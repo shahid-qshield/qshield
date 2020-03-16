@@ -1,0 +1,4 @@
+id,name,model_id:id,group_id:id,perm_read,perm_write,perm_create,perm_unlink
+access_ebs_qsheild_mod_ebs_mod_document_type,ebs_qsheild_mod.ebs_mod_document_type,model_ebs_mod_document_type,,1,1,1,1
+access_ebs_qsheild_mod_ebs_mod_contact_document,ebs_qsheild_mod.ebs_mod_contact_document,model_ebs_mod_contact_document,,1,1,1,1
+access_ebs_qsheild_mod_ebs_mod_contracts,ebs_qsheild_mod.ebs_mod_contracts,model_ebs_mod_contracts,,1,1,1,1

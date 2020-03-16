@@ -1,0 +1,49 @@
+<?xml version='1.0' encoding='UTF-8' ?>
+<odoo>
+    <data>
+        <!--list view -->
+        <record id="document_type_tree" model="ir.ui.view">
+            <field name="name">Document Type Tree</field>
+            <field name="model">ebs_mod.document.type</field>
+            <field name="arch" type="xml">
+                <tree editable="bottom">
+                    <field name="value"/>
+                     <field name="name"/>
+                </tree>
+            </field>
+        </record>
+
+
+<!--        <record id="document_type_form" model="ir.ui.view">-->
+<!--            <field name="name">Document Type Form</field>-->
+<!--            <field name="model">ebs_mod.document.type</field>-->
+<!--            <field name="arch" type="xml">-->
+<!--                <form>-->
+<!--                    <sheet>-->
+<!--                        <group name="group_top">-->
+<!--                            <group name="group_left">-->
+<!--                                <field name="sequence"/>-->
+<!--                                 <field name="name"/>-->
+<!--                                <field name="final_step"/>-->
+<!--                            </group>-->
+<!--                            <group name="group_right">-->
+<!--                                <field name="group" attrs="{'invisible':[('final_step','=',True)]}"/>-->
+<!--                                <field name="account" />-->
+<!--                            </group>-->
+<!--                        </group>-->
+<!--                    </sheet>-->
+<!--                </form>-->
+<!--            </field>-->
+<!--        </record>-->
+
+        <!--window -->
+        <record id="document_type_window" model="ir.actions.act_window">
+            <field name="name">Document Type Window</field>
+            <field name="res_model">ebs_mod.document.type</field>
+            <field name="view_mode">tree</field>
+        </record>
+        <!--menu -->
+
+
+    </data>
+</odoo>

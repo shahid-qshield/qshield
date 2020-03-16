@@ -1,0 +1,63 @@
+<?xml version='1.0' encoding='UTF-8' ?>
+<odoo>
+    <data>
+        <!--list view -->
+        <record id="contracts_tree" model="ir.ui.view">
+            <field name="name">Contracts Tree</field>
+            <field name="model">ebs_mod.contracts</field>
+            <field name="arch" type="xml">
+                <tree>
+                    <field name="name"/>
+                    <field name="contract_date"/>
+                    <field name="start_date"/>
+                    <field name="end_date"/>
+                    <field name="contact_id"/>
+                    <field name="contact_type"/>
+
+                </tree>
+            </field>
+        </record>
+
+
+        <record id="contracts_form" model="ir.ui.view">
+            <field name="name">Contracts Form</field>
+            <field name="model">ebs_mod.contracts</field>
+            <field name="arch" type="xml">
+                <form>
+                    <sheet>
+                        <h1>
+                            <field name="name" placeholder="Name..."/>
+                        </h1>
+                        <group name="group_top">
+                            <group name="group_left">
+                                <field name="contract_date"/>
+                                <field name="start_date"/>
+                                <field name="end_date"/>
+                            </group>
+                            <group name="group_right">
+                                <field name="contact_id" required="context.get('required_contact', True)"
+                                       invisible="context.get('invisible_contact', False)"
+                                       options="{'no_create': True, 'no_create_edit':True}"/>
+
+                                <field name="contact_type" invisible="context.get('invisible_contact', False)"/>
+                            </group>
+                        </group>
+                        <group name="group_bottom">
+                            <field name="desc"/>
+                        </group>
+                    </sheet>
+                </form>
+            </field>
+        </record>
+
+        <!--window -->
+        <record id="contracts_window" model="ir.actions.act_window">
+            <field name="name">Contracts Window</field>
+            <field name="res_model">ebs_mod.contracts</field>
+            <field name="view_mode">tree,form</field>
+        </record>
+        <!--menu -->
+
+
+    </data>
+</odoo>
