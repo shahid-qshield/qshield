@@ -276,7 +276,7 @@
                     <filter name="group_parents" string="Parents" context="{'group_by': 'related_parent'}"/>
                 </xpath>
                 <xpath expr="//filter[@name='group_parents']" position="after">
-                    <filter name="group_parents" string="Type" context="{'group_by': 'person_type'}"/>
+                    <filter name="group_type" string="Type" context="{'group_by': 'person_type'}"/>
                 </xpath>
                 <xpath expr="//filter[@name='type_company']" position="after">
                     <filter string="Employee's" name="employee" domain="[('person_type', '=', 'emp')]"/>
