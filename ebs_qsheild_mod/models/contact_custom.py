@@ -56,10 +56,10 @@ class ContactCustom(models.Model):
         required=False)
 
     trade_licence_number = fields.Char(
-        string='CR Number',
+        string='Trade Licence Number',
         required=False)
     trade_licence_date = fields.Date(
-        string='CR Expiry Date',
+        string='Trade Licence Expiry Date',
         required=False)
 
     account_manager = fields.Many2one(
