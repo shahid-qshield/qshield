@@ -62,16 +62,47 @@
                         </group>
                         <group name="group_bottom">
                             <field name="desc"/>
+                            <field name="hide_notebook" invisible="True"/>
                         </group>
 
-                        <notebook>
+                        <notebook attrs="{'invisible':[('hide_notebook','=',True)]}">
                             <page name="employee_page" string="Employees">
-
-                               <field name="employees"
-                                      options="{'no_create': True, 'no_create_edit':True}"
-                                      domain="[('parent_id','=',(contact_id or -1))]"/>
-
+                                <button name="add_all_employee" type="object" string="Add Employees"
+                                        class="btn btn-primary" style="margin-right:10px"/>
+                                <button name="remove_all_employee" type="object" string="Remove Employees"
+                                        class="btn btn-danger"/>
+                                <field name="contact_list"
+                                       options="{'no_create': True, 'no_create_edit':True}"
+                                       domain="[
+                                      ('parent_id','=',contact_id ),('person_type','=','emp')
+                                      ]"
+                                       />
                             </page>
+
+                            <page name="visitor_page" string="Visitors">
+                                <button name="add_all_visitor" type="object" string="Add Visitors"
+                                        class="btn btn-primary" style="margin-right:10px"/>
+                                <button name="remove_all_visitor" type="object" string="Remove Visitors"
+                                        class="btn btn-danger"/>
+<!--                                <field name="contact_list"-->
+<!--                                       options="{'no_create': True, 'no_create_edit':True}"-->
+<!--                                       domain="[-->
+<!--                                      ('parent_id','=',contact_id )-->
+<!--                                      ]"/>-->
+                            </page>
+
+                            <page name="dependent_page" string="Dependents">
+                                <button name="add_all_dependent" type="object" string="Add Dependents"
+                                        class="btn btn-primary" style="margin-right:10px"/>
+                                <button name="remove_all_dependent" type="object" string="Remove Visitors"
+                                        class="btn btn-danger"/>
+                                <field name="dependant_list"
+                                       options="{'no_create': True, 'no_create_edit':True}"
+                                       domain="[
+                                      ('parent_id','=',contact_id ),('person_type','=','child')
+                                      ]"/>
+                            </page>
+
                             <page name="services_page" string="Services">
                                 <h1>Coming Soon</h1>
                             </page>

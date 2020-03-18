@@ -34,6 +34,7 @@
         'views/contacts_view_custom.xml',
         'views/document_type_view.xml',
         'views/contracts_view.xml',
+        'views/contact_relation_type_view.xml',
         'views/menus.xml',
     ]
 }
