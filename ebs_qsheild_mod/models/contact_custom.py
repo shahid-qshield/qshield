@@ -97,7 +97,7 @@ class ContactCustom(models.Model):
     document_o2m = fields.One2many(
         comodel_name='documents.document',
         inverse_name='partner_id',
-        string='Documents',
+        string='Related Documents',
         required=False)
 
     def sponsor_domain(self):
