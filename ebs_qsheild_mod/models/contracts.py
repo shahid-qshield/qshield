@@ -51,16 +51,23 @@ class Contracts(models.Model):
         string="Description",
         required=False)
 
-    contact_list = fields.Many2many(comodel_name="res.partner",
-                                    relation="ebs_mod_m2m_contract_contact",
+    employee_list = fields.Many2many(comodel_name="res.partner",
+                                     relation="ebs_mod_m2m_contract_emp",
+                                     column1="contract_id",
+                                     column2="contact_id",
+                                     string="Employees",
+                                     # domain=employees_domain
+                                     )
+
+    visitor_list = fields.Many2many(comodel_name="res.partner",
+                                    relation="ebs_mod_m2m_contract_visitor",
                                     column1="contract_id",
                                     column2="contact_id",
-                                    string="Contacts",
+                                    string="Visitors",
                                     # domain=employees_domain
                                     )
-
     dependant_list = fields.Many2many(comodel_name="res.partner",
-                                      relation="ebs_mod_m2m_contract_contact",
+                                      relation="ebs_mod_m2m_contract_dependant",
                                       column1="contract_id",
                                       column2="contact_id",
                                       string="Dependants",
@@ -79,53 +86,53 @@ class Contracts(models.Model):
         string='Hide Notebook',
         required=False, default=False, compute='_compute_hide_notebook')
 
-    # @api.onchange('contact_id')
-    # def contact_id_onchange(self):
-    #     if self.contact_id:
-    #         return {
-    #             'domain':{
-    #                 'employee'
-    #             }
-    #         }
-
     def add_all_employee(self):
         emp_list = self.env['res.partner'].search([
             ('parent_id', '=', self.contact_id.id),
             ('person_type', '=', 'emp')
         ])
+        if len(emp_list) == 0:
+            raise ValidationError(_("No Employees Available"))
         for emp in emp_list:
-            self.write({'contact_list': [(4, emp.id)]})
+            self.write({'employee_list': [(4, emp.id)]})
 
     def remove_all_employee(self):
-        for contact in self.contact_list:
-            if contact.person_type == 'emp':
-                self.write({'contact_list': [(3, contact.id)]})
+        self.write({'employee_list': [(6, 0, [])]})
 
     def add_all_visitor(self):
         emp_list = self.env['res.partner'].search([
             ('parent_id', '=', self.contact_id.id),
             ('person_type', '=', 'visitor')
         ])
+        if len(emp_list) == 0:
+            raise ValidationError(_("No Visitors Available"))
         for emp in emp_list:
-            self.write({'contact_list': [(4, emp.id)]})
+            self.write({'visitor_list': [(4, emp.id)]})
 
     def remove_all_visitor(self):
-        for contact in self.contact_list:
-            if contact.person_type == 'visitor':
-                self.write({'contact_list': [(3, contact.id)]})
+        self.write({'visitor_list': [(6, 0, [])]})
 
     def add_all_dependent(self):
         emp_list = self.env['res.partner'].search([
             ('parent_id', '=', self.contact_id.id),
-            ('person_type', '=', 'visitor')
+            ('person_type', '=', 'emp')
         ])
+        if len(emp_list) == 0:
+            raise ValidationError(_("No Employees Available"))
+        inserted = 0
         for emp in emp_list:
-            self.write({'contact_list': [(4, emp.id)]})
+            dep_list = self.env['res.partner'].search([
+                ('parent_id', '=', emp.id),
+                ('person_type', '=', 'child')
+            ])
+            for child in dep_list:
+                inserted += 1
+                self.write({'dependant_list': [(4, child.id)]})
+        if inserted == 0:
+            raise ValidationError(_("No Dependants Available"))
 
     def remove_all_dependent(self):
-        for contact in self.contact_list:
-            if contact.person_type == 'child':
-                self.write({'contact_list': [(3, contact.id)]})
+        self.write({'dependant_list': [(6, 0, [])]})
 
     @api.model
     def create(self, vals):
@@ -153,6 +160,12 @@ class Contracts(models.Model):
             if contract_days < 365:
                 raise ValidationError(_("Contract is minimum for 1 year"))
         if 'contact_id' in vals:
-            if self.contact_id:
-                vals['employees'] = [(6, 0, [])]
+            if len(self.dependant_list) > 0 or len(self.employee_list) > 0 or len(self.visitor_list) > 0:
+                raise ValidationError(_("Cannot edit company, delete linked items."))
         return super(Contracts, self).write(vals)
+
+    def unlink(self):
+        self.write({'employee_list': [(6, 0, [])]})
+        self.write({'dependant_list': [(6, 0, [])]})
+        self.write({'visitor_list': [(6, 0, [])]})
+        return super(Contracts, self).unlink()
