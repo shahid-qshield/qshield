@@ -51,13 +51,88 @@ class Contracts(models.Model):
         string="Description",
         required=False)
 
-    employees = fields.Many2many(comodel_name="res.partner",
-                                 relation="ebs_mod_m2m_contract_contact",
-                                 column1="contract_id",
-                                 column2="contact_id",
-                                 string="Employees",
-                                 # domain=employees_domain
-                                 )
+    employee_list = fields.Many2many(comodel_name="res.partner",
+                                     relation="ebs_mod_m2m_contract_emp",
+                                     column1="contract_id",
+                                     column2="contact_id",
+                                     string="Employees",
+                                     # domain=employees_domain
+                                     )
+
+    visitor_list = fields.Many2many(comodel_name="res.partner",
+                                    relation="ebs_mod_m2m_contract_visitor",
+                                    column1="contract_id",
+                                    column2="contact_id",
+                                    string="Visitors",
+                                    # domain=employees_domain
+                                    )
+    dependant_list = fields.Many2many(comodel_name="res.partner",
+                                      relation="ebs_mod_m2m_contract_dependant",
+                                      column1="contract_id",
+                                      column2="contact_id",
+                                      string="Dependants",
+                                      # domain=employees_domain
+                                      )
+
+    @api.depends('contact_id')
+    def _compute_hide_notebook(self):
+        for rec in self:
+            if rec.contact_id:
+                rec.hide_notebook = False
+            else:
+                rec.hide_notebook = True
+
+    hide_notebook = fields.Boolean(
+        string='Hide Notebook',
+        required=False, default=False, compute='_compute_hide_notebook')
+
+    def add_all_employee(self):
+        emp_list = self.env['res.partner'].search([
+            ('parent_id', '=', self.contact_id.id),
+            ('person_type', '=', 'emp')
+        ])
+        if len(emp_list) == 0:
+            raise ValidationError(_("No Employees Available"))
+        for emp in emp_list:
+            self.write({'employee_list': [(4, emp.id)]})
+
+    def remove_all_employee(self):
+        self.write({'employee_list': [(6, 0, [])]})
+
+    def add_all_visitor(self):
+        emp_list = self.env['res.partner'].search([
+            ('parent_id', '=', self.contact_id.id),
+            ('person_type', '=', 'visitor')
+        ])
+        if len(emp_list) == 0:
+            raise ValidationError(_("No Visitors Available"))
+        for emp in emp_list:
+            self.write({'visitor_list': [(4, emp.id)]})
+
+    def remove_all_visitor(self):
+        self.write({'visitor_list': [(6, 0, [])]})
+
+    def add_all_dependent(self):
+        emp_list = self.env['res.partner'].search([
+            ('parent_id', '=', self.contact_id.id),
+            ('person_type', '=', 'emp')
+        ])
+        if len(emp_list) == 0:
+            raise ValidationError(_("No Employees Available"))
+        inserted = 0
+        for emp in emp_list:
+            dep_list = self.env['res.partner'].search([
+                ('parent_id', '=', emp.id),
+                ('person_type', '=', 'child')
+            ])
+            for child in dep_list:
+                inserted += 1
+                self.write({'dependant_list': [(4, child.id)]})
+        if inserted == 0:
+            raise ValidationError(_("No Dependants Available"))
+
+    def remove_all_dependent(self):
+        self.write({'dependant_list': [(6, 0, [])]})
 
     @api.model
     def create(self, vals):
@@ -67,11 +142,6 @@ class Contracts(models.Model):
         if contract_days < 365:
             raise ValidationError(_("Contract is minimum for 1 year"))
         contract = super(Contracts, self).create(vals)
-        emp_id_list = []
-        emp_list = self.env['res.partner'].search([('parent_id', '=', self.contact_id.id)])
-        for emp in emp_list:
-            emp_id_list.append(emp.id)
-        contract.write({'employees': [(6, 0, emp_id_list)]})
         return contract
 
     def write(self, vals):
@@ -90,12 +160,12 @@ class Contracts(models.Model):
             if contract_days < 365:
                 raise ValidationError(_("Contract is minimum for 1 year"))
         if 'contact_id' in vals:
-            if self.contact_id:
-                emp_id_list = []
-                emp_list = self.env['res.partner'].search([('parent_id', '=', self.contact_id.id)])
-                for emp in emp_list:
-                    emp_id_list.append(emp.id)
-                vals['employees'] = [(6, 0, emp_id_list)]
-            else:
-                vals['employees'] = [(6, 0, [])]
+            if len(self.dependant_list) > 0 or len(self.employee_list) > 0 or len(self.visitor_list) > 0:
+                raise ValidationError(_("Cannot edit company, delete linked items."))
         return super(Contracts, self).write(vals)
+
+    def unlink(self):
+        self.write({'employee_list': [(6, 0, [])]})
+        self.write({'dependant_list': [(6, 0, [])]})
+        self.write({'visitor_list': [(6, 0, [])]})
+        return super(Contracts, self).unlink()

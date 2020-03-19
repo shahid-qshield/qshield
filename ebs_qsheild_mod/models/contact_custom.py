@@ -5,6 +5,9 @@ from odoo import models, fields, api
 
 class ContactCustom(models.Model):
     _inherit = 'res.partner'
+
+    parent_id = fields.Many2one('res.partner', string='Related Contact', index=True)
+
     is_miscellaneous = fields.Boolean(
         string='Is Miscellaneous',
         required=False, default=False)
@@ -20,7 +23,7 @@ class ContactCustom(models.Model):
             ('emp', 'Employee'),
             ('visitor', 'Visitor'),
             ('child', 'Dependent')],
-        required=True, default='company')
+    )
 
     nationality = fields.Many2one(
         comodel_name='res.country',
@@ -38,7 +41,6 @@ class ContactCustom(models.Model):
     qatarid_exp_date = fields.Date(
         string='Qatar ID Expiry Date',
         required=False)
-
     computer_card_number = fields.Char(
         string='Computer Card Number',
         required=False)
@@ -53,28 +55,39 @@ class ContactCustom(models.Model):
         string='CR Expiry Date',
         required=False)
 
+    trade_licence_number = fields.Char(
+        string='Trade Licence Number',
+        required=False)
+    trade_licence_date = fields.Date(
+        string='Trade Licence Expiry Date',
+        required=False)
+
     account_manager = fields.Many2one(
         comodel_name='hr.employee',
         string='Account Manager',
         required=False)
-    related_parent = fields.Many2one(
-        comodel_name='res.partner',
-        string='Parent',
-        required=False,
-        domain=[('person_type', '=', 'emp')])
 
-    related_contacts = fields.One2many(
+    company_visitors = fields.One2many(
         comodel_name='res.partner',
         inverse_name='parent_id',
-        string='Related Contacts',
-        required=False
+        string='Related Visitors',
+        required=False, domain=[('person_type', '=', 'visitor')]
     )
 
-    dependents = fields.One2many(
+    company_employees = fields.One2many(
         comodel_name='res.partner',
-        inverse_name='related_parent',
-        string='Dependents',
-        required=False)
+        inverse_name='parent_id',
+        string='Related Employees',
+        required=False, domain=[('person_type', '=', 'emp')]
+    )
+
+    employee_dependants = fields.One2many(
+        comodel_name='res.partner',
+        inverse_name='parent_id',
+        string='Related Dependants',
+        required=False, domain=[('person_type', '=', 'child')]
+    )
+
     contracts = fields.One2many(
         comodel_name='ebs_mod.contracts',
         inverse_name='contact_id',
@@ -95,14 +108,12 @@ class ContactCustom(models.Model):
         if self.person_type == 'child':
             return ['|', ('person_type', '=', 'emp'), ('person_type', '=', 'company')]
 
-    @api.depends('related_parent', 'parent_id')
+    @api.depends('parent_id')
     def _sponsor_default(self):
         if self.person_type == 'company':
             return self.id
-        if self.person_type == 'emp' or self.person_type == 'visitor':
+        if self.person_type in ('emp', 'child', 'visitor'):
             return self.parent_id.id
-        if self.person_type == 'child':
-            return self.related_parent.id
         return None
 
     sponsor = fields.Many2one(
@@ -112,11 +123,43 @@ class ContactCustom(models.Model):
         default=_sponsor_default,
         domain=sponsor_domain)
 
+    @api.depends('parent_id')
+    def _get_related_company(self):
+        for rec in self:
+            if rec.person_type == 'child':
+                rec.related_company = rec.parent_id.parent_id.id
+            if rec.person_type in ('emp', 'visitor'):
+                rec.related_company = rec.parent_id.id
+
+    related_company = fields.Many2one(
+        comodel_name='res.partner',
+        string='Related Company',
+        required=False,
+        store=True,
+        compute='_get_related_company')
+
+    dependants = fields.One2many(
+        comodel_name='res.partner',
+        inverse_name='related_company',
+        string='Dependants',
+        domain=[('person_type', '=', 'child')],
+        required=False, readonly=True)
+    contact_relation_type_id = fields.Many2one(
+        comodel_name='ebs_mod.contact.relation.type',
+        string='Relation Type',
+        required=False)
+
     @api.depends('is_company', 'name', 'parent_id.name', 'type', 'company_name')
     @api.depends_context('show_address', 'show_address_only', 'show_email', 'html_format', 'show_vat')
     def _compute_display_name(self):
-        for rec in self:
-            rec.display_name = rec.name
+        # if partner.person_type in ('emp', 'visitor', 'child'):
+        diff = dict(show_address=None, show_address_only=None, show_email=None, html_format=None, show_vat=None)
+        names = dict(self.with_context(**diff).name_get())
+        for partner in self:
+            if partner.person_type:
+                partner.display_name = partner.name
+            else:
+                partner.display_name = names.get(partner.id)
 
     @api.onchange('person_type')
     def _person_type_change(self):
@@ -145,12 +188,9 @@ class ContactCustom(models.Model):
                 if 'person_type' in vals:
                     if vals['person_type'] == 'company':
                         res.sponsor = res.id
-                    if vals['person_type'] == 'visitor' or vals['person_type'] == 'emp':
+                    if vals['person_type'] in ('visitor', 'emp', 'child'):
                         if res.parent_id:
                             res.sponsor = res.parent_id.id
-                    if vals['person_type'] == 'child':
-                        if res.related_parent:
-                            res.sponsor = res.related_parent.id
         return res
 
     def write(self, vals):
@@ -161,6 +201,11 @@ class ContactCustom(models.Model):
 
         return res
 
+    def _get_name(self):
+        if self.person_type:
+            return self.name
+        else:
+            return super(ContactCustom, self)._get_name()
 #
 #     @api.depends('value')
 #     def _value_pc(self):

@@ -62,16 +62,77 @@
                         </group>
                         <group name="group_bottom">
                             <field name="desc"/>
+                            <field name="hide_notebook" invisible="True"/>
                         </group>
 
-                        <notebook>
+                        <notebook attrs="{'invisible':[('hide_notebook','=',True)]}">
                             <page name="employee_page" string="Employees">
-
-                               <field name="employees"
-                                      options="{'no_create': True, 'no_create_edit':True}"
-                                      domain="[('parent_id','=',(contact_id or -1))]"/>
-
+                                <button name="add_all_employee" type="object" string="Add Employees"
+                                        class="btn btn-primary" style="margin-right:10px"/>
+                                <button name="remove_all_employee" type="object" string="Remove Employees"
+                                        class="btn btn-secondary"/>
+                                <field name="employee_list"
+                                       options="{'no_create': True, 'no_create_edit':True}"
+                                       domain="[
+                                      ('parent_id','=',contact_id ),('person_type','=','emp')
+                                      ]"
+                                >
+                                      <tree>
+                                        <field name="name"/>
+                                        <field name="sponsor"/>
+                                         <field name="phone"/>
+                                         <field name="email"/>
+                                        <field name="person_type"/>
+                                        <field name="image_1920" widget="image" height="30"/>
+                                    </tree>
+                                </field>
                             </page>
+
+                            <page name="visitor_page" string="Visitors">
+                                <button name="add_all_visitor" type="object" string="Add Visitors"
+                                        class="btn btn-primary" style="margin-right:10px"/>
+                                <button name="remove_all_visitor" type="object" string="Remove Visitors"
+                                        class="btn btn-secondary"/>
+                                <field name="visitor_list"
+                                       options="{'no_create': True, 'no_create_edit':True}"
+                                       domain="[
+                                      ('parent_id','=',contact_id ),('person_type','=','visitor')
+                                      ]"
+                                >
+                                      <tree>
+                                        <field name="name"/>
+                                        <field name="sponsor"/>
+                                         <field name="phone"/>
+                                         <field name="email"/>
+                                        <field name="person_type"/>
+                                        <field name="image_1920" widget="image" height="30"/>
+                                    </tree>
+                                </field>
+                            </page>
+
+                            <page name="dependent_page" string="Dependants">
+                                <button name="add_all_dependent" type="object" string="Add Dependants"
+                                        class="btn btn-primary" style="margin-right:10px"/>
+                                <button name="remove_all_dependent" type="object" string="Remove Dependants"
+                                        class="btn btn-secondary"/>
+                                <field name="dependant_list"
+                                       options="{'no_create': True, 'no_create_edit':True}"
+
+                                       domain="[
+                                      ('related_company','=',contact_id ),('person_type','=','child')
+                                      ]"
+                                >
+                                    <tree>
+                                        <field name="name"/>
+                                        <field name="sponsor"/>
+                                         <field name="phone"/>
+                                         <field name="email"/>
+                                        <field name="person_type"/>
+                                        <field name="image_1920" widget="image" height="30"/>
+                                    </tree>
+                                </field>
+                            </page>
+
                             <page name="services_page" string="Services">
                                 <h1>Coming Soon</h1>
                             </page>
