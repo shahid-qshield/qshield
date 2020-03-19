@@ -192,6 +192,7 @@
                         <field name="parent_id" readonly="context.get('readonly_parent_id', False)"
                                string="Related Contact"
                                options="{'no_create': True, 'no_create_edit':True}"
+                                attrs="{'invisible':[('person_type','=','company')]}"
                                domain="[('person_type','=', (
 						   (person_type in ('emp','visitor') and 'company')
 						   or
