@@ -1,0 +1,48 @@
+<?xml version='1.0' encoding='UTF-8' ?>
+<odoo>
+    <data>
+        <record id="custom_documents_view" model="ir.ui.view">
+            <field name="name">custom.documents.view</field>
+            <field name="model">documents.document</field>
+            <field name="inherit_id" ref="documents.document_view_form"/>
+            <field name="arch" type="xml">
+
+                <xpath expr="//field[@name='owner_id']" position="attributes">
+                    <attribute name="invisible">True</attribute>
+                </xpath>
+                <xpath expr="//field[@name='create_uid']" position="attributes">
+                    <attribute name="invisible">True</attribute>
+                </xpath>
+                <xpath expr="//field[@name='create_date']" position="attributes">
+                    <attribute name="invisible">True</attribute>
+                </xpath>
+                <xpath expr="//field[@name='type']" position="before">
+                    <field name="issue_date"/>
+                    <field name="expiry_date"/>
+                    <field name="desc"/>
+                </xpath>
+            </field>
+        </record>
+
+        <record model="ir.ui.view" id="documents_custom_tree">
+            <field name="name">documents.custom.tree</field>
+            <field name="model">documents.document</field>
+            <field name="inherit_id" ref="documents.documents_view_list"/>
+            <field name="priority">16</field>
+            <field name="type">tree</field>
+            <field name="arch" type="xml">
+
+                <xpath expr="//tree//field[@name='owner_id']" position="replace">
+                     <field name="issue_date"/>
+                    <field name="expiry_date"/>
+                </xpath>
+                <xpath expr="//tree//field[@name='create_date']" position="replace">
+                     <field name="create_date" widget="date" optional="hide"/>
+                </xpath>
+
+            </field>
+        </record>
+
+
+    </data>
+</odoo>

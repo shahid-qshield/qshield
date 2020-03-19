@@ -23,7 +23,8 @@
     'depends': [
         'base',
         'contacts',
-        'hr'
+        'hr',
+        'documents'
     ],
 
     # always loaded
@@ -32,9 +33,9 @@
         'views/views.xml',
         'views/templates.xml',
         'views/contacts_view_custom.xml',
-        'views/document_type_view.xml',
         'views/contracts_view.xml',
         'views/contact_relation_type_view.xml',
+        'views/document_custom.xml',
         'views/menus.xml',
     ]
 }
