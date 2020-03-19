@@ -36,6 +36,9 @@
                      <field name="issue_date"/>
                     <field name="expiry_date"/>
                 </xpath>
+                <xpath expr="//tree//field[@name='create_date']" position="replace">
+                     <field name="create_date" widget="date" optional="hide"/>
+                </xpath>
 
             </field>
         </record>

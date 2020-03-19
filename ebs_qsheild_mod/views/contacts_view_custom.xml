@@ -38,7 +38,7 @@
 
                 <xpath expr="//notebook//page[@name='internal_notes']" position="after">
                     <page name="document_page" string="Documents">
-                        <field name="document_list"/>
+                        <field name="document_o2m"/>
                     </page>
                 </xpath>
 

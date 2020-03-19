@@ -94,7 +94,7 @@ class ContactCustom(models.Model):
         string='Contracts',
         required=False)
 
-    document_list = fields.One2many(
+    document_o2m = fields.One2many(
         comodel_name='documents.document',
         inverse_name='partner_id',
         string='Documents',
