@@ -94,9 +94,9 @@ class ContactCustom(models.Model):
         string='Contracts',
         required=False)
 
-    documents = fields.One2many(
-        comodel_name='ebs_mod.contact.document',
-        inverse_name='contact_id',
+    document_list = fields.One2many(
+        comodel_name='documents.document',
+        inverse_name='partner_id',
         string='Documents',
         required=False)
 
