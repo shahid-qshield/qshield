@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data>
+
+         <record id="create_contact_document_view_form" model="ir.ui.view">
+            <field name="name">create.contact.document.form</field>
+            <field name="model">ebs_mod.contact.document</field>
+            <field name="arch" type="xml">
+                <form string="Create Document">
+                    <group class="oe_title">
+                        <field name="contact_id" invisible="True"/>
+                        <field name="issue_date"/>
+                        <field name="expiry_date"/>
+                        <field name="tags" widget="many2many_tags"/>
+                        <field name="desc" />
+                        <field name="attachment_ids" widget="many2many_binary"/>
+                    </group>
+                    <footer>
+                        <button name="create_document" string="Submit" type="object" class="btn-primary"/>
+                        <button string="Cancel" class="btn-secondary" special="cancel"/>
+                    </footer>
+                </form>
+            </field>
+        </record>
+
+        <record id="create_contact_document_view_action" model="ir.actions.act_window">
+            <field name="name">Create Document</field>
+            <field name="type">ir.actions.act_window</field>
+            <field name="res_model">ebs_mod.contact.document</field>
+            <field name="view_mode">form</field>
+            <field name="view_id" ref="create_contact_document_view_form"/>
+            <field name="target">new</field>
+        </record>
+
+    </data>
+</odoo>

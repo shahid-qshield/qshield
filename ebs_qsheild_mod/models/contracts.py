@@ -38,6 +38,8 @@ class Contracts(models.Model):
                    ('yearly', 'Yearly')],
         required=[('contract_type', '=', 'retainer_agreement')],
         default='monthly')
+
+
     payment_amount = fields.Float(
         string='Amount',
         required=[('contract_type', '=', 'retainer_agreement')],
