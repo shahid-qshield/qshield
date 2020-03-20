@@ -6,6 +6,7 @@ from odoo.exceptions import ValidationError
 
 class CreateContactDocument(models.TransientModel):
     _name = 'ebs_mod.contact.document'
+    _description = 'Create documents for contacts wizard'
 
     issue_date = fields.Date(
         string='Issue Date',
