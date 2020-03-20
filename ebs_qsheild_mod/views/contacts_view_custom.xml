@@ -38,6 +38,10 @@
 
                 <xpath expr="//notebook//page[@name='internal_notes']" position="after">
                     <page name="document_page" string="Documents">
+                        <button name="%(create_contact_document_view_action)d"
+                                    string="Create Document"
+                                    type="action" class="oe_highlight"
+                                    context="{'default_contact_id':id}"/>
                         <field name="document_o2m"/>
                     </page>
                 </xpath>
