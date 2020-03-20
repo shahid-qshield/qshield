@@ -40,8 +40,8 @@ class CreateContactDocument(models.TransientModel):
         if len(self.attachment_ids) == 0 or len(self.attachment_ids) > 1:
             raise ValidationError(_("Select 1 File"))
 
-        if len(self.tags) == 0 or len(self.tags) > 1:
-            raise ValidationError(_("Select 1 Tag"))
+        if len(self.tags) == 0:
+            raise ValidationError(_("Select Tags"))
         self.env['documents.document'].create(
             {
                 'issue_date': self.issue_date,
