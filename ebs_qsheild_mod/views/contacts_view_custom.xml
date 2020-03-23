@@ -25,7 +25,11 @@
                     <page name="contract_page" string="Contracts" attrs="{'invisible':[('person_type','!=','company')]}">
                         <field
                                 name="contracts"
-                                context="{'invisible_contact':True,'required_contact':False}"
+                                context="{
+                                'invisible_contact':True,
+                                'required_contact':False,
+                                'default_contact_id':id
+                                }"
                         />
                     </page>
                 </xpath>
