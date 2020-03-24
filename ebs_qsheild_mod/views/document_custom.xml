@@ -30,6 +30,7 @@
             <field name="inherit_id" ref="documents.documents_view_list"/>
             <field name="priority">16</field>
             <field name="type">tree</field>
+
             <field name="arch" type="xml">
 
                 <xpath expr="//tree//field[@name='owner_id']" position="replace">
@@ -38,6 +39,10 @@
                 </xpath>
                 <xpath expr="//tree//field[@name='create_date']" position="replace">
                      <field name="create_date" widget="date" optional="hide"/>
+                </xpath>
+
+                <xpath expr="//tree//field[@name='create_date']" position="before">
+                     <field name="datas" widget="binary" string="Download" optional="show" attrs="{'invisible':[('type','!=','binary')]}"/>
                 </xpath>
 
             </field>

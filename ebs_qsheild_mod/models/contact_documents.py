@@ -79,3 +79,6 @@ class ContactDocument(models.Model):
                 raise ValidationError(_("Must not have expiry date"))
         
         return super(ContactDocument, self).write(vals)
+
+
+

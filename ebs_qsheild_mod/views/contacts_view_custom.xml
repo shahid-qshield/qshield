@@ -16,13 +16,27 @@
                            readonly="context.get('readonly_person_type', False)"
                            class="oe_edit_only"
                            options="{'horizontal': true}"
+                           default_focus="1"
                     />
                 </xpath>
                 <xpath expr="//field[@name='parent_id']//.." position="replace">
                 </xpath>
 
+                <xpath expr="//field[@name='name']" position="replace">
+                    <h1>
+                        <field name="name" placeholder="Name" attrs="{'required' : [('type', '=', 'contact')]}"/>
+                    </h1>
+                </xpath>
+
+                <xpath expr="//field[@name='name']//.." position="after">
+                    <h3>
+                        <field name="ref" required="False" style="width:70%" placeholder="Reference"/>
+                        <field name="id" invisible="1"/>
+                    </h3>
+                </xpath>
                 <xpath expr="//notebook//page[@name='internal_notes']" position="after">
-                    <page name="contract_page" string="Contracts" attrs="{'invisible':[('person_type','!=','company')]}">
+                    <page name="contract_page" string="Contracts"
+                          attrs="{'invisible':[('person_type','!=','company')]}">
                         <field
                                 name="contracts"
                                 context="{
@@ -43,9 +57,9 @@
                 <xpath expr="//notebook//page[@name='internal_notes']" position="after">
                     <page name="document_page" string="Documents">
                         <button name="%(create_contact_document_view_action)d"
-                                    string="Create Document"
-                                    type="action" class="oe_highlight"
-                                    context="{'default_contact_id':id}"/>
+                                string="Create Document"
+                                type="action" class="oe_highlight"
+                                context="{'default_contact_id':id}"/>
                         <field name="document_o2m"/>
                     </page>
                 </xpath>
@@ -92,12 +106,14 @@
                         <field name="company_employees" context="{
                         'default_person_type':'emp',
                          'default_company_type':'person',
+                         'default_parent_id':id,
+                         'default_sponsor':sponsor,
                         'readonly_person_type':True,
                         'readonly_parent_id':True
                         }"
 
                         >
-                            <tree>
+                            <tree delete="0">
                                 <field name="name"/>
                                 <field name="date" string="Date od Birth"/>
                                 <field name="gender"/>
@@ -111,14 +127,16 @@
                     <page name="visitor_page" string="Visitors"
                           attrs="{'invisible':[('person_type','!=','company')]}">
                         <field name="company_visitors" context="{
-                        'default_person_type':'emp',
-                         'default_company_type':'person',
+                        'default_person_type':'visitor',
+                        'default_company_type':'person',
+                        'default_parent_id':id,
+                        'default_sponsor':sponsor,
                         'readonly_person_type':True,
                         'readonly_parent_id':True
                         }"
 
                         >
-                            <tree>
+                            <tree delete="0">
                                 <field name="name"/>
                                 <field name="date" string="Date od Birth"/>
                                 <field name="gender"/>
@@ -129,10 +147,10 @@
                 </xpath>
 
 
-                 <xpath expr="//notebook//page[@name='internal_notes']" position="before">
+                <xpath expr="//notebook//page[@name='internal_notes']" position="before">
                     <page name="company_dependant_page" string="Employees Dependants"
                           attrs="{'invisible':[('person_type','!=','company')]}">
-                        <field name="dependants" >
+                        <field name="dependants" readonly="True">
                             <tree>
                                 <field name="name"/>
                                 <field name="parent_id"/>
@@ -150,14 +168,38 @@
                           attrs="{'invisible':[('person_type','!=','emp')]}">
                         <field name="employee_dependants" context="{
                         'default_person_type':'child',
+                        'default_parent_id':id,
+                        'default_sponsor':sponsor,
                         'default_company_type':'person',
                         'readonly_person_type':True,
                         'readonly_parent_id':True
                         }">
+                            <tree delete="0">
+                                <field name="name"/>
+                                <field name="date" string="Date od Birth"/>
+                                <field name="gender"/>
+                                <field name="image_1920" widget="image" height="30"/>
+                            </tree>
+                        </field>
+                    </page>
+                </xpath>
+
+
+                <xpath expr="//notebook//page[@name='internal_notes']" position="before">
+                    <page name="sponsor_page" string="Sponsor For"
+                          attrs="{'invisible':[('person_type','!=','company')]}">
+                        <field name="sponsor_for" context="{
+                        'readonly_person_type':True,
+                        'readonly_parent_id':True
+                        }"
+
+                        >
                             <tree>
                                 <field name="name"/>
                                 <field name="date" string="Date od Birth"/>
                                 <field name="gender"/>
+                                <field name="person_type"/>
+                                <field name="parent_id"/>
                                 <field name="image_1920" widget="image" height="30"/>
                             </tree>
                         </field>
@@ -170,7 +212,7 @@
                         <field name="parent_id" readonly="context.get('readonly_parent_id', False)"
                                string="Related Contact"
                                options="{'no_create': True, 'no_create_edit':True}"
-                                attrs="{'invisible':[('person_type','=','company')]}"
+                               attrs="{'invisible':[('person_type','=','company')]}"
                                domain="[('person_type','=', (
 						   (person_type in ('emp','visitor') and 'company')
 						   or
@@ -250,7 +292,7 @@
                 <xpath expr="//tree//field[@name='parent_id']" position="after">
                     <field name="sponsor" optional="show"/>
                 </xpath>
-                 <xpath expr="//tree//field[@name='sponsor']" position="after">
+                <xpath expr="//tree//field[@name='sponsor']" position="after">
                     <field name="related_company" optional="show"/>
                 </xpath>
                 <xpath expr="//tree//field[@name='vat']" position="replace">
@@ -291,8 +333,10 @@
             <field name="arch" type="xml">
 
                 <xpath expr="//field[@name='parent_id']" position="replace">
-                    <field name="related_company" domain="[('person_type', '=', 'company')]" string="Related Company" operator="child_of"/>
-                    <field name="parent_id" domain="[('person_type', '=', 'emp')]" string="Related Contact" operator="child_of"/>
+                    <field name="related_company" domain="[('person_type', '=', 'company')]" string="Related Company"
+                           operator="child_of"/>
+                    <field name="parent_id" domain="[('person_type', '=', 'emp')]" string="Related Contact"
+                           operator="child_of"/>
                 </xpath>
 
                 <xpath expr="//filter[@name='type_person']" position="replace">
