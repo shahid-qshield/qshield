@@ -1,6 +1,7 @@
 # -*- coding: utf-8 -*-
 
-from odoo import models, fields, api
+from odoo import models, fields, api, _
+from odoo.exceptions import ValidationError
 
 
 class ContactCustom(models.Model):
@@ -87,7 +88,12 @@ class ContactCustom(models.Model):
         string='Related Dependants',
         required=False, domain=[('person_type', '=', 'child')]
     )
-
+    sponsor_for = fields.One2many(
+        comodel_name='res.partner',
+        inverse_name='sponsor',
+        string='Sponsor For',
+        required=False, readonly=True
+    )
     contracts = fields.One2many(
         comodel_name='ebs_mod.contracts',
         inverse_name='contact_id',
@@ -100,28 +106,54 @@ class ContactCustom(models.Model):
         string='Related Documents',
         required=False)
 
-    def sponsor_domain(self):
-        if self.person_type == 'company':
-            return [('person_type', '=', 'company')]
-        if self.person_type == 'emp' or self.person_type == 'visitor':
-            return [('person_type', '=', 'company')]
-        if self.person_type == 'child':
-            return ['|', ('person_type', '=', 'emp'), ('person_type', '=', 'company')]
+    # def sponsor_domain(self):
+    #     if self.person_type == 'company':
+    #         return [('person_type', '=', 'company')]
+    #     if self.person_type == 'emp' or self.person_type == 'visitor':
+    #         return [('person_type', '=', 'company')]
+    #     if self.person_type == 'child':
+    #         return ['|', ('person_type', '=', 'emp'), ('person_type', '=', 'company')]
 
     @api.depends('parent_id')
     def _sponsor_default(self):
         if self.person_type == 'company':
             return self.id
-        if self.person_type in ('emp', 'child', 'visitor'):
+        if self.person_type in ('emp', 'visitor'):
             return self.parent_id.id
+        if self.person_type == 'child':
+            self.sponsor = self.parent_id.parent_id.id
         return None
+
+    @api.depends('parent_id')
+    def _sponsor_compute(self):
+        for rec in self:
+            if rec.person_type == 'company':
+                if 'default_sponsor' in rec._context:
+                    if rec._context['default_sponsor']:
+                        rec.sponsor = rec._context['default_sponsor']
+                else:
+                    rec.sponsor = rec.id
+            if rec.person_type == 'visitor' or rec.person_type == 'emp':
+                if 'default_sponsor' in rec._context:
+                    if rec._context['default_sponsor']:
+                        rec.sponsor = rec._context['default_sponsor']
+                else:
+                    rec.sponsor = rec.parent_id.id
+            if rec.person_type == 'child':
+                if 'default_sponsor' in rec._context:
+                    if rec._context['default_sponsor']:
+                        rec.sponsor = rec._context['default_sponsor']
+                else:
+                    rec.sponsor = rec.parent_id.sponsor.id
 
     sponsor = fields.Many2one(
         comodel_name='res.partner',
         string='Sponsor',
         required=False,
+        readonly=False,
         default=_sponsor_default,
-        domain=sponsor_domain)
+        # compute='_sponsor_compute', store=True,
+        domain=[('person_type', '=', 'company')])
 
     @api.depends('parent_id')
     def _get_related_company(self):
@@ -168,11 +200,11 @@ class ContactCustom(models.Model):
         else:
             self.company_type = 'person'
 
-        return {
-            'domain': {
-                'sponsor': self.sponsor_domain()
-            }
-        }
+        # return {
+        #     'domain': {
+        #         'sponsor': self.sponsor_domain()
+        #     }
+        # }
 
     @api.model
     def create(self, vals):
@@ -188,24 +220,99 @@ class ContactCustom(models.Model):
                 if 'person_type' in vals:
                     if vals['person_type'] == 'company':
                         res.sponsor = res.id
-                    if vals['person_type'] in ('visitor', 'emp', 'child'):
+                    if vals['person_type'] in ('visitor', 'emp'):
                         if res.parent_id:
                             res.sponsor = res.parent_id.id
+                    if vals['person_type'] == 'child':
+                        if res.parent_id.sponsor:
+                            res.sponsor = res.parent_id.sponsor.id
         return res
 
     def write(self, vals):
         if 'person_type' in vals:
             if self.person_type == "visitor" and vals['person_type'] == "emp":
                 self.message_post(body="Type Changed From Visitor to Employee")
-        res = super(ContactCustom, self).write(vals)
 
+        if 'parent_id' in vals:
+            if vals['parent_id']:
+                new_res = self.env['res.partner'].browse(vals['parent_id'])
+                for rec in self.employee_dependants:
+                    rec.related_company = new_res.id
+                    rec.sponsor = new_res.id
+                self.message_post(
+                    body="Related contact changed from '" + self.parent_id.name + "' to '" + new_res.name + "'")
+
+        active_before = self.active
+        res = super(ContactCustom, self).write(vals)
+        active_after = self.active
+        if active_after != active_before:
+            self.contact_archive_onchange(active_after)
         return res
+
+    def contact_archive_onchange(self, active):
+        self.contact_document_archive(active)
+        related_contacts_list = self.env['res.partner'].search(
+            [('parent_id', '=', self.id), ('active', '=', (not active))])
+        for rec in related_contacts_list:
+            rec.active = active
+
+    def contact_document_archive(self, active):
+        document_list = self.env['documents.document'].search(
+            [('partner_id', '=', self.id), ('active', '=', (not active))])
+        for rec in document_list:
+            rec.active = active
 
     def _get_name(self):
         if self.person_type:
             return self.name
         else:
             return super(ContactCustom, self)._get_name()
+
+    def unlink(self):
+        if self.person_type == 'company':
+            if len(self.company_visitors) > 0 or len(self.company_employees) > 0:
+                raise ValidationError(_("Cannot delete, check linked items"))
+        if self.person_type == 'emp':
+            if len(self.employee_dependants) > 0:
+                raise ValidationError(_("Cannot delete, check linked items"))
+
+        for doc in self.document_o2m:
+            doc.unlink()
+
+    @api.onchange('parent_id')
+    def onchange_parent_id(self):
+        # return values in result, as this method is used by _fields_sync()
+        if not self.parent_id:
+            return
+        result = {}
+        partner = self._origin
+        # if partner.parent_id and partner.parent_id != self.parent_id:
+        #     result['warning'] = {
+        #         'title': _('Warning'),
+        #         'message': _('Changing the company of a contact should only be done if it '
+        #                      'was never correctly set. If an existing contact starts working for a new '
+        #                      'company then a new contact should be created under that new '
+        #                      'company. You can use the "Discard" button to abandon this change.')}
+        if partner.type == 'contact' or self.type == 'contact':
+            # for contacts: copy the parent address, if set (aka, at least one
+            # value is set in the address: otherwise, keep the one from the
+            # contact)
+            address_fields = self._address_fields()
+            if any(self.parent_id[key] for key in address_fields):
+                def convert(value):
+                    return value.id if isinstance(value, models.BaseModel) else value
+
+                result['value'] = {key: convert(self.parent_id[key]) for key in address_fields}
+        return result
+
+    @api.depends('person_type')
+    @api.onchange('parent_id')
+    def parent_id_onchange(self):
+        if self.person_type == 'visitor' or self.person_type == 'emp':
+            self.sponsor = self.parent_id.id
+        if self.person_type == 'child':
+            self.sponsor = self.parent_id.parent_id.id
+            self.nationality = self.parent_id.nationality.id
 #
 #     @api.depends('value')
 #     def _value_pc(self):
