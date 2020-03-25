@@ -18,11 +18,9 @@ class DocumentsCustom(models.Model):
     expiry_date = fields.Date(
         required=False)
 
-
-
     document_number = fields.Char(
         string='Document Number',
-        required=True, default='N/A')
+        required=False)
     document_type_id = fields.Many2one(
         comodel_name='ebs_mod.document.types',
         string='Document Type',
@@ -39,7 +37,10 @@ class DocumentsCustom(models.Model):
         result = []
         for rec in self:
             if rec.type == 'binary':
-                result.append((rec.id, rec.document_number))
+                if rec.document_number:
+                    result.append((rec.id, rec.document_number))
+                else:
+                    result.append((rec.id, rec.name))
             else:
                 result.append((rec.id, rec.name))
         return result
