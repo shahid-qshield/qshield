@@ -16,6 +16,13 @@
                 <xpath expr="//field[@name='create_date']" position="attributes">
                     <attribute name="invisible">True</attribute>
                 </xpath>
+                <xpath expr="//field[@name='datas']" position="before">
+                    <field name="document_number" string="Document Number"/>
+                </xpath>
+                <xpath expr="//field[@name='document_number']" position="after">
+                    <field name="document_type_id"/>
+                    <field name="status" string="Status"/>
+                </xpath>
                 <xpath expr="//field[@name='type']" position="before">
                     <field name="issue_date"/>
                     <field name="expiry_date"/>
@@ -34,15 +41,23 @@
             <field name="arch" type="xml">
 
                 <xpath expr="//tree//field[@name='owner_id']" position="replace">
-                     <field name="issue_date"/>
+                    <field name="issue_date"/>
                     <field name="expiry_date"/>
                 </xpath>
+                <xpath expr="//tree//field[@name='name']" position="replace">
+                    <field name="document_number" string="Document Number"/>
+                </xpath>
+                <xpath expr="//tree//field[@name='tag_ids']" position="before">
+                    <field name="document_type_id"/>
+                    <field name="status"/>
+                </xpath>
                 <xpath expr="//tree//field[@name='create_date']" position="replace">
-                     <field name="create_date" widget="date" optional="hide"/>
+                    <field name="create_date" widget="date" optional="hide"/>
                 </xpath>
 
                 <xpath expr="//tree//field[@name='create_date']" position="before">
-                     <field name="datas" widget="binary" string="Download" optional="show" attrs="{'invisible':[('type','!=','binary')]}"/>
+                    <field name="datas" widget="binary" string="Download" optional="show"
+                           attrs="{'invisible':[('type','!=','binary')]}"/>
                 </xpath>
 
             </field>

@@ -8,6 +8,10 @@ class CreateContactDocument(models.TransientModel):
     _name = 'ebs_mod.contact.document'
     _description = 'Create documents for contacts wizard'
 
+    document_number = fields.Char(
+        string='Document Number',
+        required=True)
+
     issue_date = fields.Date(
         string='Issue Date',
         required=True)
@@ -19,14 +23,19 @@ class CreateContactDocument(models.TransientModel):
         string='Contact',
         required=False)
     attachment_ids = fields.Many2many(comodel_name="ir.attachment",
-                                       relation="ebs_mod_m2m_ir_contact_document",
-                                       column1="m2m_id",
-                                       column2="attachment_id",
-                                       string="File"
-                                       )
+                                      relation="ebs_mod_m2m_ir_contact_document",
+                                      column1="m2m_id",
+                                      column2="attachment_id",
+                                      string="File"
+                                      )
     desc = fields.Text(
         string="Description",
         required=False)
+
+    document_type_id = fields.Many2one(
+        comodel_name='ebs_mod.document.types',
+        string='Document Type',
+        required=True)
 
     tags = fields.Many2many(
         comodel_name='documents.tag',
@@ -40,10 +49,10 @@ class CreateContactDocument(models.TransientModel):
         if len(self.attachment_ids) == 0 or len(self.attachment_ids) > 1:
             raise ValidationError(_("Select 1 File"))
 
-        if len(self.tags) == 0:
-            raise ValidationError(_("Select Tags"))
         self.env['documents.document'].create(
             {
+                'document_type_id': self.document_type_id.id,
+                'document_number': self.document_number,
                 'issue_date': self.issue_date,
                 'expiry_date': self.expiry_date,
                 'desc': self.desc,
