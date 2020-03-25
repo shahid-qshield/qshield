@@ -54,21 +54,21 @@ class DocumentsCustom(models.Model):
             if self.expiry_date < self.issue_date:
                 raise ValidationError(_("Expiry date is before issue date."))
         return res
-
-    @api.model
-    def create(self, vals):
-        if 'expiry_date' in vals and vals['expiry_date']:
-            expiry_date = datetime.strptime(vals['expiry_date'], "%Y-%m-%d")
-            if expiry_date > datetime.today().date():
-                vals['status'] = 'active'
-            else:
-                vals['status'] = 'expired'
-        else:
-            vals['status'] = 'na'
-        res = super(DocumentsCustom, self).create(vals)
-        if self.expiry_date and self.issue_date:
-            if self.expiry_date < self.issue_date:
-                raise ValidationError(_("Expiry date is before issue date."))
+    #
+    # @api.model
+    # def create(self, vals):
+    #     if 'expiry_date' in vals and vals['expiry_date']:
+    #         expiry_date = datetime.strptime(vals['expiry_date'], "%Y-%m-%d")
+    #         if expiry_date > datetime.today().date():
+    #             vals['status'] = 'active'
+    #         else:
+    #             vals['status'] = 'expired'
+    #     else:
+    #         vals['status'] = 'na'
+    #     res = super(DocumentsCustom, self).create(vals)
+    #     if self.expiry_date and self.issue_date:
+    #         if self.expiry_date < self.issue_date:
+    #             raise ValidationError(_("Expiry date is before issue date."))
 
 
 class DocumentsFolderCustom(models.Model):
