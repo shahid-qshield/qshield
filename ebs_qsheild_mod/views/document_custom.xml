@@ -7,6 +7,11 @@
             <field name="inherit_id" ref="documents.document_view_form"/>
             <field name="arch" type="xml">
 
+
+                <xpath expr="//button[@name='create_share']" position="after">
+                    <button type="object" name="preview_document" string="Preview"/>
+                </xpath>
+
                 <xpath expr="//field[@name='owner_id']" position="attributes">
                     <attribute name="invisible">True</attribute>
                 </xpath>
@@ -46,6 +51,7 @@
                 </xpath>
                 <xpath expr="//tree//field[@name='name']" position="replace">
                     <field name="document_number" string="Document Number"/>
+                    <field name="name" string="Document Name" optional="show"/>
                 </xpath>
                 <xpath expr="//tree//field[@name='tag_ids']" position="before">
                     <field name="document_type_id"/>
@@ -56,13 +62,52 @@
                 </xpath>
 
                 <xpath expr="//tree//field[@name='create_date']" position="before">
-                    <field name="datas" widget="binary" string="Download" optional="show"
-                           attrs="{'invisible':[('type','!=','binary')]}"/>
+                    <button name="access_content" icon="fa-download" type="object"
+                            attrs="{'invisible':[('type','!=','binary')]}"/>
+                    <button name="preview_document" icon="fa-eye" type="object"
+                            attrs="{'invisible':[('type','!=','binary')]}"/>
                 </xpath>
 
             </field>
         </record>
 
+        <record model="ir.ui.view" id="documents_custom_kanban">
+            <field name="name">documents.custom.kanban</field>
+            <field name="model">documents.document</field>
+            <field name="inherit_id" ref="documents.document_view_kanban"/>
+            <field name="priority">16</field>
+            <field name="type">kanban</field>
+
+            <field name="arch" type="xml">
+
+                <xpath expr="//kanban//field[@name='id']" position="after">
+                    <field name="document_number"/>
+                </xpath>
+
+                <xpath expr="//kanban//templates//field[@name='name']" position="replace">
+                    <field name="document_number" class="o_text_overflow"/>
+                    <br/>
+                    <field name="name" required="True" class="o_text_overflow"/>
+<!--                    <br/>-->
+<!--                    <button name="preview_document"-->
+<!--                            string="&lt;span class='glyphicon glyphicon-eye-open'&gt;&lt;/span&gt;"-->
+<!--                            type="object" attrs="{'invisible':[('type','!=','binary')]}"/>-->
+                </xpath>
+                <xpath expr="//kanban//templates//div[hasclass('o_kanban_record_title')]" position="after">
+                    <div>
+                        <button name="preview_document"
+                                type="object"
+                                attrs="{'invisible':[('type','!=','binary')]}"
+                                class="btn btn-secondary"
+
+                        >Preview</button>
+
+                    </div>
+                </xpath>
+
+
+            </field>
+        </record>
 
     </data>
 </odoo>
