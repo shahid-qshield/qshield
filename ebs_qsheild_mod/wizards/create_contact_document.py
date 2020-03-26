@@ -49,19 +49,18 @@ class CreateContactDocument(models.TransientModel):
         if len(self.attachment_ids) == 0 or len(self.attachment_ids) > 1:
             raise ValidationError(_("Select 1 File"))
 
-        self.env['documents.document'].create(
-            {
-                'document_type_id': self.document_type_id.id,
-                'document_number': self.document_number,
-                'issue_date': self.issue_date,
-                'expiry_date': self.expiry_date,
-                'desc': self.desc,
-                'tag_ids': self.tags,
-                'attachment_id': self.attachment_ids[0].id,
-                'partner_id': self.contact_id.id,
-                'type': 'binary',
-                'folder_id': folder.id
-
-            }
-        )
+        vals = {
+            'document_type_id': self.document_type_id.id,
+            'document_number': self.document_number,
+            'issue_date': self.issue_date.strftime("%Y-%m-%d"),
+            'desc': self.desc,
+            'tag_ids': self.tags,
+            'attachment_id': self.attachment_ids[0].id,
+            'partner_id': self.contact_id.id,
+            'type': 'binary',
+            'folder_id': folder.id
+        }
+        if self.expiry_date:
+            vals['expiry_date'] = self.expiry_date.strftime("%Y-%m-%d")
+        self.env['documents.document'].create(vals)
         self.env.cr.commit()

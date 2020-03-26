@@ -9,6 +9,11 @@ class DocumentsCustom(models.Model):
     _inherit = 'documents.document'
     _order = 'issue_date desc'
 
+    _sql_constraints = [
+        ('document_number_document_type_unique', 'unique (document_number,document_type_id)',
+         'Document Number and Document Type Combination must be unique !'),
+    ]
+
     desc = fields.Text(
         string="Description",
         required=False)
@@ -58,7 +63,7 @@ class DocumentsCustom(models.Model):
     @api.model
     def create(self, vals):
         if 'expiry_date' in vals and vals['expiry_date']:
-            expiry_date = datetime.strptime(vals['expiry_date'], "%Y-%m-%d")
+            expiry_date = datetime.strptime(vals['expiry_date'], "%Y-%m-%d").today().date()
             if expiry_date > datetime.today().date():
                 vals['status'] = 'active'
             else:
@@ -69,6 +74,7 @@ class DocumentsCustom(models.Model):
         if res.expiry_date and res.issue_date:
             if res.expiry_date < res.issue_date:
                 raise ValidationError(_("Expiry date is before issue date."))
+        return res
 
 
 class DocumentsFolderCustom(models.Model):
