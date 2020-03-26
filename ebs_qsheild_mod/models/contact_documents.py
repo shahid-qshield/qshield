@@ -77,7 +77,7 @@ class ContactDocument(models.Model):
         if state == 'na':
             if expiry_date:
                 raise ValidationError(_("Must not have expiry date"))
-        
+
         return super(ContactDocument, self).write(vals)
 
 

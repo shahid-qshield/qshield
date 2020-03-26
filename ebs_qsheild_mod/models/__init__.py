@@ -5,4 +5,5 @@ from . import contact_custom
 from . import contracts
 from . import contact_relation_type
 from . import documents_custom
+from . import document_types
 

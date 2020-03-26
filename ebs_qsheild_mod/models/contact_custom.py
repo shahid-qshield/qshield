@@ -7,6 +7,11 @@ from odoo.exceptions import ValidationError
 class ContactCustom(models.Model):
     _inherit = 'res.partner'
 
+    _sql_constraints = [
+        ('person_type_name_parent_unique', 'unique (person_type, parent_id,name)',
+         'The combination of Type, Related Contact and Name must be unique !'),
+    ]
+
     parent_id = fields.Many2one('res.partner', string='Related Contact', index=True)
 
     is_miscellaneous = fields.Boolean(
@@ -25,42 +30,83 @@ class ContactCustom(models.Model):
             ('visitor', 'Visitor'),
             ('child', 'Dependent')],
     )
+    date_join = fields.Date(
+        string='join Date',
+        required=False)
+
+    date_termination = fields.Date(
+        string='Termination Date',
+        required=False)
 
     nationality = fields.Many2one(
         comodel_name='res.country',
         string='Nationality',
         required=False)
-    passport_id = fields.Char(
-        string='Passport ID',
-        required=False)
+
+    passport_doc = fields.Many2one(
+        comodel_name='documents.document',
+        string='Passport Document',
+        required=False
+    )
+    # passport_id = fields.Char(
+    #     related='passport_doc.document_number',
+    #     string='Passport ID',
+    #     required=False)
     passport_exp_date = fields.Date(
+        related='passport_doc.expiry_date',
         string='Passport Expiry Date',
         required=False)
-    qatar_id = fields.Char(
-        string='Qatar ID',
+
+    qatar_id_doc = fields.Many2one(
+        comodel_name='documents.document',
+        string='Qatar ID Document',
         required=False)
+
+    # qatar_id = fields.Char(
+    #     #     string='Qatar ID',
+    #     #     required=False)
+
     qatarid_exp_date = fields.Date(
-        string='Qatar ID Expiry Date',
+        string='Qatar ID Expiry Date', related='qatar_id_doc.expiry_date',
         required=False)
-    computer_card_number = fields.Char(
-        string='Computer Card Number',
-        required=False)
+
+    computer_card_doc = fields.Many2one(
+        comodel_name='documents.document',
+        string='Computer Card Document',
+        required=False, domain=['partner_id', '=', id]
+    )
+
+    # computer_card_number = fields.Char(
+    #     string='Computer Card Number',
+    #     required=False)
     comp_card_exp_date = fields.Date(
-        string='Computer Card Expiry Date',
+        string='Computer Card Expiry Date', related='computer_card_doc.expiry_date',
         required=False)
 
-    cr_number = fields.Char(
-        string='CR Number',
-        required=False)
+    cr_number_doc = fields.Many2one(
+        comodel_name='documents.document',
+        string='CR Number Document',
+        required=False
+    )
+
+    # cr_number = fields.Char(
+    #     string='CR Number',
+    #     required=False)
     cr_exp_date = fields.Date(
-        string='CR Expiry Date',
+        string='CR Expiry Date', related='cr_number_doc.expiry_date',
         required=False)
 
-    trade_licence_number = fields.Char(
-        string='Trade Licence Number',
-        required=False)
+    trade_licence_doc = fields.Many2one(
+        comodel_name='documents.document',
+        string='Trade Licence Document',
+        required=False
+    )
+
+    # trade_licence_number = fields.Char(
+    #     string='Trade Licence Number',
+    #     required=False)
     trade_licence_date = fields.Date(
-        string='Trade Licence Expiry Date',
+        string='Trade Licence Expiry Date', related='trade_licence_doc.expiry_date',
         required=False)
 
     account_manager = fields.Many2one(

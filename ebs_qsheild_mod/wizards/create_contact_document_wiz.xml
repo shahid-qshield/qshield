@@ -9,6 +9,8 @@
                 <form string="Create Document">
                     <group class="oe_title">
                         <field name="contact_id" invisible="True"/>
+                        <field name="document_number"/>
+                        <field name="document_type_id"/>
                         <field name="issue_date"/>
                         <field name="expiry_date"/>
                         <field name="tags" widget="many2many_tags"/>

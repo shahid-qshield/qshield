@@ -16,6 +16,13 @@
             parent="contacts.menu_contacts"
             sequence="3"
     />
+     <menuitem
+            id="document_type_view_menu"
+            name="Document Types"
+            action="document_type_window"
+            parent="documents.Config"
+            sequence="6"
+    />
 
 
 </odoo>

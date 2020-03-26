@@ -38,6 +38,7 @@
         'views/contact_relation_type_view.xml',
         'views/document_custom.xml',
         'views/document_folder_custom.xml',
+        'views/document_types_view.xml',
         'views/menus.xml',
     ]
 }
