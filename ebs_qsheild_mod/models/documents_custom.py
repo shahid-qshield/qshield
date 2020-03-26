@@ -76,6 +76,18 @@ class DocumentsCustom(models.Model):
                 raise ValidationError(_("Expiry date is before issue date."))
         return res
 
+    def preview_document(self):
+        self.ensure_one()
+        action = {
+            'type': "ir.actions.act_url",
+            'target': "_blank",
+            'url': '/documents/content/preview/%s' % self.id
+        }
+        return action
+
+    def access_content(self):
+        return super(DocumentsCustom, self).access_content()
+
 
 class DocumentsFolderCustom(models.Model):
     _inherit = 'documents.folder'
