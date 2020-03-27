@@ -88,10 +88,10 @@
                     <field name="document_number" class="o_text_overflow"/>
                     <br/>
                     <field name="name" required="True" class="o_text_overflow"/>
-<!--                    <br/>-->
-<!--                    <button name="preview_document"-->
-<!--                            string="&lt;span class='glyphicon glyphicon-eye-open'&gt;&lt;/span&gt;"-->
-<!--                            type="object" attrs="{'invisible':[('type','!=','binary')]}"/>-->
+                    <!--                    <br/>-->
+                    <!--                    <button name="preview_document"-->
+                    <!--                            string="&lt;span class='glyphicon glyphicon-eye-open'&gt;&lt;/span&gt;"-->
+                    <!--                            type="object" attrs="{'invisible':[('type','!=','binary')]}"/>-->
                 </xpath>
                 <xpath expr="//kanban//templates//div[hasclass('o_kanban_record_title')]" position="after">
                     <div>
@@ -100,7 +100,8 @@
                                 attrs="{'invisible':[('type','!=','binary')]}"
                                 class="btn btn-secondary"
 
-                        >Preview</button>
+                        >Preview
+                        </button>
 
                     </div>
                 </xpath>
@@ -108,6 +109,38 @@
 
             </field>
         </record>
+
+
+        <record model="ir.ui.view" id="documents_custom_search_panel">
+            <field name="name">documents.custom.search_panel</field>
+            <field name="model">documents.document</field>
+            <field name="inherit_id" ref="documents.document_view_search"/>
+            <field name="priority">16</field>
+            <field name="type">search</field>
+
+            <field name="arch" type="xml">
+
+                <xpath expr="//search//field[@name='tag_ids']" position="after">
+                    <field name="document_type_id"/>
+                    <field name="status"/>
+                </xpath>
+                <xpath expr="//search//filter[@name='owner']" position="before">
+                    <filter name="document_type_group" string="Document Type" domain="[]"
+                            context="{'group_by':'document_type_id'}"/>
+                    <filter name="status_group" string="Status" 
+                            context="{'group_by':'status'}"/>
+                </xpath>
+                <xpath expr="//search//searchpanel//field[@name='res_model']" position="replace">
+
+                </xpath>
+                <xpath expr="//search//searchpanel//field[@name='tag_ids']" position="before">
+                    <field name="document_type_id" />
+                    <field name="status" />
+                </xpath>
+
+            </field>
+        </record>
+
 
     </data>
 </odoo>
