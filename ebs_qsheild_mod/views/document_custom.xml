@@ -127,7 +127,7 @@
                 <xpath expr="//search//filter[@name='owner']" position="before">
                     <filter name="document_type_group" string="Document Type" domain="[]"
                             context="{'group_by':'document_type_id'}"/>
-                    <filter name="status_group" string="Status" 
+                    <filter name="status_group" string="Status"
                             context="{'group_by':'status'}"/>
                 </xpath>
                 <xpath expr="//search//searchpanel//field[@name='res_model']" position="replace">
