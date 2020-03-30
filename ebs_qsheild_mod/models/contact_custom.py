@@ -60,7 +60,8 @@ class ContactCustom(models.Model):
     qatar_id_doc = fields.Many2one(
         comodel_name='documents.document',
         string='Qatar ID Document',
-        required=False)
+        required=False
+    )
 
     # qatar_id = fields.Char(
     #     #     string='Qatar ID',
@@ -73,7 +74,7 @@ class ContactCustom(models.Model):
     computer_card_doc = fields.Many2one(
         comodel_name='documents.document',
         string='Computer Card Document',
-        required=False, domain=['partner_id', '=', id]
+        required=False
     )
 
     # computer_card_number = fields.Char(
@@ -324,6 +325,7 @@ class ContactCustom(models.Model):
 
         for doc in self.document_o2m:
             doc.unlink()
+        super(ContactCustom, self).unlink()
 
     @api.onchange('parent_id')
     def onchange_parent_id(self):

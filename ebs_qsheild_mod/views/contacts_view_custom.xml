@@ -226,7 +226,7 @@
                         <field name="date_join" attrs="{'invisible':[('person_type','!=','emp')]}"/>
                         <field name="date_termination" attrs="{'invisible':[('person_type','!=','emp')]}"/>
 
-                        <field name="passport_doc"
+                        <field name="passport_doc" options="{'no_create': True, 'no_create_edit':True}"
                                attrs="{'invisible':[('person_type','=', 'company')]}"
                                domain="[('partner_id','=',id)]"
 
@@ -234,19 +234,31 @@
                         <field name="passport_exp_date" attrs="{'invisible':[('passport_doc','=', False)]}"/>
 
 
-                        <field name="qatar_id_doc" attrs="{'invisible':[('person_type','in', ('company','visitor'))]}"/>
+                        <field name="qatar_id_doc" domain="[('partner_id','=',id)]"
+                               options="{'no_create': True, 'no_create_edit':True}"
+                               attrs="{'invisible':[('person_type','in', ('company','visitor'))]}"/>
+
                         <field name="qatarid_exp_date"
                                attrs="{'invisible':[('qatar_id_doc','=', False)]}"/>
 
                         <field name="account_manager" attrs="{'invisible':[('person_type','!=', 'company')]}"/>
 
-                        <field name="computer_card_doc" attrs="{'invisible':[('person_type','!=', 'company')]}"/>
+                        <field name="computer_card_doc" domain="[('partner_id','=',id)]"
+                               options="{'no_create': True, 'no_create_edit':True}"
+                               attrs="{'invisible':[('person_type','!=', 'company')]}"/>
+
                         <field name="comp_card_exp_date" attrs="{'invisible':[('computer_card_doc','=', False)]}"/>
 
-                        <field name="cr_number_doc" attrs="{'invisible':[('person_type','!=', 'company')]}"/>
+                        <field name="cr_number_doc" domain="[('partner_id','=',id)]"
+                               options="{'no_create': True, 'no_create_edit':True}"
+                               attrs="{'invisible':[('person_type','!=', 'company')]}"/>
+
                         <field name="cr_exp_date" attrs="{'invisible':[('cr_number_doc','=', False)]}"/>
 
-                        <field name="trade_licence_doc" attrs="{'invisible':[('person_type','!=', 'company')]}"/>
+                        <field name="trade_licence_doc" domain="[('partner_id','=',id)]"
+                               options="{'no_create': True, 'no_create_edit':True}"
+                               attrs="{'invisible':[('person_type','!=', 'company')]}"/>
+
                         <field name="trade_licence_date" attrs="{'invisible':[('trade_licence_doc','=', False)]}"/>
 
                     </group>

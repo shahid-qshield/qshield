@@ -38,19 +38,29 @@ class DocumentsCustom(models.Model):
         default='na',
         required=False, )
 
+    # def name_get(self):
+    #     result = []
+    #     for rec in self:
+    #         if rec.type:
+    #             if rec.type == 'binary':
+    #                 if rec.document_number:
+    #                     result.append((rec.id, rec.document_number))
+    #                 else:
+    #                     result.append((rec.id, rec.name))
+    #             else:
+    #                 result.append((rec.id, rec.name))
+    #         else:
+    #             result.append((rec.id, rec.name))
+    #     return result
+
     def name_get(self):
         result = []
         for rec in self:
-            if rec.type:
-                if rec.type == 'binary':
-                    if rec.document_number:
-                        result.append((rec.id, rec.document_number))
-                    else:
-                        result.append((rec.id, rec.name))
-                else:
-                    result.append((rec.id, rec.name))
-            else:
-                result.append((rec.id, rec.name))
+            rec_name = ""
+            if rec.document_number:
+                rec_name += (rec.document_number + " - ")
+            rec_name += rec.name
+            result.append((rec.id, rec_name))
         return result
 
     def write(self, vals):
