@@ -64,12 +64,12 @@ class DocumentsCustom(models.Model):
         return result
 
     def write(self, vals):
-        if vals.get('expiry_date', False):
-            expiry_date = datetime.strptime(vals['expiry_date'], "%Y-%m-%d").today().date()
-            if expiry_date > datetime.today().date():
-                vals['status'] = 'active'
-            else:
-                vals['status'] = 'expired'
+        # if vals.get('expiry_date', False):
+        #     expiry_date = datetime.strptime(vals['expiry_date'], "%Y-%m-%d").today().date()
+        #     if expiry_date > datetime.today().date():
+        #         vals['status'] = 'active'
+        #     else:
+        #         vals['status'] = 'expired'
         res = super(DocumentsCustom, self).write(vals)
         if self.expiry_date and self.issue_date:
             if self.expiry_date < self.issue_date:

@@ -30,6 +30,7 @@
     # always loaded
     'data': [
         'security/ir.model.access.csv',
+        'cron/document_cron_job.xml',
         'views/views.xml',
         'views/templates.xml',
         'wizards/create_contact_document_wiz.xml',
