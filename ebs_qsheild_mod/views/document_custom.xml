@@ -120,7 +120,9 @@
 
             <field name="arch" type="xml">
 
-                <xpath expr="//search//field[@name='tag_ids']" position="after">
+                <xpath expr="//search//field[@name='name']" position="replace">
+                    <field name="document_number" string="Document Number"/>
+                    <field name="name" string="Document Name"/>
                     <field name="document_type_id"/>
                     <field name="status"/>
                 </xpath>

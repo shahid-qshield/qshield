@@ -64,15 +64,27 @@ class DocumentsCustom(models.Model):
         return result
 
     def write(self, vals):
+        if vals.get('expiry_date', False):
+            expiry_date = datetime.strptime(vals['expiry_date'], "%Y-%m-%d").today().date()
+            if expiry_date > datetime.today().date():
+                vals['status'] = 'active'
+            else:
+                vals['status'] = 'expired'
         res = super(DocumentsCustom, self).write(vals)
         if self.expiry_date and self.issue_date:
             if self.expiry_date < self.issue_date:
                 raise ValidationError(_("Expiry date is before issue date."))
         return res
 
+    def check_document_expiry_date(self):
+        for doc in self.env['documents.document'].search([('status', '=', 'active')]):
+            if doc.expiry_date:
+                if doc.expiry_date < datetime.today().date():
+                    doc.status = 'expired'
+
     @api.model
     def create(self, vals):
-        if 'expiry_date' in vals and vals['expiry_date']:
+        if vals.get('expiry_date', False):
             expiry_date = datetime.strptime(vals['expiry_date'], "%Y-%m-%d").today().date()
             if expiry_date > datetime.today().date():
                 vals['status'] = 'active'
