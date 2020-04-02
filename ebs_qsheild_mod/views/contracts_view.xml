@@ -48,7 +48,7 @@
                                 <field name="end_date"/>
                                 <field name="contact_id" required="context.get('required_contact', True)"
                                        invisible="context.get('invisible_contact', False)"
-                                       options="{'no_create': True, 'no_create_edit':True}"/>
+                                       />
                             </group>
                             <group name="group_right">
                                 <field name="contract_type"/>

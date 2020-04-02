@@ -113,7 +113,7 @@
                         }"
 
                         >
-                            <tree delete="0">
+                            <tree >
                                 <field name="name"/>
                                 <field name="date" string="Date of Birth"/>
                                 <field name="gender"/>
@@ -136,7 +136,7 @@
                         }"
 
                         >
-                            <tree delete="0">
+                            <tree >
                                 <field name="name"/>
                                 <field name="date" string="Date of Birth"/>
                                 <field name="gender"/>
@@ -174,7 +174,7 @@
                         'readonly_person_type':True,
                         'readonly_parent_id':True
                         }">
-                            <tree delete="0">
+                            <tree >
                                 <field name="name"/>
                                 <field name="date" string="Date of Birth"/>
                                 <field name="gender"/>
