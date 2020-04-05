@@ -18,7 +18,7 @@
         <!--window -->
         <record id="document_type_window" model="ir.actions.act_window">
             <field name="name">Document Type</field>
-            <field name="res_model">ebs_mod.contact.relation.type</field>
+            <field name="res_model">ebs_mod.document.types</field>
             <field name="view_mode">tree</field>
         </record>
         <!--menu -->
