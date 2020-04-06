@@ -54,6 +54,14 @@
                     </page>
                 </xpath>
 
+
+
+<!--                 <xpath expr="//notebook//page[@name='internal_notes']" position="after">-->
+<!--                    <page name="document_archive_page" string="Documents Archived">-->
+<!--                        <field name="document_o2m_archived" />-->
+<!--                    </page>-->
+<!--                </xpath>-->
+
                 <xpath expr="//notebook//page[@name='internal_notes']" position="after">
                     <page name="document_page" string="Documents">
                         <button name="%(create_contact_document_view_action)d"
