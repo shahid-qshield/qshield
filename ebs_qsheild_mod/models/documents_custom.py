@@ -9,10 +9,10 @@ class DocumentsCustom(models.Model):
     _inherit = 'documents.document'
     _order = 'issue_date desc'
 
-    _sql_constraints = [
-        ('document_number_document_type_unique', 'unique (document_number,document_type_id)',
-         'Document Number and Document Type Combination must be unique !'),
-    ]
+    # _sql_constraints = [
+    #     ('document_number_document_type_unique', 'unique (document_number,document_type_id)',
+    #      'Document Number and Document Type Combination must be unique !'),
+    # ]
 
     desc = fields.Text(
         string="Description",
@@ -37,6 +37,13 @@ class DocumentsCustom(models.Model):
                    ('active', 'Active'), ('expired', 'Expired')],
         default='na',
         required=False, )
+
+    @api.constrains('document_number')
+    def _check_document_number(self):
+        for rec in self:
+            if len(self.env['documents.document'].search(
+                    [('document_number', '=', rec.document_number), ('active', '=', True), ('id', '!=', rec.id)])) != 0:
+                raise ValidationError(_("Document Number and Document Type Combination must be unique !"))
 
     # def name_get(self):
     #     result = []
@@ -85,7 +92,7 @@ class DocumentsCustom(models.Model):
     @api.model
     def create(self, vals):
         if vals.get('expiry_date', False):
-            expiry_date = datetime.strptime(vals['expiry_date'], "%Y-%m-%d").today().date()
+            expiry_date = datetime.strptime(vals['expiry_date'], "%Y-%m-%d").date()
             if expiry_date > datetime.today().date():
                 vals['status'] = 'active'
             else:

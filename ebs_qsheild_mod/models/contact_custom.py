@@ -153,6 +153,22 @@ class ContactCustom(models.Model):
         string='Related Documents',
         required=False)
 
+    # document_o2m_archived = fields.One2many(
+    #     comodel_name='documents.document',
+    #     inverse_name='partner_id',
+    #     string='Related Documents Archived',
+    #     required=False, compute="_get_archived_documents",
+    # )
+    #
+    # def _get_archived_documents(self):
+    #     for rec in self:
+    #         ids = []
+    #         # for doc in self.env['documents.document'].with_context(active_test=False).search(
+    #         #         [('partner_id', '=', rec.id), ('active', '=', False)]):
+    #         #     ids.append(doc.id)
+    #         rec.document_o2m_archived = self.env['documents.document'].with_context(active_test=False).search(
+    #             [('partner_id', '=', rec.id), ('active', '=', False)])
+
     # def sponsor_domain(self):
     #     if self.person_type == 'company':
     #         return [('person_type', '=', 'company')]

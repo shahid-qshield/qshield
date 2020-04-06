@@ -7,6 +7,7 @@ class DocumentTypes(models.Model):
     _name = 'ebs_mod.document.types'
     _description = "Document Type"
 
+
     _sql_constraints = [
         ('document_type_name_unique', 'unique (name)',
          'Name must be unique !'),
