@@ -31,6 +31,7 @@
     'data': [
         'security/ir.model.access.csv',
         'cron/document_cron_job.xml',
+        'data/sequence.xml',
         'views/views.xml',
         'views/templates.xml',
         'wizards/create_contact_document_wiz.xml',
@@ -40,6 +41,9 @@
         'views/document_custom.xml',
         'views/document_folder_custom.xml',
         'views/document_types_view.xml',
+        'views/expense_types_view.xml',
+        'views/service_types_view.xml',
+        'views/service_request_view.xml',
         'views/menus.xml',
     ]
 }

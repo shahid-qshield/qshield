@@ -38,6 +38,11 @@ class DocumentsCustom(models.Model):
         default='na',
         required=False, )
 
+    service_id = fields.Many2one(
+        comodel_name='ebs_mod.service.request',
+        string='Service',
+        required=False,tracking=True)
+
     @api.constrains('document_number')
     def _check_document_number(self):
         for rec in self:

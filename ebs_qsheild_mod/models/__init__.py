@@ -6,4 +6,8 @@ from . import contracts
 from . import contact_relation_type
 from . import documents_custom
 from . import document_types
+from . import service_types
+from . import service_request
+from . import expense_types
+
 

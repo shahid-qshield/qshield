@@ -1,0 +1,28 @@
+<?xml version='1.0' encoding='UTF-8' ?>
+<odoo>
+    <data>
+        <!--list view -->
+        <record id="expense_type_tree" model="ir.ui.view">
+            <field name="name">Expense Type Tree</field>
+            <field name="model">ebs_mod.expense.types</field>
+            <field name="arch" type="xml">
+                <tree editable="bottom">
+
+                     <field name="name"/>
+                </tree>
+            </field>
+        </record>
+
+
+
+        <!--window -->
+        <record id="expense_type_window" model="ir.actions.act_window">
+            <field name="name">Expense Type</field>
+            <field name="res_model">ebs_mod.expense.types</field>
+            <field name="view_mode">tree</field>
+        </record>
+        <!--menu -->
+
+
+    </data>
+</odoo>

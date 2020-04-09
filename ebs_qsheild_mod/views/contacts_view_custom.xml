@@ -50,7 +50,12 @@
 
                 <xpath expr="//notebook//page[@name='internal_notes']" position="after">
                     <page name="services_page" string="Services">
-                        <h2>Coming Soon</h2>
+                        <field name="service_ids"
+                        context="{
+                                'invisible_contact':True,
+                                'default_partner_id':id
+                                }"
+                        />
                     </page>
                 </xpath>
 
@@ -302,7 +307,18 @@
                     <attribute name="invisible">1</attribute>
                 </xpath>
 
+                <xpath expr="//div[@name='button_box']" position="inside">
+                       <button name="action_see_services" type="object" class="oe_stat_button"
+                                    icon="fa-file-text-o">
+                                <div class="o_field_widget o_stat_info">
+                                    <span class="o_stat_value">
+                                        <field name="service_count"/>
+                                    </span>
+                                    <span class="o_stat_text">Services</span>
+                                </div>
+                            </button>
 
+                </xpath>
             </field>
         </record>
 

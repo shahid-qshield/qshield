@@ -1,0 +1,255 @@
+<?xml version='1.0' encoding='UTF-8' ?>
+<odoo>
+    <data>
+        <!--list view -->
+        <record id="service_request_tree" model="ir.ui.view">
+            <field name="name">Service Request Tree</field>
+            <field name="model">ebs_mod.service.request</field>
+            <field name="arch" type="xml">
+                <tree>
+                    <field name="name"/>
+                    <field name="date"/>
+                    <field name="partner_id"/>
+                    <field name="service_type_id"/>
+                    <field name="related_company_ro"/>
+                    <field name="contract_id"/>
+                    <field name="flow_type"/>
+                    <field name="status"/>
+                </tree>
+            </field>
+        </record>
+
+        <record id="service_request_form" model="ir.ui.view">
+            <field name="name">Service Request Form</field>
+            <field name="model">ebs_mod.service.request</field>
+            <field name="arch" type="xml">
+                <form>
+
+                    <header>
+
+                        <button name="request_submit" string="submit" type="object"
+                                attrs="{'invisible':[('status','!=','draft')]}"/>
+
+                        <button name="request_cancel" string="Cancel" type="object"
+                                attrs="{'invisible':[('status','!=','progress')]}"/>
+
+                        <button name="request_draft" string="Draft" type="object"
+                                attrs="{'invisible':[('status','!=','cancel')]}"/>
+
+                        <field name="status" widget="statusbar"/>
+
+
+                    </header>
+                    <sheet>
+                        <div name="button_box" class="oe_button_box">
+                            <button name="action_see_documents" type="object" class="oe_stat_button"
+                                    icon="fa-file-text-o">
+                                <div class="o_field_widget o_stat_info">
+                                    <span class="o_stat_value">
+                                        <field name="document_count"/>
+                                    </span>
+                                    <span class="o_stat_text">Documents</span>
+                                </div>
+                            </button>
+                        </div>
+                        <h1>
+                            <field name="name" attrs="{'invisible':[('name','=','/')]}" placeholder="Name ..."/>
+                        </h1>
+                        <group name="group_top">
+                            <group name="group_left">
+                                <field name="date" attrs="{'readonly':[('status','!=','draft')]}"/>
+                                <field name="partner_id"
+                                       invisible="context.get('invisible_contact',False)"
+                                       options="{'no_create': True, 'no_create_edit':True}"
+                                       attrs="{'readonly':[('status','!=','draft')]}"
+                                />
+
+                                <field name="partner_type"
+                                       invisible="context.get('invisible_contact',False)"
+                                       attrs="{'readonly':[('status','!=','draft')]}"/>
+                                <field name="related_company_ro"/>
+                                <field name="related_company" invisible="True"/>
+                                <field name="phone"/>
+                                <field name="mobile"/>
+                                <field name="email"/>
+                                <field name="is_miscellaneous"/>
+
+                            </group>
+                            <group name="group_right">
+                                <field name="contract_id"
+                                       options="{'no_create': True, 'no_create_edit':True}"
+                                       attrs="{'readonly':[('status','!=','draft')]}"
+                                />
+                                <field name="service_type_id"
+                                       options="{'no_create': True, 'no_create_edit':True}"
+                                       attrs="{'readonly':[('status','!=','draft')]}"
+                                />
+                                <field name="flow_type"
+                                       attrs="{'readonly':[('status','!=','draft')]}"
+                                />
+
+                                <field name="cost_center" attrs="{'readonly':[('status','!=','draft')]}"/>
+                                <field name="start_date"/>
+                                <field name="end_date"/>
+                            </group>
+                        </group>
+                        <group name="group_bottom">
+                            <field name="desc"/>
+                        </group>
+                        <notebook>
+                            <page name="workflow_page" string="WorkFlow">
+                                <field name="service_flow_ids" attrs="{'readonly':[('status','=','complete')]}"/>
+                            </page>
+
+                            <page name="document_page" string="Documents">
+                                <field name="service_document_ids"
+                                       attrs="{'readonly':[('status','=','complete')]}"
+                                />
+
+
+                            </page>
+
+                            <page name="expense_page" string="Expenses">
+                                <field name="expenses_ids"
+                                       attrs="{'readonly':[('status','=','complete')]}"
+                                />
+                            </page>
+
+                        </notebook>
+                    </sheet>
+                </form>
+            </field>
+        </record>
+
+        <!--window -->
+        <record id="service_request_window" model="ir.actions.act_window">
+            <field name="name">Service Request</field>
+            <field name="res_model">ebs_mod.service.request</field>
+            <field name="view_mode">tree,form</field>
+        </record>
+        <!--menu -->
+
+
+        <record id="view_service_request_filter" model="ir.ui.view">
+            <field name="name">Service Request Filters</field>
+            <field name="model">ebs_mod.service.request</field>
+            <field name="arch" type="xml">
+                <search string="Search Contract">
+                    <field name="name"/>
+                    <field name="date"/>
+                    <field name="service_type_id"/>
+                    <field name="related_company_ro"/>
+                    <field name="contract_id"/>
+                    <field name="partner_id"/>
+                    <field name="status"/>
+                    <field name="flow_type"/>
+                    <separator/>
+                    <filter string="Archived" name="inactive" domain="[('active', '=', False)]"/>
+                    <separator/>
+                    <group expand="0" name="group_by" string="Group By">
+                        <filter name="service_type_group" string="Service Type"
+                                context="{'group_by': 'service_type_id'}"/>
+                        <filter name="service_status_group" string="Service Status" context="{'group_by': 'status'}"/>
+                        <filter name="workflow_group" string="Workflow Type" context="{'group_by': 'flow_type'}"/>
+                    </group>
+                </search>
+            </field>
+        </record>
+
+
+        <!--  service Flow Form and tree  -->
+
+        <record id="service_flow_tree" model="ir.ui.view">
+            <field name="name">Service Flow Tree</field>
+            <field name="model">ebs_mod.service.request.workflow</field>
+            <field name="arch" type="xml">
+                <tree>
+                    <field name="workflow_id"/>
+                    <field name="sequence"/>
+                    <field name="start_count_flow"/>
+                    <field name="status"/>
+                    <field name="date"/>
+                    <field name="assign_to"/>
+
+                </tree>
+            </field>
+        </record>
+
+
+        <record id="service_flow_form" model="ir.ui.view">
+            <field name="name">Service Flow Form</field>
+            <field name="model">ebs_mod.service.request.workflow</field>
+            <field name="arch" type="xml">
+                <form>
+                    <sheet>
+                        <group name="group_top">
+                            <group>
+                                <field name="workflow_id"/>
+                                <field name="sequence"/>
+                                <field name="start_count_flow"/>
+                            </group>
+                            <group>
+                                <field name="assign_to"/>
+                                <field name="status"/>
+                                <field name="date"/>
+                            </group>
+                        </group>
+                        <group name="group_bottom">
+                            <field name="desc"/>
+                        </group>
+
+                    </sheet>
+
+                </form>
+
+            </field>
+        </record>
+
+
+        <!-- service payment -->
+        <record id="service_expense_tree" model="ir.ui.view">
+            <field name="name">Service Expense Tree</field>
+            <field name="model">ebs_mod.service.request.expenses</field>
+            <field name="arch" type="xml">
+                <tree>
+                    <field name="expense_type_id"/>
+                    <field name="desc"/>
+                    <field name="amount"/>
+                    <field name="date"/>
+                    <field name="payment_by"/>
+
+
+                </tree>
+            </field>
+        </record>
+
+
+        <record id="service_expense_form" model="ir.ui.view">
+            <field name="name">Service Expense Form</field>
+            <field name="model">ebs_mod.service.request.expenses</field>
+            <field name="arch" type="xml">
+                <form>
+                    <sheet>
+                        <group name="group_top">
+                            <group>
+                                <field name="expense_type_id"/>
+                                <field name="date"/>
+                                <field name="payment_by"/>
+                                <field name="currency_id"/>
+                                <field name="amount" widget="monetary" sum="Total"/>
+                            </group>
+                        </group>
+                        <group name="group_bottom">
+                            <field name="desc"/>
+                        </group>
+
+                    </sheet>
+
+                </form>
+
+            </field>
+        </record>
+
+
+    </data>
+</odoo>

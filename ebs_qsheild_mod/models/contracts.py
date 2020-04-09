@@ -39,7 +39,6 @@ class Contracts(models.Model):
         required=[('contract_type', '=', 'retainer_agreement')],
         default='monthly')
 
-
     payment_amount = fields.Float(
         string='Amount',
         required=[('contract_type', '=', 'retainer_agreement')],
@@ -75,6 +74,13 @@ class Contracts(models.Model):
                                       string="Dependants",
                                       # domain=employees_domain
                                       )
+
+    service_ids = fields.Many2many(
+        comodel_name='ebs_mod.service.types',
+        relation="ebs_mod_m2m_contract_services_type",
+        column1="contract_id",
+        column2="service_type_id",
+        string='Services')
 
     @api.depends('contact_id')
     def _compute_hide_notebook(self):
@@ -135,6 +141,16 @@ class Contracts(models.Model):
 
     def remove_all_dependent(self):
         self.write({'dependant_list': [(6, 0, [])]})
+
+    def add_all_services(self):
+        services_list = self.env['ebs_mod.service.types'].search([])
+        if len(services_list) == 0:
+            raise ValidationError(_("No Services Available"))
+        for rec in services_list:
+            self.write({'service_ids': [(4, rec.id)]})
+
+    def remove_all_services(self):
+        self.write({'service_ids': [(6, 0, [])]})
 
     @api.model
     def create(self, vals):
