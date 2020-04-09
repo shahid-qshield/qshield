@@ -9,14 +9,22 @@
             parent="contacts.res_partner_menu_config"
             sequence="2"
     />
-     <menuitem
+    <record model="ir.ui.menu" id="contacts.res_partner_menu_config">
+        <field name="sequence" eval="20"/>
+    </record>
+
+
+    <menuitem
             id="contracts_view_menu"
             name="Contracts"
             action="contracts_window"
             parent="contacts.menu_contacts"
-            sequence="3"
+            sequence="5"
     />
-     <menuitem
+
+
+
+    <menuitem
             id="document_type_view_menu"
             name="Document Types"
             action="document_type_window"
@@ -24,6 +32,36 @@
             sequence="6"
     />
 
+
+    <menuitem
+            name="Services"
+        id="qshield_services"
+        sequence="7"
+        web_icon="approvals,static/description/icon.png"/>
+
+      <menuitem
+            id="service_request_view_menu"
+            name="Service Requests"
+            action="service_request_window"
+            parent="qshield_services"
+            sequence="10"
+    />
+
+     <menuitem
+            id="service_type_view_menu"
+            name="Service Types"
+            action="service_type_window"
+            parent="qshield_services"
+            sequence="15"
+    />
+
+     <menuitem
+            id="expense_type_view_menu"
+            name="Expense Types"
+            action="expense_type_window"
+            parent="qshield_services"
+            sequence="20"
+    />
 
 </odoo>
 

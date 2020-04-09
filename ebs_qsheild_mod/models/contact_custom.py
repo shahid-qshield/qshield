@@ -153,6 +153,21 @@ class ContactCustom(models.Model):
         string='Related Documents',
         required=False)
 
+    service_ids = fields.One2many(
+        comodel_name='ebs_mod.service.request',
+        inverse_name='partner_id',
+        string='Services',
+        required=False)
+
+    def _get_service_count(self):
+        for rec in self:
+            rec.service_count = len(rec.service_ids)
+
+    service_count = fields.Integer(
+        string='Services Count',
+        required=False,
+        compute="_get_service_count")
+
     # document_o2m_archived = fields.One2many(
     #     comodel_name='documents.document',
     #     inverse_name='partner_id',
@@ -239,6 +254,7 @@ class ContactCustom(models.Model):
         string='Dependants',
         domain=[('person_type', '=', 'child')],
         required=False, readonly=True)
+
     contact_relation_type_id = fields.Many2one(
         comodel_name='ebs_mod.contact.relation.type',
         string='Relation Type',
@@ -377,7 +393,38 @@ class ContactCustom(models.Model):
         if self.person_type == 'child':
             self.sponsor = self.parent_id.parent_id.id
             self.nationality = self.parent_id.nationality.id
-#
-#     @api.depends('value')
-#     def _value_pc(self):
-#         self.value2 = float(self.value) / 100
+
+    #
+    #     @api.depends('value')
+    #     def _value_pc(self):
+    #         self.value2 = float(self.value) / 100
+    def action_see_documents(self):
+        self.ensure_one()
+        return {
+            'name': _('Documents'),
+            'res_model': 'documents.document',
+            'type': 'ir.actions.act_window',
+            'views': [(False, 'kanban'), (False, 'tree'), (False, 'form')],
+            'view_mode': 'kanban',
+            'context': {
+                "search_default_partner_id": self.id,
+                "default_partner_id": self.id,
+                "searchpanel_default_folder_id": False,
+                "hide_contact": True,
+                "hide_service": True
+            },
+        }
+
+    def action_see_services(self):
+        self.ensure_one()
+        return {
+            'name': _('Service Request'),
+            'res_model': 'ebs_mod.service.request',
+            'type': 'ir.actions.act_window',
+            'views': [(False, 'tree'), (False, 'form')],
+            'view_mode': 'tree',
+            'context': {
+                "search_default_partner_id": self.id,
+                "default_partner_id": self.id,
+            },
+        }

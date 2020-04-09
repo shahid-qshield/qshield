@@ -48,6 +48,7 @@
                                 <field name="end_date"/>
                                 <field name="contact_id" required="context.get('required_contact', True)"
                                        invisible="context.get('invisible_contact', False)"
+                                        options="{'no_create': True, 'no_create_edit':True}"
                                        />
                             </group>
                             <group name="group_right">
@@ -134,7 +135,11 @@
                             </page>
 
                             <page name="services_page" string="Services">
-                                <h1>Coming Soon</h1>
+                                 <button name="add_all_services" type="object" string="Add Services"
+                                        class="btn btn-primary" style="margin-right:10px"/>
+                                <button name="remove_all_services" type="object" string="Remove Services"
+                                        class="btn btn-secondary"/>
+                                <field name="service_ids"  options="{'no_create': True, 'no_create_edit':True}"/>
                             </page>
                         </notebook>
                     </sheet>
