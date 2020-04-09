@@ -38,7 +38,7 @@ class ServiceRequest(models.Model):
 
     related_company = fields.Many2one(
         comodel_name='res.partner',
-        string='Related Company',
+        string='Company',
     )
 
     date = fields.Date(
@@ -323,7 +323,7 @@ class ServiceRequestWorkFlow(models.Model):
 
     service_request_id = fields.Many2one(
         comodel_name='ebs_mod.service.request',
-        string='Workflow',
+        string='Service',
         required=True)
 
     workflow_id = fields.Many2one(
