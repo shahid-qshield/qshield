@@ -72,7 +72,10 @@
                         <button name="%(create_contact_document_view_action)d"
                                 string="Create Document"
                                 type="action" class="oe_highlight"
-                                context="{'default_contact_id':id}"/>
+                                context="{
+                                'default_contact_id':id,
+                                'upload_contact':True
+                                }"/>
                         <field name="document_o2m"/>
                     </page>
                 </xpath>

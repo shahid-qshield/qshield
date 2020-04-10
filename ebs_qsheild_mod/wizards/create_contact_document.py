@@ -22,6 +22,11 @@ class CreateContactDocument(models.TransientModel):
         comodel_name='res.partner',
         string='Contact',
         required=False)
+
+    service_request_id = fields.Many2one(
+        comodel_name='ebs_mod.service.request',
+        string='Service',
+        required=False)
     attachment_ids = fields.Many2many(comodel_name="ir.attachment",
                                       relation="ebs_mod_m2m_ir_contact_document",
                                       column1="m2m_id",
@@ -56,10 +61,16 @@ class CreateContactDocument(models.TransientModel):
             'desc': self.desc,
             'tag_ids': self.tags,
             'attachment_id': self.attachment_ids[0].id,
-            'partner_id': self.contact_id.id,
             'type': 'binary',
             'folder_id': folder.id
         }
+        if self.env.context.get('upload_contact', False):
+            vals['partner_id'] = self.contact_id.id
+        if self.env.context.get('upload_service', False):
+            vals['service_id'] = self.service_request_id.id
+        if self.env.context.get('upload_service_contact', False):
+            self.service_request_id.partner_document_count = self.service_request_id.partner_document_count + 1
+
         if self.expiry_date:
             vals['expiry_date'] = self.expiry_date.strftime("%Y-%m-%d")
         self.env['documents.document'].create(vals)
