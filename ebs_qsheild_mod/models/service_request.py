@@ -1,10 +1,12 @@
 from odoo import models, fields, api, _
 from odoo.exceptions import ValidationError
+from datetime import datetime
 
 
 class ServiceRequest(models.Model):
     _name = 'ebs_mod.service.request'
     _description = "Service Request"
+    _inherit = ['mail.activity.mixin', 'mail.thread.blacklist']
     _order = 'date desc'
 
     code = fields.Char(
@@ -15,7 +17,9 @@ class ServiceRequest(models.Model):
         required=False,
         default='/'
     )
-
+    partner_document_count = fields.Integer(
+        string='Contact Uploaded Documents Count',
+        required=False, default=0)
     start_date = fields.Datetime(
         string='Start Date',
         required=False, readonly=True)
@@ -35,10 +39,16 @@ class ServiceRequest(models.Model):
         string='Related Company',
         readonly=True
     )
+    partner_id = fields.Many2one(
+        comodel_name='res.partner',
+        string='Contact',
+        required=True,
+    )
 
     related_company = fields.Many2one(
         comodel_name='res.partner',
         string='Company',
+
     )
 
     date = fields.Date(
@@ -52,11 +62,6 @@ class ServiceRequest(models.Model):
         domain=[('id', '=', -1)]
     )
 
-    partner_id = fields.Many2one(
-        comodel_name='res.partner',
-        string='Contact',
-        required=True,
-    )
     partner_type = fields.Selection(
         string='Contact Type',
         selection=[
@@ -68,23 +73,27 @@ class ServiceRequest(models.Model):
     )
     phone = fields.Char(
         string='Phone',
+        readonly=True,
         required=False,
         related="partner_id.phone")
 
     mobile = fields.Char(
         string='Mobile',
         required=False,
+        readonly=True,
         related="partner_id.mobile")
 
     is_miscellaneous = fields.Boolean(
         string='Is Miscellaneous',
         required=False,
+        readonly=True,
         related="partner_id.is_miscellaneous"
     )
 
     email = fields.Char(
         string='Email',
         required=False,
+        readonly=True,
         related="partner_id.email")
 
     desc = fields.Text(
@@ -94,11 +103,18 @@ class ServiceRequest(models.Model):
         string='Status',
         selection=[('draft', 'Draft'),
                    ('progress', 'In Progress'),
+                   ('hold', 'On Hold'),
                    ('complete', 'Completed'),
                    ('cancel', 'Canceled')],
         required=False,
         default='draft')
-
+    status_dict = {
+        'draft': 'Draft',
+        'progress': 'In Progress',
+        'hold': 'On Hold',
+        'complete': 'Completed',
+        'cancel': 'Canceled'
+    }
     cost_center = fields.Char(
         string='Cost Center',
         required=False)
@@ -138,10 +154,19 @@ class ServiceRequest(models.Model):
 
     @api.model
     def create(self, vals):
+        vals['related_company_ro'] = vals['related_company']
         res = super(ServiceRequest, self).create(vals)
         return res
 
     def write(self, vals):
+        if vals.get('related_company', False):
+            vals['related_company_ro'] = vals['related_company']
+
+        if vals.get('status', False):
+            if vals['status'] != self.status:
+                self.message_post(
+                    body="Status changed from " + self.status_dict[self.status] + " to " + self.status_dict[
+                        vals['status']] + ".")
         res = super(ServiceRequest, self).write(vals)
         return res
 
@@ -295,14 +320,20 @@ class ServiceRequest(models.Model):
     def request_cancel(self):
         self.status = 'cancel'
 
+    def request_hold(self):
+        self.status = 'hold'
+
+    def request_progress(self):
+        self.status = 'progress'
+
     def request_draft(self):
 
-        if len(self.service_flow_ids) == 0:
+        if len(self.service_flow_ids) == 0 and len(self.service_document_ids) == 0 and len(self.expenses_ids) == 0:
             self.start_date = None
             self.end_date = None
             self.status = 'draft'
         else:
-            raise ValidationError(_("Delete all Workflow."))
+            raise ValidationError(_("Delete all Related Items."))
 
     def name_get(self):
         result = []
@@ -343,15 +374,16 @@ class ServiceRequestWorkFlow(models.Model):
 
     status = fields.Selection(
         string='Status',
-        selection=[('progress', 'in Progress'),
+        selection=[('pending', 'Pending'),
+                   ('progress', 'in Progress'),
                    ('complete', 'Completed'), ],
-        required=True, default='progress')
+        required=True, default='pending')
 
     desc = fields.Text(
         string="Description",
         required=False)
 
-    date = fields.Date(
+    date = fields.Datetime(
         string='Status Last Updated',
         required=False)
 
@@ -363,12 +395,21 @@ class ServiceRequestWorkFlow(models.Model):
     def write(self, vals):
         res = super(ServiceRequestWorkFlow, self).write(vals)
         if res:
+            if vals.get('status', False):
+                self.date = datetime.today()
+                if vals['status'] == 'progress':
+                    if self.start_count_flow:
+                        self.service_request_id.start_date = datetime.today()
+                if vals['status'] == 'complete':
+                    if self.start_count_flow and not self.service_request_id.start_date:
+                        self.service_request_id.start_date = datetime.today()
             complete = True
             for flow in self.service_request_id.service_flow_ids:
-                if flow.status == 'progress':
+                if flow.status == 'progress' or flow.status == 'pending':
                     complete = False
                     break
             if complete:
+                self.service_request_id.end_date = datetime.today()
                 self.service_request_id.status = 'complete'
 
     def unlink(self):

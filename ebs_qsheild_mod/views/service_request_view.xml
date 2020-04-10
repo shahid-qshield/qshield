@@ -27,8 +27,26 @@
 
                     <header>
 
+
+                        <button name="%(create_contact_document_view_action)d"
+                                string="Upload Document to Contact"
+                                type="action" class="oe_highlight"
+                                context="{
+                                'default_contact_id':partner_id,
+                                'upload_service_contact':True,
+                                'upload_contact':True,
+                                'default_service_request_id':id
+                                }"
+                                attrs="{'invisible':[('status','!=','complete')]}"/>
+
                         <button name="request_submit" string="submit" type="object"
                                 attrs="{'invisible':[('status','!=','draft')]}"/>
+
+                        <button name="request_hold" string="On Hold" type="object"
+                                attrs="{'invisible':[('status','!=','progress')]}"/>
+
+                        <button name="request_progress" string="In Progress" type="object"
+                                attrs="{'invisible':[('status','!=','hold')]}"/>
 
                         <button name="request_cancel" string="Cancel" type="object"
                                 attrs="{'invisible':[('status','!=','progress')]}"/>
@@ -42,6 +60,8 @@
                     </header>
                     <sheet>
                         <div name="button_box" class="oe_button_box">
+<!--                            <widget name="web_ribbon" text="Completed" bg_color="bg-success"-->
+<!--                                    attrs="{'invisible':[('partner_document_count','=',0)]}"/>-->
                             <button name="action_see_documents" type="object" class="oe_stat_button"
                                     icon="fa-file-text-o">
                                 <div class="o_field_widget o_stat_info">
@@ -66,8 +86,9 @@
 
                                 <field name="partner_type"
                                        invisible="context.get('invisible_contact',False)"
-                                       attrs="{'readonly':[('status','!=','draft')]}"/>
-                                <field name="related_company_ro"/>
+                                       readonly="True"
+                                />
+                                <field name="related_company_ro" readonly="True"/>
                                 <field name="related_company" invisible="True"/>
                                 <field name="phone"/>
                                 <field name="mobile"/>
@@ -91,6 +112,8 @@
                                 <field name="cost_center" attrs="{'readonly':[('status','!=','draft')]}"/>
                                 <field name="start_date"/>
                                 <field name="end_date"/>
+                                <field name="partner_document_count"
+                                       attrs="{'invisible':[('status','!=','complete')]}"/>
                             </group>
                         </group>
                         <group name="group_bottom">
@@ -102,6 +125,15 @@
                             </page>
 
                             <page name="document_page" string="Documents">
+                                <button name="%(create_contact_document_view_action)d"
+                                        string="Create Document"
+                                        type="action" class="oe_highlight"
+                                        context="{
+                                        'default_service_request_id':id,
+                                        'upload_service':True
+                                        }"
+                                        attrs="{'invisible':[('status','=','complete')]}"/>
+
                                 <field name="service_document_ids"
                                        attrs="{'readonly':[('status','=','complete')]}"
                                 />
@@ -117,6 +149,13 @@
 
                         </notebook>
                     </sheet>
+
+                    <div class="oe_chatter">
+                        <field name="message_follower_ids" widget="mail_followers"/>
+                        <field name="activity_ids" widget="mail_activity"/>
+                        <field name="message_ids" widget="mail_thread"/>
+                    </div>
+
                 </form>
             </field>
         </record>
@@ -125,7 +164,7 @@
         <record id="service_request_window" model="ir.actions.act_window">
             <field name="name">Service Request</field>
             <field name="res_model">ebs_mod.service.request</field>
-            <field name="view_mode">tree,form</field>
+            <field name="view_mode">tree,form,activity</field>
         </record>
         <!--menu -->
 
@@ -191,7 +230,7 @@
                             <group>
                                 <field name="assign_to"/>
                                 <field name="status"/>
-                                <field name="date"/>
+                                <field name="date" readonly="True"/>
                             </group>
                         </group>
                         <group name="group_bottom">

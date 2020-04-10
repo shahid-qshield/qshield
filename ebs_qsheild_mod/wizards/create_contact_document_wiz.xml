@@ -9,6 +9,7 @@
                 <form string="Create Document">
                     <group class="oe_title">
                         <field name="contact_id" invisible="True"/>
+                        <field name="service_request_id" invisible="True"/>
                         <field name="document_number"/>
                         <field name="document_type_id"/>
                         <field name="issue_date"/>
