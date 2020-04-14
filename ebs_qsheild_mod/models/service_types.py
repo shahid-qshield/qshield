@@ -19,7 +19,9 @@ class DocumentTypes(models.Model):
     name = fields.Char(
         string='Name',
         required=True)
-
+    sla = fields.Char(
+        string='SLA - Working Days',
+        required=False)
     for_company = fields.Boolean(
         string='For Company',
         required=False,

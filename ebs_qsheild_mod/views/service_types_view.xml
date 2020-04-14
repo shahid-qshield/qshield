@@ -9,6 +9,7 @@
                 <tree>
                     <field name="code"/>
                     <field name="name"/>
+                    <field name="sla"/>
                     <field name="for_company"/>
                     <field name="for_employee"/>
                     <field name="for_visitor"/>
@@ -28,6 +29,7 @@
                             <group name="group_left">
                                 <field name="code"/>
                                 <field name="name"/>
+                                <field name="sla"/>
                             </group>
 
                             <group name="group_right">
