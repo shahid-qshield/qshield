@@ -54,6 +54,12 @@
                         <button name="request_draft" string="Draft" type="object"
                                 attrs="{'invisible':[('status','!=','cancel')]}"/>
 
+                        <button name="request_complete" string="Complete" type="object"
+                                attrs="{'invisible':[('status','!=','progress')]}"/>
+
+                        <button name="request_reject" string="Reject" type="object"
+                                attrs="{'invisible':[('status','=','complete')]}"/>
+
                         <field name="status" widget="statusbar"/>
 
 

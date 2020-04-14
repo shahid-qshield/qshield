@@ -24,7 +24,8 @@
         'base',
         'contacts',
         'hr',
-        'documents'
+        'documents',
+        'helpdesk'
     ],
 
     # always loaded
@@ -44,6 +45,7 @@
         'views/expense_types_view.xml',
         'views/service_types_view.xml',
         'views/service_request_view.xml',
+        'views/tickets_view_custom.xml',
         'views/menus.xml',
     ]
 }

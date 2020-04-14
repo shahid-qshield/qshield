@@ -28,7 +28,10 @@
                     <field name="document_type_id"/>
                     <field name="status" string="Status"/>
                 </xpath>
-                 <xpath expr="//field[@name='partner_id']" position="after">
+                <xpath expr="//field[@name='partner_id']" position="after">
+
+                    <field name="person_type"/>
+                    <field name="related_company"/>
                     <field name="service_id"/>
                 </xpath>
                 <xpath expr="//field[@name='type']" position="before">
@@ -51,6 +54,8 @@
 
                 <xpath expr="//tree//field[@name='partner_id']" position="replace">
                     <field name="partner_id" optional="hide"/>
+                    <field name="person_type" optional="hide"/>
+                    <field name="related_company" optional="hide"/>
                     <field name="service_id" optional="hide"/>
                 </xpath>
                 <xpath expr="//tree//field[@name='owner_id']" position="replace">
@@ -134,20 +139,24 @@
                     <field name="document_type_id"/>
                     <field name="status"/>
                     <field name="service_id"/>
+                    <field name="person_type"/>
+                    <field name="related_company" domain="[('person_type', '=', 'company')]" string="Related Company"
+                           operator="child_of"/>
                 </xpath>
                 <xpath expr="//search//filter[@name='owner']" position="before">
                     <filter name="document_type_group" string="Document Type" domain="[]"
                             context="{'group_by':'document_type_id'}"/>
                     <filter name="status_group" string="Status"
                             context="{'group_by':'status'}"/>
-
+                    <filter name="group_related_company" string="Related Company" context="{'group_by': 'related_company'}"/>
+                     <filter name="group_person_type" string="Contact Type" context="{'group_by': 'person_type'}"/>
                 </xpath>
                 <xpath expr="//search//searchpanel//field[@name='res_model']" position="replace">
 
                 </xpath>
                 <xpath expr="//search//searchpanel//field[@name='tag_ids']" position="before">
-                    <field name="document_type_id" />
-                    <field name="status" />
+                    <field name="document_type_id"/>
+                    <field name="status"/>
                 </xpath>
 
             </field>
