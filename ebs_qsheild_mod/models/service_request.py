@@ -105,7 +105,8 @@ class ServiceRequest(models.Model):
                    ('progress', 'In Progress'),
                    ('hold', 'On Hold'),
                    ('complete', 'Completed'),
-                   ('cancel', 'Canceled')],
+                   ('cancel', 'Canceled'),
+                   ('reject', 'Rejected')],
         required=False,
         default='draft')
     status_dict = {
@@ -113,6 +114,7 @@ class ServiceRequest(models.Model):
         'progress': 'In Progress',
         'hold': 'On Hold',
         'complete': 'Completed',
+        'reject': 'Rejected',
         'cancel': 'Canceled'
     }
     cost_center = fields.Char(
@@ -320,6 +322,23 @@ class ServiceRequest(models.Model):
     def request_cancel(self):
         self.status = 'cancel'
 
+    def request_reject(self):
+        for flow in self.service_flow_ids:
+            flow.status = 'reject'
+        self.status = 'reject'
+
+    def request_complete(self):
+        complete = True
+        for flow in self.service_flow_ids:
+            if flow.status == 'pending' or flow.status == 'progress' or flow.status == 'hold':
+                complete = False
+                break
+        if complete:
+            self.start_date = datetime.today()
+            self.status = 'complete'
+        else:
+            raise ValidationError(_("Workflow still pending or in progress."))
+
     def request_hold(self):
         self.status = 'hold'
 
@@ -345,13 +364,20 @@ class ServiceRequest(models.Model):
 class ServiceRequestWorkFlow(models.Model):
     _name = 'ebs_mod.service.request.workflow'
     _description = "Service Request Workflow"
-    _order = 'workflow_id desc'
+    _order = 'workflow_id '
 
     _sql_constraints = [
         ('service_workflow_unique', 'unique (service_request_id,workflow_id)',
          'Workflow already added!')
     ]
-
+    status_dict = {
+        'pending': 'Pending',
+        'progress': 'In Progress',
+        'hold': 'On Hold',
+        'complete': 'Completed',
+        'reject': 'Rejected',
+        'cancel': 'Canceled'
+    }
     service_request_id = fields.Many2one(
         comodel_name='ebs_mod.service.request',
         string='Service',
@@ -376,7 +402,11 @@ class ServiceRequestWorkFlow(models.Model):
         string='Status',
         selection=[('pending', 'Pending'),
                    ('progress', 'in Progress'),
-                   ('complete', 'Completed'), ],
+                   ('hold', 'On Hold'),
+                   ('complete', 'Completed'),
+                   ('cancel', 'Cancelled'),
+                   ('reject', 'Rejected'),
+                   ],
         required=True, default='pending')
 
     desc = fields.Text(
@@ -393,6 +423,12 @@ class ServiceRequestWorkFlow(models.Model):
         required=False, default=lambda self: self.env.user)
 
     def write(self, vals):
+        if vals.get('status', False):
+            if vals['status'] != self.status:
+                self.service_request_id.message_post(
+                    body="Workflow " + self.workflow_id.name + " status changed from " + self.status_dict[
+                        self.status] + " to " + self.status_dict[
+                             vals['status']] + ".")
         res = super(ServiceRequestWorkFlow, self).write(vals)
         if res:
             if vals.get('status', False):
@@ -405,7 +441,7 @@ class ServiceRequestWorkFlow(models.Model):
                         self.service_request_id.start_date = datetime.today()
             complete = True
             for flow in self.service_request_id.service_flow_ids:
-                if flow.status == 'progress' or flow.status == 'pending':
+                if flow.status == 'progress' or flow.status == 'pending' or flow.status == 'hold':
                     complete = False
                     break
             if complete:

@@ -1,0 +1,76 @@
+<?xml version='1.0' encoding='UTF-8' ?>
+<odoo>
+    <data>
+
+        <record id="custom_tickets_view" model="ir.ui.view">
+            <field name="name">custom.tickets.view</field>
+            <field name="model">helpdesk.ticket</field>
+            <field name="inherit_id" ref="helpdesk.helpdesk_ticket_view_form"/>
+            <field name="arch" type="xml">
+                <xpath expr="//field[@name='partner_id']" position="replace">
+                    <field name="partner_id" class="field_partner_id"
+                           options="{'no_create': True, 'no_create_edit':True}"
+                           domain="['|', ('company_id', '=', False), ('company_id', '=', company_id)]"/>
+                    <field name="person_type"/>
+                    <field name="related_company"/>
+                </xpath>
+                 <xpath expr="//field[@name='email_cc']" position="after">
+                    <field name="service_id"
+                           domain="[('partner_id','=',partner_id)]"
+                           context="{
+                                'invisible_contact':True,
+                                'default_partner_id':partner_id
+                                }"
+                              attrs="{'invisible':[('partner_id','=',False)]}"
+
+                    />
+                    <field name="service_type_id" options="{'no_create': True, 'no_create_edit':True}"/>
+                </xpath>
+
+            </field>
+        </record>
+
+
+          <record model="ir.ui.view" id="tickets_custom_tree">
+            <field name="name">tickets.custom.tree</field>
+            <field name="model">helpdesk.ticket</field>
+            <field name="inherit_id" ref="helpdesk.helpdesk_tickets_view_tree"/>
+            <field name="priority">16</field>
+            <field name="type">tree</field>
+            <field name="arch" type="xml">
+
+                <xpath expr="//tree//field[@name='partner_id']" position="after">
+                    <field name="person_type" />
+                    <field name="related_company" />
+                    <field name="service_id" optional="hide" />
+                    <field name="service_type_id" optional="hide"  />
+                </xpath>
+
+            </field>
+          </record>
+
+        <record model="ir.ui.view" id="tickets_custom_filter">
+            <field name="name">tickets.custom.filter</field>
+            <field name="model">helpdesk.ticket</field>
+            <field name="inherit_id" ref="helpdesk.helpdesk_tickets_view_search"/>
+            <field name="arch" type="xml">
+                <xpath expr="//field[@name='partner_id']" position="after">
+                    <field name="related_company" domain="[('person_type', '=', 'company')]" string="Related Company"
+                           operator="child_of"/>
+                    <field name="person_type"/>
+                    <field name="service_id" />
+                    <field name="service_type_id"/>
+                </xpath>
+
+
+                <xpath expr="//search//filter[@name='stage']" position="after">
+                    <filter name="group_related_company" string="Related Company"
+                            context="{'group_by': 'related_company'}"/>
+                    <filter name="group_person_type" string="Contact Type" context="{'group_by': 'person_type'}"/>
+                    <filter name="service_type_group" string="Service Type" context="{'group_by': 'service_type_id'}"/>
+                </xpath>
+            </field>
+        </record>
+
+    </data>
+</odoo>

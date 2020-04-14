@@ -43,6 +43,23 @@ class DocumentsCustom(models.Model):
         string='Service',
         required=False,tracking=True)
 
+    related_company = fields.Many2one(
+        comodel_name='res.partner',
+        string='Related Company',
+        store=True,
+        related="partner_id.related_company")
+
+    person_type = fields.Selection(
+        string='Person Type',
+        selection=[
+            ('company', 'Company'),
+            ('emp', 'Employee'),
+            ('visitor', 'Visitor'),
+            ('child', 'Dependent')],
+        store=True,
+        related="partner_id.person_type"
+    )
+
     @api.constrains('document_number')
     def _check_document_number(self):
         for rec in self:
