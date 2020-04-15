@@ -46,6 +46,7 @@
         'views/service_types_view.xml',
         'views/service_request_view.xml',
         'views/tickets_view_custom.xml',
+        'views/service_workflow_config_view.xml',
         'views/menus.xml',
     ]
 }

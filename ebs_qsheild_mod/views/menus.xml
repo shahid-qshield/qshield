@@ -47,20 +47,34 @@
             sequence="10"
     />
 
+    <menuitem
+            id="services_config"
+            name="Configuration"
+            parent="qshield_services"
+            sequence="15"
+    />
+
      <menuitem
             id="service_type_view_menu"
             name="Service Types"
             action="service_type_window"
-            parent="qshield_services"
-            sequence="15"
+            parent="services_config"
+            sequence="5"
     />
 
      <menuitem
             id="expense_type_view_menu"
             name="Expense Types"
             action="expense_type_window"
-            parent="qshield_services"
-            sequence="20"
+            parent="services_config"
+            sequence="10"
+    />
+    <menuitem
+            id="service_workflow_config_view_menu"
+            name="Service Workflow Configuration"
+            action="service_workflow_config_window"
+            parent="services_config"
+            sequence="15"
     />
 
 </odoo>
