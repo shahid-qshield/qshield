@@ -10,5 +10,4 @@ from . import service_types
 from . import service_request
 from . import expense_types
 from . import tickets_custom
-
-
+from . import service_workflow_config

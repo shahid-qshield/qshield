@@ -1,7 +1,7 @@
 from odoo import models, fields, api, _
 
 
-class DocumentTypes(models.Model):
+class ServiceTypes(models.Model):
     _name = 'ebs_mod.service.types'
     _description = "Service Types"
 
@@ -65,6 +65,19 @@ class DocumentTypes(models.Model):
         required=False,
         domain=[('flow_type', '=', 'm')])
 
+    @api.model
+    def create(self, vals):
+        res = super(ServiceTypes, self).create(vals)
+        for rec in self.env['ebs_mod.service.workflow.config'].search([]):
+            self.env['ebs_mod.service.type.workflow'].create({
+                'name': rec.name,
+                'sequence': rec.sequence,
+                'flow_type': rec.flow_type,
+                'start_count_flow': rec.start_count_flow,
+                'service_type_id': res.id,
+            })
+        return res
+
 
 class ServiceTypeWorkflow(models.Model):
     _name = "ebs_mod.service.type.workflow"
@@ -93,6 +106,6 @@ class ServiceTypeWorkflow(models.Model):
         required=False)
 
     _sql_constraints = [
-        ('service_type_flow_name_type_unique', 'unique (name,flow_type)',
+        ('service_type_flow_name_type_unique', 'unique (service_type_id,name,flow_type)',
          'Name and type combination must be unique !')
     ]
