@@ -348,16 +348,17 @@ class ContactCustom(models.Model):
             return super(ContactCustom, self)._get_name()
 
     def unlink(self):
-        if self.person_type == 'company':
-            if len(self.company_visitors) > 0 or len(self.company_employees) > 0:
-                raise ValidationError(_("Cannot delete, check linked items"))
-        if self.person_type == 'emp':
-            if len(self.employee_dependants) > 0:
-                raise ValidationError(_("Cannot delete, check linked items"))
+        for rec in self:
+            if rec.person_type == 'company':
+                if len(rec.company_visitors) > 0 or len(rec.company_employees) > 0:
+                    raise ValidationError(_("Cannot delete, check linked items"))
+            if rec.person_type == 'emp':
+                if len(rec.employee_dependants) > 0:
+                    raise ValidationError(_("Cannot delete, check linked items"))
 
-        for doc in self.document_o2m:
-            doc.unlink()
-        super(ContactCustom, self).unlink()
+            for doc in rec.document_o2m:
+                doc.unlink()
+            super(ContactCustom, rec).unlink()
 
     @api.onchange('parent_id')
     def onchange_parent_id(self):

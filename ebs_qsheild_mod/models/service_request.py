@@ -228,6 +228,7 @@ class ServiceRequest(models.Model):
                                             'message': _(
                                                 'Selected contact not found in contracts related contacts')}}
                     else:
+                        self.contract_id = contact_contract_list[0]
                         return {
                             'domain': {
                                 'contract_id': [('id', 'in', contact_contract_list)]
@@ -449,9 +450,10 @@ class ServiceRequestWorkFlow(models.Model):
                 self.service_request_id.status = 'complete'
 
     def unlink(self):
-        if self.service_request_id.status == 'progress':
-            raise ValidationError(_("Cannot Delete, service in progress."))
-        return super(ServiceRequestWorkFlow, self).unlink()
+        for rec in self:
+            if rec.service_request_id.status == 'progress':
+                raise ValidationError(_("Cannot Delete, service in progress."))
+            return super(ServiceRequestWorkFlow, rec).unlink()
 
 
 class ServiceRequestExpenses(models.Model):

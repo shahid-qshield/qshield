@@ -133,11 +133,15 @@
 
             <field name="arch" type="xml">
 
+                <xpath expr="//search//field[@name='partner_id']" position="replace">
+                </xpath>
+
                 <xpath expr="//search//field[@name='name']" position="replace">
                     <field name="document_number" string="Document Number"/>
                     <field name="name" string="Document Name"/>
                     <field name="document_type_id"/>
                     <field name="status"/>
+                    <field name="partner_id" string="Contact"/>
                     <field name="service_id"/>
                     <field name="person_type"/>
                     <field name="related_company" domain="[('person_type', '=', 'company')]" string="Related Company"

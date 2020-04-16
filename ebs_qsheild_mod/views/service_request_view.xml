@@ -188,6 +188,7 @@
                     <field name="partner_id"/>
                     <field name="status"/>
                     <field name="flow_type"/>
+                    <field name="person_type"/>
                     <separator/>
                     <filter string="Archived" name="inactive" domain="[('active', '=', False)]"/>
                     <separator/>

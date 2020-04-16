@@ -156,9 +156,9 @@ class Contracts(models.Model):
     def create(self, vals):
         start_date = datetime.strptime(vals['start_date'], "%Y-%m-%d")
         end_date = datetime.strptime(vals['end_date'], "%Y-%m-%d")
-        contract_days = (end_date - start_date).days
-        if contract_days < 365:
-            raise ValidationError(_("Contract is minimum for 1 year"))
+        # contract_days = (end_date - start_date).days
+        if end_date < start_date:
+            raise ValidationError(_("End date is before start date"))
         contract = super(Contracts, self).create(vals)
         return contract
 
@@ -174,16 +174,17 @@ class Contracts(models.Model):
                 end_date = datetime.strptime(vals['end_date'], "%Y-%m-%d")
             else:
                 end_date = datetime.combine(self.end_date.today(), datetime.min.time())
-            contract_days = (end_date - start_date).days
-            if contract_days < 365:
-                raise ValidationError(_("Contract is minimum for 1 year"))
+            # contract_days = (end_date - start_date).days
+            if end_date < start_date:
+                raise ValidationError(_("End date is before start date"))
         if 'contact_id' in vals:
             if len(self.dependant_list) > 0 or len(self.employee_list) > 0 or len(self.visitor_list) > 0:
                 raise ValidationError(_("Cannot edit company, delete linked items."))
         return super(Contracts, self).write(vals)
 
     def unlink(self):
-        self.write({'employee_list': [(6, 0, [])]})
-        self.write({'dependant_list': [(6, 0, [])]})
-        self.write({'visitor_list': [(6, 0, [])]})
-        return super(Contracts, self).unlink()
+        for rec in self:
+            rec.write({'employee_list': [(6, 0, [])]})
+            rec.write({'dependant_list': [(6, 0, [])]})
+            rec.write({'visitor_list': [(6, 0, [])]})
+            return super(Contracts, rec).unlink()
