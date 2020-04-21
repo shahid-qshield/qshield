@@ -49,9 +49,21 @@
                 </xpath>
 
                 <xpath expr="//notebook//page[@name='internal_notes']" position="after">
+                    <page name="payments_page" string="Payments" attrs="{'invisible':[('person_type','=','child')]}">
+                        <field name="payment_ids" readonly="True">
+                            <tree create="0" delete="0">
+                                <field name="amount"/>
+                                <field name="currency_id"/>
+                                <field name="create_date"/>
+                            </tree>
+                        </field>
+                    </page>
+                </xpath>
+
+                <xpath expr="//notebook//page[@name='internal_notes']" position="after">
                     <page name="services_page" string="Services">
                         <field name="service_ids"
-                        context="{
+                               context="{
                                 'invisible_contact':True,
                                 'default_partner_id':id
                                 }"
@@ -60,12 +72,11 @@
                 </xpath>
 
 
-
-<!--                 <xpath expr="//notebook//page[@name='internal_notes']" position="after">-->
-<!--                    <page name="document_archive_page" string="Documents Archived">-->
-<!--                        <field name="document_o2m_archived" />-->
-<!--                    </page>-->
-<!--                </xpath>-->
+                <!--                 <xpath expr="//notebook//page[@name='internal_notes']" position="after">-->
+                <!--                    <page name="document_archive_page" string="Documents Archived">-->
+                <!--                        <field name="document_o2m_archived" />-->
+                <!--                    </page>-->
+                <!--                </xpath>-->
 
                 <xpath expr="//notebook//page[@name='internal_notes']" position="after">
                     <page name="document_page" string="Documents">
@@ -129,7 +140,7 @@
                         }"
 
                         >
-                            <tree >
+                            <tree>
                                 <field name="name"/>
                                 <field name="date" string="Date of Birth"/>
                                 <field name="gender"/>
@@ -152,7 +163,7 @@
                         }"
 
                         >
-                            <tree >
+                            <tree>
                                 <field name="name"/>
                                 <field name="date" string="Date of Birth"/>
                                 <field name="gender"/>
@@ -190,7 +201,7 @@
                         'readonly_person_type':True,
                         'readonly_parent_id':True
                         }">
-                            <tree >
+                            <tree>
                                 <field name="name"/>
                                 <field name="date" string="Date of Birth"/>
                                 <field name="gender"/>
@@ -311,15 +322,15 @@
                 </xpath>
 
                 <xpath expr="//div[@name='button_box']" position="inside">
-                       <button name="action_see_services" type="object" class="oe_stat_button"
-                                    icon="fa-file-text-o">
-                                <div class="o_field_widget o_stat_info">
-                                    <span class="o_stat_value">
-                                        <field name="service_count"/>
-                                    </span>
-                                    <span class="o_stat_text">Services</span>
-                                </div>
-                            </button>
+                    <button name="action_see_services" type="object" class="oe_stat_button"
+                            icon="fa-file-text-o">
+                        <div class="o_field_widget o_stat_info">
+                            <span class="o_stat_value">
+                                <field name="service_count"/>
+                            </span>
+                            <span class="o_stat_text">Services</span>
+                        </div>
+                    </button>
 
                 </xpath>
             </field>

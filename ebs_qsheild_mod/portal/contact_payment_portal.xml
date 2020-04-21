@@ -1,0 +1,130 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data noupdate="0">
+        <template id="portal_my_home_menu_contact_payment" name="Portal layout : Contact Payments menu entries"
+                  inherit_id="portal.portal_breadcrumbs" priority="50">
+
+            <xpath expr="//ol[hasclass('o_portal_submenu')]" position="inside">
+                <li t-if="page_name in ('payment_insert','payment')"
+                    t-attf-class="breadcrumb-item #{'active ' if not payment else ''}">
+                    <a t-if="page_name == 'payment_insert'" t-attf-href="/my/payments">Payments</a>
+                    <t t-else="">Payments</t>
+                </li>
+                <li t-if="page_name == 'payment_insert'" class="breadcrumb-item active">
+                    Insert Payment
+                </li>
+            </xpath>
+        </template>
+
+        <template id="portal_my_home_contact_payment" name="Portal My Home : Contact Payments"
+                  inherit_id="portal.portal_my_home" priority="50">
+            <xpath expr="//div[hasclass('o_portal_docs')]" position="inside">
+                <t t-call="portal.portal_docs_entry">
+                    <t t-set="title">Payments</t>
+                    <t t-set="url" t-value="'/my/payments'"/>
+                    <t t-set="count" t-value="payment_count"/>
+                </t>
+            </xpath>
+        </template>
+
+
+        <template id="portal_contact_payment" name="contact payment">
+
+
+            <t t-call="portal.portal_layout">
+                <t t-set="breadcrumbs_searchbar" t-value="True"/>
+
+                <t t-call="portal.portal_searchbar">
+                    <t t-set="title">Payments</t>
+                </t>
+                <div t-if="not payments" class="alert alert-info">
+                    There are currently no Payments.
+                </div>
+                <div class="row" style="text-align: center;">
+                    <div class='col-md-12'>
+                        <a href="/my/payments/insert_form" class="btn btn-info" role="button">Add Payment</a>
+                    </div>
+                </div>
+                <br/>
+                <t t-if="payments" t-call="portal.portal_table">
+                    <thead>
+                        <tr>
+                            <th class="text-right">Amount</th>
+                            <th class="text-right">Currency</th>
+                            <th class="text-right">Description</th>
+                            <th class="text-right">Date</th>
+                        </tr>
+                    </thead>
+                    <t t-foreach="payments" t-as="payment">
+                        <tr>
+                            <td class="text-right">
+                                <t t-esc="payment.amount"/>
+                            </td>
+                            <td class="text-right">
+                                <t t-esc="payment.currency_id.name"/>
+                            </td>
+                            <td class="text-right">
+                                <t t-esc="payment.desc"/>
+                            </td>
+                            <td class="text-right">
+                                <t t-esc="payment.create_date.strftime('%m/%d/%Y')"/>
+                            </td>
+                        </tr>
+                    </t>
+                </t>
+            </t>
+        </template>
+
+
+        <template id="portal_contact_payment_form" name="contact payment form">
+
+            <t t-call="portal.portal_layout">
+<!--                <t t-set="breadcrumbs_searchbar" t-value="True"/>-->
+
+<!--                <t t-call="portal.portal_searchbar">-->
+<!--                    <t t-set="title">Insert Payment</t>-->
+<!--                </t>-->
+                <div class="row">
+                    <div class=" col-sm-8">
+                        <form class="form-horizontal" action="/my/payments/insert" method="post">
+                            <input type="hidden" name="csrf_token" t-att-value="request.csrf_token()"/>
+                            <div class="form-group">
+                                <label class="control-label col-sm-2" for="amount">Amount:</label>
+                                <div class="col-sm-10">
+                                    <input type="number" class="form-control" id="amount" name="amount"
+                                           required="required"/>
+                                </div>
+                            </div>
+                            <div class="form-group">
+                                <label class="control-label col-sm-2" for="currency">Currency:</label>
+                                <div class="col-sm-10">
+                                    <select class="form-control" name="currency" id="currency">
+                                        <option t-att-value="currency.id" selected="selected">
+                                            <t t-esc="currency.name"/>
+                                        </option>
+
+                                    </select>
+
+                                </div>
+                            </div>
+                            <div class="form-group">
+                                <label class="control-label col-sm-2" for="desc">Description:</label>
+                                <div class="col-sm-10">
+                                    <input type="text" class="form-control" id="desc" name="desc"/>
+                                </div>
+                            </div>
+                            <div class="form-group">
+                                <div class="col-sm-offset-2 col-sm-10">
+                                    <button type="submit" class="btn btn-info">Submit</button>
+                                </div>
+                            </div>
+
+                        </form>
+                    </div>
+                </div>
+            </t>
+        </template>
+
+
+    </data>
+</odoo>
