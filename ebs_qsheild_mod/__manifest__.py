@@ -47,6 +47,8 @@
         'views/service_request_view.xml',
         'views/tickets_view_custom.xml',
         'views/service_workflow_config_view.xml',
+        'views/contact_payment_view.xml',
         'views/menus.xml',
+        'portal/contact_payment_portal.xml'
     ]
 }

@@ -20,6 +20,12 @@
             action="contracts_window"
             parent="contacts.menu_contacts"
             sequence="5"
+    /> <menuitem
+            id="contract_payment_view_menu"
+            name="Payments"
+            action="contact_payment_window"
+            parent="contacts.menu_contacts"
+            sequence="10"
     />
 
 

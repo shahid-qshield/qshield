@@ -260,6 +260,12 @@ class ContactCustom(models.Model):
         string='Relation Type',
         required=False)
 
+    payment_ids = fields.One2many(
+        comodel_name='ebs_mod.contact.payment',
+        inverse_name='partner_id',
+        string='Payments',
+        required=False)
+
     @api.depends('is_company', 'name', 'parent_id.name', 'type', 'company_name')
     @api.depends_context('show_address', 'show_address_only', 'show_email', 'html_format', 'show_vat')
     def _compute_display_name(self):
