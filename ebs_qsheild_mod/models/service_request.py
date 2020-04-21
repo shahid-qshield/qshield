@@ -452,7 +452,8 @@ class ServiceRequestWorkFlow(models.Model):
     def unlink(self):
         for rec in self:
             if rec.service_request_id.status == 'progress':
-                raise ValidationError(_("Cannot Delete, service in progress."))
+                if self.status != 'pending':
+                    raise ValidationError(_("Cannot Delete, service in progress."))
             return super(ServiceRequestWorkFlow, rec).unlink()
 
 
