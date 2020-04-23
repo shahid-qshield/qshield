@@ -296,6 +296,9 @@ class ServiceRequest(models.Model):
             return False
 
     def request_submit(self):
+        if len(self.service_flow_ids) == 0:
+            raise ValidationError(_("Missing Workflow!"))
+
         if self.code:
             code = self.code
         else:
@@ -309,16 +312,16 @@ class ServiceRequest(models.Model):
         self.name = comp_ref + "-" + service_red + "-" + month + year + "-" + code
         self.status = 'progress'
 
-        if self.flow_type == 'o':
-            flow_list = self.service_type_id.workflow_online_ids
-        else:
-            flow_list = self.service_type_id.workflow_manual_ids
-
-        for flow in flow_list:
-            self.env['ebs_mod.service.request.workflow'].create({
-                'service_request_id': self.id,
-                'workflow_id': flow.id,
-            })
+        # if self.flow_type == 'o':
+        #     flow_list = self.service_type_id.workflow_online_ids
+        # else:
+        #     flow_list = self.service_type_id.workflow_manual_ids
+        #
+        # for flow in flow_list:
+        #     self.env['ebs_mod.service.request.workflow'].create({
+        #         'service_request_id': self.id,
+        #         'workflow_id': flow.id,
+        #     })
 
     def request_cancel(self):
         self.status = 'cancel'
@@ -361,6 +364,14 @@ class ServiceRequest(models.Model):
             result.append((rec.id, rec.name))
         return result
 
+    def unlink(self):
+        for rec in self:
+            if len(rec.service_document_ids) != 0:
+                raise ValidationError(_("Delete Related Documents"))
+            for flow in rec.service_flow_ids:
+                flow.unlink()
+        return super(ServiceRequest, self).unlink()
+
 
 class ServiceRequestWorkFlow(models.Model):
     _name = 'ebs_mod.service.request.workflow'
@@ -384,10 +395,23 @@ class ServiceRequestWorkFlow(models.Model):
         string='Service',
         required=True)
 
+    def _get_workflow_domain(self):
+        domain = [
+            ('flow_type', '=', self.service_request_id.flow_type),
+            ('service_type_id', '=', self.service_request_id.service_type_id.id)
+        ]
+        return domain
+
     workflow_id = fields.Many2one(
         comodel_name='ebs_mod.service.type.workflow',
         string='Workflow',
-        required=True)
+        required=True,
+
+    )
+
+    due_date = fields.Datetime(
+        string='Due Date',
+        required=False)
 
     sequence = fields.Integer(
         string='Sequence',
@@ -440,21 +464,21 @@ class ServiceRequestWorkFlow(models.Model):
                 if vals['status'] == 'complete':
                     if self.start_count_flow and not self.service_request_id.start_date:
                         self.service_request_id.start_date = datetime.today()
-            complete = True
-            for flow in self.service_request_id.service_flow_ids:
-                if flow.status == 'progress' or flow.status == 'pending' or flow.status == 'hold':
-                    complete = False
-                    break
-            if complete:
-                self.service_request_id.end_date = datetime.today()
-                self.service_request_id.status = 'complete'
+            # complete = True
+            # for flow in self.service_request_id.service_flow_ids:
+            #     if flow.status == 'progress' or flow.status == 'pending' or flow.status == 'hold':
+            #         complete = False
+            #         break
+            # if complete:
+            #     self.service_request_id.end_date = datetime.today()
+            #     self.service_request_id.status = 'complete'
 
-    def unlink(self):
-        for rec in self:
-            if rec.service_request_id.status == 'progress':
-                if self.status != 'pending':
-                    raise ValidationError(_("Cannot Delete, service in progress."))
-            return super(ServiceRequestWorkFlow, rec).unlink()
+    # def unlink(self):
+    #     for rec in self:
+    #         if rec.service_request_id.status == 'progress':
+    #             if self.status != 'pending':
+    #                 raise ValidationError(_("Cannot Delete, service in progress."))
+    #      return super(ServiceRequestWorkFlow, rec).unlink()
 
 
 class ServiceRequestExpenses(models.Model):
