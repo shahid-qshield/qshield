@@ -36,6 +36,7 @@
         'views/views.xml',
         'views/templates.xml',
         'wizards/create_contact_document_wiz.xml',
+        'wizards/message_wiz_view.xml',
         'views/contacts_view_custom.xml',
         'views/contracts_view.xml',
         'views/contact_relation_type_view.xml',
