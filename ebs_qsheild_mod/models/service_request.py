@@ -447,6 +447,29 @@ class ServiceRequestWorkFlow(models.Model):
         string='Assign To',
         required=False, default=lambda self: self.env.user)
 
+    def create_service_activity(self):
+        if self.due_date and self.assign_to:
+            activity_type = self.env['mail.activity.type'].search([('name', '=', "To Do")], limit=1)
+            self.service_request_id.activity_schedule(
+                date_deadline=self.due_date,
+                summary=self.workflow_id.name,
+                note='',
+                user_id=self.assign_to.id,
+                activity_type_id=activity_type.id
+            )
+            message_id = self.env['message.wizard'].create({'message': _("Activity Created.")})
+            return {
+                'name': _('Success'),
+                'type': 'ir.actions.act_window',
+                'view_mode': 'form',
+                'res_model': 'message.wizard',
+                # pass the id
+                'res_id': message_id.id,
+                'target': 'new'
+            }
+        else:
+            raise ValidationError(_("Fill due date and assign to."))
+
     def write(self, vals):
         if vals.get('status', False):
             if vals['status'] != self.status:

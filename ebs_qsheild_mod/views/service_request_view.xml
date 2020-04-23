@@ -219,7 +219,7 @@
                     <field name="status"/>
                     <field name="date"/>
                     <field name="assign_to"/>
-
+                    <button name="create_service_activity" icon="fa-calendar" type="object" />
                 </tree>
             </field>
         </record>
@@ -248,6 +248,7 @@
                                 <field name="assign_to"/>
                                 <field name="status"/>
                                 <field name="date" readonly="True"/>
+                                <button name="create_service_activity" string="Create Activity" class="btn btn-primary" type="object"/>
                             </group>
                         </group>
                         <group name="group_bottom">
