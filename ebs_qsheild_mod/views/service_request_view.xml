@@ -66,8 +66,8 @@
                     </header>
                     <sheet>
                         <div name="button_box" class="oe_button_box">
-<!--                            <widget name="web_ribbon" text="Completed" bg_color="bg-success"-->
-<!--                                    attrs="{'invisible':[('partner_document_count','=',0)]}"/>-->
+                            <!--                            <widget name="web_ribbon" text="Completed" bg_color="bg-success"-->
+                            <!--                                    attrs="{'invisible':[('partner_document_count','=',0)]}"/>-->
                             <button name="action_see_documents" type="object" class="oe_stat_button"
                                     icon="fa-file-text-o">
                                 <div class="o_field_widget o_stat_info">
@@ -127,7 +127,9 @@
                         </group>
                         <notebook>
                             <page name="workflow_page" string="WorkFlow">
-                                <field name="service_flow_ids" attrs="{'readonly':[('status','=','complete')]}"/>
+                                <field name="service_flow_ids"
+                                       attrs="{'readonly':[('status','=','complete')]}"
+                                />
                             </page>
 
                             <page name="document_page" string="Documents">
@@ -213,6 +215,7 @@
                     <field name="workflow_id"/>
                     <field name="sequence"/>
                     <field name="start_count_flow"/>
+                    <field name="due_date"/>
                     <field name="status"/>
                     <field name="date"/>
                     <field name="assign_to"/>
@@ -230,9 +233,16 @@
                     <sheet>
                         <group name="group_top">
                             <group>
-                                <field name="workflow_id"/>
+                                <field name="workflow_id"
+                                       options="{'no_create': True, 'no_create_edit':True}"
+                                       domain="[
+                                                ('flow_type', '=', parent.flow_type),
+                                                ('service_type_id', '=', parent.service_type_id)
+                                                ]"
+                                />
                                 <field name="sequence"/>
                                 <field name="start_count_flow"/>
+                                <field name="due_date"/>
                             </group>
                             <group>
                                 <field name="assign_to"/>
