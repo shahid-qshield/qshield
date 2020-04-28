@@ -50,6 +50,12 @@
             name="Service Requests"
             action="service_request_window"
             parent="qshield_services"
+            sequence="5"
+    /> <menuitem
+            id="service_request__workflow_view_menu"
+            name="Service Requests Workflow's"
+            action="service_request_workflow_window"
+            parent="qshield_services"
             sequence="10"
     />
 
