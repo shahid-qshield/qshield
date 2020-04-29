@@ -77,7 +77,7 @@
 
         <!--window -->
         <record id="service_request_workflow_window" model="ir.actions.act_window">
-            <field name="name">Service Request Workflow</field>
+            <field name="name">Service Request Tasks</field>
             <field name="res_model">ebs_mod.service.request.workflow</field>
             <field name="view_mode">tree,form,activity</field>
             <field name="context">{'search_default_user_workflow':1}</field>
