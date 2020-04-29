@@ -133,7 +133,7 @@
                                        context="{
                                        'hide_parent':True,
                                        'show_activity_btn':False,
-                                       'default_service_request_id':id
+                                       'default_service_request_id':active_id
                                        }"
                                 >
                                     <tree >
@@ -150,8 +150,7 @@
                              <sheet>
                         <group name="group_top">
                             <group>
-                                <field name="service_request_id" invisible="True"
-                                       readonly="True"/>
+                                <field name="service_request_id" invisible="True" required="False"/>
                                 <field name="flow_type" invisible="True"/>
                                 <field name="service_type_id" invisible="True"/>
                                 <field name="related_company" invisible="True"/>
