@@ -55,7 +55,7 @@
                                 <field name="status"/>
                                 <field name="date" readonly="True"/>
                                 <button name="create_service_activity" string="Create Activity" class="btn btn-primary"
-                                        type="object" />
+                                        type="object"/>
                             </group>
                         </group>
                         <group name="group_bottom">
@@ -107,7 +107,8 @@
                         <filter name="assign_to_group" string="Assign To"
                                 context="{'group_by': 'assign_to'}"/>
                         <filter name="status_group" string="Status" context="{'group_by': 'status'}"/>
-                        <filter name="workflow_group" string="Workflow" context="{'group_by': 'workflow_id'}"/>
+                        <filter name="workflow_group" string="Workflow" context="{'group_by': 'name'}"/>
+
                     </group>
                 </search>
             </field>

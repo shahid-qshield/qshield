@@ -43,6 +43,7 @@ class ServiceRequestWorkFlow(models.Model):
     name = fields.Char(
         string='Name',
         related="workflow_id.name",
+        store=True,
         required=False)
 
     due_date = fields.Datetime(
