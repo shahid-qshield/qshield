@@ -41,7 +41,7 @@ class DocumentsCustom(models.Model):
     service_id = fields.Many2one(
         comodel_name='ebs_mod.service.request',
         string='Service',
-        required=False,tracking=True)
+        required=False, tracking=True)
 
     related_company = fields.Many2one(
         comodel_name='res.partner',
@@ -59,6 +59,14 @@ class DocumentsCustom(models.Model):
         store=True,
         related="partner_id.person_type"
     )
+
+    sponsor = fields.Many2one(
+        comodel_name='res.partner',
+        string='Sponsor',
+        required=False,
+        readonly=True,
+        store=True,
+        related="partner_id.sponsor")
 
     @api.constrains('document_number')
     def _check_document_number(self):
