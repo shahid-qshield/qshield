@@ -32,6 +32,8 @@
 
                     <field name="person_type"/>
                     <field name="related_company"/>
+                    <field name="sponsor"/>
+
                     <field name="service_id"/>
                 </xpath>
                 <xpath expr="//field[@name='type']" position="before">
@@ -56,6 +58,7 @@
                     <field name="partner_id" optional="hide"/>
                     <field name="person_type" optional="hide"/>
                     <field name="related_company" optional="hide"/>
+                    <field name="sponsor"  optional="hide"/>
                     <field name="service_id" optional="hide"/>
                 </xpath>
                 <xpath expr="//tree//field[@name='owner_id']" position="replace">
@@ -144,6 +147,7 @@
                     <field name="partner_id" string="Contact"/>
                     <field name="service_id"/>
                     <field name="person_type"/>
+                    <field name="sponsor"/>
                     <field name="related_company" domain="[('person_type', '=', 'company')]" string="Related Company"
                            operator="child_of"/>
                 </xpath>
@@ -154,6 +158,7 @@
                             context="{'group_by':'status'}"/>
                     <filter name="group_related_company" string="Related Company" context="{'group_by': 'related_company'}"/>
                      <filter name="group_person_type" string="Contact Type" context="{'group_by': 'person_type'}"/>
+                     <filter name="group_sponsor" string="Sponsor" context="{'group_by': 'sponsor'}"/>
                 </xpath>
                 <xpath expr="//search//searchpanel//field[@name='res_model']" position="replace">
 
