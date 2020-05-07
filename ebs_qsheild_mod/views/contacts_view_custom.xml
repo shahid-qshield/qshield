@@ -142,6 +142,8 @@
                         >
                             <tree>
                                 <field name="name"/>
+                                <field name="qatar_id_doc"/>
+                                <field name="qatarid_exp_date"/>
                                 <field name="date" string="Date of Birth"/>
                                 <field name="gender"/>
                                 <field name="image_1920" widget="image" height="30"/>
@@ -165,6 +167,8 @@
                         >
                             <tree>
                                 <field name="name"/>
+                                 <field name="qatar_id_doc"/>
+                                <field name="qatarid_exp_date"/>
                                 <field name="date" string="Date of Birth"/>
                                 <field name="gender"/>
                                 <field name="image_1920" widget="image" height="30"/>
@@ -181,6 +185,8 @@
                             <tree>
                                 <field name="name"/>
                                 <field name="parent_id"/>
+                                 <field name="qatar_id_doc"/>
+                                 <field name="qatarid_exp_date"/>
                                 <field name="date" string="Date of Birth"/>
                                 <field name="gender"/>
                                 <field name="image_1920" widget="image" height="30"/>
@@ -203,6 +209,8 @@
                         }">
                             <tree>
                                 <field name="name"/>
+                                 <field name="qatar_id_doc"/>
+                                <field name="qatarid_exp_date"/>
                                 <field name="date" string="Date of Birth"/>
                                 <field name="gender"/>
                                 <field name="image_1920" widget="image" height="30"/>

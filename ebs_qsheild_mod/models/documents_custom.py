@@ -95,8 +95,9 @@ class DocumentsCustom(models.Model):
         for rec in self:
             rec_name = ""
             if rec.document_number:
-                rec_name += (rec.document_number + " - ")
-            rec_name += rec.name
+                rec_name = rec.document_number
+            else:
+                rec_name = rec.name
             result.append((rec.id, rec_name))
         return result
 
