@@ -38,7 +38,7 @@
                                 'upload_contact':True,
                                 'default_service_request_id':id
                                 }"
-                                attrs="{'invisible':[('status','!=','complete')]}"/>
+                             />
 
                         <button name="request_submit" string="submit" type="object"
                                 attrs="{'invisible':[('status','!=','draft')]}"/>
@@ -119,8 +119,7 @@
                                 <field name="cost_center" attrs="{'readonly':[('status','!=','draft')]}"/>
                                 <field name="start_date"/>
                                 <field name="end_date"/>
-                                <field name="partner_document_count"
-                                       attrs="{'invisible':[('status','!=','complete')]}"/>
+                                <field name="partner_document_count"/>
                             </group>
                         </group>
                         <group name="group_bottom">
