@@ -32,6 +32,7 @@
 
                     <field name="person_type"/>
                     <field name="related_company"/>
+                    <field name="related_contact"/>
                     <field name="sponsor"/>
 
                     <field name="service_id"/>
@@ -58,6 +59,7 @@
                     <field name="partner_id" optional="hide"/>
                     <field name="person_type" optional="hide"/>
                     <field name="related_company" optional="hide"/>
+                    <field name="related_contact" optional="hide"/>
                     <field name="sponsor"  optional="hide"/>
                     <field name="service_id" optional="hide"/>
                 </xpath>
@@ -148,6 +150,7 @@
                     <field name="service_id"/>
                     <field name="person_type"/>
                     <field name="sponsor"/>
+                    <field name="related_contact"/>
                     <field name="related_company" domain="[('person_type', '=', 'company')]" string="Related Company"
                            operator="child_of"/>
                 </xpath>
