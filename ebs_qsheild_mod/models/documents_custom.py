@@ -49,6 +49,11 @@ class DocumentsCustom(models.Model):
         store=True,
         related="partner_id.related_company")
 
+    related_contact = fields.Many2one(
+        comodel_name='res.partner',
+        string='Related Contact',
+        related="partner_id.parent_id")
+
     person_type = fields.Selection(
         string='Person Type',
         selection=[
