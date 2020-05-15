@@ -81,7 +81,9 @@ class ServiceRequestWorkFlow(models.Model):
     start_count_flow = fields.Boolean(
         string='Start Count Flow',
         required=False,
-        related="workflow_id.start_count_flow")
+        related="workflow_id.start_count_flow",
+        store=True, readonly=False
+        )
 
     status = fields.Selection(
         string='Status',
@@ -144,20 +146,15 @@ class ServiceRequestWorkFlow(models.Model):
         if res:
             if vals.get('status', False):
                 self.date = datetime.today()
-                if vals['status'] == 'progress':
-                    if self.start_count_flow:
-                        self.service_request_id.start_date = datetime.today()
-                if vals['status'] == 'complete':
-                    if self.start_count_flow and not self.service_request_id.start_date:
-                        self.service_request_id.start_date = datetime.today()
-            # complete = True
-            # for flow in self.service_request_id.service_flow_ids:
-            #     if flow.status == 'progress' or flow.status == 'pending' or flow.status == 'hold':
-            #         complete = False
-            #         break
-            # if complete:
-            #     self.service_request_id.end_date = datetime.today()
-            #     self.service_request_id.status = 'complete'
+                if self.start_count_flow and not self.service_request_id.start_date:
+                    self.service_request_id.start_date = datetime.today()
+                # if vals['status'] == 'progress':
+                #     if self.start_count_flow:
+                #         self.service_request_id.start_date = datetime.today()
+                # if vals['status'] == 'complete':
+                #     if self.start_count_flow and not self.service_request_id.start_date:
+                #         self.service_request_id.start_date = datetime.today()
+
 
     # def unlink(self):
     #     for rec in self:

@@ -1,6 +1,6 @@
 from odoo import models, fields, api, _
 from odoo.exceptions import ValidationError
-from datetime import datetime
+from datetime import datetime, timedelta
 
 
 class ServiceRequest(models.Model):
@@ -33,6 +33,20 @@ class ServiceRequest(models.Model):
         string='Service Type',
         required=True, domain=[('id', '=', -1)]
     )
+    sla_min = fields.Integer(
+        string='SLA - Minimum Days',
+        required=False,
+        related="service_type_id.sla_min", readonly=True)
+
+    sla_max = fields.Integer(
+        string='SLA - Maximum Days',
+        required=False,
+        related="service_type_id.sla_max", readonly=True
+    )
+    sla_days = fields.Integer(
+        string='SLA - Days',
+        required=False,
+        readonly=True)
 
     related_company_ro = fields.Many2one(
         comodel_name='res.partner',
@@ -163,7 +177,10 @@ class ServiceRequest(models.Model):
     def write(self, vals):
         if vals.get('related_company', False):
             vals['related_company_ro'] = vals['related_company']
-
+        if vals.get('cost_center', False):
+            if vals['cost_center'] != self.status:
+                self.message_post(
+                    body="Cost Center changed from " + self.cost_center + " to " + vals['cost_center'] + ".")
         if vals.get('status', False):
             if vals['status'] != self.status:
                 self.message_post(
@@ -339,6 +356,14 @@ class ServiceRequest(models.Model):
                 break
         if complete:
             self.end_date = datetime.today()
+            delta = timedelta(days=1)
+            start_date = self.start_date.date()
+            end_date = self.end_date.date()
+            count = 0
+            while start_date <= end_date:
+                start_date += delta
+                count += 1
+            self.sla_days = count
             self.status = 'complete'
         else:
             raise ValidationError(_("Workflow still pending or in progress."))

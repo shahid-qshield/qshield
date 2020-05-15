@@ -30,6 +30,8 @@
                                 <field name="code"/>
                                 <field name="name"/>
                                 <field name="sla"/>
+                                <field name="sla_min"/>
+                                <field name="sla_max"/>
                             </group>
 
                             <group name="group_right">

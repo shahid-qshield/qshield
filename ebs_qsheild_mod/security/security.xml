@@ -35,4 +35,22 @@
         <field name="category_id" ref="module_category_qshield_contact"/>
     </record>
 
+
+     <record model="ir.module.category" id="module_category_qshield_accountant">
+        <field name="name">QShield Accountant</field>
+        <field name="description">Category for QShield</field>
+        <field name="sequence">55</field>
+    </record>
+
+    <record model="res.groups" id="qshield_accountant_admin">
+        <field name="name">Admin</field>
+        <field name="category_id" ref="module_category_qshield_accountant"/>
+    </record>
+
+    <record model="res.groups" id="qshield_accountant_user">
+        <field name="name">User</field>
+        <field name="category_id" ref="module_category_qshield_accountant"/>
+    </record>
+
+
 </odoo>
