@@ -22,6 +22,17 @@ class ServiceTypes(models.Model):
     sla = fields.Char(
         string='SLA - Working Days',
         required=False)
+
+    sla_min = fields.Integer(
+        string='SLA - Minimum Days',
+        required=False)
+
+    sla_max = fields.Integer(
+        string='SLA - Maximum Days',
+        required=False)
+
+
+
     for_company = fields.Boolean(
         string='For Company',
         required=False,

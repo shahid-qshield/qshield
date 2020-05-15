@@ -112,13 +112,16 @@
                                        options="{'no_create': True, 'no_create_edit':True}"
                                        attrs="{'readonly':[('status','!=','draft')]}"
                                 />
+                                <field name="sla_min"/>
+                                <field name="sla_max"/>
                                 <field name="flow_type"
                                        attrs="{'readonly':[('status','!=','draft')]}"
                                 />
 
-                                <field name="cost_center" attrs="{'readonly':[('status','!=','draft')]}"/>
+                                <field name="cost_center" attrs="{'readonly':[('status','=','complete')]}"/>
                                 <field name="start_date"/>
                                 <field name="end_date"/>
+                                <field name="sla_days"/>
                                 <field name="partner_document_count"/>
                             </group>
                         </group>
@@ -204,7 +207,7 @@
 
                             <page name="expense_page" string="Expenses">
                                 <field name="expenses_ids"
-                                       attrs="{'readonly':[('status','=','complete')]}"
+                                       groups="ebs_qsheild_mod.qshield_accountant_admin"
                                 />
                             </page>
 
