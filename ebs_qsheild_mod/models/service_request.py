@@ -33,6 +33,11 @@ class ServiceRequest(models.Model):
         string='Service Type',
         required=True, domain=[('id', '=', -1)]
     )
+
+    is_started = fields.Boolean(
+        string='Is Started',
+        required=False, default=False)
+
     sla_min = fields.Integer(
         string='SLA - Minimum Days',
         required=False,
@@ -47,6 +52,22 @@ class ServiceRequest(models.Model):
         string='SLA - Days',
         required=False,
         readonly=True)
+    estimated_end_date = fields.Date(
+        string='Estimated End Date',
+        required=False)
+
+    @api.depends('estimated_end_date')
+    def _get_days_to_finish(self):
+        for rec in self:
+            if rec.estimated_end_date and rec.status == 'complete':
+                rec.days_to_finish = self.get_date_difference(datetime.now().date(), rec.estimated_end_date, 1)
+            else:
+                rec.days_to_finish = 0
+
+    days_to_finish = fields.Integer(
+        string='Days to Finish',
+        required=False,
+        compute="_get_days_to_finish")
 
     related_company_ro = fields.Many2one(
         comodel_name='res.partner',
@@ -316,6 +337,10 @@ class ServiceRequest(models.Model):
         if len(self.service_flow_ids) == 0:
             raise ValidationError(_("Missing Workflow!"))
 
+        if len(self.env['ebs_mod.service.request.workflow'].search(
+                [('service_request_id', '=', self.id), ('start_count_flow', '=', True)])) != 1:
+            raise ValidationError(_("Must have 1 workflow with start count checked!"))
+
         if self.code:
             code = self.code
         else:
@@ -340,6 +365,16 @@ class ServiceRequest(models.Model):
         #         'workflow_id': flow.id,
         #     })
 
+    def get_date_difference(self, start, end, jump):
+        delta = timedelta(days=jump)
+        start_date = start
+        end_date = end
+        count = 0
+        while start_date < end_date:
+            start_date += delta
+            count += 1
+        return count
+
     def request_cancel(self):
         self.status = 'cancel'
 
@@ -356,14 +391,10 @@ class ServiceRequest(models.Model):
                 break
         if complete:
             self.end_date = datetime.today()
-            delta = timedelta(days=1)
-            start_date = self.start_date.date()
-            end_date = self.end_date.date()
-            count = 0
-            while start_date <= end_date:
-                start_date += delta
-                count += 1
-            self.sla_days = count
+            if self.start_date.date() and self.end_date.date():
+                self.sla_days = self.get_date_difference(self.start_date.date(), self.end_date.date(), 1)
+            else:
+                self.sla_days = 0
             self.status = 'complete'
         else:
             raise ValidationError(_("Workflow still pending or in progress."))
