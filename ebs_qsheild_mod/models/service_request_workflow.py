@@ -1,6 +1,6 @@
 from odoo import models, fields, api, _
 from odoo.exceptions import ValidationError
-from datetime import datetime
+from datetime import datetime, timedelta
 
 
 class ServiceRequestWorkFlow(models.Model):
@@ -8,7 +8,6 @@ class ServiceRequestWorkFlow(models.Model):
     _inherit = ['mail.activity.mixin', 'mail.thread']
     _description = "Service Request Workflow"
     _order = 'workflow_id '
-
 
     _sql_constraints = [
         ('service_workflow_unique', 'unique (service_request_id,workflow_id)',
@@ -83,7 +82,7 @@ class ServiceRequestWorkFlow(models.Model):
         required=False,
         related="workflow_id.start_count_flow",
         store=True, readonly=False
-        )
+    )
 
     status = fields.Selection(
         string='Status',
@@ -147,14 +146,16 @@ class ServiceRequestWorkFlow(models.Model):
             if vals.get('status', False):
                 self.date = datetime.today()
                 if self.start_count_flow and not self.service_request_id.start_date:
+                    self.service_request_id.is_started = True
                     self.service_request_id.start_date = datetime.today()
+                    self.service_request_id.estimated_end_date = (
+                                datetime.now().date() + timedelta(days=(self.service_request_id.sla_max or 0)))
                 # if vals['status'] == 'progress':
                 #     if self.start_count_flow:
                 #         self.service_request_id.start_date = datetime.today()
                 # if vals['status'] == 'complete':
                 #     if self.start_count_flow and not self.service_request_id.start_date:
                 #         self.service_request_id.start_date = datetime.today()
-
 
     # def unlink(self):
     #     for rec in self:

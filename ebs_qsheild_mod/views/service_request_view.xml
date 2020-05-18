@@ -101,9 +101,11 @@
                                 <field name="mobile"/>
                                 <field name="email"/>
                                 <field name="is_miscellaneous"/>
-
+                                <field name="cost_center" attrs="{'readonly':[('status','=','complete')]}"/>
+                                <field name="partner_document_count"/>
                             </group>
                             <group name="group_right">
+                                <field name="is_started" invisible="True"/>
                                 <field name="contract_id"
                                        options="{'no_create': True, 'no_create_edit':True}"
                                        attrs="{'readonly':[('status','!=','draft')]}"
@@ -112,17 +114,18 @@
                                        options="{'no_create': True, 'no_create_edit':True}"
                                        attrs="{'readonly':[('status','!=','draft')]}"
                                 />
-                                <field name="sla_min"/>
-                                <field name="sla_max"/>
                                 <field name="flow_type"
                                        attrs="{'readonly':[('status','!=','draft')]}"
                                 />
 
-                                <field name="cost_center" attrs="{'readonly':[('status','=','complete')]}"/>
-                                <field name="start_date"/>
-                                <field name="end_date"/>
-                                <field name="sla_days"/>
-                                <field name="partner_document_count"/>
+                                <field name="sla_min"/>
+                                <field name="sla_max"/>
+                                <field name="start_date" attrs="{'invisible':[('is_started','!=',True)]}"/>
+                                <field name="estimated_end_date" attrs="{'invisible':[('is_started','!=',True)]}"/>
+                                <field name="days_to_finish" attrs="{'invisible':[('is_started','!=',True)]}"/>
+                                <field name="end_date" attrs="{'invisible':[('status','!=','complete')]}"/>
+                                <field name="sla_days" attrs="{'invisible':[('status','!=','complete')]}"/>
+
                             </group>
                         </group>
                         <group name="group_bottom">
