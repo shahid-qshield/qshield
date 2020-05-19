@@ -199,9 +199,10 @@ class ServiceRequest(models.Model):
         if vals.get('related_company', False):
             vals['related_company_ro'] = vals['related_company']
         if vals.get('cost_center', False):
-            if vals['cost_center'] != self.status:
-                self.message_post(
-                    body="Cost Center changed from " + self.cost_center + " to " + vals['cost_center'] + ".")
+            if self.cost_center:
+                if vals['cost_center'] != self.cost_center:
+                    self.message_post(
+                        body="Cost Center changed from " + self.cost_center + " to " + vals['cost_center'] + ".")
         if vals.get('status', False):
             if vals['status'] != self.status:
                 self.message_post(
