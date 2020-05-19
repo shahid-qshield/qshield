@@ -337,9 +337,9 @@ class ServiceRequest(models.Model):
         if len(self.service_flow_ids) == 0:
             raise ValidationError(_("Missing Workflow!"))
 
-        if len(self.env['ebs_mod.service.request.workflow'].search(
-                [('service_request_id', '=', self.id), ('start_count_flow', '=', True)])) != 1:
-            raise ValidationError(_("Must have 1 workflow with start count checked!"))
+        # if len(self.env['ebs_mod.service.request.workflow'].search(
+        #         [('service_request_id', '=', self.id), ('start_count_flow', '=', True)])) != 1:
+        #     raise ValidationError(_("Must have 1 workflow with start count checked!"))
 
         if self.code:
             code = self.code
@@ -391,7 +391,7 @@ class ServiceRequest(models.Model):
                 break
         if complete:
             self.end_date = datetime.today()
-            if self.start_date.date() and self.end_date.date():
+            if self.start_date and self.end_date:
                 self.sla_days = self.get_date_difference(self.start_date.date(), self.end_date.date(), 1)
             else:
                 self.sla_days = 0
