@@ -69,7 +69,9 @@ class CreateContactDocument(models.TransientModel):
         if self.env.context.get('upload_service', False):
             vals['service_id'] = self.service_request_id.id
         if self.env.context.get('upload_service_contact', False):
-            self.service_request_id.partner_document_count = self.service_request_id.partner_document_count + 1
+            vals['service_id'] = self.service_request_id.id
+            vals['partner_id'] = self.contact_id.id
+            # self.service_request_id.partner_document_count = self.service_request_id.partner_document_count + 1
 
         if self.expiry_date:
             vals['expiry_date'] = self.expiry_date.strftime("%Y-%m-%d")

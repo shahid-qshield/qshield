@@ -318,14 +318,13 @@ class ContactCustom(models.Model):
             if self.person_type == "visitor" and vals['person_type'] == "emp":
                 self.message_post(body="Type Changed From Visitor to Employee")
 
-        if 'parent_id' in vals:
-            if vals['parent_id']:
-                new_res = self.env['res.partner'].browse(vals['parent_id'])
-                for rec in self.employee_dependants:
-                    rec.related_company = new_res.id
-                    rec.sponsor = new_res.id
-                self.message_post(
-                    body="Related contact changed from '" + self.parent_id.name + "' to '" + new_res.name + "'")
+        if vals.get('parent_id', False):
+            new_res = self.env['res.partner'].browse(vals['parent_id'])
+            for rec in self.employee_dependants:
+                rec.related_company = new_res.id
+                rec.sponsor = new_res.sponsor.id
+            self.message_post(
+                body="Related contact changed from '" + self.parent_id.name + "' to '" + new_res.name + "'")
 
         active_before = self.active
         res = super(ContactCustom, self).write(vals)

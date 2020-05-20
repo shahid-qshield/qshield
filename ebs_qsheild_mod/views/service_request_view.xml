@@ -102,7 +102,7 @@
                                 <field name="email"/>
                                 <field name="is_miscellaneous"/>
                                 <field name="cost_center" attrs="{'readonly':[('status','=','complete')]}"/>
-                                <field name="partner_document_count"/>
+                                <field name="partner_document_count" invisible="True"/>
                             </group>
                             <group name="group_right">
                                 <field name="is_started" invisible="True"/>

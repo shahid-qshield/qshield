@@ -166,10 +166,10 @@
                 <xpath expr="//search//searchpanel//field[@name='res_model']" position="replace">
 
                 </xpath>
-                <xpath expr="//search//searchpanel//field[@name='tag_ids']" position="before">
-                    <field name="document_type_id"/>
-                    <field name="status"/>
-                </xpath>
+<!--                <xpath expr="//search//searchpanel//field[@name='tag_ids']" position="before">-->
+<!--                    <field name="document_type_id"/>-->
+<!--                    <field name="status"/>-->
+<!--                </xpath>-->
 
             </field>
         </record>
