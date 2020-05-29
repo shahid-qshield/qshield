@@ -36,7 +36,8 @@
                                 'default_contact_id':partner_id,
                                 'upload_service_contact':True,
                                 'upload_contact':True,
-                                'default_service_request_id':id
+                                'default_service_request_id':id,
+                                'default_issue_date':end_date
                                 }"
                              />
 
