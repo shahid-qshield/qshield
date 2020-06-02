@@ -51,7 +51,16 @@
             action="service_request_window"
             parent="qshield_services"
             sequence="5"
-    /> <menuitem
+    />
+    <menuitem
+            id="service_expenses_view_menu"
+            name="Services Expenses"
+            action="service_expenses_window"
+            parent="qshield_services"
+            sequence="7"
+    />
+
+    <menuitem
             id="service_request__workflow_view_menu"
             name="Service Requests Tasks"
             action="service_request_workflow_window"
