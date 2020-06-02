@@ -386,10 +386,10 @@ class ServiceRequest(models.Model):
 
     def request_complete(self):
         complete = True
-        for flow in self.service_flow_ids:
-            if flow.status == 'pending' or flow.status == 'progress' or flow.status == 'hold':
-                complete = False
-                break
+        # for flow in self.service_flow_ids:
+        #     if flow.status == 'pending' or flow.status == 'progress' or flow.status == 'hold':
+        #         complete = False
+        #         break
         if complete:
             self.end_date = datetime.today()
             if self.start_date and self.end_date:
@@ -444,6 +444,33 @@ class ServiceRequestExpenses(models.Model):
         comodel_name='ebs_mod.service.request',
         string='Service Request',
         required=True)
+
+    related_company_ro = fields.Many2one(
+        comodel_name='res.partner',
+        string='Related Company',
+        related="service_request_id.related_company_ro"
+    )
+    contract_id = fields.Many2one(
+        comodel_name='ebs_mod.contracts',
+        string='Contract',
+        related="service_request_id.contract_id"
+    )
+
+    partner_id = fields.Many2one(
+        comodel_name='res.partner',
+        string='Contact',
+        related="service_request_id.partner_id"
+    )
+
+    partner_type = fields.Selection(
+        string='Contact Type',
+        selection=[
+            ('company', 'Company'),
+            ('emp', 'Employee'),
+            ('visitor', 'Visitor'),
+            ('child', 'Dependent')],
+        related="partner_id.person_type"
+    )
 
     desc = fields.Text(
         string="Description",
