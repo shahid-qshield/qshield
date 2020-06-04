@@ -34,7 +34,7 @@
                     <field name="related_company"/>
                     <field name="related_contact"/>
                     <field name="sponsor"/>
-
+                    <field name="date_stop_renew"/>
                     <field name="service_id"/>
                 </xpath>
                 <xpath expr="//field[@name='type']" position="before">
@@ -60,7 +60,8 @@
                     <field name="person_type" optional="hide"/>
                     <field name="related_company" optional="hide"/>
                     <field name="related_contact" optional="hide"/>
-                    <field name="sponsor"  optional="hide"/>
+                    <field name="sponsor" optional="hide"/>
+                    <field name="date_stop_renew" optional="hide"/>
                     <field name="service_id" optional="hide"/>
                 </xpath>
                 <xpath expr="//tree//field[@name='owner_id']" position="replace">
@@ -159,17 +160,18 @@
                             context="{'group_by':'document_type_id'}"/>
                     <filter name="status_group" string="Status"
                             context="{'group_by':'status'}"/>
-                    <filter name="group_related_company" string="Related Company" context="{'group_by': 'related_company'}"/>
-                     <filter name="group_person_type" string="Contact Type" context="{'group_by': 'person_type'}"/>
-                     <filter name="group_sponsor" string="Sponsor" context="{'group_by': 'sponsor'}"/>
+                    <filter name="group_related_company" string="Related Company"
+                            context="{'group_by': 'related_company'}"/>
+                    <filter name="group_person_type" string="Contact Type" context="{'group_by': 'person_type'}"/>
+                    <filter name="group_sponsor" string="Sponsor" context="{'group_by': 'sponsor'}"/>
                 </xpath>
                 <xpath expr="//search//searchpanel//field[@name='res_model']" position="replace">
 
                 </xpath>
-<!--                <xpath expr="//search//searchpanel//field[@name='tag_ids']" position="before">-->
-<!--                    <field name="document_type_id"/>-->
-<!--                    <field name="status"/>-->
-<!--                </xpath>-->
+                <!--                <xpath expr="//search//searchpanel//field[@name='tag_ids']" position="before">-->
+                <!--                    <field name="document_type_id"/>-->
+                <!--                    <field name="status"/>-->
+                <!--                </xpath>-->
 
             </field>
         </record>

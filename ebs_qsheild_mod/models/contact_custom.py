@@ -13,7 +13,9 @@ class ContactCustom(models.Model):
     ]
 
     parent_id = fields.Many2one('res.partner', string='Related Contact', index=True)
-
+    date_stop_renew = fields.Date(
+        string='Do Not Renew After',
+        required=False)
     is_miscellaneous = fields.Boolean(
         string='Is Miscellaneous',
         required=False, default=False)
