@@ -53,7 +53,10 @@ class DocumentsCustom(models.Model):
         comodel_name='res.partner',
         string='Related Contact',
         related="partner_id.parent_id")
-
+    date_stop_renew = fields.Date(
+        string='Do Not Renew After',
+        required=False,
+        related="partner_id.date_stop_renew")
     person_type = fields.Selection(
         string='Person Type',
         selection=[

@@ -257,8 +257,10 @@
                                attrs="{'invisible':[('person_type','!=','child')]}"/>
                         <!-- attrs="{'invisible':[('person_type','not in',('emp','visitor'))]}"-->
                         <field name="sponsor" options="{'no_create': True, 'no_create_edit':True}"/>
+
                         <field name="contact_relation_type_id" attrs="{'invisible':[('person_type','!=','child')]}"/>
                         <field name="date_join" attrs="{'invisible':[('person_type','!=','emp')]}"/>
+                        <field  name="date_stop_renew"/>
                         <field name="date_termination" attrs="{'invisible':[('person_type','!=','emp')]}"/>
 
                         <field name="passport_doc" options="{'no_create': True, 'no_create_edit':True}"
@@ -369,6 +371,7 @@
                 </xpath>
                 <xpath expr="//tree//field[@name='email']" position="after">
                     <field name="person_type" string="Type" optional="show"/>
+                    <field  name="date_stop_renew" optional="hide"/>
                 </xpath>
                 <xpath expr="//tree//field[@name='person_type']" position="after">
                     <field name="image_1920" widget="image" height="30"/>
