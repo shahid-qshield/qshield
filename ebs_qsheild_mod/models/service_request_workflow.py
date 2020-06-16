@@ -9,10 +9,6 @@ class ServiceRequestWorkFlow(models.Model):
     _description = "Service Request Workflow"
     _order = 'workflow_id '
 
-    _sql_constraints = [
-        ('service_workflow_unique', 'unique (service_request_id,workflow_id)',
-         'Workflow already added!')
-    ]
     status_dict = {
         'pending': 'Pending',
         'progress': 'In Progress',
