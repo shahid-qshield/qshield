@@ -124,7 +124,9 @@ class ServiceRequest(models.Model):
         readonly=True,
         related="partner_id.is_miscellaneous"
     )
-
+    active = fields.Boolean(
+        string='Active', default=True,
+        required=False)
     email = fields.Char(
         string='Email',
         required=False,
