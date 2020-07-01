@@ -13,5 +13,7 @@ from . import tickets_custom
 from . import service_workflow_config
 from . import contact_payment
 from . import service_request_workflow
+from . import payment_transaction
+
 
 
