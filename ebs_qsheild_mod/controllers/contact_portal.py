@@ -143,11 +143,11 @@ class ContactPortal(CustomerPortal):
 
             amount = str(amount1) + str(amount2)
             host_url = request.httprequest.host_url
-            w = re.search("localhost", host_url)
-            if not x:
-                return_url = host_url + "my/payments/return_url"
-            else:
-                return_url = "http://jaafarkhansa.com/demo/gateway/index.php"
+            # w = re.search("localhost", host_url)
+            # if not x: 
+            return_url = host_url + "my/payments/return_url"
+            # else:
+            #     return_url = "http://jaafarkhansa.com/demo/gateway/index.php"
             transaction = env['ebs_mod.payment.transaction'].sudo().create(
                 {
                     "partner_id": request.env.user.partner_id.id,

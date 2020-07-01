@@ -167,7 +167,7 @@
                         <div class="row">
                             <div class="col-sm-offset-2 col-sm-10">
                                 <div id="alert_box" class="alert alert-danger alert-dismissible" style="display:none">
-                                    <a href="#" class="close" data-dismiss="alert" aria-label="close">x</a>
+
                                     <span id="alert_msg">err</span>
                                 </div>
                             </div>
@@ -178,7 +178,7 @@
                             //data:{d:JSON.stringify(json)}
                             document.getElementById("submit_btn").addEventListener("click", submit_payment_form);
                             function submit_payment_form() {
-
+                            $("#alert_box").hide();
                             var amount=$('#amount1').val()+$('#amount2').val();
                             $('#vpc_Amount').val(amount);
                             var url='/my/payments/secure_token';
