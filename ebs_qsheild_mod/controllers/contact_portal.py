@@ -5,6 +5,13 @@ from odoo.tools.translate import _
 from odoo.addons.portal.controllers.portal import pager as portal_pager, CustomerPortal
 from odoo.addons.portal.controllers.mail import _message_post_helper
 from odoo.osv.expression import OR
+from datetime import datetime
+import binascii
+import hmac
+import hashlib
+import json
+import re
+import array
 
 
 class ContactPortal(CustomerPortal):
@@ -87,6 +94,93 @@ class ContactPortal(CustomerPortal):
         }
 
         return request.render("ebs_qsheild_mod.portal_contact_payment_form", values)
+
+    @http.route(['/my/payments/return_url'], type='http', auth='user', method=['GET'], website=True)
+    def payments_return_url(self, **kw):
+        amount = request.params['vpc_Amount']
+        order_info = request.params['vpc_OrderInfo']
+        message = request.params['vpc_Message']
+        trx_response_code = request.params.get('vpc_ReceiptNo', False)
+        acq_response_code = request.params.get('vpc_AcqResponseCode', False)
+        transaction_no = request.params.get('vpc_TransactionNo', False)
+        batch_no = request.params.get('vpc_BatchNo', False)
+        authorize_id = request.params.get('vpc_AuthorizeId', False)
+
+        transaction = request.env['ebs_mod.payment.transaction'].browse(int(order_info))
+        transaction.sudo().write({
+            'trx_response_code': trx_response_code,
+            'acq_response_code': acq_response_code,
+            'message': message,
+            'transaction_no': transaction_no,
+            'batch_no': batch_no,
+            'authorize_id': authorize_id,
+        })
+
+        if trx_response_code == '0':
+            request.env['ebs_mod.contact.payment'].create({
+                "transaction_id": transaction.id
+            })
+
+        return request.redirect('/my/payments')
+
+    @http.route(['/my/payments/secure_token'], type='http', auth='user', method=['GET'], website=True)
+    def payment_secure_token(self, **kw):
+        with_token = False
+        if request.params.get('token', False):
+            if len(request.params['token']) == 51:
+                with_token = True
+        if with_token:
+            env = request.env
+            amount1 = request.params['amount1']
+            amount2 = request.params['amount2']
+            x = re.search("^[0 9]{2}$", amount2)
+            if not x:
+                return json.dumps({'status': "error", 'msg': _("Second field must be 2 digits only")})
+
+            y = re.search("^\d+$", amount1)
+            if not y:
+                return json.dumps({'status': "error", 'msg': _("First field must be digits only")})
+
+            amount = str(amount1) + str(amount2)
+            host_url = request.httprequest.host_url
+            w = re.search("localhost", host_url)
+            if not x:
+                return_url = host_url + "my/payments/return_url"
+            else:
+                return_url = "http://jaafarkhansa.com/demo/gateway/index.php"
+            transaction = env['ebs_mod.payment.transaction'].sudo().create(
+                {
+                    "partner_id": request.env.user.partner_id.id,
+                    "currency_id": env['res.currency'].search([('name', '=', 'QAR')], limit=1).id,
+                    "amount": (float(amount) / 100.0),
+                    "date": datetime.today()
+                }
+            )
+
+            api_secret = "AB563B8F4E9DB457F52E3D77F214C977"
+            message = "vpc_AccessCode=E8AEDBAA"
+            message += "&vpc_Amount=" + amount
+            message += "&vpc_Command=pay"
+            message += "&vpc_Currency=QAR"
+            message += "&vpc_Locale=en"
+            message += "&vpc_MerchTxnRef=txn1"
+            message += "&vpc_Merchant=DB91363"
+            message += "&vpc_OrderInfo=" + str(transaction.id)
+            message += "&vpc_ReturnURL=" + return_url
+            message += "&vpc_Version=1"
+            signature = hmac.new(binascii.unhexlify(bytes(api_secret, 'UTF-8')),
+                                 msg=message.encode("UTF-8"),
+                                 digestmod=hashlib.sha256).hexdigest().upper()
+
+            return json.dumps({
+                'status': "success",
+                'data': {'key': signature,
+                         'order_id': transaction.id,
+                         'return_url': return_url
+                         }
+            })
+        else:
+            return json.dumps({'status': "error", 'msg': _("Token Error")})
 
     @http.route(['/my/payments/insert'], type='http', auth='user', website=True)
     def contact_payment_insert(self):

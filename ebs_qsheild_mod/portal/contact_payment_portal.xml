@@ -79,47 +79,147 @@
         <template id="portal_contact_payment_form" name="contact payment form">
 
             <t t-call="portal.portal_layout">
-<!--                <t t-set="breadcrumbs_searchbar" t-value="True"/>-->
+                <!--                <t t-set="breadcrumbs_searchbar" t-value="True"/>-->
 
-<!--                <t t-call="portal.portal_searchbar">-->
-<!--                    <t t-set="title">Insert Payment</t>-->
-<!--                </t>-->
+                <!--                <t t-call="portal.portal_searchbar">-->
+                <!--                    <t t-set="title">Insert Payment</t>-->
+                <!--                </t>-->
                 <div class="row">
                     <div class=" col-sm-8">
-                        <form class="form-horizontal" action="/my/payments/insert" method="post">
-                            <input type="hidden" name="csrf_token" t-att-value="request.csrf_token()"/>
-                            <div class="form-group">
-                                <label class="control-label col-sm-2" for="amount">Amount:</label>
-                                <div class="col-sm-10">
-                                    <input type="number" class="form-control" id="amount" name="amount"
-                                           required="required"/>
-                                </div>
-                            </div>
-                            <div class="form-group">
-                                <label class="control-label col-sm-2" for="currency">Currency:</label>
-                                <div class="col-sm-10">
-                                    <select class="form-control" name="currency" id="currency">
-                                        <option t-att-value="currency.id" selected="selected">
-                                            <t t-esc="currency.name"/>
-                                        </option>
+                        <input type="hidden" id="csrf_token" name="csrf_token" t-att-value="request.csrf_token()"/>
+                        <br/>
+                        <form class="form-horizontal" action="https://migs.mastercard.com.au/vpcpay" method="post"
+                              id="payment_form">
 
-                                    </select>
+
+                            <input type="hidden" name="vpc_AccessCode" value="E8AEDBAA"/>
+
+                            <!--                            <div class="row"> -->
+                            <!--                                <div-->
+                            <!--                            </div>-->
+                            <div class="form-group">
+                                <div class="col-sm-10">
+                                    <table>
+                                        <tr>
+                                            <td>
+                                                <input type="text" class="form-control" id="amount1" name="amount1"
+                                                       required="required" pattern="\d+" title="Must be digits only"/>
+                                            </td>
+                                            <td>
+                                                <span>.</span>
+                                            </td>
+                                            <td>
+                                                <input type="text" class="form-control" id="amount2" name="amount2"
+                                                       required="required" pattern="^\d{2}&amp;"
+                                                       title="Must be 2 digits only" value="00"/>
+                                            </td>
+
+                                        </tr>
+                                    </table>
 
                                 </div>
+
+
                             </div>
+
                             <div class="form-group">
-                                <label class="control-label col-sm-2" for="desc">Description:</label>
                                 <div class="col-sm-10">
-                                    <input type="text" class="form-control" id="desc" name="desc"/>
+                                    <label>Currency: QAR</label>
                                 </div>
+
+
                             </div>
+
+                            <input type="hidden" id="vpc_Amount" name="vpc_Amount"/>
+                            <input type="hidden" name="vpc_Command" value="pay"/>
+                            <input type="hidden" name="vpc_Currency" value="QAR"/>
+                            <input type="hidden" name="vpc_Locale" value="en"/>
+                            <input type="hidden" name="vpc_MerchTxnRef" value="txn1"/>
+                            <input type="hidden" name="vpc_Merchant" value="DB91363"/>
+                            <input type="hidden" id="vpc_OrderInfo" name="vpc_OrderInfo" value="qshield_payment"/>
+                            <input type="hidden" name="vpc_ReturnURL" id="vpc_ReturnURL" value=""/>
+                            <input type="hidden" name="vpc_Version" value="1"/>
+                            <input type="hidden" id="vpc_SecureHash" name="vpc_SecureHash"
+                                   value=""/>
+                            <input type="hidden" name="vpc_SecureHashType" value="SHA256"/>
+
+
+                            <!--                            <div class="form-group">-->
+                            <!--                                <label class="control-label col-sm-2" for="currency">Currency:</label>-->
+                            <!--                                <div class="col-sm-10">-->
+                            <!--                                    <select class="form-control" name="currency" id="currency">-->
+                            <!--                                        <option t-att-value="currency.id" selected="selected">-->
+                            <!--                                            <t t-esc="currency.name"/>-->
+                            <!--                                        </option>-->
+
+                            <!--                                    </select>-->
+
+                            <!--                                </div>-->
+                            <!--                            </div>-->
+
                             <div class="form-group">
                                 <div class="col-sm-offset-2 col-sm-10">
-                                    <button type="submit" class="btn btn-info">Submit</button>
+                                    <button type="button" id="submit_btn" class="btn btn-info">Submit</button>
                                 </div>
                             </div>
 
                         </form>
+                        <div class="row">
+                            <div class="col-sm-offset-2 col-sm-10">
+                                <div id="alert_box" class="alert alert-danger alert-dismissible" style="display:none">
+                                    <a href="#" class="close" data-dismiss="alert" aria-label="close">x</a>
+                                    <span id="alert_msg">err</span>
+                                </div>
+                            </div>
+
+                        </div>
+                        <script>
+                            //contentType: "application/json; charset=utf-8",
+                            //data:{d:JSON.stringify(json)}
+                            document.getElementById("submit_btn").addEventListener("click", submit_payment_form);
+                            function submit_payment_form() {
+
+                            var amount=$('#amount1').val()+$('#amount2').val();
+                            $('#vpc_Amount').val(amount);
+                            var url='/my/payments/secure_token';
+
+
+                            url += '?amount1='+$('#amount1').val();
+                            url += '&amp;amount2='+$('#amount2').val();
+                            url += '&amp;token='+$('#csrf_token').val();
+                            $.ajax( {
+                            url:url,
+                            cash:false,
+                            type:"get",
+
+                            dataType:"JSON"
+                            }
+                            )
+                            .done(function(result) {
+                            if(result.status=='error')
+                            {
+                            $("#alert_msg").html(result.msg);
+                            $("#alert_box").show();
+                            }
+                            else
+                            {
+                            $("#vpc_SecureHash").val(result.data.key);
+                            $("#vpc_OrderInfo").val(result.data.order_id);
+                            $("#vpc_ReturnURL").val(result.data.return_url);
+                            document.getElementById("payment_form").submit();
+                            }
+
+                            })
+                            .fail(function() {
+                            $("#alert_msg").html('Connection Error, Please try again.');
+                            $("#alert_box").show();
+                            });
+
+
+                            }
+
+                        </script>
+
                     </div>
                 </div>
             </t>

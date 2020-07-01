@@ -7,10 +7,15 @@ class ContactPayment(models.Model):
     _name = 'ebs_mod.contact.payment'
     _description = "contact payment"
 
+    transaction_id = fields.Many2one(
+        comodel_name='ebs_mod.payment.transaction',
+        string='Transaction',
+        required=False)
+
     partner_id = fields.Many2one(
         comodel_name='res.partner',
         string='Contact',
-        required=True)
+        related='transaction_id.partner_id')
     partner_type = fields.Selection(
         string='Contact Type', store=True,
         selection=[
@@ -23,11 +28,11 @@ class ContactPayment(models.Model):
     currency_id = fields.Many2one(
         comodel_name='res.currency',
         string='Currency',
-        required=True)
+        related='transaction_id.currency_id')
 
     amount = fields.Float(
         string='Amount',
-        required=True, default=0.0)
+        related='transaction_id.amount')
 
     desc = fields.Text(
         string="Description",
