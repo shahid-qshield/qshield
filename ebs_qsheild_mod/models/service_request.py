@@ -379,11 +379,23 @@ class ServiceRequest(models.Model):
         return count
 
     def request_cancel(self):
+        for flow in self.service_flow_ids:
+            flow.status = 'cancel'
+        self.end_date = datetime.today()
+        if self.start_date and self.end_date:
+            self.sla_days = self.get_date_difference(self.start_date.date(), self.end_date.date(), 1)
+        else:
+            self.sla_days = 0
         self.status = 'cancel'
 
     def request_reject(self):
         for flow in self.service_flow_ids:
             flow.status = 'reject'
+        self.end_date = datetime.today()
+        if self.start_date and self.end_date:
+            self.sla_days = self.get_date_difference(self.start_date.date(), self.end_date.date(), 1)
+        else:
+            self.sla_days = 0
         self.status = 'reject'
 
     def request_complete(self):
