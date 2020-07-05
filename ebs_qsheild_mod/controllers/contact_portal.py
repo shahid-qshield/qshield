@@ -144,7 +144,7 @@ class ContactPortal(CustomerPortal):
             amount = str(amount1) + str(amount2)
             host_url = request.httprequest.host_url
             # w = re.search("localhost", host_url)
-            # if not x: 
+            # if not x:
             return_url = host_url + "my/payments/return_url"
             # else:
             #     return_url = "http://jaafarkhansa.com/demo/gateway/index.php"
