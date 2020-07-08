@@ -11,6 +11,7 @@ import hmac
 import hashlib
 import json
 import re
+import uuid
 import array
 
 
@@ -100,26 +101,40 @@ class ContactPortal(CustomerPortal):
         amount = request.params['vpc_Amount']
         order_info = request.params['vpc_OrderInfo']
         message = request.params['vpc_Message']
-        trx_response_code = request.params.get('vpc_ReceiptNo', False)
+        trx_response_code = request.params.get('vpc_TxnResponseCode', False)
+        vpc_receipt_no = request.params.get('vpc_ReceiptNo', False)
         acq_response_code = request.params.get('vpc_AcqResponseCode', False)
         transaction_no = request.params.get('vpc_TransactionNo', False)
         batch_no = request.params.get('vpc_BatchNo', False)
         authorize_id = request.params.get('vpc_AuthorizeId', False)
 
-        transaction = request.env['ebs_mod.payment.transaction'].browse(int(order_info))
-        transaction.sudo().write({
-            'trx_response_code': trx_response_code,
-            'acq_response_code': acq_response_code,
-            'message': message,
-            'transaction_no': transaction_no,
-            'batch_no': batch_no,
-            'authorize_id': authorize_id,
-        })
+        transaction = request.env['ebs_mod.payment.transaction'].search([('order_info', '=', order_info)],
+                                                                        limit=1)
+        vals = {
+            'message': message
+        }
+        if trx_response_code:
+            vals['trx_response_code_full'] = trx_response_code
+            vals['trx_response_code'] = trx_response_code[0]
 
-        if trx_response_code == '0':
-            request.env['ebs_mod.contact.payment'].create({
-                "transaction_id": transaction.id
-            })
+        if acq_response_code:
+            vals['acq_response_code'] = acq_response_code
+        if transaction_no:
+            vals['transaction_no'] = transaction_no
+        if vpc_receipt_no:
+            vals['vpc_receipt_no'] = vpc_receipt_no
+        if batch_no:
+            vals['batch_no'] = batch_no
+        if authorize_id:
+            vals['authorize_id'] = authorize_id
+
+        transaction.sudo().write(vals)
+
+        if trx_response_code:
+            if trx_response_code[0] == "0":
+                request.env['ebs_mod.contact.payment'].create({
+                    "transaction_id": transaction.id
+                })
 
         return request.redirect('/my/payments')
 
@@ -165,7 +180,7 @@ class ContactPortal(CustomerPortal):
             message += "&vpc_Locale=en"
             message += "&vpc_MerchTxnRef=txn1"
             message += "&vpc_Merchant=DB91363"
-            message += "&vpc_OrderInfo=" + str(transaction.id)
+            message += "&vpc_OrderInfo=" + transaction.order_info
             message += "&vpc_ReturnURL=" + return_url
             message += "&vpc_Version=1"
             signature = hmac.new(binascii.unhexlify(bytes(api_secret, 'UTF-8')),
@@ -175,7 +190,7 @@ class ContactPortal(CustomerPortal):
             return json.dumps({
                 'status': "success",
                 'data': {'key': signature,
-                         'order_id': transaction.id,
+                         'order_id': transaction.order_info,
                          'return_url': return_url
                          }
             })

@@ -1,6 +1,7 @@
 # -*- coding: utf-8 -*-
 
 from odoo import models, fields, api, _
+import uuid
 
 
 class PaymentTransaction(models.Model):
@@ -39,6 +40,9 @@ class PaymentTransaction(models.Model):
         string='Message',
         required=False)
 
+    trx_response_code_full = fields.Char(
+        string='Response Code Full',
+        required=False)
     trx_response_code = fields.Selection(
         string='Transaction Response',
         selection=[('0', 'Success'),
@@ -50,9 +54,33 @@ class PaymentTransaction(models.Model):
     transaction_no = fields.Char(
         string='Transaction Number',
         required=False)
+    vpc_receipt_no = fields.Char(
+        string='Receipt Number',
+        required=False)
     batch_no = fields.Char(
         string='Batch Number',
         required=False)
     authorize_id = fields.Char(
         string='Authorized ID',
         required=False)
+    order_info = fields.Char(
+        string='Order Info',
+        required=True,
+        default=lambda x: str(uuid.uuid1()).replace("-", "").upper()
+    )
+
+    service_id = fields.Many2one(
+        comodel_name='ebs_mod.service.request',
+        string='Service',
+        required=False)
+
+    def complete_payment(self):
+        self.trx_response_code = "0"
+        self.message = "Transaction Completed Manually"
+        self.env['ebs_mod.contact.payment'].create({
+            "transaction_id": self.id
+        })
+        return {
+            'type': 'ir.actions.client',
+            'tag': 'reload',
+        }
