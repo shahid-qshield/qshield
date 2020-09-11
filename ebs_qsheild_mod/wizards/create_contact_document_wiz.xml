@@ -2,7 +2,7 @@
 <odoo>
     <data>
 
-         <record id="create_contact_document_view_form" model="ir.ui.view">
+        <record id="create_contact_document_view_form" model="ir.ui.view">
             <field name="name">create.contact.document.form</field>
             <field name="model">ebs_mod.contact.document</field>
             <field name="arch" type="xml">
@@ -15,8 +15,25 @@
                         <field name="issue_date"/>
                         <field name="expiry_date"/>
                         <field name="tags" widget="many2many_tags"/>
-                        <field name="desc" />
+                        <field name="desc"/>
                         <field name="attachment_ids" widget="many2many_binary"/>
+                        <field name="binary"/>
+
+                        <input class="oe_form_binary_file" type="file" onchange="file_selected(event)" name="test" id="file_selector"></input>
+                        <script>
+                            function file_selected(event)
+                            {
+                            console.log("here");
+                            alert(this.files[0].mozFullPath);
+                           /* var reader = new FileReader();
+                            reader.readAsDataURL(event.srcElement.files[0]);
+                            var me = this;
+                            reader.onload = function () {
+                            var fileContent = reader.result;
+                            console.log(reader);
+                            }*/
+                            }
+                        </script>
                     </group>
                     <footer>
                         <button name="create_document" string="Submit" type="object" class="btn-primary"/>

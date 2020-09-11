@@ -1,6 +1,6 @@
 from odoo import models, fields, api, _
 from odoo.exceptions import ValidationError
-from datetime import datetime, timedelta
+from datetime import datetime, timedelta, date
 
 
 class ServiceRequest(models.Model):
@@ -90,6 +90,14 @@ class ServiceRequest(models.Model):
         string='Date',
         required=True
     )
+
+    @api.onchange('date')
+    def _date_on_change(self):
+        if self.date:
+            if self.env.company.disable_future_date_service:
+                if self.date > date.today():
+                    self.date = date.today()
+
     contract_id = fields.Many2one(
         comodel_name='ebs_mod.contracts',
         string='Contract',

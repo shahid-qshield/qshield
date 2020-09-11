@@ -33,6 +33,9 @@ class CreateContactDocument(models.TransientModel):
                                       column2="attachment_id",
                                       string="File"
                                       )
+
+    binary = fields.Binary(string='Icon')
+
     desc = fields.Text(
         string="Description",
         required=False)
