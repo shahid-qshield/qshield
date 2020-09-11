@@ -53,6 +53,7 @@
         'views/contact_payment_view.xml',
         'views/service_expenses_view.xml',
         'views/contact_payment_transaction_view.xml',
+        'views/setting_view.xml',
         'views/menus.xml',
         # 'views/documents_assets.xml',
         'portal/contact_payment_portal.xml'
