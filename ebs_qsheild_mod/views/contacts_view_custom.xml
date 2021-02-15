@@ -65,7 +65,8 @@
                         <field name="service_ids"
                                context="{
                                 'invisible_contact':True,
-                                'default_partner_id':id
+                                'default_partner_id':id,
+                                'form_view_ref':'ebs_qsheild_mod.service_request_form_2'
                                 }"
                         />
                     </page>
