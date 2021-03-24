@@ -56,6 +56,7 @@
         'views/setting_view.xml',
         'views/menus.xml',
         # 'views/documents_assets.xml',
-        'portal/contact_payment_portal.xml'
+        'portal/contact_payment_portal.xml',
+        'demo/demo.xml'
     ]
 }
