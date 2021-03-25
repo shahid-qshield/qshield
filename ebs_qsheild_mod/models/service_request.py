@@ -199,6 +199,38 @@ class ServiceRequest(models.Model):
         required=False,
         compute="_compute_service_document_count")
 
+    status_sla = fields.Selection([('normal', 'Normal'),
+                               ('exceeded', 'Exceeded'), ], default='normal', string=' SLA Status')
+
+    progress_date = fields.Date('Progress Date')
+
+    def compute_exceeded_requests(self):
+        recordset = self.search([('status', '=', 'progress'), ('status_sla', '=', 'normal')])
+        for record in recordset:
+            if record.sla_max:
+                max_days = timedelta(days=record.sla_max)
+                today = fields.Date.today()
+                if record.progress_date:
+                    if (today + max_days) > record.progress_date:
+                        record.write({'status_sla': 'exceeded'})
+                        service_group = self.env.ref('ebs_qsheild_mod.group_service_manager')
+                        service_users = self.env['res.users'].search([('groups_id', 'in', [service_group.id])])
+                        notification_ids = []
+                        for user in service_users:
+                            notification_ids.append((0, 0, {
+                                'res_partner_id': user.partner_id.id,
+                                # 'group_public_id': service_group.id,
+                                'notification_type': 'inbox'}))
+                        channels = self.env['mail.channel'].search(
+                            [('id', '=', self.env.ref('ebs_qsheild_mod.channel_service_manager_group').id)])
+                        if channels:
+                            channels.message_post(body='This Service Request %s has been Exceeded!' %(record.name), message_type='notification',
+                                              subtype='mail.mt_comment', author_id=self.env.user.partner_id.id,
+                                              notification_ids=notification_ids)
+
+
+
+
     @api.model
     def create(self, vals):
         vals['related_company_ro'] = vals['related_company']
@@ -364,6 +396,7 @@ class ServiceRequest(models.Model):
         self.code = code
         self.name = comp_ref + "-" + service_red + "-" + month + year + "-" + code
         self.status = 'progress'
+        self.progress_date = fields.Date.today()
 
         # if self.flow_type == 'o':
         #     flow_list = self.service_type_id.workflow_online_ids

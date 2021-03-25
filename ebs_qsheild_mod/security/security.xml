@@ -18,8 +18,7 @@
     </record>
 
 
-
-     <record model="ir.module.category" id="module_category_qshield_contact">
+    <record model="ir.module.category" id="module_category_qshield_contact">
         <field name="name">QShield Contact</field>
         <field name="description">Category for QShield</field>
         <field name="sequence">45</field>
@@ -36,7 +35,7 @@
     </record>
 
 
-     <record model="ir.module.category" id="module_category_qshield_accountant">
+    <record model="ir.module.category" id="module_category_qshield_accountant">
         <field name="name">QShield Accountant</field>
         <field name="description">Category for QShield</field>
         <field name="sequence">55</field>
@@ -67,5 +66,11 @@
         <field name="name">User</field>
         <field name="category_id" ref="module_category_qshield_payment_gateway"/>
     </record>
+
+    <record id="group_service_manager" model="res.groups">
+        <field name="name">Service Manager</field>
+        <field name="category_id" ref="base.module_category_hidden"/>
+    </record>
+
 
 </odoo>
