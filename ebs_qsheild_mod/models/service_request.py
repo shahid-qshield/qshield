@@ -219,7 +219,7 @@ class ServiceRequest(models.Model):
                         for user in service_users:
                             notification_ids.append((0, 0, {
                                 'res_partner_id': user.partner_id.id,
-                                'group_public_id': service_group.id,
+                                # 'group_public_id': service_group.id,
                                 'notification_type': 'inbox'}))
                         channels = self.env['mail.channel'].search(
                             [('id', '=', self.env.ref('ebs_qsheild_mod.channel_service_manager_group').id)])
@@ -229,15 +229,6 @@ class ServiceRequest(models.Model):
                                               notification_ids=notification_ids)
 
 
-
-    # def button_validate(self):
-    #     res = super(StockPicking, self).button_validate()
-        # create condition only receipt document
-        # if self.picking_ytpe_id.code == 'incoming':
-        #     # define purchase user by group
-        #     purchase_group = self.env.ref('purchase.group_purchase_user')
-        #     purchase_user = self.env['res.users].search([('groups_id', '=', purchase_group )])
-        #
 
 
     @api.model
