@@ -127,7 +127,7 @@
                                 />
 
                                 <field name="status_sla" readonly="1"/>
-                                <field name="progress_date" />
+                                <field name="progress_date" readonly="1"/>
                                 <field name="exceeded_date" invisible="1"/>
                                 <field name="sla_min"/>
                                 <field name="sla_max"/>
