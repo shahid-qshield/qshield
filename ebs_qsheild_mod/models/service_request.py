@@ -40,11 +40,13 @@ class ServiceRequest(models.Model):
 
     sla_min = fields.Integer(
         string='SLA - Minimum Days',
+        store=True,
         required=False,
         related="service_type_id.sla_min", readonly=True)
 
     sla_max = fields.Integer(
         string='SLA - Maximum Days',
+        store=True,
         required=False,
         related="service_type_id.sla_max", readonly=True
     )
@@ -200,7 +202,7 @@ class ServiceRequest(models.Model):
         compute="_compute_service_document_count")
 
     status_sla = fields.Selection([('normal', 'Normal'),
-                               ('exceeded', 'Exceeded'), ], default='normal', string=' SLA Status')
+                                   ('exceeded', 'Exceeded'), ], default='normal', string=' SLA Status')
 
     progress_date = fields.Date('Progress Date')
 
