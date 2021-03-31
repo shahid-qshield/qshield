@@ -129,6 +129,7 @@
                                 <field name="status_sla" readonly="1"/>
                                 <field name="progress_date" readonly="1"/>
                                 <field name="exceeded_date" invisible="1"/>
+                                <field name="exceeded_days" attrs="{'invisible':[('status_sla','=','normal')]}"/>
                                 <field name="sla_min"/>
                                 <field name="sla_max"/>
                                 <field name="start_date" attrs="{'invisible':[('is_started','!=',True)]}"/>
