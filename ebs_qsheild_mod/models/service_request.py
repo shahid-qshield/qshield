@@ -436,7 +436,7 @@ class ServiceRequest(models.Model):
             flow.status = 'cancel'
         self.end_date = datetime.today()
         if self.start_date and self.end_date:
-            self.sla_days = self.get_date_difference(self.start_date.date(), self.end_date.date(), 1)
+            self.sla_days = self.get_date_difference(self.progress_date, self.end_date.date(), 1)
         else:
             self.sla_days = 0
         self.status = 'cancel'
@@ -445,8 +445,8 @@ class ServiceRequest(models.Model):
         for flow in self.service_flow_ids:
             flow.status = 'reject'
         self.end_date = datetime.today()
-        if self.start_date and self.end_date:
-            self.sla_days = self.get_date_difference(self.start_date.date(), self.end_date.date(), 1)
+        if self.progress_date and self.end_date:
+            self.sla_days = self.get_date_difference(self.progress_date, self.end_date.date(), 1)
         else:
             self.sla_days = 0
         self.status = 'reject'
