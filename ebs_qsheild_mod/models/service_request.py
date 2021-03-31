@@ -205,6 +205,16 @@ class ServiceRequest(models.Model):
                                    ('exceeded', 'Exceeded'), ], default='normal', string=' SLA Status')
 
     progress_date = fields.Date('Progress Date')
+    exceeded_date = fields.Date('Exceeded Date')
+    exceeded_days = fields.Integer('Exceeded Days', compute="_compute_exceeded_days", store=-True)
+
+    @api.depends('status', 'status_sla', 'exceeded_date')
+    def _compute_exceeded_days(self):
+        for rec in self:
+            if rec.status == 'progress':
+                if rec.status_sla == 'exceeded':
+                    if rec.exceeded_date:
+                        rec.exceeded_days = rec.exceeded_date.day - rec.progress_date.day
 
     def compute_exceeded_requests(self):
         recordset = self.search([('status', '=', 'progress'), ('status_sla', '=', 'normal')])
@@ -215,6 +225,7 @@ class ServiceRequest(models.Model):
                 if record.progress_date:
                     if (today + max_days) > record.progress_date:
                         record.write({'status_sla': 'exceeded'})
+                        record.exceeded_date = fields.Date.today()
                         service_group = self.env.ref('ebs_qsheild_mod.group_service_manager')
                         service_users = self.env['res.users'].search([('groups_id', 'in', [service_group.id])])
                         notification_ids = []
@@ -226,12 +237,11 @@ class ServiceRequest(models.Model):
                         channels = self.env['mail.channel'].search(
                             [('id', '=', self.env.ref('ebs_qsheild_mod.channel_service_manager_group').id)])
                         if channels:
-                            channels.message_post(body='This Service Request %s has been Exceeded!' %(record.name), message_type='notification',
-                                              subtype='mail.mt_comment', author_id=self.env.user.partner_id.id,
-                                              notification_ids=notification_ids)
-
-
-
+                            channels.message_post(
+                                body='This Service Request %s has been Exceeded! with %s exceeded days ' % (
+                                record.name, record.exceeded_days), message_type='notification',
+                                subtype='mail.mt_comment', author_id=self.env.user.partner_id.id,
+                                notification_ids=notification_ids)
 
     @api.model
     def create(self, vals):
@@ -426,7 +436,7 @@ class ServiceRequest(models.Model):
             flow.status = 'cancel'
         self.end_date = datetime.today()
         if self.start_date and self.end_date:
-            self.sla_days = self.get_date_difference(self.start_date.date(), self.end_date.date(), 1)
+            self.sla_days = self.get_date_difference(self.progress_date, self.end_date.date(), 1)
         else:
             self.sla_days = 0
         self.status = 'cancel'
@@ -435,8 +445,8 @@ class ServiceRequest(models.Model):
         for flow in self.service_flow_ids:
             flow.status = 'reject'
         self.end_date = datetime.today()
-        if self.start_date and self.end_date:
-            self.sla_days = self.get_date_difference(self.start_date.date(), self.end_date.date(), 1)
+        if self.progress_date and self.end_date:
+            self.sla_days = self.get_date_difference(self.progress_date, self.end_date.date(), 1)
         else:
             self.sla_days = 0
         self.status = 'reject'
@@ -449,8 +459,8 @@ class ServiceRequest(models.Model):
         #         break
         if complete:
             self.end_date = datetime.today()
-            if self.start_date and self.end_date:
-                self.sla_days = self.get_date_difference(self.start_date.date(), self.end_date.date(), 1)
+            if self.progress_date:
+                self.sla_days = self.get_date_difference(self.progress_date, self.end_date.date(), 1)
             else:
                 self.sla_days = 0
             self.status = 'complete'
