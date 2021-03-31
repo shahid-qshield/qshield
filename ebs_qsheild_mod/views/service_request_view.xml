@@ -131,7 +131,6 @@
                                 <field name="exceeded_date" invisible="1"/>
                                 <field name="sla_min"/>
                                 <field name="sla_max"/>
-                                <field name="exceeded_days" attrs="{'invisible':[('status_sla','=','normal')]}"/>
                                 <field name="start_date" attrs="{'invisible':[('is_started','!=',True)]}"/>
                                 <field name="estimated_end_date" attrs="{'invisible':[('is_started','!=',True)]}"/>
                                 <field name="days_to_finish" attrs="{'invisible':[('is_started','!=',True)]}"/>
