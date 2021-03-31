@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data>
+        <record id="change_sla_wizard_view_form" model="ir.ui.view">
+            <field name="name">change.sla.wizard.form</field>
+            <field name="model">change.sla.wizard</field>
+            <field name="arch" type="xml">
+                <form string="Change SLA Min - Max">
+                    <group>
+                        <field name="sla_min"/>
+                        <field name="sla_max"/>
+                    </group>
+                    <footer>
+                        <button string="Apply" class="btn-primary" type="object" name="action_ok"/>
+                        <button string="Close" class="btn-primary" special="cancel"/>
+                    </footer>
+                </form>
+            </field>
+        </record>
+        <act_window
+                name="Change SLA Min - Max"
+                res_model="change.sla.wizard"
+                binding_model="ebs_mod.service.request"
+                binding_views="form"
+                view_mode="form"
+                target="new"
+                view_id="change_sla_wizard_view_form"
+                id="action_change_sla_wizard"
+        />
+    </data>
+</odoo>

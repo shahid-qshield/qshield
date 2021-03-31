@@ -27,8 +27,6 @@
                 <form>
 
                     <header>
-
-
                         <button name="%(create_contact_document_view_action)d"
                                 string="Upload Document to Contact"
                                 type="action" class="oe_highlight"
@@ -40,7 +38,6 @@
                                 'default_issue_date':end_date
                                 }"
                         />
-
                         <button name="request_submit" string="submit" type="object"
                                 attrs="{'invisible':[('status','!=','draft')]}"/>
 
@@ -127,6 +124,9 @@
                                 <field name="flow_type"
                                        attrs="{'readonly':[('status','!=','draft')]}"
                                 />
+
+                                <field name="status_sla" readonly="1"/>
+                                <field name="progress_date"/>
 
                                 <field name="sla_min"/>
                                 <field name="sla_max"/>
@@ -269,6 +269,8 @@
                     <field name="contract_id"/>
                     <field name="partner_id"/>
                     <field name="status"/>
+
+                    <field name="status_sla"/>
                     <field name="flow_type"/>
                     <field name="partner_type"/>
                     <separator/>
@@ -278,6 +280,7 @@
                         <filter name="service_type_group" string="Service Type"
                                 context="{'group_by': 'service_type_id'}"/>
                         <filter name="service_status_group" string="Service Status" context="{'group_by': 'status'}"/>
+                        <filter name="status_sla" string="SLA Status" context="{'group_by': 'status_sla'}"/>
                         <filter name="workflow_group" string="Workflow Type" context="{'group_by': 'flow_type'}"/>
                     </group>
                 </search>
