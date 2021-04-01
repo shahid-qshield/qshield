@@ -27,11 +27,10 @@ class ChangeSLAWizard(models.TransientModel):
                 "sla_min": self.sla_min,
                 "sla_max": self.sla_max,
             })
-            if line.sla_max:
-                max_days = timedelta(days=record.sla_max)
-                today = fields.Date.today()
-                if record.progress_date:
-                    if (today - max_days) < line.progress_date:
-                        line.write({'status_sla': 'normal'})
-                    else:
-                        line.write({'status_sla': 'exceeded'})
+            max_days = timedelta(days=record.sla_max)
+            today = fields.Date.today()
+            if record.progress_date:
+                if (today - max_days) < line.progress_date:
+                    line.write({'status_sla': 'normal'})
+                else:
+                    line.write({'status_sla': 'exceeded'})

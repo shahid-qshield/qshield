@@ -204,9 +204,10 @@ class ServiceRequest(models.Model):
     status_sla = fields.Selection([('normal', 'Normal'),
                                    ('exceeded', 'Exceeded'), ], default='normal', string=' SLA Status')
 
-    progress_date = fields.Date('Progress Date')
+    progress_date = fields.Date('Start Progress Date')
     exceeded_date = fields.Date('Exceeded Date')
-    exceeded_days = fields.Integer('Exceeded Days', compute="_compute_exceeded_days", store=-True)
+    exceeded_days = fields.Integer('Exceeded Days', compute="_compute_exceeded_days", store=True)
+    sla_min_max = fields.Char('SLA Timeline', compute='_concatenate_min_max')
 
     @api.depends('status', 'status_sla', 'exceeded_date')
     def _compute_exceeded_days(self):
@@ -214,34 +215,46 @@ class ServiceRequest(models.Model):
             if rec.status == 'progress':
                 if rec.status_sla == 'exceeded':
                     if rec.exceeded_date:
-                        rec.exceeded_days = rec.exceeded_date.day - rec.progress_date.day
+                        progress = datetime.strptime(str(rec.progress_date), '%Y-%m-%d')
+                        exceeded = datetime.strptime(str(rec.exceeded_date), '%Y-%m-%d')
+                        rec.exceeded_days = (exceeded - progress).days
+                        # rec.exceeded_days = rec.exceeded_date.day - rec.progress_date.day
+
+    def _concatenate_min_max(self):
+        for rec in self:
+            name = ""
+            # if rec.sla_min:
+            name += str(rec.sla_min) + ' ' + 'to' + ' '
+            # if rec.sla_max:
+            name += str(rec.sla_max)
+            rec.sla_min_max = name
 
     def compute_exceeded_requests(self):
         recordset = self.search([('status', '=', 'progress'), ('status_sla', '=', 'normal')])
         for record in recordset:
-            if record.sla_max:
-                max_days = timedelta(days=record.sla_max)
-                today = fields.Date.today()
-                if record.progress_date:
-                    if (today + max_days) > record.progress_date:
-                        record.write({'status_sla': 'exceeded'})
-                        record.exceeded_date = fields.Date.today()
-                        service_group = self.env.ref('ebs_qsheild_mod.group_service_manager')
-                        service_users = self.env['res.users'].search([('groups_id', 'in', [service_group.id])])
-                        notification_ids = []
-                        for user in service_users:
-                            notification_ids.append((0, 0, {
-                                'res_partner_id': user.partner_id.id,
-                                # 'group_public_id': service_group.id,
-                                'notification_type': 'inbox'}))
-                        channels = self.env['mail.channel'].search(
-                            [('id', '=', self.env.ref('ebs_qsheild_mod.channel_service_manager_group').id)])
-                        if channels:
-                            channels.message_post(
-                                body='This Service Request %s has been Exceeded! with %s exceeded days ' % (
-                                record.name, record.exceeded_days), message_type='notification',
-                                subtype='mail.mt_comment', author_id=self.env.user.partner_id.id,
-                                notification_ids=notification_ids)
+            sla_max = 1 if record.sla_max == 0 else record.sla_max
+            max_days = timedelta(days=sla_max)
+            today = fields.Date.today()
+            if record.progress_date:
+                if (today + max_days) > record.progress_date:
+                    record.write({'status_sla': 'exceeded'})
+                    record.exceeded_date = fields.Date.today()
+                    service_group = self.env.ref('ebs_qsheild_mod.group_service_manager')
+                    service_users = self.env['res.users'].search([('groups_id', 'in', [service_group.id])])
+                    notification_ids = []
+                    for user in service_users:
+                        notification_ids.append((0, 0, {
+                            'res_partner_id': user.partner_id.id,
+                            # 'group_public_id': service_group.id,
+                            'notification_type': 'inbox'}))
+                    channels = self.env['mail.channel'].search(
+                        [('id', '=', self.env.ref('ebs_qsheild_mod.channel_service_manager_group').id)])
+                    if channels:
+                        channels.message_post(
+                            body='This Service Request %s has been Exceeded! with %s exceeded days ' % (
+                            record.name, record.exceeded_days), message_type='notification',
+                            subtype='mail.mt_comment', author_id=self.env.user.partner_id.id,
+                            notification_ids=notification_ids)
 
     @api.model
     def create(self, vals):
