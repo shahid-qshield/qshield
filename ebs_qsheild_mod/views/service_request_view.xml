@@ -15,6 +15,8 @@
                     <field name="end_date"/>
                     <field name="contract_id" optional="hide"/>
                     <field name="flow_type"/>
+                    <field name="sla_min_max"/>
+
                     <field name="status"/>
                     <field name="status_sla"/>
                 </tree>
