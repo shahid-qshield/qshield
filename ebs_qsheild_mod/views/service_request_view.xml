@@ -140,7 +140,7 @@
                                 <field name="estimated_end_date" attrs="{'invisible':[('is_started','!=',True)]}"/>
                                 <field name="days_to_finish" attrs="{'invisible':[('is_started','!=',True)]}"/>
                                 <field name="end_date" attrs="{'invisible':[('status','!=','complete')]}"/>
-                                <field name="sla_days" attrs="{'invisible':[('status','!=','complete')]}"/>
+                                <field name="sla_days" attrs="{'invisible':[('status','=','draft')]}"/>
 
                             </group>
                         </group>

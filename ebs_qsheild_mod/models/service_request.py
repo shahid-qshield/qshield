@@ -252,7 +252,7 @@ class ServiceRequest(models.Model):
                     if channels:
                         channels.message_post(
                             body='This Service Request %s has been Exceeded! with %s exceeded days ' % (
-                            record.name, record.exceeded_days), message_type='notification',
+                                record.name, record.exceeded_days), message_type='notification',
                             subtype='mail.mt_comment', author_id=self.env.user.partner_id.id,
                             notification_ids=notification_ids)
 
@@ -401,6 +401,16 @@ class ServiceRequest(models.Model):
         else:
             return False
 
+    def get_date_difference(self, start, end, jump):
+        delta = timedelta(days=jump)
+        start_date = start
+        end_date = end
+        count = 0
+        while start_date < end_date:
+            start_date += delta
+            count += 1
+        return count
+
     def request_submit(self):
         if len(self.service_flow_ids) == 0:
             raise ValidationError(_("Missing Workflow!"))
@@ -420,48 +430,51 @@ class ServiceRequest(models.Model):
         service_red = self.service_type_id.code or ""
         self.code = code
         self.name = comp_ref + "-" + service_red + "-" + month + year + "-" + code
-        self.status = 'progress'
+
         self.progress_date = fields.Date.today()
 
-        # if self.flow_type == 'o':
-        #     flow_list = self.service_type_id.workflow_online_ids
-        # else:
-        #     flow_list = self.service_type_id.workflow_manual_ids
-        #
-        # for flow in flow_list:
-        #     self.env['ebs_mod.service.request.workflow'].create({
-        #         'service_request_id': self.id,
-        #         'workflow_id': flow.id,
-        #     })
-
-    def get_date_difference(self, start, end, jump):
-        delta = timedelta(days=jump)
-        start_date = start
-        end_date = end
-        count = 0
-        while start_date < end_date:
-            start_date += delta
-            count += 1
-        return count
+        workflow_id = self.env['ebs_mod.service.request.workflow'].search(
+            [('service_request_id', '=', self.id), ('is_application_submission', '=', True)], limit=1)
+        if workflow_id:
+            complete_date = workflow_id.complete_data
+            self.sla_days = self.get_date_difference(self.progress_date, complete_date, 1)
+        else:
+            self.sla_days = 0
+        self.status = 'progress'
 
     def request_cancel(self):
         for flow in self.service_flow_ids:
             flow.status = 'cancel'
-        self.end_date = datetime.today()
-        if self.start_date and self.end_date:
-            self.sla_days = self.get_date_difference(self.progress_date, self.end_date.date(), 1)
+        workflow_id = self.env['ebs_mod.service.request.workflow'].search(
+            [('service_request_id', '=', self.id), ('is_application_submission', '=', True)], limit=1)
+        if workflow_id:
+            complete_date = workflow_id.complete_data
+            self.sla_days = self.get_date_difference(self.end_date.date(), complete_date, 1)
         else:
             self.sla_days = 0
+        # self.end_date = datetime.today()
+        # if self.start_date and self.end_date:
+        #     self.sla_days = self.get_date_difference(self.progress_date, self.end_date.date(), 1)
+        # else:
+        #     self.sla_days = 0
         self.status = 'cancel'
 
     def request_reject(self):
         for flow in self.service_flow_ids:
             flow.status = 'reject'
-        self.end_date = datetime.today()
-        if self.progress_date and self.end_date:
-            self.sla_days = self.get_date_difference(self.progress_date, self.end_date.date(), 1)
+
+        workflow_id = self.env['ebs_mod.service.request.workflow'].search(
+            [('service_request_id', '=', self.id), ('is_application_submission', '=', True)], limit=1)
+        if workflow_id:
+            complete_date = workflow_id.complete_data
+            self.sla_days = self.get_date_difference(self.end_date.date(), complete_date, 1)
         else:
             self.sla_days = 0
+        # self.end_date = datetime.today()
+        # if self.progress_date and self.end_date:
+        #     self.sla_days = self.get_date_difference(self.progress_date, self.end_date.date(), 1)
+        # else:
+        #     self.sla_days = 0
         self.status = 'reject'
 
     def request_complete(self):
@@ -471,9 +484,11 @@ class ServiceRequest(models.Model):
         #         complete = False
         #         break
         if complete:
-            self.end_date = datetime.today()
-            if self.progress_date:
-                self.sla_days = self.get_date_difference(self.progress_date, self.end_date.date(), 1)
+            workflow_id = self.env['ebs_mod.service.request.workflow'].search(
+                [('service_request_id', '=', self.id), ('is_application_submission', '=', True)], limit=1)
+            if workflow_id:
+                complete_date = workflow_id.complete_data
+                self.sla_days = self.get_date_difference(self.end_date.date(), complete_date, 1)
             else:
                 self.sla_days = 0
             self.status = 'complete'
@@ -487,7 +502,6 @@ class ServiceRequest(models.Model):
         self.status = 'progress'
 
     def request_draft(self):
-
         if len(self.service_flow_ids) == 0 and len(self.service_document_ids) == 0 and len(self.expenses_ids) == 0:
             self.start_date = None
             self.end_date = None
