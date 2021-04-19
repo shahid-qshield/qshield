@@ -209,6 +209,41 @@ class ServiceRequest(models.Model):
     exceeded_days = fields.Integer('Exceeded Days', compute="_compute_exceeded_days", store=True)
     sla_min_max = fields.Char('SLA Timeline', compute='_concatenate_min_max')
 
+    def notify_completed_requests(self):
+        group_companies = self.read_group(
+            domain=[('related_company_ro.account_manager', '!=', False)],
+            fields=[],
+            groupby=['related_company_ro'])
+        # print(len(group_companies))
+
+        for company in group_companies:
+            service_requests = self.search([('status', '=', 'progress'), ('progress_date', '=', fields.Date.today()),
+                                            ('related_company_ro', '=', company['related_company_ro'][0]), ])
+            if service_requests:
+                items = []
+                account_manager = None
+                for service in service_requests:
+                    account_manager = service.related_company_ro.account_manager
+                    items.append(
+                        {
+                            'Request Service Number': service.name,
+                            'Request Service Type': service.service_type_id.name,
+                            'Contact Name': service.partner_id.name,
+                            'Contact Type': service.partner_type,
+                        }
+                    )
+                mail = self.env['mail.mail'].sudo().create({
+                    'subject': _('Completed Service Requests.'),
+                    'email_from': self.env.user.partner_id.email,
+                    'author_id': self.env.user.partner_id.id,
+                    'email_to': account_manager.user_id.email,
+                    'body_html': " Dear {}, \n "
+                                 " This is the Content of Completed Service requests With Fully Detail \n"
+                                 " {} \n ".format(account_manager.name,items)
+                    ,
+                })
+                mail.send()
+
     @api.depends('status', 'status_sla', 'exceeded_date')
     def _compute_exceeded_days(self):
         for rec in self:

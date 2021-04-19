@@ -43,6 +43,8 @@
                                 'default_issue_date':end_date
                                 }"
                         />
+                        <button name="notify_completed_requests" string="Notify Requests" type="object"
+                                />
                         <button name="request_submit" string="submit" type="object"
                                 attrs="{'invisible':[('status','!=','draft')]}"/>
 
