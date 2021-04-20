@@ -8,11 +8,29 @@
             <field name="arch" type="xml">
                 <tree editable="bottom">
 
-                     <field name="name"/>
+                    <field name="name"/>
                 </tree>
             </field>
         </record>
+        <record id="document_type_form" model="ir.ui.view">
+            <field name="name">Document Type form</field>
+            <field name="model">ebs_mod.document.types</field>
+            <field name="arch" type="xml">
+                <form>
+                    <group>
+                        <group>
+                            <field name="name"/>
+                        </group>
+                        <group>
+                            <field name="notify"/>
+                            <field name="days_before_notifaction" attrs="{'invisible':[('notify','=',False)],'required':[('notify','=',True)]}"/>
+                        </group>
+                    </group>
 
+
+                </form>
+            </field>
+        </record>
 
 
         <!--window -->

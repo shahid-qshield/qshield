@@ -205,6 +205,7 @@ class ServiceRequest(models.Model):
                                    ('exceeded', 'Exceeded'), ], default='normal', string=' SLA Status')
 
     progress_date = fields.Date('Start Progress Date')
+    completed_date = fields.Date('completed Date')
     exceeded_date = fields.Date('Exceeded Date')
     exceeded_days = fields.Integer('Exceeded Days', compute="_compute_exceeded_days", store=True)
     sla_min_max = fields.Char('SLA Timeline', compute='_concatenate_min_max')
@@ -214,10 +215,8 @@ class ServiceRequest(models.Model):
             domain=[('related_company_ro.account_manager', '!=', False)],
             fields=[],
             groupby=['related_company_ro'])
-        # print(len(group_companies))
-
         for company in group_companies:
-            service_requests = self.search([('status', '=', 'progress'), ('progress_date', '=', fields.Date.today()),
+            service_requests = self.search([('status', '=', 'complete'), ('completed_date', '=', fields.Date.today()),
                                             ('related_company_ro', '=', company['related_company_ro'][0]), ])
             if service_requests:
                 items = []
@@ -226,10 +225,10 @@ class ServiceRequest(models.Model):
                     account_manager = service.related_company_ro.account_manager
                     items.append(
                         {
-                            'Request Service Number': service.name,
-                            'Request Service Type': service.service_type_id.name,
-                            'Contact Name': service.partner_id.name,
-                            'Contact Type': service.partner_type,
+                            'Request_Service_Number': service.name,
+                            'Request_Service_Type': service.service_type_id.name,
+                            'Contact_Name': service.partner_id.name,
+                            'Contact_Type': service.partner_type,
                         }
                     )
                 mail = self.env['mail.mail'].sudo().create({
@@ -237,9 +236,12 @@ class ServiceRequest(models.Model):
                     'email_from': self.env.user.partner_id.email,
                     'author_id': self.env.user.partner_id.id,
                     'email_to': account_manager.user_id.email,
-                    'body_html': " Dear {}, \n "
-                                 " This is the Content of Completed Service requests With Fully Detail \n"
-                                 " {} \n ".format(account_manager.name,items)
+                    'body_html': " Dear {}, \n\n ".format(account_manager.name) +
+                                 " This is the Content of Completed Service requests With Fully Detail \n\n" +
+                                 "{} – {} - {} -{} \n\n".format(
+                                     req['Contact_Name'], req['Contact_Type'], req['Request_Service_Type'],
+                                     req['Request_Service_Number'] )for req in items
+
                     ,
                 })
                 mail.send()
@@ -295,6 +297,15 @@ class ServiceRequest(models.Model):
     def create(self, vals):
         vals['related_company_ro'] = vals['related_company']
         res = super(ServiceRequest, self).create(vals)
+        for rec in res:
+            if rec.service_type_id.for_renewing:
+                print('Create')
+                if rec.service_document_ids:
+                    for line in rec.service_document_ids:
+                        document = self.env['documents.document'].search(
+                            [('document_number', '=', line.document_number)], limit=1)
+                        if document:
+                            document.write({'renewed': True})
         return res
 
     def write(self, vals):
@@ -310,6 +321,15 @@ class ServiceRequest(models.Model):
                 self.message_post(
                     body="Status changed from " + self.status_dict[self.status] + " to " + self.status_dict[
                         vals['status']] + ".")
+        for rec in self:
+            if rec.service_type_id.for_renewing:
+                print('Write')
+                if rec.service_document_ids:
+                    for line in rec.service_document_ids:
+                        document = self.env['documents.document'].search(
+                            [('document_number', '=', line.document_number)], limit=1)
+                        if document:
+                            document.write({'renewed': True})
         res = super(ServiceRequest, self).write(vals)
         return res
 
@@ -513,6 +533,7 @@ class ServiceRequest(models.Model):
         self.status = 'reject'
 
     def request_complete(self):
+        self.completed_date = fields.Date.today()
         complete = True
         # for flow in self.service_flow_ids:
         #     if flow.status == 'pending' or flow.status == 'progress' or flow.status == 'hold':

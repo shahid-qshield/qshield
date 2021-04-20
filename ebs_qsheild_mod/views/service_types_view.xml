@@ -41,6 +41,7 @@
                                 <field name="for_dependant"/>
                                 <field name="for_not_miscellaneous"/>
                                 <field name="for_miscellaneous"/>
+                                <field name="for_renewing"/>
                             </group>
                         </group>
                         <notebook>

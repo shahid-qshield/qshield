@@ -31,6 +31,16 @@ class DocumentsCustom(models.Model):
         string='Document Type',
         required=False)
 
+    notify = fields.Boolean(
+        string='Notified For Expiration',
+        related='document_type_id.notify',
+    )
+
+    days_before_notifaction = fields.Integer(
+        string='Days Before Expiration',
+        related='document_type_id.days_before_notifaction',
+    )
+
     status = fields.Selection(
         string='Status',
         selection=[('na', 'N/A'),
@@ -76,12 +86,56 @@ class DocumentsCustom(models.Model):
         store=True,
         related="partner_id.sponsor")
 
+    renewed = fields.Boolean(
+        string='Renewed',
+        required=False,
+        default=False)
+
     @api.constrains('document_number')
     def _check_document_number(self):
         for rec in self:
             if len(self.env['documents.document'].search(
                     [('document_number', '=', rec.document_number), ('active', '=', True), ('id', '!=', rec.id)])) != 0:
                 raise ValidationError(_("Document Number and Document Type Combination must be unique !"))
+
+    def notify_expired_document(self):
+        group_companies = self.read_group(
+            domain=[('related_company_ro.account_manager', '!=', False)],
+            fields=[],
+            groupby=['related_company_ro'])
+        for company in group_companies:
+            documents = self.search([('active', '=', 'True'), ('renewed', '=', False),('notify', '=', True),
+                                     ('related_company_ro', '=', company['related_company_ro'][0]), ])
+            if documents:
+                # expiry_date
+                items = []
+                account_manager = None
+                company_name = None
+                for document in documents:
+                    company_name = document.related_company_ro.name
+                    account_manager = document.related_company_ro.account_manager
+                    items.append(
+                        {
+                            'Document_Number': document.document_number,
+                            'Document_Type': document.document_type_id.name,
+                            'Employee_Name ': document.partner_id.name,
+                            'Employee_Type': document.partner_type,
+                            'Expiration_Date': document.expiry_date,
+                        }
+                    )
+                mail = self.env['mail.mail'].sudo().create({
+                    'subject': _('Company {} / Documents Expiration.'.format(company_name)),
+                    'email_from': self.env.user.partner_id.email,
+                    'author_id': self.env.user.partner_id.id,
+                    'email_to': account_manager.user_id.email,
+                    'body_html': " Dear Company {}, \n\n ".format(company_name) +
+                                 " This is the Content of Expired Document With Fully Detail \n\n" +
+                                 str("{} / {} / {}/ {} is expiring on {} date.\n\n".format(
+                                     doc['Employee_Name'], doc['Employee_Type'], doc['Document_Type'],
+                                     doc['Document_Number'], doc['Expiration_Date']) for doc in items)
+                    ,
+                })
+                mail.send()
 
     # def name_get(self):
     #     result = []

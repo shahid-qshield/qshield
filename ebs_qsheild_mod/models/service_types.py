@@ -76,6 +76,11 @@ class ServiceTypes(models.Model):
         required=False,
         domain=[('flow_type', '=', 'm')])
 
+    for_renewing = fields.Boolean(
+        string='Renewing',
+        required=False,
+        default=False)
+
     @api.model
     def create(self, vals):
         res = super(ServiceTypes, self).create(vals)
