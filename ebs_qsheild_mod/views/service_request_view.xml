@@ -19,244 +19,254 @@
                     <field name="sla_min_max"/>
                     <field name="status_sla"/>
                     <field name="exceeded_days" string="SLA Excess Days"/>
-
-
                 </tree>
             </field>
         </record>
 
         <record id="service_request_form" model="ir.ui.view">
-            <field name="name">Service Request Form</field>
-            <field name="model">ebs_mod.service.request</field>
-            <field name="arch" type="xml">
-                <form>
+        <field name="name">Service Request Form</field>
+        <field name="model">ebs_mod.service.request</field>
+        <field name="arch" type="xml">
+        <form>
 
-                    <header>
-                        <button name="%(create_contact_document_view_action)d"
-                                string="Upload Document to Contact"
-                                type="action" class="oe_highlight"
-                                context="{
+        <header>
+            <button name="%(create_contact_document_view_action)d"
+                    string="Upload Document to Contact"
+                    type="action" class="oe_highlight"
+                    context="{
                                 'default_contact_id':partner_id,
                                 'upload_service_contact':True,
                                 'upload_contact':True,
                                 'default_service_request_id':id,
                                 'default_issue_date':end_date
                                 }"
-                        />
-                        <button name="notify_completed_requests" string="Notify Requests" type="object"
-                                />
-                        <button name="request_submit" string="submit" type="object"
-                                attrs="{'invisible':[('status','!=','draft')]}"/>
+            />
+            <button name="request_submit" string="submit" type="object"
+                    attrs="{'invisible':[('status','!=','draft')]}"/>
 
-                        <button name="request_hold" string="On Hold" type="object"
-                                attrs="{'invisible':[('status','!=','progress')]}"/>
+            <button name="request_hold" string="On Hold" type="object"
+                    attrs="{'invisible':[('status','!=','progress')]}"/>
 
-                        <button name="request_progress" string="In Progress" type="object"
-                                attrs="{'invisible':[('status','!=','hold')]}"/>
+            <button name="request_progress" string="In Progress" type="object"
+                    attrs="{'invisible':[('status','!=','hold')]}"/>
 
-                        <button name="request_cancel" string="Cancel" type="object"
-                                attrs="{'invisible':[('status','!=','progress')]}"/>
+            <button name="request_cancel" string="Cancel" type="object"
+                    attrs="{'invisible':[('status','!=','progress')]}"/>
 
-                        <button name="request_draft" string="Draft" type="object"
-                                attrs="{'invisible':[('status','!=','cancel')]}"/>
+            <button name="request_draft" string="Draft" type="object"
+                    attrs="{'invisible':[('status','!=','cancel')]}"/>
 
-                        <button name="request_complete" string="Complete" type="object"
-                                attrs="{'invisible':[('status','!=','progress')]}"/>
+            <button name="request_complete" string="Complete" type="object"
+                    attrs="{'invisible':[('status','!=','progress')]}"/>
 
-                        <button name="request_reject" string="Reject" type="object"
-                                attrs="{'invisible':[('status','=','complete')]}"/>
+            <button name="request_reject" string="Reject" type="object"
+                    attrs="{'invisible':[('status','=','complete')]}"/>
 
-                        <field name="status" widget="statusbar"/>
+            <field name="status" widget="statusbar"/>
 
 
-                    </header>
+        </header>
+        <sheet>
+        <div name="button_box" class="oe_button_box">
+            <button name="toggle_active" type="object" invisible="True"
+
+                    class="oe_stat_button" icon="fa-archive">
+
+                <field name="active" widget="boolean_button"
+
+                       options='{"terminology": "archive"}'/>
+
+            </button>
+            <!--                            <widget name="web_ribbon" text="Completed" bg_color="bg-success"-->
+            <!--                                    attrs="{'invisible':[('partner_document_count','=',0)]}"/>-->
+            <button name="action_see_documents" type="object" class="oe_stat_button"
+                    icon="fa-file-text-o">
+                <div class="o_field_widget o_stat_info">
+                    <span class="o_stat_value">
+                        <field name="document_count"/>
+                    </span>
+                    <span class="o_stat_text">Documents</span>
+                </div>
+            </button>
+        </div>
+        <h1>
+            <field name="name" attrs="{'invisible':[('name','=','/')]}" placeholder="Name ..."/>
+        </h1>
+        <group name="group_top">
+            <group name="group_left">
+                <field name="date" attrs="{'readonly':[('status','!=','draft')]}"/>
+                <field name="partner_id"
+                       invisible="context.get('invisible_contact',False)"
+                       options="{'no_create': True, 'no_create_edit':True}"
+                       attrs="{'readonly':[('status','!=','draft')]}"
+                />
+
+                <field name="partner_type"
+                       invisible="context.get('invisible_contact',False)"
+                       readonly="True"
+                />
+                <field name="related_company_ro" readonly="True"/>
+                <field name="related_company" invisible="True"/>
+                <field name="phone"/>
+                <field name="mobile"/>
+                <field name="email"/>
+                <field name="is_miscellaneous"/>
+                <field name="cost_center" attrs="{'readonly':[('status','=','complete')]}"/>
+                <field name="partner_document_count" invisible="True"/>
+            </group>
+            <group name="group_right">
+                <field name="is_started" invisible="True"/>
+                <field name="contract_id"
+                       options="{'no_create': True, 'no_create_edit':True}"
+                       attrs="{'readonly':[('status','!=','draft')]}"
+                />
+                <field name="service_type_id"
+                       options="{'no_create': True, 'no_create_edit':True}"
+                       attrs="{'readonly':[('status','!=','draft')]}"
+                />
+                <field name="flow_type"
+                       attrs="{'readonly':[('status','!=','draft')]}"
+                />
+
+                <field name="status_sla" readonly="1"/>
+                <field name="progress_date" readonly="1"/>
+                <field name="exceeded_date" invisible="1"/>
+                <field name="exceeded_days" attrs="{'invisible':[('status_sla','=','normal')]}"/>
+                <field name="sla_min"/>
+                <field name="sla_max"/>
+                <field name="start_date" attrs="{'invisible':[('is_started','!=',True)]}"/>
+                <field name="estimated_end_date" attrs="{'invisible':[('is_started','!=',True)]}"/>
+                <field name="days_to_finish" attrs="{'invisible':[('is_started','!=',True)]}"/>
+                <field name="end_date" attrs="{'invisible':[('status','!=','complete')]}"/>
+                <field name="sla_days" attrs="{'invisible':[('status','=','draft')]}"/>
+
+            </group>
+        </group>
+        <group name="group_bottom">
+            <field name="desc"/>
+        </group>
+        <notebook>
+        <page name="workflow_page" string="WorkFlow">
+            <field name="service_flow_ids"
+                   attrs="{'readonly':[('status','=','complete')]}"
+                   context="{
+                                       'hide_parent':True,
+                                       'show_activity_btn':False,
+                                       'default_service_request_id':active_id
+                                       }"
+            >
+                <tree>
+                    <field name="name"/>
+                    <field name="sequence"/>
+                    <field name="start_count_flow"/>
+                    <field name="due_date"/>
+                    <field name="status"/>
+                    <field name="date"/>
+                    <field name="assign_to"/>
+                    <button name="create_service_activity" icon="fa-calendar" type="object"/>
+                </tree>
+                <form>
                     <sheet>
-                        <div name="button_box" class="oe_button_box">
-                            <button name="toggle_active" type="object" invisible="True"
-
-                                    class="oe_stat_button" icon="fa-archive">
-
-                                <field name="active" widget="boolean_button"
-
-                                       options='{"terminology": "archive"}'/>
-
-                            </button>
-                            <!--                            <widget name="web_ribbon" text="Completed" bg_color="bg-success"-->
-                            <!--                                    attrs="{'invisible':[('partner_document_count','=',0)]}"/>-->
-                            <button name="action_see_documents" type="object" class="oe_stat_button"
-                                    icon="fa-file-text-o">
-                                <div class="o_field_widget o_stat_info">
-                                    <span class="o_stat_value">
-                                        <field name="document_count"/>
-                                    </span>
-                                    <span class="o_stat_text">Documents</span>
-                                </div>
-                            </button>
-                        </div>
-                        <h1>
-                            <field name="name" attrs="{'invisible':[('name','=','/')]}" placeholder="Name ..."/>
-                        </h1>
                         <group name="group_top">
-                            <group name="group_left">
-                                <field name="date" attrs="{'readonly':[('status','!=','draft')]}"/>
-                                <field name="partner_id"
-                                       invisible="context.get('invisible_contact',False)"
-                                       options="{'no_create': True, 'no_create_edit':True}"
-                                       attrs="{'readonly':[('status','!=','draft')]}"
-                                />
-
-                                <field name="partner_type"
-                                       invisible="context.get('invisible_contact',False)"
-                                       readonly="True"
-                                />
-                                <field name="related_company_ro" readonly="True"/>
+                            <group>
+                                <field name="service_request_id" invisible="True" required="False"/>
+                                <field name="flow_type" invisible="True"/>
+                                <field name="service_type_id" invisible="True"/>
                                 <field name="related_company" invisible="True"/>
-                                <field name="phone"/>
-                                <field name="mobile"/>
-                                <field name="email"/>
-                                <field name="is_miscellaneous"/>
-                                <field name="cost_center" attrs="{'readonly':[('status','=','complete')]}"/>
-                                <field name="partner_document_count" invisible="True"/>
+                                <field name="partner_id" invisible="True"/>
+
+                                <field name="workflow_id"
+                                       options="{'no_create': True, 'no_create_edit':True}"
+                                       domain="[
+                                                ('flow_type', '=', flow_type),
+                                                ('service_type_id', '=', service_type_id)
+                                                ]"
+                                />
+                                <field name="sequence"/>
+                                <field name="start_count_flow"/>
+                                <field name="due_date"/>
                             </group>
-                            <group name="group_right">
-                                <field name="is_started" invisible="True"/>
-                                <field name="contract_id"
-                                       options="{'no_create': True, 'no_create_edit':True}"
-                                       attrs="{'readonly':[('status','!=','draft')]}"
-                                />
-                                <field name="service_type_id"
-                                       options="{'no_create': True, 'no_create_edit':True}"
-                                       attrs="{'readonly':[('status','!=','draft')]}"
-                                />
-                                <field name="flow_type"
-                                       attrs="{'readonly':[('status','!=','draft')]}"
-                                />
-
-                                <field name="status_sla" readonly="1"/>
-                                <field name="progress_date" readonly="1"/>
-                                <field name="exceeded_date" invisible="1"/>
-                                <field name="exceeded_days" attrs="{'invisible':[('status_sla','=','normal')]}"/>
-                                <field name="sla_min"/>
-                                <field name="sla_max"/>
-                                <field name="start_date" attrs="{'invisible':[('is_started','!=',True)]}"/>
-                                <field name="estimated_end_date" attrs="{'invisible':[('is_started','!=',True)]}"/>
-                                <field name="days_to_finish" attrs="{'invisible':[('is_started','!=',True)]}"/>
-                                <field name="end_date" attrs="{'invisible':[('status','!=','complete')]}"/>
-                                <field name="sla_days" attrs="{'invisible':[('status','=','draft')]}"/>
-
+                            <group>
+                                <field name="assign_to" domain="[('share', '=', False)]"
+                                       options="{'no_create': True, 'no_create_edit':True}"/>
+                                <field name="status"/>
+                                <field name="date" readonly="True"/>
+                                <button name="create_service_activity" string="Create Activity"
+                                        class="btn btn-primary"
+                                        type="object"/>
                             </group>
                         </group>
                         <group name="group_bottom">
                             <field name="desc"/>
                         </group>
-                        <notebook>
-                            <page name="workflow_page" string="WorkFlow">
-                                <field name="service_flow_ids"
-                                       attrs="{'readonly':[('status','=','complete')]}"
-                                       context="{
-                                       'hide_parent':True,
-                                       'show_activity_btn':False,
-                                       'default_service_request_id':active_id
-                                       }"
-                                >
-                                    <tree>
-                                        <field name="name"/>
-                                        <field name="sequence"/>
-                                        <field name="start_count_flow"/>
-                                        <field name="due_date"/>
-                                        <field name="status"/>
-                                        <field name="date"/>
-                                        <field name="assign_to"/>
-                                        <button name="create_service_activity" icon="fa-calendar" type="object"/>
-                                    </tree>
-                                    <form>
-                                        <sheet>
-                                            <group name="group_top">
-                                                <group>
-                                                    <field name="service_request_id" invisible="True" required="False"/>
-                                                    <field name="flow_type" invisible="True"/>
-                                                    <field name="service_type_id" invisible="True"/>
-                                                    <field name="related_company" invisible="True"/>
-                                                    <field name="partner_id" invisible="True"/>
 
-                                                    <field name="workflow_id"
-                                                           options="{'no_create': True, 'no_create_edit':True}"
-                                                           domain="[
-                                                ('flow_type', '=', flow_type),
-                                                ('service_type_id', '=', service_type_id)
-                                                ]"
-                                                    />
-                                                    <field name="sequence"/>
-                                                    <field name="start_count_flow"/>
-                                                    <field name="due_date"/>
-                                                </group>
-                                                <group>
-                                                    <field name="assign_to" domain="[('share', '=', False)]"
-                                                           options="{'no_create': True, 'no_create_edit':True}"/>
-                                                    <field name="status"/>
-                                                    <field name="date" readonly="True"/>
-                                                    <button name="create_service_activity" string="Create Activity"
-                                                            class="btn btn-primary"
-                                                            type="object"/>
-                                                </group>
-                                            </group>
-                                            <group name="group_bottom">
-                                                <field name="desc"/>
-                                            </group>
-
-                                        </sheet>
-
-                                    </form>
-                                </field>
-                            </page>
-
-                            <page name="document_page" string="Documents">
-                                <button name="%(create_contact_document_view_action)d"
-                                        string="Create Document"
-                                        type="action" class="oe_highlight"
-                                        context="{
-                                        'default_service_request_id':id,
-                                        'upload_service':True
-                                        }"
-                                        attrs="{'invisible':[('status','=','complete')]}"/>
-
-                                <field name="service_document_ids"
-                                       attrs="{'readonly':[('status','=','complete')]}"
-                                />
-
-
-                            </page>
-
-                            <page name="expense_page" string="Expenses">
-                                <field name="expenses_ids"
-                                       groups="ebs_qsheild_mod.qshield_accountant_admin"
-                                >
-                                    <tree editable="bottom">
-                                        <field name="expense_type_id"/>
-                                        <field name="date" string="Date"/>
-                                        <field name="amount" sum="Total Amount"/>
-                                        <field name="currency_id"/>
-                                        <field name="payment_by"/>
-                                        <field name="desc"/>
-                                    </tree>
-
-                                </field>
-                            </page>
-
-                        </notebook>
                     </sheet>
-
-                    <div class="oe_chatter">
-                        <field name="message_follower_ids" widget="mail_followers"/>
-                        <field name="activity_ids" widget="mail_activity"/>
-                        <field name="message_ids" widget="mail_thread"/>
-                    </div>
 
                 </form>
             </field>
-        </record>
+        </page>
 
-        <!--window -->
+        <page name="document_page" string="Documents">
+        <button name="%(create_contact_document_view_action)d"
+                string="Create Document"
+                type="action" class="oe_highlight"
+                context="{
+                                        'default_service_request_id':id,
+                                        'upload_service':True
+                                        }"
+                attrs="{'invisible':[('status','=','complete')]}"/>
+
+        <field name="service_document_ids"
+               attrs="{'readonly':[('status','=','complete')]}"
+        >
+            <tree  editable="bottom">
+                <field name="document_number"/>
+                <field name="name"/>
+                <field name="document_type_id"/>
+                <field name="status"/>
+                <field name="tag_ids"/>
+                <field name="partner_id"/>
+                <field name="issue_date"/>
+                <field name="expiry_date"/>
+                <field name="type"/>
+<!--                 <field name="attachment_ids" widget="many2many_binary"/>-->
+                        <field name="folder_id"/>
+            </tree>
+        </field>
+
+
+    </page>
+
+    <page name="expense_page" string="Expenses">
+        <field name="expenses_ids"
+               groups="ebs_qsheild_mod.qshield_accountant_admin"
+        >
+            <tree editable="bottom">
+                <field name="expense_type_id"/>
+                <field name="date" string="Date"/>
+                <field name="amount" sum="Total Amount"/>
+                <field name="currency_id"/>
+                <field name="payment_by"/>
+                <field name="desc"/>
+            </tree>
+
+        </field>
+    </page>
+
+</notebook>
+</sheet>
+
+<div class="oe_chatter">
+<field name="message_follower_ids" widget="mail_followers"/>
+<field name="activity_ids" widget="mail_activity"/>
+<field name="message_ids" widget="mail_thread"/>
+</div>
+
+</form>
+</field>
+</record>
+
+<!--window -->
         <record id="service_request_window" model="ir.actions.act_window">
             <field name="name">Service Request</field>
             <field name="res_model">ebs_mod.service.request</field>
@@ -398,7 +408,6 @@
 
             </field>
         </record>
-
 
 
         <record id="service_request_form_2" model="ir.ui.view">
@@ -620,11 +629,9 @@
                     </sheet>
 
 
-
                 </form>
             </field>
         </record>
-
 
 
     </data>

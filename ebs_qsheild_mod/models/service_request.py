@@ -231,17 +231,26 @@ class ServiceRequest(models.Model):
                             'Contact_Type': service.partner_type,
                         }
                     )
+                body = ''
+                if items:
+                    for req in items:
+                        body += str(req['Contact_Name'])
+                        body += '-'
+                        body += str(req['Contact_Type'])
+                        body += '-'
+                        body += str(req['Request_Service_Type'])
+                        body += '-'
+                        body += str(req['Request_Service_Number'])
+                        body += '.'
+                        body += '\n'
                 mail = self.env['mail.mail'].sudo().create({
                     'subject': _('Completed Service Requests.'),
                     'email_from': self.env.user.partner_id.email,
                     'author_id': self.env.user.partner_id.id,
                     'email_to': account_manager.user_id.email,
-                    'body_html': " Dear {}, \n\n ".format(account_manager.name) +
-                                 " This is the Content of Completed Service requests With Fully Detail \n\n" +
-                                 "{} – {} - {} -{} \n\n".format(
-                                     req['Contact_Name'], req['Contact_Type'], req['Request_Service_Type'],
-                                     req['Request_Service_Number'] )for req in items
-
+                    'body_html': " Dear {}, \n ".format(account_manager.name) +'\n'+
+                                 " This is the Content of Completed Service requests With Fully Detail \n" +'\n'+
+                                body
                     ,
                 })
                 mail.send()

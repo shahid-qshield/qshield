@@ -23,3 +23,5 @@ access_user_ebs_mod_service_workflow_config,ebs_qsheild_mod.ebs_mod_service_work
 access_ebs_mod_res_partner_admin,base.res_partner,model_res_partner,ebs_qsheild_mod.qshield_contact_admin,1,1,1,1
 access_ebs_mod_res_partner_user,base.res_partner,model_res_partner,ebs_qsheild_mod.qshield_contact_user,1,1,1,0
 access_ebs_mod_payment_transaction,ebs_qsheild_mod.ebs_mod_payment_transaction,model_ebs_mod_payment_transaction,,1,1,1,1
+
+access_ebs_documents_document,ebs.documents.document,documents.model_documents_document,,1,1,1,0

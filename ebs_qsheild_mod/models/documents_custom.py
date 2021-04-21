@@ -2,7 +2,7 @@
 
 from odoo import models, fields, api, _
 from odoo.exceptions import UserError, ValidationError
-from datetime import date, datetime
+from datetime import date, datetime, timedelta
 
 
 class DocumentsCustom(models.Model):
@@ -98,41 +98,76 @@ class DocumentsCustom(models.Model):
                     [('document_number', '=', rec.document_number), ('active', '=', True), ('id', '!=', rec.id)])) != 0:
                 raise ValidationError(_("Document Number and Document Type Combination must be unique !"))
 
+    def get_date_difference(self, start, end, jump):
+        delta = timedelta(days=jump)
+        start_date = start
+        end_date = end
+        count = 0
+        while start_date < end_date:
+            start_date += delta
+            count += 1
+        return count
+
     def notify_expired_document(self):
         group_companies = self.read_group(
-            domain=[('related_company_ro.account_manager', '!=', False)],
+            domain=[('related_company.account_manager', '!=', False)],
             fields=[],
-            groupby=['related_company_ro'])
+            groupby=['related_company'])
         for company in group_companies:
-            documents = self.search([('active', '=', 'True'), ('renewed', '=', False),('notify', '=', True),
-                                     ('related_company_ro', '=', company['related_company_ro'][0]), ])
+            documents = self.search([('active', '=', 'True'),('renewed', '=', False), ('notify', '=', True),
+                                     ('related_company', '=', company['related_company'][0]), ])
             if documents:
-                # expiry_date
                 items = []
                 account_manager = None
                 company_name = None
+                base_url = self.env['ir.config_parameter'].get_param('web.base.url')
                 for document in documents:
-                    company_name = document.related_company_ro.name
-                    account_manager = document.related_company_ro.account_manager
-                    items.append(
-                        {
-                            'Document_Number': document.document_number,
-                            'Document_Type': document.document_type_id.name,
-                            'Employee_Name ': document.partner_id.name,
-                            'Employee_Type': document.partner_type,
-                            'Expiration_Date': document.expiry_date,
-                        }
-                    )
+                    company_name = document.related_company.name
+                    account_manager = document.related_company.account_manager
+                    document_days = 0
+                    if document.expiry_date:
+                        document_days = self.get_date_difference(fields.Date.today(), document.expiry_date, 1)
+                    if document_days <= document.days_before_notifaction:
+                        items.append(
+                            {
+                                'Employee_Name': document.partner_id.name,
+                                'Employee_Type': document.person_type,
+                                'Document_Type': document.document_type_id.name,
+                                'Document_Number': document.document_number,
+                                'Expiration_Date': document.expiry_date,
+                                'Document_url': str(
+                                    base_url) + '/web#id={id}&action={action_id}&model=documents.document&view_type=form'.format(
+                                    id=document.id, action_id=self.env.ref('documents.document_action').id
+                                ),
+                            }
+                        )
+                body = ''
+                if items:
+                    for doc in items:
+                        body += "["
+                        body += str(doc['Employee_Name'])
+                        body += '-'
+                        body += str(doc['Employee_Type'])
+                        body += '-'
+                        body += str(doc['Document_Type'])
+                        body += '-'
+                        body += str(doc['Document_Number'])
+                        body += '-'
+                        body += str(doc['Expiration_Date'])
+                        body += '-'
+                        body += str(doc['Document_url'])
+                        body += '.'
+                        body += "]\n"
+                        body += '\n'
+                        body += '\n'
                 mail = self.env['mail.mail'].sudo().create({
                     'subject': _('Company {} / Documents Expiration.'.format(company_name)),
                     'email_from': self.env.user.partner_id.email,
                     'author_id': self.env.user.partner_id.id,
                     'email_to': account_manager.user_id.email,
-                    'body_html': " Dear Company {}, \n\n ".format(company_name) +
-                                 " This is the Content of Expired Document With Fully Detail \n\n" +
-                                 str("{} / {} / {}/ {} is expiring on {} date.\n\n".format(
-                                     doc['Employee_Name'], doc['Employee_Type'], doc['Document_Type'],
-                                     doc['Document_Number'], doc['Expiration_Date']) for doc in items)
+                    'body_html': " Dear Company {}, \n ".format(company_name) + '\n' +
+                                 " This is the Content of Expired Document With Fully Detail \n" + '\n' +
+                                 body
                     ,
                 })
                 mail.send()
