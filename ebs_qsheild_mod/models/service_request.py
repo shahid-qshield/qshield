@@ -33,6 +33,10 @@ class ServiceRequest(models.Model):
         string='Service Type',
         required=True, domain=[('id', '=', -1)]
     )
+    for_renewing = fields.Boolean(
+        related='service_type_id.for_renewing',
+        string='Renewing',
+    )
 
     is_started = fields.Boolean(
         string='Is Started',
@@ -210,6 +214,17 @@ class ServiceRequest(models.Model):
     exceeded_days = fields.Integer('Exceeded Days', compute="_compute_exceeded_days", store=True)
     sla_min_max = fields.Char('SLA Timeline', compute='_concatenate_min_max')
 
+    service_document_id = fields.Many2one(
+        comodel_name='documents.document',
+        string='Documents',
+        required=False)
+
+    @api.onchange('service_type_id', )
+    def get_domain_document_id(self):
+        for record in self:
+            return {'domain': {
+                'service_document_id': [('partner_id', '=', record.partner_id.id), ('status', '!=', 'expired')]}}
+
     def notify_completed_requests(self):
         group_companies = self.read_group(
             domain=[('related_company_ro.account_manager', '!=', False)],
@@ -248,9 +263,9 @@ class ServiceRequest(models.Model):
                     'email_from': self.env.user.partner_id.email,
                     'author_id': self.env.user.partner_id.id,
                     'email_to': account_manager.user_id.email,
-                    'body_html': " Dear {}, \n ".format(account_manager.name) +'\n'+
-                                 " This is the Content of Completed Service requests With Fully Detail \n" +'\n'+
-                                body
+                    'body_html': " Dear {}, \n ".format(account_manager.name) + '\n' +
+                                 " This is the Content of Completed Service requests With Fully Detail \n" + '\n' +
+                                 body
                     ,
                 })
                 mail.send()
@@ -309,12 +324,8 @@ class ServiceRequest(models.Model):
         for rec in res:
             if rec.service_type_id.for_renewing:
                 print('Create')
-                if rec.service_document_ids:
-                    for line in rec.service_document_ids:
-                        document = self.env['documents.document'].search(
-                            [('document_number', '=', line.document_number)], limit=1)
-                        if document:
-                            document.write({'renewed': True})
+                if rec.service_document_id:
+                    rec.service_document_id.renewed = True
         return res
 
     def write(self, vals):
@@ -333,12 +344,8 @@ class ServiceRequest(models.Model):
         for rec in self:
             if rec.service_type_id.for_renewing:
                 print('Write')
-                if rec.service_document_ids:
-                    for line in rec.service_document_ids:
-                        document = self.env['documents.document'].search(
-                            [('document_number', '=', line.document_number)], limit=1)
-                        if document:
-                            document.write({'renewed': True})
+                if rec.service_document_id:
+                    rec.service_document_id.renewed = True
         res = super(ServiceRequest, self).write(vals)
         return res
 
