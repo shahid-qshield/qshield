@@ -33,6 +33,10 @@ class ServiceRequest(models.Model):
         string='Service Type',
         required=True, domain=[('id', '=', -1)]
     )
+    for_renewing = fields.Boolean(
+        related='service_type_id.for_renewing',
+        string='Renewing',
+    )
 
     is_started = fields.Boolean(
         string='Is Started',
@@ -205,9 +209,66 @@ class ServiceRequest(models.Model):
                                    ('exceeded', 'Exceeded'), ], default='normal', string=' SLA Status')
 
     progress_date = fields.Date('Start Progress Date')
+    completed_date = fields.Date('completed Date')
     exceeded_date = fields.Date('Exceeded Date')
     exceeded_days = fields.Integer('Exceeded Days', compute="_compute_exceeded_days", store=True)
     sla_min_max = fields.Char('SLA Timeline', compute='_concatenate_min_max')
+
+    service_document_id = fields.Many2one(
+        comodel_name='documents.document',
+        string='Documents',
+        required=False)
+
+    @api.onchange('service_type_id', )
+    def get_domain_document_id(self):
+        for record in self:
+            return {'domain': {
+                'service_document_id': [('partner_id', '=', record.partner_id.id), ('status', '!=', 'expired')]}}
+
+    def notify_completed_requests(self):
+        group_companies = self.read_group(
+            domain=[('related_company_ro.account_manager', '!=', False)],
+            fields=[],
+            groupby=['related_company_ro'])
+        for company in group_companies:
+            service_requests = self.search([('status', '=', 'complete'), ('completed_date', '=', fields.Date.today()),
+                                            ('related_company_ro', '=', company['related_company_ro'][0]), ])
+            if service_requests:
+                items = []
+                account_manager = None
+                for service in service_requests:
+                    account_manager = service.related_company_ro.account_manager
+                    items.append(
+                        {
+                            'Request_Service_Number': service.name,
+                            'Request_Service_Type': service.service_type_id.name,
+                            'Contact_Name': service.partner_id.name,
+                            'Contact_Type': service.partner_type,
+                        }
+                    )
+                body = ''
+                if items:
+                    for req in items:
+                        body += str(req['Contact_Name'])
+                        body += '-'
+                        body += str(req['Contact_Type'])
+                        body += '-'
+                        body += str(req['Request_Service_Type'])
+                        body += '-'
+                        body += str(req['Request_Service_Number'])
+                        body += '.'
+                        body += '\n'
+                mail = self.env['mail.mail'].sudo().create({
+                    'subject': _('Completed Service Requests.'),
+                    'email_from': self.env.user.partner_id.email,
+                    'author_id': self.env.user.partner_id.id,
+                    'email_to': account_manager.user_id.email,
+                    'body_html': " Dear {}, \n ".format(account_manager.name) + '\n' +
+                                 " This is the Content of Completed Service requests With Fully Detail \n" + '\n' +
+                                 body
+                    ,
+                })
+                mail.send()
 
     @api.depends('status', 'status_sla', 'exceeded_date')
     def _compute_exceeded_days(self):
@@ -252,7 +313,7 @@ class ServiceRequest(models.Model):
                     if channels:
                         channels.message_post(
                             body='This Service Request %s has been Exceeded! with %s exceeded days ' % (
-                            record.name, record.exceeded_days), message_type='notification',
+                                record.name, record.exceeded_days), message_type='notification',
                             subtype='mail.mt_comment', author_id=self.env.user.partner_id.id,
                             notification_ids=notification_ids)
 
@@ -260,6 +321,11 @@ class ServiceRequest(models.Model):
     def create(self, vals):
         vals['related_company_ro'] = vals['related_company']
         res = super(ServiceRequest, self).create(vals)
+        for rec in res:
+            if rec.service_type_id.for_renewing:
+                print('Create')
+                if rec.service_document_id:
+                    rec.service_document_id.renewed = True
         return res
 
     def write(self, vals):
@@ -275,6 +341,11 @@ class ServiceRequest(models.Model):
                 self.message_post(
                     body="Status changed from " + self.status_dict[self.status] + " to " + self.status_dict[
                         vals['status']] + ".")
+        for rec in self:
+            if rec.service_type_id.for_renewing:
+                print('Write')
+                if rec.service_document_id:
+                    rec.service_document_id.renewed = True
         res = super(ServiceRequest, self).write(vals)
         return res
 
@@ -401,6 +472,16 @@ class ServiceRequest(models.Model):
         else:
             return False
 
+    def get_date_difference(self, start, end, jump):
+        delta = timedelta(days=jump)
+        start_date = start
+        end_date = end
+        count = 0
+        while start_date < end_date:
+            start_date += delta
+            count += 1
+        return count
+
     def request_submit(self):
         if len(self.service_flow_ids) == 0:
             raise ValidationError(_("Missing Workflow!"))
@@ -420,60 +501,66 @@ class ServiceRequest(models.Model):
         service_red = self.service_type_id.code or ""
         self.code = code
         self.name = comp_ref + "-" + service_red + "-" + month + year + "-" + code
-        self.status = 'progress'
+
         self.progress_date = fields.Date.today()
 
-        # if self.flow_type == 'o':
-        #     flow_list = self.service_type_id.workflow_online_ids
-        # else:
-        #     flow_list = self.service_type_id.workflow_manual_ids
-        #
-        # for flow in flow_list:
-        #     self.env['ebs_mod.service.request.workflow'].create({
-        #         'service_request_id': self.id,
-        #         'workflow_id': flow.id,
-        #     })
-
-    def get_date_difference(self, start, end, jump):
-        delta = timedelta(days=jump)
-        start_date = start
-        end_date = end
-        count = 0
-        while start_date < end_date:
-            start_date += delta
-            count += 1
-        return count
+        workflow_id = self.env['ebs_mod.service.request.workflow'].search(
+            [('service_request_id', '=', self.id), ('is_application_submission', '=', True)], limit=1)
+        if workflow_id:
+            complete_date = workflow_id.complete_data
+            self.sla_days = self.get_date_difference(self.progress_date, complete_date, 1)
+        else:
+            self.sla_days = 0
+        self.status = 'progress'
 
     def request_cancel(self):
         for flow in self.service_flow_ids:
             flow.status = 'cancel'
-        self.end_date = datetime.today()
-        if self.start_date and self.end_date:
-            self.sla_days = self.get_date_difference(self.progress_date, self.end_date.date(), 1)
+        workflow_id = self.env['ebs_mod.service.request.workflow'].search(
+            [('service_request_id', '=', self.id), ('is_application_submission', '=', True)], limit=1)
+        if workflow_id:
+            complete_date = workflow_id.complete_data
+            self.sla_days = self.get_date_difference(self.end_date.date(), complete_date, 1)
         else:
             self.sla_days = 0
+        # self.end_date = datetime.today()
+        # if self.start_date and self.end_date:
+        #     self.sla_days = self.get_date_difference(self.progress_date, self.end_date.date(), 1)
+        # else:
+        #     self.sla_days = 0
         self.status = 'cancel'
 
     def request_reject(self):
         for flow in self.service_flow_ids:
             flow.status = 'reject'
-        self.end_date = datetime.today()
-        if self.progress_date and self.end_date:
-            self.sla_days = self.get_date_difference(self.progress_date, self.end_date.date(), 1)
+
+        workflow_id = self.env['ebs_mod.service.request.workflow'].search(
+            [('service_request_id', '=', self.id), ('is_application_submission', '=', True)], limit=1)
+        if workflow_id:
+            complete_date = workflow_id.complete_data
+            self.sla_days = self.get_date_difference(self.end_date.date(), complete_date, 1)
         else:
             self.sla_days = 0
+        # self.end_date = datetime.today()
+        # if self.progress_date and self.end_date:
+        #     self.sla_days = self.get_date_difference(self.progress_date, self.end_date.date(), 1)
+        # else:
+        #     self.sla_days = 0
         self.status = 'reject'
 
     def request_complete(self):
+        self.completed_date = fields.Date.today()
         complete = True
         # for flow in self.service_flow_ids:
         #     if flow.status == 'pending' or flow.status == 'progress' or flow.status == 'hold':
         #         complete = False
         #         break
         if complete:
-            self.end_date = datetime.today()
-            if self.progress_date:
-                self.sla_days = self.get_date_difference(self.progress_date, self.end_date.date(), 1)
+            workflow_id = self.env['ebs_mod.service.request.workflow'].search(
+                [('service_request_id', '=', self.id), ('is_application_submission', '=', True)], limit=1)
+            if workflow_id:
+                complete_date = workflow_id.complete_data
+                self.sla_days = self.get_date_difference(self.end_date.date(), complete_date, 1)
             else:
                 self.sla_days = 0
             self.status = 'complete'
@@ -487,7 +574,6 @@ class ServiceRequest(models.Model):
         self.status = 'progress'
 
     def request_draft(self):
-
         if len(self.service_flow_ids) == 0 and len(self.service_document_ids) == 0 and len(self.expenses_ids) == 0:
             self.start_date = None
             self.end_date = None

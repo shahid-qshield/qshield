@@ -19,8 +19,6 @@
                     <field name="sla_min_max"/>
                     <field name="status_sla"/>
                     <field name="exceeded_days" string="SLA Excess Days"/>
-
-
                 </tree>
             </field>
         </record>
@@ -126,6 +124,11 @@
                                        options="{'no_create': True, 'no_create_edit':True}"
                                        attrs="{'readonly':[('status','!=','draft')]}"
                                 />
+                                <field name="for_renewing"/>
+                                <field name="service_document_id"
+                                       options="{'no_create': True, 'no_create_edit':True}"
+                                       attrs="{'invisible':[('for_renewing','=',False)],'readonly':[('status','!=','draft')]}"
+                                />
                                 <field name="flow_type"
                                        attrs="{'readonly':[('status','!=','draft')]}"
                                 />
@@ -140,7 +143,7 @@
                                 <field name="estimated_end_date" attrs="{'invisible':[('is_started','!=',True)]}"/>
                                 <field name="days_to_finish" attrs="{'invisible':[('is_started','!=',True)]}"/>
                                 <field name="end_date" attrs="{'invisible':[('status','!=','complete')]}"/>
-                                <field name="sla_days" attrs="{'invisible':[('status','!=','complete')]}"/>
+                                <field name="sla_days" attrs="{'invisible':[('status','=','draft')]}"/>
 
                             </group>
                         </group>
@@ -220,7 +223,21 @@
 
                                 <field name="service_document_ids"
                                        attrs="{'readonly':[('status','=','complete')]}"
-                                />
+                                >
+                                    <tree editable="bottom">
+                                        <field name="document_number"/>
+                                        <field name="name"/>
+                                        <field name="document_type_id"/>
+                                        <field name="status"/>
+                                        <field name="tag_ids"/>
+                                        <field name="partner_id"/>
+                                        <field name="issue_date"/>
+                                        <field name="expiry_date"/>
+                                        <field name="type"/>
+                                        <!--                 <field name="attachment_ids" widget="many2many_binary"/>-->
+                                        <field name="folder_id"/>
+                                    </tree>
+                                </field>
 
 
                             </page>
@@ -396,7 +413,6 @@
 
             </field>
         </record>
-
 
 
         <record id="service_request_form_2" model="ir.ui.view">
@@ -618,11 +634,9 @@
                     </sheet>
 
 
-
                 </form>
             </field>
         </record>
-
 
 
     </data>

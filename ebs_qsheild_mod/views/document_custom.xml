@@ -12,6 +12,7 @@
                     <button type="object" name="preview_document" string="Preview"/>
                 </xpath>
 
+
                 <xpath expr="//field[@name='owner_id']" position="attributes">
                     <attribute name="invisible">True</attribute>
                 </xpath>

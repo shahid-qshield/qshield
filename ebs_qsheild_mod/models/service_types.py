@@ -76,6 +76,11 @@ class ServiceTypes(models.Model):
         required=False,
         domain=[('flow_type', '=', 'm')])
 
+    for_renewing = fields.Boolean(
+        string='Renewing',
+        required=False,
+        default=False)
+
     @api.model
     def create(self, vals):
         res = super(ServiceTypes, self).create(vals)
@@ -116,7 +121,11 @@ class ServiceTypeWorkflow(models.Model):
         string='Service_type',
         required=False)
 
+    is_application_submission = fields.Boolean(
+        string='Is Application Submission')
+
     _sql_constraints = [
         ('service_type_flow_name_type_unique', 'unique (service_type_id,name,flow_type)',
          'Name and type combination must be unique !')
     ]
+
