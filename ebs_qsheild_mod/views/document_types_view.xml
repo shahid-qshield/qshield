@@ -9,6 +9,8 @@
                 <tree editable="bottom">
 
                     <field name="name"/>
+                    <field name="notify"/>
+                    <field name="days_before_notifaction"/>
                 </tree>
             </field>
         </record>
