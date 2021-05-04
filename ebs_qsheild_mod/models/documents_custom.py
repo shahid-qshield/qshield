@@ -143,29 +143,36 @@ class DocumentsCustom(models.Model):
                 body = ''
                 if items:
                     for doc in items:
+                        contact_type_list = [('company', 'Company'),
+                                             ('emp', 'Employee'),
+                                             ('visitor', 'Visitor'),
+                                             ('child', 'Dependent')]
+                        contact_type_list = dict(contact_type_list)
                         body += "["
                         body += str(doc['Employee_Name'])
-                        body += '-'
-                        body += str(doc['Employee_Type'])
-                        body += '-'
+                        body += '/'
+                        body += contact_type_list[str(doc['Employee_Type'])]
+                        body += '/'
                         body += str(doc['Document_Type'])
-                        body += '-'
+                        body += '/'
                         body += str(doc['Document_Number'])
-                        body += '-'
+                        body += '/'
                         body += str(doc['Expiration_Date'])
-                        body += '-'
+                        body += '/ <a href=\"'
                         body += str(doc['Document_url'])
-                        body += '.'
-                        body += "]\n"
-                        body += '\n'
-                        body += '\n'
+                        body += '\" target="_blank">'
+                        body += str(doc['Employee_Name'])
+                        body += '</a>.'
+                        body += "]<br/>"
+                        body += '<br/>'
+                        body += '<br/>'
                     mail = self.env['mail.mail'].sudo().create({
-                        'subject': _('Company {} / Documents Expiration.'.format(company_name)),
+                        'subject': _('{} / Documents Expiration.'.format(company_name)),
                         'email_from': self.env.user.partner_id.email,
                         'author_id': self.env.user.partner_id.id,
                         'email_to': account_manager.user_id.email,
-                        'body_html': " Dear Company {}, \n ".format(company_name) + '\n' +
-                                     " This is the Content of Expired Document With Fully Detail \n" + '\n' +
+                        'body_html': " Dear {}, <br/> ".format(company_name) + '<br/>' +
+                                     " These are the documents to be expired in full details <br/>" + '<br/>' +
                                      body
                         ,
                     })
@@ -192,7 +199,6 @@ class DocumentsCustom(models.Model):
                     document_days = 0
                     if document.expiry_date:
                         document_days = self.get_date_difference(fields.Date.today(), document.expiry_date,)
-                        print(document_days)
                     if document_days <= document.days_before_notifaction:
                         items.append(
                             {
@@ -210,33 +216,40 @@ class DocumentsCustom(models.Model):
                 body = ''
                 if items:
                     for doc in items:
+                        contact_type_list = [('company', 'Company'),
+                                             ('emp', 'Employee'),
+                                             ('visitor', 'Visitor'),
+                                             ('child', 'Dependent')]
+                        contact_type_list = dict(contact_type_list)
                         body += "["
                         body += str(doc['Employee_Name'])
-                        body += '-'
-                        body += str(doc['Employee_Type'])
-                        body += '-'
+                        body += '/'
+                        body += contact_type_list[str(doc['Employee_Type'])]
+                        body += '/'
                         body += str(doc['Document_Type'])
-                        body += '-'
+                        body += '/'
                         body += str(doc['Document_Number'])
-                        body += '-'
+                        body += '/'
                         body += str(doc['Expiration_Date'])
-                        body += '-'
+                        body += '/ <a href=\"'
                         body += str(doc['Document_url'])
-                        body += '.'
-                        body += "]\n"
-                        body += '\n'
-                        body += '\n'
+                        body += '\" target="_blank">'
+                        body += str(doc['Employee_Name'])
+                        body += '</a>.'
+                        body += "]<br/>"
+                        body += '<br/>'
+                        body += '<br/>'
                     mail = self.env['mail.mail'].sudo().create({
-                        'subject': _('Client {} / Documents Expiration.'.format(partner_id.name)),
+                        'subject': _('{} / Documents Expiration.'.format(partner_id.name)),
                         'email_from': self.env.user.partner_id.email,
                         'author_id': self.env.user.partner_id.id,
                         'email_to': account_manager.user_id.email,
-                        'body_html': " Dear Company {}, \n ".format(company_name) + '\n' +
-                                     " This is the Content of Expired Document"
-                                     " That belongs To this Client {partner} With Fully Detail \n".format(
+                        'body_html': " Dear {}, <br/> ".format(company_name) + '<br/>' +
+                                     " These are expired to be documents"
+                                     " that belongs to {partner} with full details <br/>".format(
                                          partner=partner_id.name)
                                      +
-                                     '\n' +
+                                     '<br/>' +
                                      body
                         ,
                     })
