@@ -513,7 +513,8 @@ class ServiceRequest(models.Model):
             [('service_request_id', '=', self.id), ('is_application_submission', '=', True)], limit=1)
         if workflow_id:
             complete_date = workflow_id.complete_data
-            self.sla_days = self.get_date_difference(self.progress_date, complete_date, 1)
+            if self.progress_date:
+                self.sla_days = self.get_date_difference(self.progress_date, complete_date, 1)
         else:
             self.sla_days = 0
         self.status = 'progress'
@@ -525,7 +526,8 @@ class ServiceRequest(models.Model):
             [('service_request_id', '=', self.id), ('is_application_submission', '=', True)], limit=1)
         if workflow_id:
             complete_date = workflow_id.complete_data
-            self.sla_days = self.get_date_difference(self.end_date.date(), complete_date, 1)
+            if self.end_date:
+                self.sla_days = self.get_date_difference(self.end_date.date(), complete_date, 1)
         else:
             self.sla_days = 0
         # self.end_date = datetime.today()
@@ -543,7 +545,8 @@ class ServiceRequest(models.Model):
             [('service_request_id', '=', self.id), ('is_application_submission', '=', True)], limit=1)
         if workflow_id:
             complete_date = workflow_id.complete_data
-            self.sla_days = self.get_date_difference(self.end_date.date(), complete_date, 1)
+            if self.end_date:
+                self.sla_days = self.get_date_difference(self.end_date.date(), complete_date, 1)
         else:
             self.sla_days = 0
         # self.end_date = datetime.today()
@@ -565,7 +568,8 @@ class ServiceRequest(models.Model):
                 [('service_request_id', '=', self.id), ('is_application_submission', '=', True)], limit=1)
             if workflow_id:
                 complete_date = workflow_id.complete_data
-                self.sla_days = self.get_date_difference(self.end_date.date(), complete_date, 1)
+                if self.end_date:
+                    self.sla_days = self.get_date_difference(self.end_date.date(), complete_date, 1)
             else:
                 self.sla_days = 0
             self.status = 'complete'
