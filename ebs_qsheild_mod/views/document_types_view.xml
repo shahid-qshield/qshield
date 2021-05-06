@@ -40,7 +40,7 @@
         <record id="document_type_window" model="ir.actions.act_window">
             <field name="name">Document Type</field>
             <field name="res_model">ebs_mod.document.types</field>
-            <field name="view_mode">form,tree</field>
+            <field name="view_mode">tree,form</field>
         </record>
         <!--menu -->
 
