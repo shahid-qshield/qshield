@@ -16,3 +16,11 @@ class DocumentTypes(models.Model):
     name = fields.Char(
         string='Name',
         required=True)
+
+    notify = fields.Boolean(
+        string='Notified For Expiration',
+        required=False,
+        default=False)
+    days_before_notifaction = fields.Integer(
+        string='Days Before Expiration'
+    )

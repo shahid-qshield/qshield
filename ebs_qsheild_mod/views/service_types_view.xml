@@ -41,6 +41,7 @@
                                 <field name="for_dependant"/>
                                 <field name="for_not_miscellaneous"/>
                                 <field name="for_miscellaneous"/>
+                                <field name="for_renewing"/>
                             </group>
                         </group>
                         <notebook>
@@ -123,6 +124,7 @@
                                 <field name="sequence"/>
                                 <field name="name"/>
                                 <field name="start_count_flow"/>
+                                <field name="is_application_submission"/>
                                 <field name="flow_type" invisible="True"/>
                                 <field name="service_type_id" invisible="True"/>
                             </group>
