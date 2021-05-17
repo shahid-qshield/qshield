@@ -512,9 +512,8 @@ class ServiceRequest(models.Model):
         workflow_id = self.env['ebs_mod.service.request.workflow'].search(
             [('service_request_id', '=', self.id), ('is_application_submission', '=', True)], limit=1)
         if workflow_id:
-            complete_date = workflow_id.complete_data
-            if self.progress_date:
-                self.sla_days = self.get_date_difference(self.progress_date, complete_date, 1)
+            if self.progress_date and workflow_id.complete_data:
+                self.sla_days = self.get_date_difference(self.progress_date, workflow_id.complete_data, 1)
         else:
             self.sla_days = 0
         self.status = 'progress'

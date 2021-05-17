@@ -36,10 +36,10 @@ class ServiceRequestWorkFlow(models.Model):
 
     )
     is_application_submission = fields.Boolean(
-        related='workflow_id.is_application_submission',
+        related='workflow_id.is_application_submission', store=True,
         string='Is Application Submission')
 
-    complete_data = fields.Date(compute='compute_submission_date')
+    complete_data = fields.Date(compute='compute_submission_date', store=True)
 
     name = fields.Char(
         string='Name',
