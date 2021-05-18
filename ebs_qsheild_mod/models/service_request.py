@@ -15,7 +15,8 @@ class ServiceRequest(models.Model):
     name = fields.Char(
         string='Name',
         required=False,
-        default='/'
+        default='/',
+        copy=False
     )
     partner_document_count = fields.Integer(
         string='Contact Uploaded Documents Count',
@@ -558,6 +559,7 @@ class ServiceRequest(models.Model):
 
     def request_complete(self):
         self.completed_date = fields.Date.today()
+        self.end_date = fields.Date.today()
         complete = True
         # for flow in self.service_flow_ids:
         #     if flow.status == 'pending' or flow.status == 'progress' or flow.status == 'hold':
