@@ -220,6 +220,10 @@ class ServiceRequest(models.Model):
         string='Documents',
         required=False)
 
+    def action_update_end_date(self):
+        for rec in self:
+            pass
+
     @api.onchange('service_type_id', )
     def get_domain_document_id(self):
         for record in self:

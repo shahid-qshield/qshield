@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data>
+        <record id="action_set_end_date_update" model="ir.actions.server">
+            <field name="name">Update End Date</field>
+            <field name="model_id" ref="ebs_qsheild_mod.model_ebs_mod_service_request"/>
+            <field name="state">code</field>
+            <field name="code">
+                action = model.action_update_end_date()
+            </field>
+        </record>
+    </data>
+</odoo>
