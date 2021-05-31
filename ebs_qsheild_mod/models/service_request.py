@@ -1,7 +1,7 @@
 from odoo import models, fields, api, _
 from odoo.exceptions import ValidationError
 from datetime import datetime, timedelta, date
-
+import re
 
 class ServiceRequest(models.Model):
     _name = 'ebs_mod.service.request'
@@ -222,7 +222,13 @@ class ServiceRequest(models.Model):
 
     def action_update_end_date(self):
         for rec in self:
-            pass
+            messages = self.env['mail.message'].search([('res_id', '=', rec.id)])
+            for message in messages:
+                msg = re.search(r'(?<=>).*(?=<)', message.body).group(0)
+                if msg == "Status changed from In Progress to Completed.":
+                    service = self.env[message.model].browse(message.res_id)
+                    if not service.end_date:
+                        service.sudo().write({'end_date': message.date.date()})
 
     @api.onchange('service_type_id', )
     def get_domain_document_id(self):
@@ -236,7 +242,7 @@ class ServiceRequest(models.Model):
             fields=[],
             groupby=['related_company_ro'])
         for company in group_companies:
-            service_requests = self.search([('status', '=', 'complete'), ('completed_date', '=', fields.Date.today()),
+            service_requests = self.search([('status', '=', 'complete'), ('end_date', '=', fields.Date.today()),
                                             ('related_company_ro', '=', company['related_company_ro'][0]), ])
             if service_requests:
                 items = []
