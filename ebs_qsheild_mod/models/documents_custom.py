@@ -3,6 +3,7 @@
 from odoo import models, fields, api, _
 from odoo.exceptions import UserError, ValidationError
 from datetime import date, datetime, timedelta
+from odoo.tools import ormcache, formataddr
 
 
 class DocumentsCustom(models.Model):
@@ -187,22 +188,23 @@ class DocumentsCustom(models.Model):
                 mail.send()
 
     def notify_document_before_expired_to_partner(self):
-        group_companies = self.read_group(
-            domain=[('related_company.account_manager', '!=', False)],
-            fields=[],
-            groupby=['partner_id'])
+        group_companies = self.read_group(domain=[('related_company', '!=', False)],
+                                          fields=[],
+                                          groupby=['partner_id'])
+
+        body = ''
+        emails = ['helpdesk@qshield.com']
+        partners = self.env['res.partner'].search([('account_manager', '!=', False)])
+        for partner in partners:
+            emails.append(partner.account_manager.user_id.partner_id.email)
+        emails = set(emails)
         for company in group_companies:
             documents = self.search([('active', '=', 'True'), ('renewed', '=', False), ('notify', '=', True),
                                      ('partner_id', '=', company['partner_id'][0]), ])
             if documents:
                 items = []
-                account_manager = None
-                partner_id = self.env['res.partner'].search([('id', '=', company['partner_id'][0])], limit=1)
-                company_name = None
                 base_url = self.env['ir.config_parameter'].get_param('web.base.url')
                 for document in documents:
-                    company_name = document.related_company.name
-                    account_manager = document.related_company.account_manager
                     document_days = 0
                     if document.expiry_date:
                         document_days = self.get_date_difference(fields.Date.today(), document.expiry_date, )
@@ -213,6 +215,8 @@ class DocumentsCustom(models.Model):
                                 'Employee_Type': document.person_type,
                                 'Document_Type': document.document_type_id.name,
                                 'Document_Number': document.document_number,
+                                'Account_Manager': document.related_company.account_manager.name,
+                                'Remaining_Days_for_expiry': document_days,
                                 'Expiration_Date': document.expiry_date,
                                 'Document_url': str(
                                     base_url) + '/web#id={id}&action={action_id}&model=documents.document&view_type=form'.format(
@@ -220,51 +224,50 @@ class DocumentsCustom(models.Model):
                                 ),
                             }
                         )
-                body = ''
+
                 if items:
                     for doc in items:
-                        contact_type_list = [('company', 'Company'),
-                                             ('emp', 'Employee'),
-                                             ('visitor', 'Visitor'),
-                                             ('child', 'Dependent')]
-                        contact_type_list = dict(contact_type_list)
                         body += " <tr> <th scope='row'>{}</th> ".format(doc['Employee_Name'])
                         body += "<th scope='row'>{}</th>".format(doc['Employee_Type'])
                         body += " <th scope='row'>{}</th>".format(doc['Document_Type'])
                         body += "<th scope='row'>{}</th>".format(doc['Document_Number'])
+                        body += "<th scope='row'>{}</th>".format(doc['Account_Manager'])
+                        body += "<th scope='row'>{}</th>".format(doc['Remaining_Days_for_expiry'])
                         body += "<th scope='row'>{}</th>".format(doc['Expiration_Date'])
                         body += '''<th><a href="{url}" target="_blank">{name}</a></th></tr> '''.format(
                             url=doc['Document_url'],
                             name=doc['Employee_Name'])
-                    mail = self.env['mail.mail'].sudo().create({
-                        'subject': _('{} / Documents Expiry.'.format(partner_id.name)),
-                        'email_from': self.env.user.partner_id.email,
-                        'author_id': self.env.user.partner_id.id,
-                        'email_to': account_manager.user_id.email,
-                        'body_html':
-                            " Dear {}, <br/> ".format(company_name) + '<br/>' +
-                            " <strong> Below is the list of document Subject to expiry :  " +
-                            " that belongs to {partner} with full details </strong> <br/>".format(
-                                partner=partner_id.name)
-                            +
-                            '''<table class='table'>
-                                 <thead>
-                                      <tr>
-                                             <th scope="col">Employee Name</th>
-                                             <th scope="col">Employee Type</th>
-                                             <th scope="col">Document Type</th>
-                                             <th scope="col">Document Number</th>
-                                             <th scope="col">Expiration Date</th>
-                                             <th scope="col">Document url</th>
-                                      </tr>
-                                 </thead>
-                                 <tbody>
-                                 ''' + body + '''
-                                      </tbody>
-                                       
-                                   </table>'''
-                    })
-                    mail.send()
+        print(emails)
+        mail = self.env['mail.mail'].sudo().create({
+            'subject': _('Documents Expiry.'),
+            'email_from': self.env.user.partner_id.email,
+            'author_id': self.env.user.partner_id.id,
+            'email_to': ','.join(emails),
+            'body_html':
+                " Dear , <br/> <br/>" +
+                " <strong> Below is the list of document Subject to expiry :  " +
+                " that belongs to Clients with full details </strong> <br/>" + "<br/> <br/' > " +
+
+                '''<table class='table'>
+                     <thead>
+                          <tr>
+                                 <th scope="col">Client</th>
+                                 <th scope="col">Client Type</th>
+                                 <th scope="col">Document Type</th>
+                                 <th scope="col">Document Number</th>
+                                 <th scope="col">Account Manager</th>
+                                 <th scope="col">Remaining Days for expiry</th>
+                                 <th scope="col">Expiration Date</th>
+                                 <th scope="col">Document url</th>
+                          </tr>
+                     </thead>
+                     <tbody>
+                     ''' + body + '''
+                          </tbody>
+
+                       </table>'''
+        })
+        mail.send()
 
     def name_get(self):
         result = []

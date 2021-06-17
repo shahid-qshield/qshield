@@ -40,19 +40,19 @@
             <field name="model_id" ref="model_ebs_mod_service_request"/>
             <field name="code" eval="'model.notify_completed_requests()'"/>
         </record>
-        <record id="document_notification_scheduler_cron_id" model="ir.cron">
-            <field name="name">Document Notification Before Expired</field>
-            <field name="user_id" ref="base.user_root"/>
-            <field name="interval_number">1</field>
-            <field name="interval_type">days</field>
-            <field name="numbercall">-1</field>
-            <field name="doall">True</field>
-            <field name="active">True</field>
-            <field name="nextcall"
-                   eval="(datetime.now() + timedelta(days=1)).strftime('%Y-%m-%d 05:00:00')"/>
-            <field name="model_id" ref="model_documents_document"/>
-            <field name="code" eval="'model.notify_expired_document()'"/>
-        </record>
+<!--        <record id="document_notification_scheduler_cron_id" model="ir.cron">-->
+<!--            <field name="name">Document Notification Before Expired</field>-->
+<!--            <field name="user_id" ref="base.user_root"/>-->
+<!--            <field name="interval_number">1</field>-->
+<!--            <field name="interval_type">days</field>-->
+<!--            <field name="numbercall">-1</field>-->
+<!--            <field name="doall">True</field>-->
+<!--            <field name="active">True</field>-->
+<!--            <field name="nextcall"-->
+<!--                   eval="(datetime.now() + timedelta(days=1)).strftime('%Y-%m-%d 05:00:00')"/>-->
+<!--            <field name="model_id" ref="model_documents_document"/>-->
+<!--            <field name="code" eval="'model.notify_expired_document()'"/>-->
+<!--        </record>-->
         <record id="document_notification_for_client_scheduler_cron_id" model="ir.cron">
             <field name="name">Document Notification For Clients Before Expired</field>
             <field name="user_id" ref="base.user_root"/>
@@ -62,7 +62,7 @@
             <field name="doall">True</field>
             <field name="active">True</field>
             <field name="nextcall"
-                   eval="(datetime.now() + timedelta(days=1)).strftime('%Y-%m-%d 06:00:00')"/>
+                   eval="(datetime.now() + timedelta(days=1)).strftime('%Y-%m-%d 04:00:00')"/>
             <field name="model_id" ref="model_documents_document"/>
             <field name="code" eval="'model.notify_document_before_expired_to_partner()'"/>
         </record>
