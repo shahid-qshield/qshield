@@ -35,6 +35,7 @@ class DocumentsCustom(models.Model):
     notify = fields.Boolean(
         string='Notified For Expiration',
         related='document_type_id.notify',
+        store=True
     )
 
     days_before_notifaction = fields.Integer(
@@ -188,9 +189,13 @@ class DocumentsCustom(models.Model):
                 mail.send()
 
     def notify_document_before_expired_to_partner(self):
-        group_companies = self.read_group(domain=[('related_company', '!=', False)],
-                                          fields=[],
-                                          groupby=['partner_id'])
+        # order = 'company_id ASC'
+        # group_companies = self.search([])
+        # self.read_group(
+        #             domain=['&', ('partner_id', '!=', False), "|", ('related_company', '!=', False),
+        #                     ('related_company', '=', False), ],
+        #             fields=['related_company'],
+        #             groupby=['related_company'])
 
         body = ''
         emails = ['helpdesk@qshield.com']
@@ -198,46 +203,52 @@ class DocumentsCustom(models.Model):
         for partner in partners:
             emails.append(partner.account_manager.user_id.partner_id.email)
         emails = set(emails)
-        for company in group_companies:
-            documents = self.search([('active', '=', 'True'), ('renewed', '=', False), ('notify', '=', True),
-                                     ('partner_id', '=', company['partner_id'][0]), ])
-            if documents:
-                items = []
-                base_url = self.env['ir.config_parameter'].get_param('web.base.url')
-                for document in documents:
-                    document_days = 0
-                    if document.expiry_date:
-                        document_days = self.get_date_difference(fields.Date.today(), document.expiry_date, )
-                    if 0 <= document_days <= document.days_before_notifaction:
-                        items.append(
-                            {
-                                'Employee_Name': document.partner_id.name,
-                                'Employee_Type': document.person_type,
-                                'Document_Type': document.document_type_id.name,
-                                'Document_Number': document.document_number,
-                                'Account_Manager': document.related_company.account_manager.name,
-                                'Remaining_Days_for_expiry': document_days,
-                                'Expiration_Date': document.expiry_date,
-                                'Document_url': str(
-                                    base_url) + '/web#id={id}&action={action_id}&model=documents.document&view_type=form'.format(
-                                    id=document.id, action_id=self.env.ref('documents.document_action').id
-                                ),
-                            }
-                        )
+        company_doc = []
+        # ('active', '=', 'True'), ('renewed', '=', False), ('notify', '=', True),
+        documents = self.search([('active', '=', 'True'), ('renewed', '=', False), ('notify', '=', True), ],
+                                order='related_company ASC')
+        if documents:
+            items = []
+            base_url = self.env['ir.config_parameter'].get_param('web.base.url')
+            for document in documents:
+                if document.partner_id.person_type == 'company':
+                    company_doc.append(document.partner_id.person_type)
+                document_days = 0
+                if document.expiry_date:
+                    document_days = self.get_date_difference(fields.Date.today(), document.expiry_date, )
+                if document_days <= document.days_before_notifaction:
+                    items.append(
+                        {
+                            'Client': document.related_company.name if document.related_company else "",
+                            'Employee_Name': document.partner_id.name,
+                            'Employee_Type': document.partner_id.person_type if document.partner_id.person_type else " ",
+                            'Corporate_Document': "Yes" if document.partner_id.person_type == 'company' else "No",
+                            'Document_Type': document.document_type_id.name,
+                            'Document_Number': document.document_number,
+                            'Account_Manager': document.related_company.account_manager.name if document.related_company.account_manager else " ",
+                            'Remaining_Days_for_expiry': document_days,
+                            'Expiration_Date': document.expiry_date if document.expiry_date else " ",
+                            'Document_url': str(
+                                base_url) + '/web#id={id}&action={action_id}&model=documents.document&view_type=form'.format(
+                                id=document.id, action_id=self.env.ref('documents.document_action').id
+                            ),
+                        }
+                    )
 
-                if items:
-                    for doc in items:
-                        body += " <tr> <th scope='row'>{}</th> ".format(doc['Employee_Name'])
-                        body += "<th scope='row'>{}</th>".format(doc['Employee_Type'])
-                        body += " <th scope='row'>{}</th>".format(doc['Document_Type'])
-                        body += "<th scope='row'>{}</th>".format(doc['Document_Number'])
-                        body += "<th scope='row'>{}</th>".format(doc['Account_Manager'])
-                        body += "<th scope='row'>{}</th>".format(doc['Remaining_Days_for_expiry'])
-                        body += "<th scope='row'>{}</th>".format(doc['Expiration_Date'])
-                        body += '''<th><a href="{url}" target="_blank">{name}</a></th></tr> '''.format(
-                            url=doc['Document_url'],
-                            name=doc['Employee_Name'])
-        print(emails)
+            if items:
+                for doc in items:
+                    body += " <tr> <th scope='row'>{}</th> ".format(doc['Client'])
+                    body += '''<th><a href="{url}" target="_blank">{name}</a></th> '''.format(
+                        url=doc['Document_url'],
+                        name=doc['Employee_Name'])
+                    body += "<th>{}</th>".format(doc['Employee_Type'])
+                    body += "<th>{}</th>".format(doc['Corporate_Document'])
+                    body += " <th >{}</th>".format(doc['Document_Type'])
+                    body += "<th >{}</th>".format(doc['Document_Number'])
+                    body += "<th >{}</th>".format(doc['Account_Manager'])
+                    body += "<th >{}</th>".format(doc['Remaining_Days_for_expiry'])
+                    body += "<th >{}</th></tr>".format(doc['Expiration_Date'])
+        print(len(company_doc))
         mail = self.env['mail.mail'].sudo().create({
             'subject': _('Documents Expiry.'),
             'email_from': self.env.user.partner_id.email,
@@ -248,17 +259,18 @@ class DocumentsCustom(models.Model):
                 " <strong> Below is the list of document Subject to expiry :  " +
                 " that belongs to Clients with full details </strong> <br/>" + "<br/> <br/' > " +
 
-                '''<table class='table'>
+                '''<table style='width:100%;' class='table'>
                      <thead>
                           <tr>
-                                 <th scope="col">Client</th>
-                                 <th scope="col">Client Type</th>
-                                 <th scope="col">Document Type</th>
-                                 <th scope="col">Document Number</th>
-                                 <th scope="col">Account Manager</th>
-                                 <th scope="col">Remaining Days for expiry</th>
-                                 <th scope="col">Expiration Date</th>
-                                 <th scope="col">Document url</th>
+                                 <th >Client</th>
+                                 <th >Name</th>
+                                 <th >Employee/Dependent</th>
+                                 <th >Corporate Document</th>
+                                 <th >Document Type</th>
+                                 <th >Document Number</th>
+                                 <th >Account Manager</th>
+                                 <th >Remaining Days for expiry</th>
+                                 <th >Expiration Date</th>
                           </tr>
                      </thead>
                      <tbody>
