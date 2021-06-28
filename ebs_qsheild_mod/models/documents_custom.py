@@ -207,7 +207,7 @@ class DocumentsCustom(models.Model):
         number_style = workbook.add_format(
             {'font_name': 'Times', 'left': 1, 'bottom': 1, 'right': 1, 'top': 1, 'align': 'right'})
 
-        sheet = workbook.add_worksheet(name='Expiry Document  in Excel')
+        sheet = workbook.add_worksheet(name='Expiry Document in Excel')
         sheet.set_column('A1:J1', 25)
         sheet.merge_range('A1:J1', 'Automated Report For All Documents expiry date', title_style)
         sheet.write(1, 0, 'No.', header_style)
@@ -276,10 +276,10 @@ class DocumentsCustom(models.Model):
         output.close()
 
         ir_values = {
-            'name': "Expiry Document in Excel",
+            'name': "Expiry Document in Excel" + ".xlsx",
             'type': 'binary',
             'datas': binary,
-            'store_fname': "Expiry Document in Excel" + ".xls",
+            'store_fname': "Expiry Document in Excel" + ".xlsx",
             'mimetype': 'application/vnd.ms-excel',
         }
         data_id = self.env['ir.attachment'].create(ir_values)

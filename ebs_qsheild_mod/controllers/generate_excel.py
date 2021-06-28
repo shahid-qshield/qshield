@@ -59,10 +59,8 @@ class SaleExcelReportController(http.Controller):
         sheet.write(1, 7, 'Account Manager', header_style)
         sheet.write(1, 8, 'Remaining Days For Expiry', header_style)
         sheet.write(1, 9, 'Expiry Date', header_style)
-
         row = 2
         number = 1
-
         documents = request.env['documents.document'].search(
             [('active', '=', 'True'), ('renewed', '=', False), ('notify', '=', True), ],
             order='related_company ASC')
@@ -116,8 +114,6 @@ class SaleExcelReportController(http.Controller):
 
                     row += 1
                     number += 1
-
-        # return the excel file as a response, so the browser can download it
         workbook.close()
         output.seek(0)
 
