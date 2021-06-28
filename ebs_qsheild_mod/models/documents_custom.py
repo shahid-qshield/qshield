@@ -267,10 +267,6 @@ class DocumentsCustom(models.Model):
                     #########################
                     sheet.write(row, 9, fields.Date.to_string(document.expiry_date) if document.expiry_date else " ",
                                 text_style)
-
-                    # sheet.cell(row=row, column=2).hyperlink =
-                    # sheet.cell(row=row, column=2).value = document.partner_id.name
-                    # sheet.cell(row=row, column=2).style = "Hyperlink"
                     row += 1
                     number += 1
 
@@ -283,7 +279,7 @@ class DocumentsCustom(models.Model):
             'name': "Expiry Document in Excel",
             'type': 'binary',
             'datas': binary,
-            'store_fname': "Expiry Document in Excel",
+            'store_fname': "Expiry Document in Excel" + ".xls",
             'mimetype': 'application/vnd.ms-excel',
         }
         data_id = self.env['ir.attachment'].create(ir_values)
