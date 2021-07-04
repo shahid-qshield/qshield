@@ -75,7 +75,8 @@ class DocumentsCustom(models.Model):
     date_stop_renew = fields.Date(
         string='Do Not Renew After',
         required=False,
-        related="partner_id.date_stop_renew")
+        related="partner_id.date_stop_renew", store=True)
+
     person_type = fields.Selection(
         string='Person Type',
         selection=[
@@ -208,8 +209,8 @@ class DocumentsCustom(models.Model):
             {'font_name': 'Times', 'left': 1, 'bottom': 1, 'right': 1, 'top': 1, 'align': 'right'})
 
         sheet = workbook.add_worksheet(name='Expiry Document in Excel')
-        sheet.set_column('A1:J1', 25)
-        sheet.merge_range('A1:J1', 'Automated Report For All Documents expiry date', title_style)
+        sheet.set_column('A1:K1', 25)
+        sheet.merge_range('A1:K1', 'Automated Report For All Documents expiry date', title_style)
         sheet.write(1, 0, 'No.', header_style)
         sheet.write(1, 1, 'Client', header_style)
         sheet.write(1, 2, 'Employee Name', header_style)
@@ -219,23 +220,36 @@ class DocumentsCustom(models.Model):
         sheet.write(1, 6, 'Document Number', header_style)
         sheet.write(1, 7, 'Account Manager', header_style)
         sheet.write(1, 8, 'Remaining Days For Expiry', header_style)
-        sheet.write(1, 9, 'Expiry Date', header_style)
+        sheet.write(1, 9, 'Do Not Renew After', header_style)
+        sheet.write(1, 10, 'Expiry Date', header_style)
         row = 2
         number = 1
-        documents = self.env['documents.document'].search(
-            [('active', '=', 'True'), ('renewed', '=', False), ('notify', '=', True), ],
-            order='related_company ASC')
+        documents = []
+        documents.extend(self.search(
+            [('active', '=', 'True'), ('renewed', '=', False), ('date_stop_renew', '=', False),
+             ('notify', '=', True), ],
+            order='related_company ASC'))
+        partners = self.env['res.partner'].search([])
+        for partner in partners:
+            if partner.date_stop_renew:
+                documents.extend(self.search(
+                    [
+                        ('active', '=', 'True'), ('renewed', '=', False), ('partner_id', '=', partner.id),
+                        ('expiry_date', '<', partner.date_stop_renew), ('date_stop_renew', '!=', False),
+                        ('notify', '=', True),
+                    ], order='related_company ASC'))
+        documents.sort(key=lambda x: x.related_company, reverse=True)
+        print(documents)
         if documents:
             base_url = self.env['ir.config_parameter'].get_param('web.base.url')
             for document in documents:
                 Remaining_Days_for_expiry = 0
                 if document.expiry_date:
-                    Remaining_Days_for_expiry = (
-                            datetime.strptime(str(fields.Date.today()), fmt) - datetime.strptime(
-                        str(document.expiry_date), fmt)).days
+                    Remaining_Days_for_expiry = (datetime.strptime(str(document.expiry_date), fmt) - datetime.strptime(
+                        str(fields.Date.today()), fmt)).days
                 document_days = 0
                 if document.expiry_date:
-                    document_days = self.get_date_difference(fields.Date.today(), document.expiry_date, )
+                    document_days = self.get_date_difference(document.expiry_date, fields.Date.today(), )
                 if document_days <= document.days_before_notifaction:
                     sheet.write(row, 0, number, text_style)
                     ##############################################
@@ -249,7 +263,8 @@ class DocumentsCustom(models.Model):
                         id=document.id, action_id=self.env.ref('documents.document_action').id),
                                     string=document.partner_id.name if document.partner_id else "False")
                     #########################
-                    sheet.write(row, 3, document.partner_id.person_type if document.partner_id.person_type else " ",
+                    sheet.write(row, 3,
+                                document.partner_id.contact_relation_type_id.name if document.partner_id.person_type == "child" else document.partner_id.person_type,
                                 text_style)
                     ######################
                     sheet.write(row, 4, "Yes" if document.partner_id.person_type == 'company' else "No",
@@ -265,7 +280,11 @@ class DocumentsCustom(models.Model):
                     ###############################
                     sheet.write(row, 8, Remaining_Days_for_expiry, text_style)
                     #########################
-                    sheet.write(row, 9, fields.Date.to_string(document.expiry_date) if document.expiry_date else " ",
+                    sheet.write(row, 9, fields.Date.to_string(
+                        document.partner_id.date_stop_renew) if document.partner_id.date_stop_renew else " ",
+                                text_style)
+                    #########################
+                    sheet.write(row, 10, fields.Date.to_string(document.expiry_date) if document.expiry_date else " ",
                                 text_style)
                     row += 1
                     number += 1
