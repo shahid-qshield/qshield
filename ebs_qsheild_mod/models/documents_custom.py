@@ -210,7 +210,7 @@ class DocumentsCustom(models.Model):
 
         sheet = workbook.add_worksheet(name='Expiry Document in Excel')
         sheet.set_column('A1:K1', 25)
-        sheet.merge_range('A1:k1', 'Automated Report For All Documents expiry date', title_style)
+        sheet.merge_range('A1:K1', 'Automated Report For All Documents expiry date', title_style)
         sheet.write(1, 0, 'No.', header_style)
         sheet.write(1, 1, 'Client', header_style)
         sheet.write(1, 2, 'Employee Name', header_style)
