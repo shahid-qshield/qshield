@@ -239,7 +239,6 @@ class DocumentsCustom(models.Model):
                         ('notify', '=', True),
                     ], order='related_company ASC'))
         documents.sort(key=lambda x: x.related_company, reverse=True)
-        print(documents)
         if documents:
             base_url = self.env['ir.config_parameter'].get_param('web.base.url')
             for document in documents:
@@ -302,7 +301,7 @@ class DocumentsCustom(models.Model):
             'mimetype': 'application/vnd.ms-excel',
         }
         data_id = self.env['ir.attachment'].create(ir_values)
-        emails = ['helpdesk@qshield.com']
+        emails = ['helpdesk@qshield.com', 'melkhatib@qshield.com']
         partners = self.env['res.partner'].search([('account_manager', '!=', False)])
         for partner in partners:
             emails.append(partner.account_manager.user_id.partner_id.email)
