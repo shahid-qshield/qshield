@@ -196,7 +196,7 @@ class DocumentsCustom(models.Model):
                 })
                 mail.send()
 
-    def notify_document_before_expired_to_partner(self):
+    def get_document_expiry_report(self, response):
         fmt = '%Y-%m-%d'
         output = io.BytesIO()
         workbook = xlsxwriter.Workbook(output, {'in_memory': True})
@@ -207,7 +207,6 @@ class DocumentsCustom(models.Model):
             {'font_name': 'Times', 'left': 1, 'bottom': 1, 'right': 1, 'top': 1, 'align': 'left'})
         number_style = workbook.add_format(
             {'font_name': 'Times', 'left': 1, 'bottom': 1, 'right': 1, 'top': 1, 'align': 'right'})
-
         sheet = workbook.add_worksheet(name='Expiry Document in Excel')
         sheet.set_column('A1:K1', 25)
         sheet.merge_range('A1:K1', 'Automated Report For All Documents expiry date', title_style)
@@ -225,14 +224,14 @@ class DocumentsCustom(models.Model):
         row = 2
         number = 1
         documents = []
-        documents.extend(self.search(
+        documents.extend(self.env['documents.document'].search(
             [('active', '=', 'True'), ('renewed', '=', False), ('date_stop_renew', '=', False),
              ('notify', '=', True), ],
             order='related_company ASC'))
         partners = self.env['res.partner'].search([])
         for partner in partners:
             if partner.date_stop_renew:
-                documents.extend(self.search(
+                documents.extend(self.env['documents.document'].search(
                     [
                         ('active', '=', 'True'), ('renewed', '=', False), ('partner_id', '=', partner.id),
                         ('expiry_date', '<', partner.date_stop_renew), ('date_stop_renew', '!=', False),
@@ -287,38 +286,42 @@ class DocumentsCustom(models.Model):
                                 text_style)
                     row += 1
                     number += 1
-
         workbook.close()
         output.seek(0)
-        binary = base64.b64encode(output.getvalue())
+        generated_file = response.stream.write(output.read())
         output.close()
 
-        ir_values = {
-            'name': "Expiry Document in Excel" + ".xlsx",
-            'type': 'binary',
-            'datas': binary,
-            'store_fname': "Expiry Document in Excel" + ".xlsx",
-            'mimetype': 'application/vnd.ms-excel',
-        }
-        data_id = self.env['ir.attachment'].create(ir_values)
+        return generated_file
+
+    def notify_document_before_expired_to_partner(self):
+        base_url = self.env['ir.config_parameter'].get_param('web.base.url') + '/web/content/download/xlsx_reports/'
+        link = "href = " + str(base_url)
         emails = ['helpdesk@qshield.com', 'melkhatib@qshield.com']
         partners = self.env['res.partner'].search([('account_manager', '!=', False)])
         for partner in partners:
-            emails.append(partner.account_manager.user_id.partner_id.email)
+            if partner.account_manager.user_id.partner_id.email:
+                emails.append(partner.account_manager.user_id.partner_id.email)
         emails = set(emails)
         mail = self.env['mail.mail'].sudo().create({
             'subject': _('Documents Expiry.'),
             'email_from': self.env.user.partner_id.email,
             'author_id': self.env.user.partner_id.id,
             'email_to': ','.join(emails),
+            # 'email_to': 'helpdesk@qshield.com',
             'body_html':
                 " Dear(s), <br/><br/> "
-                " <strong> Please find attached the list of documents subject to expire.  </strong> <br/><br/><br/>"
-                " Regards,Odoo Notification Service.<br/><br/>"
+                " <strong> Please find attached the list of documents subject to expire.  </strong> <br/>"
+                """<div style="margin: 16px 0px 16px 0px;">
+                        <a """ + link + """
+                            style="background-color: #875A7B; padding: 8px 16px 8px 16px; text-decoration: none; color: #fff; border-radius: 5px; font-size:13px;">
+                            Download Document
+                        </a>
+                        </div> <br/><br/> """
+                                        " Regards,Odoo Notification Service.<br/><br/>"
             ,
         })
         mail.send()
-        mail.attachment_ids = [(6, 0, [data_id.id])]
+        # mail.attachment_ids = [(6, 0, [data_id.id])]
 
     def name_get(self):
         result = []
