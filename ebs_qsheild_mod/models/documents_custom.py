@@ -210,17 +210,19 @@ class DocumentsCustom(models.Model):
         sheet = workbook.add_worksheet(name='Expiry Document in Excel')
         sheet.set_column('A1:K1', 25)
         sheet.merge_range('A1:K1', 'Automated Report For All Documents expiry date', title_style)
-        sheet.write(1, 0, 'No.', header_style)
-        sheet.write(1, 1, 'Client', header_style)
-        sheet.write(1, 2, 'Employee Name', header_style)
+        # sheet.write(1, 0, 'No.', header_style)
+        sheet.write(1, 0, 'Client', header_style)
+        sheet.write(1, 1, 'Employee Name', header_style)
+        sheet.write(1, 2, 'Status', header_style)
         sheet.write(1, 3, 'Employee / Dependent', header_style)
-        sheet.write(1, 4, 'Corporate Document', header_style)
-        sheet.write(1, 5, 'Document Type', header_style)
-        sheet.write(1, 6, 'Document Number', header_style)
-        sheet.write(1, 7, 'Account Manager', header_style)
-        sheet.write(1, 8, 'Remaining Days For Expiry', header_style)
-        sheet.write(1, 9, 'Do Not Renew After', header_style)
-        sheet.write(1, 10, 'Expiry Date', header_style)
+        sheet.write(1, 4, 'Related Contact', header_style)
+        sheet.write(1, 5, 'Sponsor', header_style)
+        sheet.write(1, 6, 'Document Type', header_style)
+        sheet.write(1, 7, 'Document Number', header_style)
+        sheet.write(1, 8, 'Account Manager', header_style)
+        sheet.write(1, 9, 'Remaining Days For Expiry', header_style)
+        sheet.write(1, 10, 'Do Not Renew After', header_style)
+        sheet.write(1, 11, 'Expiry Date', header_style)
         row = 2
         number = 1
         documents = []
@@ -249,40 +251,58 @@ class DocumentsCustom(models.Model):
                 if document.expiry_date:
                     document_days = self.get_date_difference(document.expiry_date, fields.Date.today(), )
                 if document_days <= document.days_before_notifaction:
-                    sheet.write(row, 0, number, text_style)
+                    # sheet.write(row, 0, number, text_style)
                     ##############################################
-                    sheet.write(row, 1,
+                    sheet.write(row, 0,
                                 document.related_company.name if document.related_company else document.partner_id.name,
                                 text_style)
 
                     ###############################
-                    sheet.write_url(row=row, col=2, url=str(
+                    sheet.write_url(row=row, col=1, url=str(
                         base_url) + '/web#id={id}&action={action_id}&model=documents.document&view_type=form'.format(
                         id=document.id, action_id=self.env.ref('documents.document_action').id),
                                     string=document.partner_id.name if document.partner_id else "False")
                     #########################
-                    sheet.write(row, 3,
-                                document.partner_id.contact_relation_type_id.name if document.partner_id.person_type == "child" else document.partner_id.person_type,
+                    status = ''
+                    if Remaining_Days_for_expiry <= 0:
+                        status = 'Expired'
+                    if Remaining_Days_for_expiry > 0:
+                        status = 'Active'
+                    sheet.write(row, 2, status,
                                 text_style)
                     ######################
-                    sheet.write(row, 4, "Yes" if document.partner_id.person_type == 'company' else "No",
+                    person = ' '
+                    if document.person_type == "company":
+                        person = 'Company'
+                    if document.person_type == "emp":
+                        person = 'Employee'
+                    if document.person_type == "visitor":
+                        person = 'Visitor'
+                    if document.person_type == "child":
+                        person = 'Dependent'
+                    sheet.write(row, 3, person,
+                                text_style)
+                    ######################
+                    sheet.write(row, 4, document.related_contact.name if document.related_contact.name else ' ',
                                 text_style)
                     ############################
-                    sheet.write(row, 5, document.document_type_id.name, text_style)
+                    sheet.write(row, 5, document.sponsor.name, text_style)
                     ##############################
-                    sheet.write(row, 6, document.document_number, text_style)
+                    sheet.write(row, 6, document.document_type_id.name, text_style)
+                    ##############################
+                    sheet.write(row, 7, document.document_number, text_style)
                     ##################################
-                    sheet.write(row, 7,
+                    sheet.write(row, 8,
                                 document.related_company.account_manager.name if document.related_company.account_manager else " ",
                                 text_style)
                     ###############################
-                    sheet.write(row, 8, Remaining_Days_for_expiry, text_style)
+                    sheet.write(row, 9, Remaining_Days_for_expiry, text_style)
                     #########################
-                    sheet.write(row, 9, fields.Date.to_string(
+                    sheet.write(row, 10, fields.Date.to_string(
                         document.partner_id.date_stop_renew) if document.partner_id.date_stop_renew else " ",
                                 text_style)
                     #########################
-                    sheet.write(row, 10, fields.Date.to_string(document.expiry_date) if document.expiry_date else " ",
+                    sheet.write(row, 11, fields.Date.to_string(document.expiry_date) if document.expiry_date else " ",
                                 text_style)
                     row += 1
                     number += 1
