@@ -150,6 +150,7 @@
                           <table class="table">
                               <thead style="border-style: none;">
                                 <tr >
+                                  <th scope="col">Driver</th>
                                   <th scope="col">7:00</th>
                                   <th scope="col">8:00</th>
                                   <th scope="col">9:00</th>
@@ -166,6 +167,7 @@
                               </thead>
                               <tbody>
                                 <tr>
+                                  <td>Driver NAME</td>
                                   <td>MED</td>
                                   <td>PICKUP</td>
                                   <td>MOF</td>
@@ -272,20 +274,20 @@
 <!--                            </table>-->
 
 
-                    <div  style="width:50%;">
-                        <div class="col-md-2 col-sm  oh-payslip oh-contracts" style="width: 50%">
-                            <div class="oh-card">
-                                <div class="oh-card-body">
-                                    <div class="stat-widget-one">
-                                        <div class="stat-icon"></div>
-                                            <div class="stat-content">
-                                                <div class="stat-text">table</div>
-                                            </div>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
+<!--                    <div  style="width:50%;">-->
+<!--                        <div class="col-md-2 col-sm  oh-payslip oh-contracts" style="width: 50%">-->
+<!--                            <div class="oh-card">-->
+<!--                                <div class="oh-card-body">-->
+<!--                                    <div class="stat-widget-one">-->
+<!--                                        <div class="stat-icon"></div>-->
+<!--                                            <div class="stat-content">-->
+<!--                                                <div class="stat-text">table</div>-->
+<!--                                            </div>-->
+<!--                                    </div>-->
+<!--                                </div>-->
+<!--                            </div>-->
+<!--                        </div>-->
+<!--                    </div>-->
 
                 </div>
 
