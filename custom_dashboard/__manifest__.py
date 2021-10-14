@@ -16,9 +16,9 @@
     'depends': ['base', 'ebs_qsheild_mod'],
     'qweb': ["static/src/xml/dashboard.xml"],
     'data': [
-        # 'security/ir.model.access.csv',
-        'views/views.xml',
-        'views/templates.xml',
+        'security/ir.model.access.csv',
+        'views/custom_views.xml',
+        # 'views/templates.xml',
         'views/dashboard_view.xml',
     ],
 }
