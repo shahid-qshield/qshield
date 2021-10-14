@@ -10,7 +10,7 @@
                   name="Dashboard"
                   parent="ebs_qsheild_mod.qshield_services"
                   action="service_request_action_dashboard"
-                  sequence="100" groups="base.group_user"/>
+                  sequence="2" groups="base.group_user"/>
 
         <template id="assets_backend_dashboard" name="Service Request Dashboard assets inherit" inherit_id="web.assets_backend">
             <xpath expr="." position="inside">
