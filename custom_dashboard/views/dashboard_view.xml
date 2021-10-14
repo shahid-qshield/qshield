@@ -10,13 +10,11 @@
                   name="Dashboard"
                   parent="ebs_qsheild_mod.qshield_services"
                   action="service_request_action_dashboard"
-                  sequence="100" groups="base.group_user"/>
+                  sequence="2" groups="base.group_user"/>
 
         <template id="assets_backend_dashboard" name="Service Request Dashboard assets inherit" inherit_id="web.assets_backend">
             <xpath expr="." position="inside">
-    <!--            <link rel="stylesheet" href="/hrms_dashboard/static/src/css/hrms_dashboard.css"/>-->
-    <!--            <script type="text/javascript" src="/hrms_dashboard/static/src/js/hrms_dashboard.js"/>-->
-    <!--            <link rel="stylesheet" href="/hrms_dashboard/static/src/css/lib/nv.d3.css"/>-->
+                <link rel="stylesheet" href="/custom_dashboard/static/src/css/hrms_dashboard.css"/>
                 <script type="text/javascript" src="/custom_dashboard/static/src/js/dashboard.js"/>
             </xpath>
         </template>
