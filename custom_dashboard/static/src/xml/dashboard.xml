@@ -3,8 +3,292 @@
     <t t-name="service_request">
         <div class="oh_dashboards">
             <div class="container-fluid o_hr_dashboard">
-                <h1>Hello All</h1>
-            </div>
+                <h3>OPERATIONS DASHBOARD</h3>
+                <div class="row1 main-section">
+                     <div class="col-md-2 col-sm-6 request_draft oh-payslip" >
+                        <div class="oh-card">
+                            <div class="oh-card-body">
+    <!--                            <div class="stat-widget-one">-->
+                                    <div class="stat-icon"><p><t t-esc="widget.progress['draft']"/></p></div>
+                                    <div class="stat-content">
+                                        <div class="stat-text">Draft</div>
+        <!--                                <div class="stat-digit"><t t-esc="widget.login_employee['payslip_count']"/></div>-->
+                                        <div class="stat-digit"></div>
+                                    </div>
+    <!--                            </div>-->
+                            </div>
+                        </div>
+                    </div>
+
+                     <div class="col-md-2 col-sm-6 request_progress oh-payslip" >
+                        <div class="oh-card">
+                            <div class="oh-card-body">
+    <!--                            <div class="stat-widget-one">-->
+                                    <div class="stat-icon"><p><t t-esc="widget.progress['progress']"/></p></div>
+                                    <div class="stat-content">
+                                        <div class="stat-text">In Progress</div>
+        <!--                                <div class="stat-digit"><t t-esc="widget.login_employee['payslip_count']"/></div>-->
+                                        <div class="stat-digit"></div>
+                                    </div>
+    <!--                            </div>-->
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="col-md-2 col-sm-6 request_complete oh-payslip" >
+                        <div class="oh-card">
+                            <div class="oh-card-body">
+                                <div class="stat-widget-one complete-colored">
+                                    <div class="stat-icon"><p><t t-esc="widget.progress['complete']"/></p></div>
+                                    <div class="stat-content ">
+                                        <div class="stat-text">Completed</div>
+        <!--                                <div class="stat-digit"><t t-esc="widget.login_employee['payslip_count']"/></div>-->
+                                        <div class="stat-digit complete-colored"></div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="row1 main-section">
+                    <div class="col-md-2 col-sm-6 request_cancel oh-payslip" >
+                        <div class="oh-card">
+                            <div class="oh-card-body">
+    <!--                            <div class="stat-widget-one">-->
+                                    <div class="stat-icon"><p><t t-esc="widget.progress['cancel']"/></p></div>
+                                    <div class="stat-content">
+                                        <div class="stat-text">Cancelled</div>
+        <!--                                <div class="stat-digit"><t t-esc="widget.login_employee['payslip_count']"/></div>-->
+                                        <div class="stat-digit"></div>
+                                    </div>
+    <!--                            </div>-->
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="col-md-2 col-sm-6 request_reject oh-payslip" >
+                        <div class="oh-card">
+                            <div class="oh-card-body">
+    <!--                            <div class="stat-widget-one">-->
+                                    <div class="stat-icon"><p><t t-esc="widget.progress['reject']"/></p></div>
+                                    <div class="stat-content">
+                                        <div class="stat-text">Rejected</div>
+        <!--                                <div class="stat-digit"><t t-esc="widget.login_employee['payslip_count']"/></div>-->
+                                        <div class="stat-digit"></div>
+                                    </div>
+    <!--                            </div>-->
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-2 col-sm-6 request_hold oh-payslip" >
+                        <div class="oh-card">
+                            <div class="oh-card-body">
+    <!--                            <div class="stat-widget-one">-->
+                                    <div class="stat-icon"><p><t t-esc="widget.progress['hold']"/></p></div>
+                                    <div class="stat-content">
+                                        <div class="stat-text">On Hold</div>
+        <!--                                <div class="stat-digit"><t t-esc="widget.login_employee['payslip_count']"/></div>-->
+                                        <div class="stat-digit"></div>
+                                    </div>
+    <!--                            </div>-->
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <br/>
+
+<!--                <h3>ASSIGNED TASKS</h3>-->
+<!--                <div class="row main-section">-->
+<!--                    <t t-foreach="widget.employee_progress" t-as="obj">-->
+<!--&lt;!&ndash;                        <div class="col-md-2 col-sm-6 get_employee_name oh-payslip" >&ndash;&gt;-->
+<!--                        <div class="col-md-2 col-sm-6 get_employee_name oh-payslip" >-->
+<!--                            <div class="oh-card" style="background-color: SeaGreen; height: 90%;">-->
+<!--                                <div class="oh-card-body">-->
+<!--&lt;!&ndash;                                    <div class="employee-name-background"><p class="employee-name" id="name"><t t-esc="obj.employee_name"/></p></div>&ndash;&gt;-->
+<!--&lt;!&ndash;                                    <div class="employee-name-background get_employee_id"><p><t t-esc="obj.employee_id"/></p></div>&ndash;&gt;-->
+<!--                                    <div class="employee-name-background"><p class="employee-name" id="name"><t t-esc="obj.employee_name"/></p></div>-->
+<!--                                    <div class="stat-content">-->
+<!--                                        <div class="stat-text" style="color: black; text-align: center;"><p><t t-esc="obj.progress"/></p></div>-->
+<!--                                        <div class="stat-digit"></div>-->
+<!--                                    </div>-->
+<!--                                </div>-->
+<!--                            </div>-->
+<!--                        </div>-->
+<!--                    </t>-->
+<!--                </div>-->
+                <h3>ASSIGNED TASKS</h3>
+                <div class="row main-section">
+                     <div style="width:46%;">
+                        <t t-foreach="widget.employee_progress" t-as="obj" >
+                            <div class="col-md-2 col-sm-6  get_employee_name oh-payslip" t-attf-id="{{obj.employee_id}}"
+                                 t-attf-emp_name="{{obj.employee_name}}"
+                                 style="display:inline-block;">
+                                <div class="oh-card" style="background-color: #b298e1; height: 70px;">
+                                    <div class="oh-card-body">
+        <!--                                    <div class="employee-name-background"><p class="employee-name" id="name"><t t-esc="obj.employee_name"/></p></div>-->
+        <!--                                    <div class="employee-name-background get_employee_id"><p><t t-esc="obj.employee_id"/></p></div>-->
+                                        <div class="employee-name-background">
+<!--                                            <p class="employee-name" >-->
+<!--                                                <span style="visibility:hidden;"> <t t-esc="obj.employee_id"/></span>-->
+<!--                                                <t t-esc="obj.employee_name"/></p></div>-->
+                                            <p class="employee-name" ><t t-esc="obj.employee_name"/></p></div>
+                                        <div class="stat-content">
+                                            <div class="stat-text" style="color: black; text-align: center;">
+                                                <p><t t-esc="obj.progress"/></p></div>
+                                            <div class="stat-digit"></div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </t>
+                    </div>
+
+                     <div style="width:54%;">
+                          <table class="table">
+                              <thead style="border-style: none;">
+                                <tr >
+                                  <th scope="col">7:00</th>
+                                  <th scope="col">8:00</th>
+                                  <th scope="col">9:00</th>
+                                  <th scope="col">10:00</th>
+                                  <th scope="col">11:00</th>
+                                  <th scope="col">12:00</th>
+                                  <th scope="col">1:00</th>
+                                  <th scope="col">2:00</th>
+                                  <th scope="col">3:00</th>
+                                  <th scope="col">4:00</th>
+                                  <th scope="col">5:00</th>
+                                  <th scope="col">6:00</th>
+                                </tr>
+                              </thead>
+                              <tbody>
+                                <tr>
+                                  <td>MED</td>
+                                  <td>PICKUP</td>
+                                  <td>MOF</td>
+                                  <td>PICKUP</td>
+                                  <td>MED</td>
+                                  <td>PICKUP</td>
+                                  <td>MOF</td>
+                                  <td>MOF</td>
+                                  <td>MOF</td>
+                                  <td>MOF</td>
+                                  <td>PICKUP</td>
+                                  <td>MOF</td>
+                                </tr>
+                                <tr>
+                                      <td></td>
+                                      <td>PICKUP</td>
+                                      <td>MOF</td>
+                                      <td></td>
+                                      <td>MED</td>
+                                      <td>PICKUP</td>
+                                      <td>MOF</td>
+                                      <td></td>
+                                      <td>MOF</td>
+                                      <td></td>
+                                      <td>PICKUP</td>
+                                      <td>MOF</td>
+                                </tr>
+                                <tr>
+                                      <td>PICKUP</td>
+                                      <td></td>
+                                      <td>MOF</td>
+                                      <td>PICKUP</td>
+                                      <td></td>
+                                      <td>PICKUP</td>
+                                      <td>MOF</td>
+                                      <td></td>
+                                      <td>MOF</td>
+                                      <td>MOF</td>
+                                      <td>PICKUP</td>
+                                      <td></td>
+                                </tr>
+                              </tbody>
+                            </table>
+                    </div>
+
+                    <!--                            <table style="margin-right:200px">-->
+<!--                                <tr>-->
+<!--                                    <td style="border-top: 1px solid #000000; border-bottom: 1px solid #000000; border-left: 1px solid #000000; border-right: 1px solid #000000"-->
+<!--                                        height="17" align="center" valign="middle">-->
+<!--                                        <b>7</b>-->
+<!--                                    </td>-->
+
+<!--                                    <td style="border-top: 1px solid #000000; border-bottom: 1px solid #000000; border-left: 1px solid #000000; border-right: 1px solid #000000"-->
+<!--                                        height="17" align="center" valign="middle">-->
+<!--                                        <b>8</b>-->
+<!--                                    </td>-->
+
+<!--                                    <td style="border-top: 1px solid #000000; border-bottom: 1px solid #000000; border-left: 1px solid #000000; border-right: 1px solid #000000"-->
+<!--                                        height="17" align="center" valign="middle">-->
+<!--                                        <b>9</b>-->
+<!--                                    </td>-->
+<!--                                    <td style="border-top: 1px solid #000000; border-bottom: 1px solid #000000; border-left: 1px solid #000000; border-right: 1px solid #000000"-->
+<!--                                        height="17" align="center" valign="middle">-->
+<!--                                        <b>10</b>-->
+<!--                                    </td>-->
+<!--                                    <td style="border-top: 1px solid #000000; border-bottom: 1px solid #000000; border-left: 1px solid #000000; border-right: 1px solid #000000"-->
+<!--                                        height="17" align="center" valign="middle">-->
+<!--                                        <b>11</b>-->
+<!--                                    </td>-->
+<!--                                    <td style="border-top: 1px solid #000000; border-bottom: 1px solid #000000; border-left: 1px solid #000000; border-right: 1px solid #000000"-->
+<!--                                        height="17" align="center" valign="middle">-->
+<!--                                        <b>12</b>-->
+<!--                                    </td>-->
+<!--                                    <td style="border-top: 1px solid #000000; border-bottom: 1px solid #000000; border-left: 1px solid #000000; border-right: 1px solid #000000"-->
+<!--                                        height="17" align="center" valign="middle">-->
+<!--                                        <b>1</b>-->
+<!--                                    </td>-->
+<!--                                    <td style="border-top: 1px solid #000000; border-bottom: 1px solid #000000; border-left: 1px solid #000000; border-right: 1px solid #000000"-->
+<!--                                        height="17" align="center" valign="middle">-->
+<!--                                        <b>2</b>-->
+<!--                                    </td>-->
+<!--                                    <td style="border-top: 1px solid #000000; border-bottom: 1px solid #000000; border-left: 1px solid #000000; border-right: 1px solid #000000"-->
+<!--                                        height="17" align="center" valign="middle">-->
+<!--                                        <b>3</b>-->
+<!--                                    </td>-->
+<!--                                    <td style="border-top: 1px solid #000000; border-bottom: 1px solid #000000; border-left: 1px solid #000000; border-right: 1px solid #000000"-->
+<!--                                        height="17" align="center" valign="middle">-->
+<!--                                        <b>4</b>-->
+<!--                                    </td>-->
+<!--                                    <td style="border-top: 1px solid #000000; border-bottom: 1px solid #000000; border-left: 1px solid #000000; border-right: 1px solid #000000"-->
+<!--                                        height="17" align="center" valign="middle">-->
+<!--                                        <b>5</b>-->
+<!--                                    </td>-->
+<!--                                    <td style="border-top: 1px solid #000000; border-bottom: 1px solid #000000; border-left: 1px solid #000000; border-right: 1px solid #000000"-->
+<!--                                        height="17" align="center" valign="middle">-->
+<!--                                        <b>6</b>-->
+<!--                                    </td>-->
+<!--                                    <td style="border-top: 1px solid #000000; border-bottom: 1px solid #000000; border-left: 1px solid #000000; border-right: 1px solid #000000"-->
+<!--                                        height="17" align="center" valign="middle">-->
+<!--                                        <b>7</b>-->
+<!--                                    </td>-->
+
+<!--                                </tr>-->
+<!--                            </table>-->
+
+
+                    <div  style="width:50%;">
+                        <div class="col-md-2 col-sm  oh-payslip oh-contracts" style="width: 50%">
+                            <div class="oh-card">
+                                <div class="oh-card-body">
+                                    <div class="stat-widget-one">
+                                        <div class="stat-icon"></div>
+                                            <div class="stat-content">
+                                                <div class="stat-text">table</div>
+                                            </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                </div>
+
+                </div>
         </div>
+
     </t>
 </templates>
