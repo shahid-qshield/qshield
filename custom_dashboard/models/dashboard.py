@@ -40,7 +40,7 @@ class ServiceRequestWorkFlow(models.Model):
                 domain = [('status', '=', 'progress'), ('assign_to', '=', each_employee.id)]
                 no_of_requests = self.env['ebs_mod.service.request.workflow'].search_count(domain)
                 request_dict = {
-                    
+                    'employee_id': each_employee.id,
                     'employee_name': each_employee.name,
                     'progress': no_of_requests
                 }
