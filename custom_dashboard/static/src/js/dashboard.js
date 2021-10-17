@@ -203,23 +203,13 @@ var ServiceDashboard = AbstractAction.extend({
             }).then(function(result) {
                 self.drivers =  result
             });
-//        var def1 =  this._rpc({
-//                model: 'hr.employee',
-//                method: 'get_user_employee_details'
-//        }).then(function(result) {
-//            self.login_employee =  result[0];
-//        });
-//        var def2 = self._rpc({
-//            model: "hr.employee",
-//            method: "get_upcoming",
-//        })
-//        .then(function (res) {
-//            self.employee_birthday = res['birthday'];
-//            self.upcoming_events = res['event'];
-//            self.announcements = res['announcement'];
-//        });
-//        return $.when(def0, def1, def2);
-        return $.when(def0,def1,def2);
+        var def3 =  self._rpc({
+                    model: 'ebs_mod.service.type.consolidation',
+                    method: 'get_request'
+            }).then(function(result) {
+                self.consolidation =  result
+            });
+        return $.when(def0,def1,def2,def3);
     },
 
     render_dashboards: function() {

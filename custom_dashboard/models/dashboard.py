@@ -129,7 +129,7 @@ class ServiceRequestWorkFlow(models.Model):
                 return elem.get('progress')
 
             request_list.sort(key=get_progress, reverse=True)
-        return request_listz
+        return request_list
 
     @api.model
     def get_driver(self):

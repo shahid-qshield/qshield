@@ -98,25 +98,8 @@
                 </div>
                 <br/>
 
-<!--                <h3>ASSIGNED TASKS</h3>-->
-<!--                <div class="row main-section">-->
-<!--                    <t t-foreach="widget.employee_progress" t-as="obj">-->
-<!--&lt;!&ndash;                        <div class="col-md-2 col-sm-6 get_employee_name oh-payslip" >&ndash;&gt;-->
-<!--                        <div class="col-md-2 col-sm-6 get_employee_name oh-payslip" >-->
-<!--                            <div class="oh-card" style="background-color: SeaGreen; height: 90%;">-->
-<!--                                <div class="oh-card-body">-->
-<!--&lt;!&ndash;                                    <div class="employee-name-background"><p class="employee-name" id="name"><t t-esc="obj.employee_name"/></p></div>&ndash;&gt;-->
-<!--&lt;!&ndash;                                    <div class="employee-name-background get_employee_id"><p><t t-esc="obj.employee_id"/></p></div>&ndash;&gt;-->
-<!--                                    <div class="employee-name-background"><p class="employee-name" id="name"><t t-esc="obj.employee_name"/></p></div>-->
-<!--                                    <div class="stat-content">-->
-<!--                                        <div class="stat-text" style="color: black; text-align: center;"><p><t t-esc="obj.progress"/></p></div>-->
-<!--                                        <div class="stat-digit"></div>-->
-<!--                                    </div>-->
-<!--                                </div>-->
-<!--                            </div>-->
-<!--                        </div>-->
-<!--                    </t>-->
-<!--                </div>-->
+
+                <!--ASSIGNED TASKS-->
                 <h3>ASSIGNED TASKS</h3>
                 <div class="row main-section">
                      <div style="width:37%;" >
@@ -173,7 +156,7 @@
                         </t>
                     </div>
 
-
+                    <!--TRANSPORT DAILY SCHEDULE-->
                      <div style="width:63%;">
                          <h3>TRANSPORT DAILY SCHEDULE</h3>
                           <table class="table" >
@@ -304,148 +287,26 @@
 
                 </div>
 
+                <br/>
+
+                <!--Service BreakDown-->
                 <h3>Service Breakdown</h3>
                 <div class="row main-section">
                      <div>
-                          <table class="table" >
+                          <table class="table" style="margin:10px;">
                               <thead>
-                                <tr >
+                                <tr>
                                   <th scope="col">Service Name</th>
                                   <th scope="col">Count</th>
                                 </tr>
                               </thead>
                               <tbody>
-                                   <t t-foreach="widget.drivers" t-as="obj" >
-                                       <tr>
-                                          <td><t t-esc="obj.driver_name"/></td>
-                                           <td>
-                                                <t t-foreach="obj.destination" t-as="des" >
-                                                     <t t-if="des.slot == '7'">
-                                                       <span  t-esc="des.destination + des.slot"/>
-                                                     </t>
-
-                                                </t>
-                                           </td>
-
-                                           <td>
-                                               <t t-foreach="obj.destination" t-as="des" >
-                                                     <t t-if="des.slot == '8'">
-                                                       <span  t-esc="des.destination"/>
-                                                     </t>
-
-                                                </t>
-                                           </td>
-
-                                           <td>
-                                               <t t-foreach="obj.destination" t-as="des" >
-                                                     <t t-if="des.slot == '9'">
-                                                       <span  t-esc="des.destination"/>
-                                                     </t>
-
-                                                </t>
-                                           </td>
-                                           <td>
-                                               <t t-foreach="obj.destination" t-as="des" >
-                                                     <t t-if="des.slot == '10'">
-                                                       <span  t-esc="des.destination"/>
-                                                     </t>
-
-                                                </t>
-                                           </td>
-                                           <td>
-                                               <t t-foreach="obj.destination" t-as="des" >
-                                                     <t t-if="des.slot == '11'">
-                                                       <span  t-esc="des.destination"/>
-                                                     </t>
-
-                                                </t>
-                                           </td>
-                                           <td>
-                                               <t t-foreach="obj.destination" t-as="des" >
-                                                     <t t-if="des.slot == '12'">
-                                                       <span  t-esc="des.destination"/>
-                                                     </t>
-
-                                                </t>
-                                           </td>
-                                           <td>
-                                               <t t-foreach="obj.destination" t-as="des" >
-                                                     <t t-if="des.slot == '1'">
-                                                       <span  t-esc="des.destination"/>
-                                                     </t>
-
-                                                </t>
-                                           </td>
-                                           <td>
-                                               <t t-foreach="obj.destination" t-as="des" >
-                                                     <t t-if="des.slot == '2'">
-                                                       <span  t-esc="des.destination"/>
-                                                     </t>
-
-                                                </t>
-                                           </td>
-                                           <td>
-                                               <t t-foreach="obj.destination" t-as="des" >
-                                                     <t t-if="des.slot == '3'">
-                                                       <span  t-esc="des.destination "/>
-                                                     </t>
-
-                                                </t>
-                                           </td>
-                                           <td>
-                                               <t t-foreach="obj.destination" t-as="des" >
-                                                     <t t-if="des.slot == '4'">
-                                                       <span  t-esc="des.destination"/>
-                                                     </t>
-
-                                                </t>
-                                           </td>
-                                           <td>
-                                               <t t-foreach="obj.destination" t-as="des" >
-                                                     <t t-if="des.slot == '5'">
-                                                       <span  t-esc="des.destination"/>
-                                                     </t>
-
-                                                </t>
-                                           </td>
-                                           <td>
-                                               <t t-foreach="obj.destination" t-as="des" >
-                                                     <t t-if="des.slot == '6'">
-                                                       <span  t-esc="des.destination"/>
-                                                     </t>
-
-                                                </t>
-                                           </td>
+                                  <t t-foreach="widget.consolidation" t-as="obj" >
+                                       <tr t-attf-id="{{obj.consolidated_service_id}}">
+                                          <td><t t-esc="obj.consolidated_service_name"/></td>
+                                          <td><t t-esc="obj.count"/></td>
                                        </tr>
-                                   </t>
-
-
-<!--                                              <td><span t-if="des.slot == 7" t-esc="des.destination"/></td>-->
-<!--                                              <td><span  t-if="des.slot == 8" t-esc="des.destination"/></td>-->
-<!--                                              <td><span  t-if="des.slot == 9" t-esc="des.destination"/></td>-->
-<!--                                              <td><span  t-if="des.slot == 10" t-esc="des.destination"/></td>-->
-<!--                                              <td><span  t-if="des.slot == 11" t-esc="des.destination"/></td>-->
-<!--                                              <td><span  t-if="des.slot == 12" t-esc="des.destination"/></td>-->
-<!--                                              <td><span  t-if="des.slot == 1" t-esc="des.destination"/></td>-->
-<!--                                              <td><span  t-if="des.slot == 2" t-esc="des.destination"/></td>-->
-<!--                                              <td><span  t-if="des.slot == 3" t-esc="des.destination"/></td>-->
-<!--                                              <td><span  t-if="des.slot == 4" t-esc="des.destination"/></td>-->
-<!--                                              <td><span  t-if="des.slot == 5" t-esc="des.destination"/></td>-->
-<!--                                              <td><span  t-if="des.slot == 6" t-esc="des.destination"/></td>-->
-<!--                                             <td t-if="des.slot == 7" ><t  t-esc="des.destination"/></td>-->
-<!--                                              <td t-elif="des.slot == 8"><t  t-esc="des.destination"/></td>-->
-<!--                                              <td t-elif="des.slot == 9"><t  t-esc="des.destination"/></td>-->
-<!--                                              <td t-elif="des.slot == 10"><t  t-esc="des.destination"/></td>-->
-<!--                                              <td t-elif="des.slot == 11"><t  t-esc="des.destination"/></td>-->
-<!--                                              <td t-elif="des.slot == 12"><t  t-esc="des.destination"/></td>-->
-<!--                                              <td t-elif="des.slot == 1"><t  t-esc="des.destination"/></td>-->
-<!--                                              <td t-elif="des.slot == 2"><t  t-esc="des.destination"/></td>-->
-<!--                                              <td t-elif="des.slot == 3"><t  t-esc="des.destination"/></td>-->
-<!--                                              <td t-elif="des.slot == 4"><t  t-esc="des.destination"/></td>-->
-<!--                                              <td t-elif="des.slot == 5"><t  t-esc="des.destination"/></td>-->
-<!--                                              <td t-elif="des.slot == 6"><t  t-esc="des.destination"/></td>-->
-
-
+                                  </t>
                               </tbody>
                             </table>
                     </div>
