@@ -157,7 +157,7 @@ class ServiceRequestWorkFlow(models.Model):
 class ServiceTypes(models.Model):
     _inherit = 'ebs_mod.service.types'
 
-    consolidation_id = fields.Many2one('ebs_mod.service.type.consolidation', 'Consolidation Name')
+    consolidation_id = fields.Many2one('ebs_mod.service.type.consolidation', 'Consolidation Name', store=True)
 
 
 class ServiceDestination(models.Model):
@@ -171,3 +171,25 @@ class ServiceTypeConsolidation(models.Model):
 
     name = fields.Char('Consolidation Name')
     service_type = fields.One2many('ebs_mod.service.types', 'consolidation_id')
+
+    @api.model
+    def get_request(self):
+        request_list = []
+        consolidated = self.env['ebs_mod.service.type.consolidation'].search([])
+        for each_consolidated in consolidated:
+            domain = [('consolidation_id', '=', each_consolidated.id)]
+            service_types = self.env['ebs_mod.service.types'].search(domain)
+            no_of_all = 0
+            for each_service_type in service_types:
+                print(each_service_type)
+                domain = [('status', '=', 'progress'), ('service_type_id', '=', each_service_type.id)]
+                no_of_inprogress = self.env['ebs_mod.service.request'].search_count(domain)
+                no_of_all += no_of_inprogress
+            if no_of_all:
+                request_dict = {
+                    'consolidated_service_id': each_consolidated.id,
+                    'consolidated_service_name': each_consolidated.name,
+                    'count': no_of_all
+                }
+                request_list.append(request_dict.copy())
+        return request_list
