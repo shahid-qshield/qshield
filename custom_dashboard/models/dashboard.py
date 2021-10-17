@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 from odoo import models, fields, api, _
-from odoo.exceptions import UserError
+from odoo import exceptions
 from datetime import date
 
 
@@ -80,16 +80,18 @@ class ServiceRequestWorkFlow(models.Model):
                     my_error_msg += ' {},'.format(each_destination.destination_id.name)
                 # count += 1
                 # my_error_msg += ' {}'.format(previous_dest)
-                my_error_msg = _(my_error_msg)
-                return {
-                    'type': 'ir.actions.client',
-                    'tag': 'display_notification',
-                    'params': {
-                        'title': title,
-                        'message': my_error_msg,
-                        'sticky': False,
-                    }
-                }
+                # my_error_msg = _(my_error_msg)
+                # return {
+                #     'type': 'ir.actions.client',
+                #     'tag': 'display_notification',
+                #     'params': {
+                #         'title': title,
+                #         'message': my_error_msg,
+                #         'sticky': False,
+                #     }
+                # }
+                # popup = Popup(title='Test popup', content=Label(text='Hello world'), auto_dismiss=False)
+                # popup.open()
             # title = _("Connection Test Succeeded!")
             # message = _("Everything seems properly set up!")
             # return {
@@ -169,4 +171,4 @@ class ServiceTypeConsolidation(models.Model):
     _name = 'ebs_mod.service.type.consolidation'
 
     name = fields.Char('Consolidation Name')
-    service_type = fields.One2many('ebs_mod.service.types', 'name')
+    service_type = fields.One2many('ebs_mod.service.types', 'consolidation_id')
