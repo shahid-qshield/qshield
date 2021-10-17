@@ -1071,3 +1071,66 @@ h3{
     margin-left: -16px;
     width: 70%
 }
+
+/*.card-body {
+   background-color: #bd96b6 !important;
+    color: white;
+    font-weight: bold
+}*/
+
+.title0{
+    background-color: #8A2BE2 !important;
+}
+
+.title1{
+    background-color: #0000FF !important;
+}
+
+.title2{
+    background-color: #FF7F50 !important;
+}
+
+.title3{
+    background-color: #A52A2A !important;
+}
+
+.title4{
+    background-color: #5F9EA0 !important;
+}
+.title5{
+    background-color: #6495ED !important;
+}
+.title6{
+    background-color: #DC143C !important;
+}
+.title7{
+    background-color: #00FFFF !important;
+}
+.title8{
+    background-color: #CD5C5C!important;
+}
+.title9{
+    background-color: #D2691E !important;
+}
+.title10{
+    background-color: #B8860B !important;
+}
+.title11{
+    background-color: #006400 !important;
+}
+.title12{
+    background-color: #00008B !important;
+}
+.title13{
+    background-color: #9932CC !important;
+}
+.title14{
+    background-color: #8FBC8F !important;
+}
+
+/*table, th, td {
+  border: 2px solid black;
+}*/
+/*tr{
+    cursor: pointer;
+}*/

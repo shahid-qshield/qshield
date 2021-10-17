@@ -119,36 +119,61 @@
 <!--                </div>-->
                 <h3>ASSIGNED TASKS</h3>
                 <div class="row main-section">
-                     <div style="width:46%;">
+                     <div style="width:37%;" >
                         <t t-foreach="widget.employee_progress" t-as="obj" >
-                            <div class="col-md-2 col-sm-6  get_employee_name oh-payslip" t-attf-id="{{obj.employee_id}}"
-                                 t-attf-emp_name="{{obj.employee_name}}"
-                                 style="display:inline-block;">
-                                <div class="oh-card" style="background-color: #b298e1; height: 70px;">
-                                    <div class="oh-card-body">
-        <!--                                    <div class="employee-name-background"><p class="employee-name" id="name"><t t-esc="obj.employee_name"/></p></div>-->
-        <!--                                    <div class="employee-name-background get_employee_id"><p><t t-esc="obj.employee_id"/></p></div>-->
-                                        <div class="employee-name-background">
-<!--                                            <p class="employee-name" >-->
-<!--                                                <span style="visibility:hidden;"> <t t-esc="obj.employee_id"/></span>-->
-<!--                                                <t t-esc="obj.employee_name"/></p></div>-->
-                                            <p class="employee-name" ><t t-esc="obj.employee_name"/></p></div>
-                                        <div class="stat-content">
-                                            <div class="stat-text" style="color: black; text-align: center;">
-                                                <p><t t-esc="obj.progress"/></p></div>
-                                            <div class="stat-digit"></div>
-                                        </div>
-                                    </div>
-                                </div>
+                            <div t-attf-class="card get_employee_name title{{obj_index}}" t-attf-id="{{obj.employee_id}}"
+                                 style="display:inline-block; margin:7px; padding: 5px; cursor: pointer;">
+<!--                              <img class="card-img-top" t-esc="obj.get_emp_image_url(employee[0])" alt="Card image cap"   />-->
+<!--                                <img class="align-self-center rounded-circle mr-3" alt=""-->
+<!--                                    t-att-src="widget.get_emp_image_url(11)"/>-->
+<!--                                <img class="card-img-top rounded-circle " t-att-src="widget.get_emp_image_url(obj.employee_id)" alt="Avatar"-->
+                                <img class="img mr3 pd3 o_we_preview_image rounded-circle o_image_40_cover " t-att-src="widget.get_emp_image_url(obj.employee_id)"
+                                     style="height: 60px; width: 60px;"/>
+                              <div t-attf-class="card-body title{{obj_index}}">
+                                <p class="card-text" ><t t-esc="obj.employee_name"/></p>
+                                <p class="card-text"><t t-esc="obj.progress"/></p>
+                              </div>
                             </div>
+<!--                            <div class="card get_employee_name " t-attf-id="{{obj.employee_id}}" style="background-color: #527a68; display:inline-block; margin:7px;">-->
+<!--&lt;!&ndash;                              <img class="card-img-top" t-esc="obj.get_emp_image_url(employee[0])" alt="Card image cap"   />&ndash;&gt;-->
+<!--&lt;!&ndash;                                <img class="align-self-center rounded-circle mr-3" alt=""&ndash;&gt;-->
+<!--&lt;!&ndash;                                    t-att-src="widget.get_emp_image_url(11)"/>&ndash;&gt;-->
+<!--                                <img class="card-img-top rounded-circle" t-att-src="widget.get_emp_image_url(obj.employee_id)" alt="Avatar"-->
+<!--                                     style="height: 40px; width: 50px"/>-->
+<!--&lt;!&ndash;                                t-attf-class="row {{ item_parity }}"&ndash;&gt;-->
+<!--                              <div class="card-body">-->
+<!--                                <p class="card-text" ><t t-esc="obj.employee_name"/></p>-->
+<!--                                <p class="card-text"><t t-esc="obj.progress"/></p>-->
+<!--                              </div>-->
+<!--                            </div>-->
+<!--                            <div class="col-md-2 col-sm-6  get_employee_name oh-payslip" t-attf-id="{{obj.employee_id}}"-->
+<!--                                 t-attf-emp_name="{{obj.employee_name}}"-->
+<!--                                 style="display:inline-block;">-->
+<!--                                <div class="oh-card" style="background-color: #b298e1; height: 70px;">-->
+<!--                                    <div class="oh-card-body">-->
+<!--        &lt;!&ndash;                                    <div class="employee-name-background"><p class="employee-name" id="name"><t t-esc="obj.employee_name"/></p></div>&ndash;&gt;-->
+<!--        &lt;!&ndash;                                    <div class="employee-name-background get_employee_id"><p><t t-esc="obj.employee_id"/></p></div>&ndash;&gt;-->
+<!--                                        <div class="employee-name-background">-->
+<!--&lt;!&ndash;                                            <p class="employee-name" >&ndash;&gt;-->
+<!--&lt;!&ndash;                                                <span style="visibility:hidden;"> <t t-esc="obj.employee_id"/></span>&ndash;&gt;-->
+<!--&lt;!&ndash;                                                <t t-esc="obj.employee_name"/></p></div>&ndash;&gt;-->
+<!--                                            <p class="employee-name" ><t t-esc="obj.employee_name"/></p></div>-->
+<!--                                        <div class="stat-content">-->
+<!--                                            <div class="stat-text" style="color: black; text-align: center;">-->
+<!--                                                <p><t t-esc="obj.progress"/></p></div>-->
+<!--                                            <div class="stat-digit"></div>-->
+<!--                                        </div>-->
+<!--                                    </div>-->
+<!--                                </div>-->
+<!--                            </div>-->
                         </t>
                     </div>
 
 
-                     <div style="width:54%;">
+                     <div style="width:63%;">
                          <h3>TRANSPORT DAILY SCHEDULE</h3>
-                          <table class="table">
-                              <thead style="border-style: none;">
+                          <table class="table" >
+                              <thead>
                                 <tr >
                                   <th scope="col">Driver</th>
                                   <th scope="col">7:00</th>
@@ -166,49 +191,137 @@
                                 </tr>
                               </thead>
                               <tbody>
-                                <tr>
-                                  <td>Driver NAME</td>
-                                  <td>MED</td>
-                                  <td>PICKUP</td>
-                                  <td>MOF</td>
-                                  <td>PICKUP</td>
-                                  <td>MED</td>
-                                  <td>PICKUP</td>
-                                  <td>MOF</td>
-                                  <td>MOF</td>
-                                  <td>MOF</td>
-                                  <td>MOF</td>
-                                  <td>PICKUP</td>
-                                  <td>MOF</td>
-                                </tr>
-                                <tr>
-                                      <td></td>
-                                      <td>PICKUP</td>
-                                      <td>MOF</td>
-                                      <td></td>
-                                      <td>MED</td>
-                                      <td>PICKUP</td>
-                                      <td>MOF</td>
-                                      <td></td>
-                                      <td>MOF</td>
-                                      <td></td>
-                                      <td>PICKUP</td>
-                                      <td>MOF</td>
-                                </tr>
-                                <tr>
-                                      <td>PICKUP</td>
-                                      <td></td>
-                                      <td>MOF</td>
-                                      <td>PICKUP</td>
-                                      <td></td>
-                                      <td>PICKUP</td>
-                                      <td>MOF</td>
-                                      <td></td>
-                                      <td>MOF</td>
-                                      <td>MOF</td>
-                                      <td>PICKUP</td>
-                                      <td></td>
-                                </tr>
+                                   <t t-foreach="widget.drivers" t-as="obj" >
+                                       <tr>
+                                          <td><t t-esc="obj.driver_name"/></td>
+                                           <td>
+                                                <t t-foreach="obj.destination" t-as="des" >
+                                                     <t t-if="des.slot == '7'">
+                                                       <span  t-esc="des.destination + des.slot"/>
+                                                     </t>
+
+                                                </t>
+                                           </td>
+
+                                           <td>
+                                               <t t-foreach="obj.destination" t-as="des" >
+                                                     <t t-if="des.slot == '8'">
+                                                       <span  t-esc="des.destination"/>
+                                                     </t>
+
+                                                </t>
+                                           </td>
+
+                                           <td>
+                                               <t t-foreach="obj.destination" t-as="des" >
+                                                     <t t-if="des.slot == '9'">
+                                                       <span  t-esc="des.destination"/>
+                                                     </t>
+
+                                                </t>
+                                           </td>
+                                           <td>
+                                               <t t-foreach="obj.destination" t-as="des" >
+                                                     <t t-if="des.slot == '10'">
+                                                       <span  t-esc="des.destination"/>
+                                                     </t>
+
+                                                </t>
+                                           </td>
+                                           <td>
+                                               <t t-foreach="obj.destination" t-as="des" >
+                                                     <t t-if="des.slot == '11'">
+                                                       <span  t-esc="des.destination"/>
+                                                     </t>
+
+                                                </t>
+                                           </td>
+                                           <td>
+                                               <t t-foreach="obj.destination" t-as="des" >
+                                                     <t t-if="des.slot == '12'">
+                                                       <span  t-esc="des.destination"/>
+                                                     </t>
+
+                                                </t>
+                                           </td>
+                                           <td>
+                                               <t t-foreach="obj.destination" t-as="des" >
+                                                     <t t-if="des.slot == '1'">
+                                                       <span  t-esc="des.destination"/>
+                                                     </t>
+
+                                                </t>
+                                           </td>
+                                           <td>
+                                               <t t-foreach="obj.destination" t-as="des" >
+                                                     <t t-if="des.slot == '2'">
+                                                       <span  t-esc="des.destination"/>
+                                                     </t>
+
+                                                </t>
+                                           </td>
+                                           <td>
+                                               <t t-foreach="obj.destination" t-as="des" >
+                                                     <t t-if="des.slot == '3'">
+                                                       <span  t-esc="des.destination "/>
+                                                     </t>
+
+                                                </t>
+                                           </td>
+                                           <td>
+                                               <t t-foreach="obj.destination" t-as="des" >
+                                                     <t t-if="des.slot == '4'">
+                                                       <span  t-esc="des.destination"/>
+                                                     </t>
+
+                                                </t>
+                                           </td>
+                                           <td>
+                                               <t t-foreach="obj.destination" t-as="des" >
+                                                     <t t-if="des.slot == '5'">
+                                                       <span  t-esc="des.destination"/>
+                                                     </t>
+
+                                                </t>
+                                           </td>
+                                           <td>
+                                               <t t-foreach="obj.destination" t-as="des" >
+                                                     <t t-if="des.slot == '6'">
+                                                       <span  t-esc="des.destination"/>
+                                                     </t>
+
+                                                </t>
+                                           </td>
+                                       </tr>
+                                   </t>
+
+
+<!--                                              <td><span t-if="des.slot == 7" t-esc="des.destination"/></td>-->
+<!--                                              <td><span  t-if="des.slot == 8" t-esc="des.destination"/></td>-->
+<!--                                              <td><span  t-if="des.slot == 9" t-esc="des.destination"/></td>-->
+<!--                                              <td><span  t-if="des.slot == 10" t-esc="des.destination"/></td>-->
+<!--                                              <td><span  t-if="des.slot == 11" t-esc="des.destination"/></td>-->
+<!--                                              <td><span  t-if="des.slot == 12" t-esc="des.destination"/></td>-->
+<!--                                              <td><span  t-if="des.slot == 1" t-esc="des.destination"/></td>-->
+<!--                                              <td><span  t-if="des.slot == 2" t-esc="des.destination"/></td>-->
+<!--                                              <td><span  t-if="des.slot == 3" t-esc="des.destination"/></td>-->
+<!--                                              <td><span  t-if="des.slot == 4" t-esc="des.destination"/></td>-->
+<!--                                              <td><span  t-if="des.slot == 5" t-esc="des.destination"/></td>-->
+<!--                                              <td><span  t-if="des.slot == 6" t-esc="des.destination"/></td>-->
+<!--                                             <td t-if="des.slot == 7" ><t  t-esc="des.destination"/></td>-->
+<!--                                              <td t-elif="des.slot == 8"><t  t-esc="des.destination"/></td>-->
+<!--                                              <td t-elif="des.slot == 9"><t  t-esc="des.destination"/></td>-->
+<!--                                              <td t-elif="des.slot == 10"><t  t-esc="des.destination"/></td>-->
+<!--                                              <td t-elif="des.slot == 11"><t  t-esc="des.destination"/></td>-->
+<!--                                              <td t-elif="des.slot == 12"><t  t-esc="des.destination"/></td>-->
+<!--                                              <td t-elif="des.slot == 1"><t  t-esc="des.destination"/></td>-->
+<!--                                              <td t-elif="des.slot == 2"><t  t-esc="des.destination"/></td>-->
+<!--                                              <td t-elif="des.slot == 3"><t  t-esc="des.destination"/></td>-->
+<!--                                              <td t-elif="des.slot == 4"><t  t-esc="des.destination"/></td>-->
+<!--                                              <td t-elif="des.slot == 5"><t  t-esc="des.destination"/></td>-->
+<!--                                              <td t-elif="des.slot == 6"><t  t-esc="des.destination"/></td>-->
+
+
                               </tbody>
                             </table>
                     </div>
@@ -290,6 +403,230 @@
 <!--                    </div>-->
 
                 </div>
+<!--                <div class="row main-section">-->
+<!--                     <div style="width:46%;">-->
+<!--                        <t t-foreach="widget.employee_progress" t-as="obj" >-->
+<!--                            <div class="col-md-2 col-sm-6  get_employee_name oh-payslip" t-attf-id="{{obj.employee_id}}"-->
+<!--                                 t-attf-emp_name="{{obj.employee_name}}"-->
+<!--                                 style="display:inline-block;">-->
+<!--                                <div class="oh-card" style="background-color: #b298e1; height: 70px;">-->
+<!--                                    <div class="oh-card-body">-->
+<!--        &lt;!&ndash;                                    <div class="employee-name-background"><p class="employee-name" id="name"><t t-esc="obj.employee_name"/></p></div>&ndash;&gt;-->
+<!--        &lt;!&ndash;                                    <div class="employee-name-background get_employee_id"><p><t t-esc="obj.employee_id"/></p></div>&ndash;&gt;-->
+<!--                                        <div class="employee-name-background">-->
+<!--&lt;!&ndash;                                            <p class="employee-name" >&ndash;&gt;-->
+<!--&lt;!&ndash;                                                <span style="visibility:hidden;"> <t t-esc="obj.employee_id"/></span>&ndash;&gt;-->
+<!--&lt;!&ndash;                                                <t t-esc="obj.employee_name"/></p></div>&ndash;&gt;-->
+<!--                                            <p class="employee-name" ><t t-esc="obj.employee_name"/></p></div>-->
+<!--                                        <div class="stat-content">-->
+<!--                                            <div class="stat-text" style="color: black; text-align: center;">-->
+<!--                                                <p><t t-esc="obj.progress"/></p></div>-->
+<!--                                            <div class="stat-digit"></div>-->
+<!--                                        </div>-->
+<!--                                    </div>-->
+<!--                                </div>-->
+<!--                            </div>-->
+<!--                        </t>-->
+<!--                    </div>-->
+
+
+<!--                     <div style="width:54%;">-->
+<!--                         <h3>TRANSPORT DAILY SCHEDULE</h3>-->
+<!--                          <table class="table">-->
+<!--                              <thead style="border-style: none;">-->
+<!--                                <tr >-->
+<!--                                  <th scope="col">Driver</th>-->
+<!--                                  <th scope="col">7:00</th>-->
+<!--                                  <th scope="col">8:00</th>-->
+<!--                                  <th scope="col">9:00</th>-->
+<!--                                  <th scope="col">10:00</th>-->
+<!--                                  <th scope="col">11:00</th>-->
+<!--                                  <th scope="col">12:00</th>-->
+<!--                                  <th scope="col">1:00</th>-->
+<!--                                  <th scope="col">2:00</th>-->
+<!--                                  <th scope="col">3:00</th>-->
+<!--                                  <th scope="col">4:00</th>-->
+<!--                                  <th scope="col">5:00</th>-->
+<!--                                  <th scope="col">6:00</th>-->
+<!--                                </tr>-->
+<!--                              </thead>-->
+<!--                              <tbody>-->
+<!--                                   <t t-foreach="widget.drivers" t-as="obj" >-->
+<!--                                       <tr>-->
+<!--                                          <td><t t-esc="obj.driver_name"/></td>-->
+<!--                                           <t t-foreach="obj.destination" t-as="des" >-->
+<!--                                               <td><t  t-esc="des.destination + des.slot"/></td>-->
+<!--                                               <td><t  t-esc="des.destination + des.slot"/></td>-->
+<!--                                               <td><t  t-esc="des.destination + des.slot"/></td>-->
+<!--                                               <td><t  t-esc="des.destination + des.slot"/></td>-->
+<!--&lt;!&ndash;                                               <td t-if="des.slot == '8'"><t  t-esc="des.destination + des.slot"/></td>&ndash;&gt;-->
+<!--&lt;!&ndash;                                               <td t-if="des.slot == '9'" ><t t-esc="des.destination + des.slot"/></td>&ndash;&gt;-->
+<!--&lt;!&ndash;                                               <td t-if="des.slot == '10'"><t  t-esc="des.destination + des.slot"/></td>&ndash;&gt;-->
+<!--&lt;!&ndash;                                               <td t-if="des.slot == '11'"><t  t-esc="des.destination + des.slot"/></td>&ndash;&gt;-->
+<!--&lt;!&ndash;                                               <td t-if="des.slot == '12'"><t  t-esc="des.destination + des.slot"/></td>&ndash;&gt;-->
+<!--&lt;!&ndash;                                               <td t-if="des.slot == '1'"><t  t-esc="des.destination + des.slot"/></td>&ndash;&gt;-->
+<!--&lt;!&ndash;                                               <td><t t-if="des.slot == '2'" t-esc="des.destination + des.slot"/></td>&ndash;&gt;-->
+<!--&lt;!&ndash;                                               <td><t t-if="des.slot == '3'" t-esc="des.destination + des.slot"/></td>&ndash;&gt;-->
+<!--&lt;!&ndash;                                               <td><t t-if="des.slot == '4'" t-esc="des.destination + des.slot"/></td>&ndash;&gt;-->
+<!--&lt;!&ndash;                                               <td><t t-if="des.slot == '5'" t-esc="des.destination + des.slot"/></td>&ndash;&gt;-->
+<!--&lt;!&ndash;                                               <t t-if="des.slot == '7'">&ndash;&gt;-->
+<!--&lt;!&ndash;                                                   <td><span  t-esc="des.destination + des.slot"/></td>&ndash;&gt;-->
+<!--&lt;!&ndash;                                               </t>&ndash;&gt;-->
+
+<!--&lt;!&ndash;                                               <t  t-if="des.slot == '8'">&ndash;&gt;-->
+<!--&lt;!&ndash;                                                   <td><span  t-esc="des.destination + des.slot"/></td>&ndash;&gt;-->
+<!--&lt;!&ndash;                                               </t>&ndash;&gt;-->
+
+<!--&lt;!&ndash;                                               <t  t-if="des.slot == '9'">&ndash;&gt;-->
+<!--&lt;!&ndash;                                                   <td><span  t-esc="des.destination + des.slot"/></td>&ndash;&gt;-->
+<!--&lt;!&ndash;                                               </t>&ndash;&gt;-->
+
+<!--&lt;!&ndash;                                               <t  t-if="des.slot == '10'">&ndash;&gt;-->
+<!--&lt;!&ndash;                                                   <td><span  t-esc="des.destination + des.slot"/></td>&ndash;&gt;-->
+<!--&lt;!&ndash;                                               </t>&ndash;&gt;-->
+
+<!--&lt;!&ndash;                                               <t  t-if="des.slot == '11'">&ndash;&gt;-->
+<!--&lt;!&ndash;                                                   <td><span  t-esc="des.destination"/></td>&ndash;&gt;-->
+<!--&lt;!&ndash;                                               </t>&ndash;&gt;-->
+
+<!--&lt;!&ndash;                                               <t  t-if="des.slot == '12'">&ndash;&gt;-->
+<!--&lt;!&ndash;                                                   <td><span  t-esc="des.destination"/></td>&ndash;&gt;-->
+<!--&lt;!&ndash;                                               </t>&ndash;&gt;-->
+
+<!--&lt;!&ndash;                                               <t  t-if="des.slot == '1'">&ndash;&gt;-->
+<!--&lt;!&ndash;                                                   <td><span  t-esc="des.destination + des.slot"/></td>&ndash;&gt;-->
+<!--&lt;!&ndash;                                               </t>&ndash;&gt;-->
+
+<!--&lt;!&ndash;                                               <t  t-if="des.slot == '2'">&ndash;&gt;-->
+<!--&lt;!&ndash;                                                   <td><span  t-esc="des.destination"/></td>&ndash;&gt;-->
+<!--&lt;!&ndash;                                               </t>&ndash;&gt;-->
+
+<!--&lt;!&ndash;                                               <t  t-if="des.slot == '3'">&ndash;&gt;-->
+<!--&lt;!&ndash;                                                   <td><span  t-esc="des.destination"/></td>&ndash;&gt;-->
+<!--&lt;!&ndash;                                               </t>&ndash;&gt;-->
+
+<!--&lt;!&ndash;                                               <t  t-if="des.slot == '4'">&ndash;&gt;-->
+<!--&lt;!&ndash;                                                   <td><span  t-esc="des.destination"/></td>&ndash;&gt;-->
+<!--&lt;!&ndash;                                               </t>&ndash;&gt;-->
+
+<!--&lt;!&ndash;                                               <t  t-if="des.slot == '5'">&ndash;&gt;-->
+<!--&lt;!&ndash;                                                   <td><span  t-esc="des.destination"/></td>&ndash;&gt;-->
+
+<!--&lt;!&ndash;                                               <t  t-if="des.slot == '6'">&ndash;&gt;-->
+<!--&lt;!&ndash;                                                   <td><span  t-esc="des.destination"/></td>&ndash;&gt;-->
+<!--&lt;!&ndash;                                           </t>&ndash;&gt;-->
+<!--                                               </t>-->
+<!--                                       </tr>-->
+<!--                                   </t>-->
+
+
+<!--&lt;!&ndash;                                              <td><span t-if="des.slot == 7" t-esc="des.destination"/></td>&ndash;&gt;-->
+<!--&lt;!&ndash;                                              <td><span  t-if="des.slot == 8" t-esc="des.destination"/></td>&ndash;&gt;-->
+<!--&lt;!&ndash;                                              <td><span  t-if="des.slot == 9" t-esc="des.destination"/></td>&ndash;&gt;-->
+<!--&lt;!&ndash;                                              <td><span  t-if="des.slot == 10" t-esc="des.destination"/></td>&ndash;&gt;-->
+<!--&lt;!&ndash;                                              <td><span  t-if="des.slot == 11" t-esc="des.destination"/></td>&ndash;&gt;-->
+<!--&lt;!&ndash;                                              <td><span  t-if="des.slot == 12" t-esc="des.destination"/></td>&ndash;&gt;-->
+<!--&lt;!&ndash;                                              <td><span  t-if="des.slot == 1" t-esc="des.destination"/></td>&ndash;&gt;-->
+<!--&lt;!&ndash;                                              <td><span  t-if="des.slot == 2" t-esc="des.destination"/></td>&ndash;&gt;-->
+<!--&lt;!&ndash;                                              <td><span  t-if="des.slot == 3" t-esc="des.destination"/></td>&ndash;&gt;-->
+<!--&lt;!&ndash;                                              <td><span  t-if="des.slot == 4" t-esc="des.destination"/></td>&ndash;&gt;-->
+<!--&lt;!&ndash;                                              <td><span  t-if="des.slot == 5" t-esc="des.destination"/></td>&ndash;&gt;-->
+<!--&lt;!&ndash;                                              <td><span  t-if="des.slot == 6" t-esc="des.destination"/></td>&ndash;&gt;-->
+<!--&lt;!&ndash;                                             <td t-if="des.slot == 7" ><t  t-esc="des.destination"/></td>&ndash;&gt;-->
+<!--&lt;!&ndash;                                              <td t-elif="des.slot == 8"><t  t-esc="des.destination"/></td>&ndash;&gt;-->
+<!--&lt;!&ndash;                                              <td t-elif="des.slot == 9"><t  t-esc="des.destination"/></td>&ndash;&gt;-->
+<!--&lt;!&ndash;                                              <td t-elif="des.slot == 10"><t  t-esc="des.destination"/></td>&ndash;&gt;-->
+<!--&lt;!&ndash;                                              <td t-elif="des.slot == 11"><t  t-esc="des.destination"/></td>&ndash;&gt;-->
+<!--&lt;!&ndash;                                              <td t-elif="des.slot == 12"><t  t-esc="des.destination"/></td>&ndash;&gt;-->
+<!--&lt;!&ndash;                                              <td t-elif="des.slot == 1"><t  t-esc="des.destination"/></td>&ndash;&gt;-->
+<!--&lt;!&ndash;                                              <td t-elif="des.slot == 2"><t  t-esc="des.destination"/></td>&ndash;&gt;-->
+<!--&lt;!&ndash;                                              <td t-elif="des.slot == 3"><t  t-esc="des.destination"/></td>&ndash;&gt;-->
+<!--&lt;!&ndash;                                              <td t-elif="des.slot == 4"><t  t-esc="des.destination"/></td>&ndash;&gt;-->
+<!--&lt;!&ndash;                                              <td t-elif="des.slot == 5"><t  t-esc="des.destination"/></td>&ndash;&gt;-->
+<!--&lt;!&ndash;                                              <td t-elif="des.slot == 6"><t  t-esc="des.destination"/></td>&ndash;&gt;-->
+
+
+<!--                              </tbody>-->
+<!--                            </table>-->
+<!--                    </div>-->
+
+<!--                    &lt;!&ndash;                            <table style="margin-right:200px">&ndash;&gt;-->
+<!--&lt;!&ndash;                                <tr>&ndash;&gt;-->
+<!--&lt;!&ndash;                                    <td style="border-top: 1px solid #000000; border-bottom: 1px solid #000000; border-left: 1px solid #000000; border-right: 1px solid #000000"&ndash;&gt;-->
+<!--&lt;!&ndash;                                        height="17" align="center" valign="middle">&ndash;&gt;-->
+<!--&lt;!&ndash;                                        <b>7</b>&ndash;&gt;-->
+<!--&lt;!&ndash;                                    </td>&ndash;&gt;-->
+
+<!--&lt;!&ndash;                                    <td style="border-top: 1px solid #000000; border-bottom: 1px solid #000000; border-left: 1px solid #000000; border-right: 1px solid #000000"&ndash;&gt;-->
+<!--&lt;!&ndash;                                        height="17" align="center" valign="middle">&ndash;&gt;-->
+<!--&lt;!&ndash;                                        <b>8</b>&ndash;&gt;-->
+<!--&lt;!&ndash;                                    </td>&ndash;&gt;-->
+
+<!--&lt;!&ndash;                                    <td style="border-top: 1px solid #000000; border-bottom: 1px solid #000000; border-left: 1px solid #000000; border-right: 1px solid #000000"&ndash;&gt;-->
+<!--&lt;!&ndash;                                        height="17" align="center" valign="middle">&ndash;&gt;-->
+<!--&lt;!&ndash;                                        <b>9</b>&ndash;&gt;-->
+<!--&lt;!&ndash;                                    </td>&ndash;&gt;-->
+<!--&lt;!&ndash;                                    <td style="border-top: 1px solid #000000; border-bottom: 1px solid #000000; border-left: 1px solid #000000; border-right: 1px solid #000000"&ndash;&gt;-->
+<!--&lt;!&ndash;                                        height="17" align="center" valign="middle">&ndash;&gt;-->
+<!--&lt;!&ndash;                                        <b>10</b>&ndash;&gt;-->
+<!--&lt;!&ndash;                                    </td>&ndash;&gt;-->
+<!--&lt;!&ndash;                                    <td style="border-top: 1px solid #000000; border-bottom: 1px solid #000000; border-left: 1px solid #000000; border-right: 1px solid #000000"&ndash;&gt;-->
+<!--&lt;!&ndash;                                        height="17" align="center" valign="middle">&ndash;&gt;-->
+<!--&lt;!&ndash;                                        <b>11</b>&ndash;&gt;-->
+<!--&lt;!&ndash;                                    </td>&ndash;&gt;-->
+<!--&lt;!&ndash;                                    <td style="border-top: 1px solid #000000; border-bottom: 1px solid #000000; border-left: 1px solid #000000; border-right: 1px solid #000000"&ndash;&gt;-->
+<!--&lt;!&ndash;                                        height="17" align="center" valign="middle">&ndash;&gt;-->
+<!--&lt;!&ndash;                                        <b>12</b>&ndash;&gt;-->
+<!--&lt;!&ndash;                                    </td>&ndash;&gt;-->
+<!--&lt;!&ndash;                                    <td style="border-top: 1px solid #000000; border-bottom: 1px solid #000000; border-left: 1px solid #000000; border-right: 1px solid #000000"&ndash;&gt;-->
+<!--&lt;!&ndash;                                        height="17" align="center" valign="middle">&ndash;&gt;-->
+<!--&lt;!&ndash;                                        <b>1</b>&ndash;&gt;-->
+<!--&lt;!&ndash;                                    </td>&ndash;&gt;-->
+<!--&lt;!&ndash;                                    <td style="border-top: 1px solid #000000; border-bottom: 1px solid #000000; border-left: 1px solid #000000; border-right: 1px solid #000000"&ndash;&gt;-->
+<!--&lt;!&ndash;                                        height="17" align="center" valign="middle">&ndash;&gt;-->
+<!--&lt;!&ndash;                                        <b>2</b>&ndash;&gt;-->
+<!--&lt;!&ndash;                                    </td>&ndash;&gt;-->
+<!--&lt;!&ndash;                                    <td style="border-top: 1px solid #000000; border-bottom: 1px solid #000000; border-left: 1px solid #000000; border-right: 1px solid #000000"&ndash;&gt;-->
+<!--&lt;!&ndash;                                        height="17" align="center" valign="middle">&ndash;&gt;-->
+<!--&lt;!&ndash;                                        <b>3</b>&ndash;&gt;-->
+<!--&lt;!&ndash;                                    </td>&ndash;&gt;-->
+<!--&lt;!&ndash;                                    <td style="border-top: 1px solid #000000; border-bottom: 1px solid #000000; border-left: 1px solid #000000; border-right: 1px solid #000000"&ndash;&gt;-->
+<!--&lt;!&ndash;                                        height="17" align="center" valign="middle">&ndash;&gt;-->
+<!--&lt;!&ndash;                                        <b>4</b>&ndash;&gt;-->
+<!--&lt;!&ndash;                                    </td>&ndash;&gt;-->
+<!--&lt;!&ndash;                                    <td style="border-top: 1px solid #000000; border-bottom: 1px solid #000000; border-left: 1px solid #000000; border-right: 1px solid #000000"&ndash;&gt;-->
+<!--&lt;!&ndash;                                        height="17" align="center" valign="middle">&ndash;&gt;-->
+<!--&lt;!&ndash;                                        <b>5</b>&ndash;&gt;-->
+<!--&lt;!&ndash;                                    </td>&ndash;&gt;-->
+<!--&lt;!&ndash;                                    <td style="border-top: 1px solid #000000; border-bottom: 1px solid #000000; border-left: 1px solid #000000; border-right: 1px solid #000000"&ndash;&gt;-->
+<!--&lt;!&ndash;                                        height="17" align="center" valign="middle">&ndash;&gt;-->
+<!--&lt;!&ndash;                                        <b>6</b>&ndash;&gt;-->
+<!--&lt;!&ndash;                                    </td>&ndash;&gt;-->
+<!--&lt;!&ndash;                                    <td style="border-top: 1px solid #000000; border-bottom: 1px solid #000000; border-left: 1px solid #000000; border-right: 1px solid #000000"&ndash;&gt;-->
+<!--&lt;!&ndash;                                        height="17" align="center" valign="middle">&ndash;&gt;-->
+<!--&lt;!&ndash;                                        <b>7</b>&ndash;&gt;-->
+<!--&lt;!&ndash;                                    </td>&ndash;&gt;-->
+
+<!--&lt;!&ndash;                                </tr>&ndash;&gt;-->
+<!--&lt;!&ndash;                            </table>&ndash;&gt;-->
+
+
+<!--&lt;!&ndash;                    <div  style="width:50%;">&ndash;&gt;-->
+<!--&lt;!&ndash;                        <div class="col-md-2 col-sm  oh-payslip oh-contracts" style="width: 50%">&ndash;&gt;-->
+<!--&lt;!&ndash;                            <div class="oh-card">&ndash;&gt;-->
+<!--&lt;!&ndash;                                <div class="oh-card-body">&ndash;&gt;-->
+<!--&lt;!&ndash;                                    <div class="stat-widget-one">&ndash;&gt;-->
+<!--&lt;!&ndash;                                        <div class="stat-icon"></div>&ndash;&gt;-->
+<!--&lt;!&ndash;                                            <div class="stat-content">&ndash;&gt;-->
+<!--&lt;!&ndash;                                                <div class="stat-text">table</div>&ndash;&gt;-->
+<!--&lt;!&ndash;                                            </div>&ndash;&gt;-->
+<!--&lt;!&ndash;                                    </div>&ndash;&gt;-->
+<!--&lt;!&ndash;                                </div>&ndash;&gt;-->
+<!--&lt;!&ndash;                            </div>&ndash;&gt;-->
+<!--&lt;!&ndash;                        </div>&ndash;&gt;-->
+<!--&lt;!&ndash;                    </div>&ndash;&gt;-->
+
+<!--                </div>-->
 
                 </div>
         </div>

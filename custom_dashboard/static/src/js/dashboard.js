@@ -138,14 +138,8 @@ var ServiceDashboard = AbstractAction.extend({
         e.preventDefault();
         var employee_id = parseInt(e.currentTarget.id)
         var employee_name = "" + e.currentTarget.getAttribute("emp_name")
-//        console.log(int(x))
         console.log(e.currentTarget)
-//        console.log(e.currentTarget.emp_name)
-        console.log(employee_name)
-//        console.log(e.target)
-//
-//        console.log(x)
-//        console.log(this.employee_progress)
+
 
         var options = {
             on_reverse_breadcrumb: this.on_reverse_breadcrumb,
@@ -184,6 +178,10 @@ var ServiceDashboard = AbstractAction.extend({
         });
     },
 
+    get_emp_image_url: function(employee){
+        return window.location.origin + '/web/image?model=res.users&field=image_1920&id='+employee;
+    },
+
     fetch_data: function() {
         var self = this;
         var def0 =  self._rpc({
@@ -198,6 +196,12 @@ var ServiceDashboard = AbstractAction.extend({
                     method: 'get_request'
             }).then(function(result) {
                 self.employee_progress =  result
+            });
+        var def2 =  self._rpc({
+                    model: 'ebs_mod.service.request.workflow',
+                    method: 'get_driver'
+            }).then(function(result) {
+                self.drivers =  result
             });
 //        var def1 =  this._rpc({
 //                model: 'hr.employee',
@@ -215,7 +219,7 @@ var ServiceDashboard = AbstractAction.extend({
 //            self.announcements = res['announcement'];
 //        });
 //        return $.when(def0, def1, def2);
-        return $.when(def0,def1);
+        return $.when(def0,def1,def2);
     },
 
     render_dashboards: function() {
