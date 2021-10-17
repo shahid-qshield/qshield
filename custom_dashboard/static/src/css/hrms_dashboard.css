@@ -1128,6 +1128,10 @@ h3{
     background-color: #8FBC8F !important;
 }
 
+.card_width_height{
+    width: 150px;
+    height 40px
+}
 /*table, th, td {
   border: 2px solid black;
 }*/
