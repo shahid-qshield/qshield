@@ -128,10 +128,9 @@ class ServiceRequestWorkFlow(models.Model):
             def get_progress(elem):
                 return elem.get('progress')
 
-            request_list.sort(key=get_progress)
+            request_list.sort(key=get_progress, reverse=True)
         return request_list
 
-    # @api.onchange('start_count_flow')
     @api.model
     def get_driver(self):
         request_list = []
