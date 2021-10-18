@@ -8,23 +8,46 @@ class ServiceRequest(models.Model):
     _inherit = 'ebs_mod.service.request'
 
     @api.model
-    def get_request(self, date_from='', date_to=''):
-        if date_to and date_from:
-            pass
-        else:
-            request_dict = {}
-            status_dict = {
-                'draft': 'Draft',
-                'progress': 'In Progress',
-                'hold': 'On Hold',
-                'complete': 'Completed',
-                'reject': 'Rejected',
-                'cancel': 'Canceled'
-            }
-            for key in status_dict:
+    def get_request(self, args=""):
+        print(1)
+        # print(args)
+        # date_from = args.get('date_from')
+        # date_to = args.get('date_to')
+
+        # print(args[0])
+        # print(args.date_to)
+        # print(date_to)
+        print(3)
+        # domain2
+        # if date_to and date_from:
+        #     domain.append(('date','<',date_to))
+        #     if
+        #     pass
+        # else:
+        request_dict = {}
+        status_dict = {
+            'draft': 'Draft',
+            'progress': 'In Progress',
+            'hold': 'On Hold',
+            'complete': 'Completed',
+            'reject': 'Rejected',
+            'cancel': 'Canceled'
+        }
+        # if args:
+        #     print(args.get('date_to'))
+        #     print(args.get('date_from'))
+        for key in status_dict:
+            if args:
+                domain = [('status', '=', key), ('date', '>=', args.get('date_from')),
+                          ('date', '<=', args.get('date_to'))]
+                print('yes')
+            else:
                 domain = [('status', '=', key)]
-                no_of_requests = self.env['ebs_mod.service.request'].search_count(domain)
-                request_dict[key] = no_of_requests
+                print('no')
+
+            no_of_requests = self.env['ebs_mod.service.request'].search_count(domain)
+            request_dict[key] = no_of_requests
+        print(request_dict)
         return request_dict
 
 
@@ -181,7 +204,7 @@ class ServiceTypeConsolidation(models.Model):
             service_types = self.env['ebs_mod.service.types'].search(domain)
             no_of_all = 0
             for each_service_type in service_types:
-                print(each_service_type)
+                # print(each_service_type)
                 domain = [('status', '=', 'progress'), ('service_type_id', '=', each_service_type.id)]
                 no_of_inprogress = self.env['ebs_mod.service.request'].search_count(domain)
                 no_of_all += no_of_inprogress

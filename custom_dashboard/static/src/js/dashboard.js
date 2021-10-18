@@ -22,6 +22,32 @@ var ServiceDashboard = AbstractAction.extend({
         'click .request_reject':'request_reject',
         'click .get_employee_name':'get_employee_name',
         'click .get_employee_id':'get_employee_id',
+        'click .get_date':'get_date',
+    },
+    get_date:function(e){
+        var self = this;
+        e.stopPropagation();
+        e.preventDefault();
+        var elem = document.getElementById('daydate');
+        var elem2 = document.getElementById('daydate2');
+        this.start_date = elem.value;
+        this.end_date = elem2.value;
+        console.log(this.start_date);
+        var options = {
+            on_reverse_breadcrumb: this.on_reverse_breadcrumb,
+        };
+        this.fetch_data(this.start_date,this.end_date);
+
+    },
+
+    init: function(parent, context) {
+        this._super(parent, context);
+        this.draft = ''
+        this.inProgress = ''
+        this.onHold = ''
+        this.rejected = ''
+        this.cancelled = ''
+        this.completed = ''
     },
 
     request_draft: function(e){
@@ -139,6 +165,7 @@ var ServiceDashboard = AbstractAction.extend({
         var employee_id = parseInt(e.currentTarget.id)
         var employee_name = "" + e.currentTarget.getAttribute("emp_name")
         console.log(e.currentTarget)
+        console.log(this.date_start)
 
 
         var options = {
@@ -174,6 +201,7 @@ var ServiceDashboard = AbstractAction.extend({
         var self = this;
         this.set("title", 'Dashboard');
         return this._super().then(function() {
+
             self.render_dashboards();
         });
     },
@@ -182,13 +210,24 @@ var ServiceDashboard = AbstractAction.extend({
         return window.location.origin + '/web/image?model=res.users&field=image_1920&id='+employee;
     },
 
-    fetch_data: function() {
+    fetch_data: function(start_date='',end_date='') {
         var self = this;
         var def0 =  self._rpc({
                     model: 'ebs_mod.service.request',
-                    method: 'get_request'
+                    method: 'get_request',
+                    args: [{
+                            'date_from': self.start_date,
+                            'date_to': self.end_date,
+                    }]
             }).then(function(result) {
                 self.progress =  result
+                console.log(result)
+                $(".draft").text(self.progress['draft']);
+                $(".inprogress").text(self.progress['progress']);
+                $(".hold").text(self.progress['hold']);
+                $(".cancel").text(self.progress['draft']);
+                $(".reject").text(self.progress['reject']);
+                $(".complete").text(self.progress['complete']);
             });
 
         var def1 =  self._rpc({
@@ -209,7 +248,12 @@ var ServiceDashboard = AbstractAction.extend({
             }).then(function(result) {
                 self.consolidation =  result
             });
+//            var elem = document.getElementById('daydate');
+//        var elem2 = document.getElementById('daydate2');
+//        elem.value='2021-01-01';
+//        elem2.value='2021-12-31';
         return $.when(def0,def1,def2,def3);
+
     },
 
     render_dashboards: function() {
@@ -217,6 +261,7 @@ var ServiceDashboard = AbstractAction.extend({
         _.each(this.dashboards_templates, function(template) {
             self.$('.o_hr_dashboard').append(QWeb.render(template, {widget: self}));
         });
+
     },
 
 });
