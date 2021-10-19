@@ -1,0 +1,8 @@
+id,name,model_id:id,group_id:id,perm_read,perm_write,perm_create,perm_unlink
+access_ebs_qsheild_employee_hr_religion,ebs_qsheild_employee.hr_religion,model_hr_religion,base.group_user,1,1,1,1
+access_ebs_qsheild_employee_hr_dependant,ebs_qsheild_employee.hr_dependant,model_hr_dependant,base.group_user,1,1,1,1
+access_ebs_qsheild_employee_hr_emergency,ebs_qsheild_employee.hr_emergency,model_hr_emergency,base.group_user,1,1,1,1
+access_ebs_qsheild_employee_hr_education,ebs_qsheild_employee.hr_education,model_hr_education,base.group_user,1,1,1,1
+access_ebs_qsheild_employee_hr_courses,ebs_qsheild_employee.hr_courses,model_hr_courses,base.group_user,1,1,1,1
+access_ebs_qsheild_employee_hr_language,ebs_qsheild_employee.hr_language,model_hr_language,base.group_user,1,1,1,1
+access_ebs_qsheild_employee_hr_history,ebs_qsheild_employee.hr_history,model_hr_history,base.group_user,1,1,1,1
