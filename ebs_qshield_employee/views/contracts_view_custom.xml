@@ -8,6 +8,8 @@
             <field name="arch" type="xml">
                 <xpath expr="//field[@name='department_id']" position="after">
                     <field name="leave_entitlement"/>
+                    <field name="contract_type"/>
+                    <field name="contract_duration" attrs="{'invisible':[('contract_type','!=','limited')]}"/>
                 </xpath>
                 <xpath expr="//page[@name='information']//group" position="after">
                     <group name="salary_information">

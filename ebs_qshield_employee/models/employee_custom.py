@@ -8,8 +8,34 @@ class EmployeeCustom(models.Model):
     first_name = fields.Char()
     middle_name = fields.Char()
     last_name = fields.Char()
+    driving_license = fields.Boolean('Driving License')
+    country_issue = fields.Many2one(comodel_name='res.country', string='Country of Issue')
     partner_id = fields.Many2one('res.partner', string='Related Contact', index=True)
     religion_id = fields.Many2one('hr.religion', string='Religion', index=True)
+    religion = fields.Selection(string='Religion',
+                                selection=[
+                                    ('christianity', 'Christianity'),
+                                    ('islam', 'Islam'),
+                                    ('atheist', 'Atheist'),
+                                    ('hinduism', 'Hinduism'),
+                                    ('Buddhism', 'Buddhism'),
+                                    ('chinese_traditional_religion', 'Chinese traditional religion'),
+                                    ('ethnic_religions', 'Ethnic religions'),
+                                    ('african_traditional_religions', 'African traditional religions'),
+                                    ('sikhism', 'Sikhism'),
+                                    ('spiritism', 'Spiritism'),
+                                    ('judaism', 'Judaism'),
+                                    ('baháʼí', 'Baháʼí'),
+                                    ('jainism', 'Jainism'),
+                                    ('shinto', 'Shinto'),
+                                    ('cao_dai', 'Cao Dai'),
+                                    ('zoroastrianism', 'Zoroastrianism'),
+                                    ('tenrikyo', 'Tenrikyo'),
+                                    ('animism', 'Animism'),
+                                    ('neo-paganism', 'Neo-Paganism'),
+                                    ('unitarian_universalism', 'Unitarian Universalism'),
+                                    ('rastafari', 'Rastafari')],
+                                store=True)
     dependant_id = fields.One2many('hr.dependant', 'hr_employee', string='Dependants', index=True)
     emergency_id = fields.One2many('hr.emergency', 'hr_employee', string='Emergency', index=True)
     education_id = fields.One2many('hr.education', 'hr_employee', string='School/College/University', index=True)
@@ -17,8 +43,6 @@ class EmployeeCustom(models.Model):
     language_id = fields.One2many('hr.language', 'hr_employee', string='Language', index=True)
     history_id = fields.One2many('hr.history', 'hr_employee', string='Employment History', index=True)
     home_leave_destination = fields.Many2one(comodel_name='res.country', string='Home Leave Destination')
-    # nearest_land_mark = fields.Char()
-    # fax_number = fields.Char('Fax No.')
     address_home_country = fields.Many2one(
         'res.partner', 'Address (Home Country)',
         help='Enter here the private address of the employee, not the one linked to your company.',

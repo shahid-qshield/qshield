@@ -114,7 +114,7 @@
                         </td>
                         <td style="padding:0px;">
                             <span style="display: inline-block;padding-right: 40px;"
-                                  t-field="o.religion_id.name"/>
+                                  t-field="o.religion"/>
                         </td>
                     </tr>
                     <tr>
@@ -818,7 +818,7 @@
                             <span>Employee Name</span>
                         </td>
                         <td style="padding:0px;">
-                            <span style="display: inline-block;padding-right: 40px;"
+                            <span style="display: inline-block;"
                                   t-field="o.name"/>
                         </td>
                     </tr>
@@ -828,7 +828,7 @@
                         </td>
                         <td style="padding:0px;">
                             <span style="display: inline-block;padding-right: 40px;"
-                                  t-field="o.first_name"/>
+                                  t-field="o.partner_id.qatar_id_doc.document_number"/>
                         </td>
                     </tr>
                     <tr>
@@ -856,7 +856,6 @@
                         <td style="padding:0px;">
                             <span style="display: inline-block;padding-right: 40px;"
                                   t-field="o.contract_id.date_start"/>
-                            <!--                                      t-field="o.contract_id.date_start" t-esc="o.contract_id.date_start.strftime('%d-%m-%Y')"/>-->
                         </td>
                     </tr>
                     <tr>
@@ -883,16 +882,19 @@
                         </td>
                         <td style="padding:0px;">
                             <span style="display: inline-block;padding-right: 40px;"
-                                  t-field="o.work_location"/>
+                                  t-field="o.contract_id.contract_type"/>
                         </td>
                     </tr>
                     <tr>
                         <td style="padding:0px;">
                             <span>Contract Duration</span>
                         </td>
-                        <td style="padding:0px;">
+                        <td t-if="o.contract_id.contract_type == 'limited'" style="padding:0px;">
                             <span style="display: inline-block;padding-right: 40px;"
-                                  t-field="o.work_location"/>
+                                  t-field="o.contract_id.contract_duration"/>
+                        </td>
+                        <td t-if="o.contract_id.contract_type == 'unlimited'" style="padding:0px;">
+                            <span style="display: inline-block;padding-right: 40px;">Unlimited</span>
                         </td>
                     </tr>
                     <tr>

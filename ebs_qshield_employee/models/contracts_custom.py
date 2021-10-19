@@ -7,6 +7,12 @@ class ContractsCustom(models.Model):
     _inherit = 'hr.contract'
 
     leave_entitlement = fields.Char('Leave Entitlement')
+    contract_type = fields.Selection(string='Contract Type',
+                                     selection=[
+                                         ('limited', 'Limited'),
+                                         ('unlimited', 'Unlimited')],
+                                     store=True)
+    contract_duration = fields.Integer('Contract Duration')
     basic_salary = fields.Monetary('Basic Salary')
     housing_allowance = fields.Monetary('Housing Allowance')
     transport_allowance = fields.Monetary('Transport Allowance')

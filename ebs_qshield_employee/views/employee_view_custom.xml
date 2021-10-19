@@ -20,8 +20,10 @@
                     <group/>
                 </xpath>
                 <xpath expr="//field[@name='parent_id']" position="after">
-                    <field name="religion_id"/>
+                    <field name="religion"/>
                     <field name="home_leave_destination"/>
+                    <field name="driving_license"/>
+                    <field name="country_issue"/>
                 </xpath>
                 <xpath expr="//field[@name='user_id']" position="after">
                     <field name="partner_id"/>
