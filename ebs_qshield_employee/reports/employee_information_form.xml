@@ -776,7 +776,8 @@
                             <span>Employee Name</span>
                         </td>
                         <td colspan="3" style="padding:0px;">
-                            <span style="margin-left:100px;"/>
+                            <span style="display: inline-block;width:200px;"
+                                  t-field="o.name"/>
                         </td>
                     </tr>
                     <tr>
@@ -818,7 +819,7 @@
                             <span>Employee Name</span>
                         </td>
                         <td style="padding:0px;">
-                            <span style="display: inline-block;"
+                            <span style="display: inline-block;width:200px;"
                                   t-field="o.name"/>
                         </td>
                     </tr>
