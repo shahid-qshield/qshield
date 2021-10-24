@@ -20,9 +20,15 @@ var ServiceDashboard = AbstractAction.extend({
         'click .request_complete':'request_complete',
         'click .request_cancel':'request_cancel',
         'click .request_reject':'request_reject',
+        'click .request_progress_exceptional':'request_progress_exceptional',
+        'click .request_new':'request_new',
+        'click .request_out_of_scope':'request_out_of_scope',
+        'click .request_escalated':'request_escalated',
+        'click .request_overdue':'request_overdue',
         'click .get_employee_name':'get_employee_name',
         'click .get_employee_id':'get_employee_id',
         'click .get_date':'get_date',
+        'click .get_date_for_drivers':'get_date_for_drivers',
     },
     get_date:function(e){
         var self = this;
@@ -32,12 +38,25 @@ var ServiceDashboard = AbstractAction.extend({
         var elem2 = document.getElementById('daydate2');
         this.start_date = elem.value;
         this.end_date = elem2.value;
-        console.log(this.start_date);
         var options = {
             on_reverse_breadcrumb: this.on_reverse_breadcrumb,
         };
-        this.fetch_data(this.start_date,this.end_date);
+        this.fetch_data(this.start_date,this.end_date,'');
 
+    },
+
+    get_date_for_drivers:function(e){
+        var self = this;
+        e.stopPropagation();
+        e.preventDefault();
+        var elem = document.getElementById('date_day');
+        console.log(elem)
+        this.date_for_drivers = elem.value;
+        console.log(this.date_for_drivers);
+        var options = {
+            on_reverse_breadcrumb: this.on_reverse_breadcrumb,
+        };
+        this.fetch_data('','',this.date_for_drivers);
     },
 
     init: function(parent, context) {
@@ -48,6 +67,60 @@ var ServiceDashboard = AbstractAction.extend({
         this.rejected = ''
         this.cancelled = ''
         this.completed = ''
+    },
+
+    request_new: function(e){
+        var self = this;
+        e.stopPropagation();
+        e.preventDefault();
+        var options = {
+            on_reverse_breadcrumb: this.on_reverse_breadcrumb,
+        };
+        this.do_action({
+            name: _t("New"),
+            type: 'ir.actions.act_window',
+            res_model: 'ebs_mod.service.request',
+            view_mode: 'tree,form',
+            views: [[false, 'list'],[false, 'form']],
+            domain: [['status','=', 'progress']],
+            target: 'current'
+        }, options)
+    },
+
+     request_escalated: function(e){
+        var self = this;
+        e.stopPropagation();
+        e.preventDefault();
+        var options = {
+            on_reverse_breadcrumb: this.on_reverse_breadcrumb,
+        };
+        this.do_action({
+            name: _t("Escalated"),
+            type: 'ir.actions.act_window',
+            res_model: 'ebs_mod.service.request',
+            view_mode: 'tree,form',
+            views: [[false, 'list'],[false, 'form']],
+            domain: [['is_escalated','=', true]],
+            target: 'current'
+        }, options)
+    },
+
+     request_progress_exceptional: function(e){
+        var self = this;
+        e.stopPropagation();
+        e.preventDefault();
+        var options = {
+            on_reverse_breadcrumb: this.on_reverse_breadcrumb,
+        };
+        this.do_action({
+            name: _t("Draft"),
+            type: 'ir.actions.act_window',
+            res_model: 'ebs_mod.service.request',
+            view_mode: 'tree,form',
+            views: [[false, 'list'],[false, 'form']],
+            domain: [['status','=', 'progress'],['is_exceptional','=', true],['is_escalated','=', false]],
+            target: 'current'
+        }, options)
     },
 
     request_draft: function(e){
@@ -63,7 +136,7 @@ var ServiceDashboard = AbstractAction.extend({
             res_model: 'ebs_mod.service.request',
             view_mode: 'tree,form',
             views: [[false, 'list'],[false, 'form']],
-            domain: [['status','=', 'draft']],
+            domain: [['status','=', 'draft'], ['is_escalated','=', false]],
             target: 'current'
         }, options)
     },
@@ -81,7 +154,7 @@ var ServiceDashboard = AbstractAction.extend({
             res_model: 'ebs_mod.service.request',
             view_mode: 'tree,form',
             views: [[false, 'list'],[false, 'form']],
-            domain: [['status','=', 'progress']],
+            domain: [['status','=', 'progress'],['is_exceptional','=', false],['is_escalated','=', false]],
             target: 'current'
         }, options)
     },
@@ -99,7 +172,7 @@ var ServiceDashboard = AbstractAction.extend({
             res_model: 'ebs_mod.service.request',
             view_mode: 'tree,form',
             views: [[false, 'list'],[false, 'form']],
-            domain: [['status','=', 'hold']],
+            domain: [['status','=', 'hold'], ['is_escalated','=', false]],
             target: 'current'
         }, options)
     },
@@ -117,7 +190,7 @@ var ServiceDashboard = AbstractAction.extend({
             res_model: 'ebs_mod.service.request',
             view_mode: 'tree,form',
             views: [[false, 'list'],[false, 'form']],
-            domain: [['status','=', 'complete']],
+            domain: [['status','=', 'complete'], ['is_escalated','=', false]],
             target: 'current'
         }, options)
     },
@@ -135,7 +208,7 @@ var ServiceDashboard = AbstractAction.extend({
             res_model: 'ebs_mod.service.request',
             view_mode: 'tree,form',
             views: [[false, 'list'],[false, 'form']],
-            domain: [['status','=', 'cancel']],
+            domain: [['status','=', 'cancel'],['is_escalated','=', false]],
             target: 'current'
         }, options)
     },
@@ -153,7 +226,7 @@ var ServiceDashboard = AbstractAction.extend({
             res_model: 'ebs_mod.service.request',
             view_mode: 'tree,form',
             views: [[false, 'list'],[false, 'form']],
-            domain: [['status','=', 'reject']],
+            domain: [['status','=', 'reject'], ['is_escalated','=', false]],
             target: 'current'
         }, options)
     },
@@ -210,7 +283,7 @@ var ServiceDashboard = AbstractAction.extend({
         return window.location.origin + '/web/image?model=res.users&field=image_1920&id='+employee;
     },
 
-    fetch_data: function(start_date='',end_date='') {
+    fetch_data: function(start_date='',end_date='', date_for_drivers ='') {
         var self = this;
         var def0 =  self._rpc({
                     model: 'ebs_mod.service.request',
@@ -223,25 +296,140 @@ var ServiceDashboard = AbstractAction.extend({
                 self.progress =  result
                 console.log(result)
                 $(".draft").text(self.progress['draft']);
-                $(".inprogress").text(self.progress['progress']);
+                $(".inprogress").text(self.progress['progress_normal']);
                 $(".hold").text(self.progress['hold']);
                 $(".cancel").text(self.progress['draft']);
                 $(".reject").text(self.progress['reject']);
                 $(".complete").text(self.progress['complete']);
+                $(".overdue").text(self.progress['overdue']);
+                $(".new").text(self.progress['new']);
+                $(".progress_out_of_scope").text(self.progress['progress_out_of_scope']);
+                $(".progress_exceptional").text(self.progress['progress_exceptional']);
+                $(".escalated").text(self.progress['escalated']);
             });
 
         var def1 =  self._rpc({
                     model: 'ebs_mod.service.request.workflow',
-                    method: 'get_request'
+                    method: 'get_request',
+                    args: [{
+                            'date_from': self.start_date,
+                            'date_to': self.end_date,
+                    }]
             }).then(function(result) {
                 self.employee_progress =  result
+                console.log(result)
+//                $(".assigned_inprogress").text(self.progress['assigned_inprogress']);
             });
         var def2 =  self._rpc({
                     model: 'ebs_mod.service.request.workflow',
-                    method: 'get_driver'
+                    method: 'get_driver',
+                     args: [{
+                            'date_day': self.date_for_drivers,
+                    }]
+
             }).then(function(result) {
                 self.drivers =  result
+                console.log(result)
+                jQuery(document).ready(function(){
+                for (var i = 0; i < result.length; i++) {
+                    console.log(result[i]['driver_name'])
+                    var tbl = document.getElementById('data')
+                    var row = tbl.insertRow();
+                    var cell1 = row.insertCell()
+                    var cell2 = row.insertCell()
+                    var cell3 = row.insertCell()
+                    var cell4 = row.insertCell()
+                    var cell5 = row.insertCell()
+                    var cell6 = row.insertCell()
+                    var cell7 = row.insertCell()
+                    var cell8 = row.insertCell()
+                    var cell9 = row.insertCell()
+                    var cell10 = row.insertCell()
+                    var cell11 = row.insertCell()
+                    var cell12 = row.insertCell()
+                    var cell13 = row.insertCell()
+                    cell1.innerHTML = result[i]['driver_name'];
+
+                    for (var j = 0; j < result[i]['destination'].length; j++){
+                        console.log(result[i]['destination'][j].slot)
+                        if (result[i]['destination'][j].slot == '7')
+                            cell2.innerHTML = result[i]['destination'][j].destination
+                        else if (result[i]['destination'][j].slot == '8')
+                            cell3.innerHTML = result[i]['destination'][j].destination
+                        else if (result[i]['destination'][j].slot == '9')
+                            cell4.innerHTML = result[i]['destination'][j].destination
+                        else if (result[i]['destination'][j].slot == '10')
+                            cell5.innerHTML = result[i]['destination'][j].destination
+                        else if (result[i]['destination'][j].slot == '11')
+                            cell6.innerHTML = result[i]['destination'][j].destination
+                        else if (result[i]['destination'][j].slot == '12')
+                            cell7.innerHTML = result[i]['destination'][j].destination
+                        else if (result[i]['destination'][j].slot == '1')
+                            cell8.innerHTML = result[i]['destination'][j].destination
+                        else if (result[i]['destination'][j].slot == '2')
+                            cell9.innerHTML = result[i]['destination'][j].destination
+                        else if (result[i]['destination'][j].slot == '3')
+                            cell10.innerHTML = result[i]['destination'][j].destination
+                        else if (result[i]['destination'][j].slot == '4')
+                            cell11.innerHTML = result[i]['destination'][j].destination
+                        else if (result[i]['destination'][j].slot == '5')
+                            cell12.innerHTML = result[i]['destination'][j].destination
+                        else
+                            cell13.innerHTML = result[i]['destination'][j].destination
+
+//                        cell2.innerHTML = result[i]['destination'][j].slot == '7' ? result[i]['destination'][j].destination
+//                        cell3.innerHTML = result[i]['destination'][j].slot == '8' ?  result[i]['destination'][j].destination
+//                        cell4.innerHTML = result[i]['destination'][j].slot  == '9' ?  result[i]['destination'][j].destination
+//                        cell5.innerHTML = result[i]['destination'][j].slot  == '10' ?  result[i]['destination'][j].destination
+//                        cell6.innerHTML = result[i]['destination'][j].slot  == '11' ?  result[i]['destination'][j].destination
+//                        cell7.innerHTML = result[i]['destination'][j].slot  == '12' ?  result[i]['destination'][j].destination
+//                        cell8.innerHTML = result[i]['destination'][j].slot  == '1' ?  result[i]['destination'][j].destination
+//                        cell9.innerHTML = result[i]['destination'][j].slot  == '2' ?  result[i]['destination'][j].destination
+//                        cell10.innerHTML = result[i]['destination'][j].slot  == '3' ?  result[i]['destination'][j].destination
+//                        cell11.innerHTML = result[i]['destination'][j].slot  == '4' ?  result[i]['destination'][j].destination
+//                        cell12.innerHTML = result[i]['destination'][j].slot  == '5' ?  result[i]['destination'][j].destination
+//                        cell13.innerHTML = result[i]['destination'][j].slot  == '6' ?  result[i]['destination'][j].destination
+                            }
+                        }
             });
+
+        });
+//                    var node = document.createElement("tr");                 // Create a <li> node
+//                    var textnode = document.createTextNode(result[i]['driver_name']);         // Create a text node
+//                    node.appendChild(textnode);                              // Append the text to <li>
+//                    document.getElementById("data").appendChild(node);
+//                    $("#data").append('<tr><td' + 'hello' + '</td></tr>');
+
+//                $('.trows').append('<td>' + result + '</td>');
+//                this.$el
+//                $.each(function(index,result){
+//                    $.each(result, function(index2, value2) {
+//                                console.log(value2)
+//                                alert(index2 + " : " + value2);
+//                    });
+//
+//                });
+
+
+
+//                let tablehtml = '';
+//
+//                for (let i =0; i< result.length; i++) {
+//                    tablehtml = '<tr>
+//                }
+//                $( ".trow" ).each(function( index, result ) {
+//                console.log( index + ": " + $( this ).text() );
+//                // element == this
+////                $( element ).css( "backgroundColor", "yellow" );
+////                if ( $( this ).is( "#stop" ) ) {
+////                 $(".tdata" ).text(result);
+////                 console.log(index, result)
+////                  return false;
+////                }
+//              });
+
+//                $(".drivers").text(result);
+
         var def3 =  self._rpc({
                     model: 'ebs_mod.service.type.consolidation',
                     method: 'get_request'

@@ -1037,6 +1037,9 @@ hover
 .complete-colored{
     background-color: #90EE90;
 }
+.overdue-colored{
+    background-color: #f5a4e2;
+}
 
 h3{
  padding-top: 20px;

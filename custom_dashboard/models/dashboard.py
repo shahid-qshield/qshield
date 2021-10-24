@@ -191,6 +191,7 @@ class ServiceRequestWorkFlow(models.Model):
                     request_dict['destination'].append({'destination': each_destination.destination_id.name,
                                                         'slot': each_destination.time_slot_type})
                 request_list.append(request_dict.copy())
+        print(request_list)
         return request_list
 
 
