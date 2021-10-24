@@ -13,6 +13,7 @@
                 <xpath expr="//field[@name='is_miscellaneous']" position="after">
                     <field name="is_exceptional" attrs="{'invisible':[('status','!=', 'progress')]}"/>
                     <field name="is_escalated"/>
+                    <field name="is_overdue"/>
                     <field name="is_governmental_fees"/>
                     <field name="governmental_fees" attrs="{'invisible':[('is_governmental_fees','!=', True)]}"/>
                 </xpath>

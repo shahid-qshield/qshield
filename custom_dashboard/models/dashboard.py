@@ -2,7 +2,7 @@
 from odoo import models, fields, api, _
 from odoo import exceptions
 from odoo.exceptions import ValidationError
-from datetime import datetime
+from datetime import datetime, timedelta, date
 
 
 class ServiceRequest(models.Model):
@@ -10,9 +10,11 @@ class ServiceRequest(models.Model):
 
     is_exceptional = fields.Boolean()
     is_escalated = fields.Boolean()
+    is_overdue = fields.Boolean()
     is_governmental_fees = fields.Boolean()
     governmental_fees = fields.Integer()
 
+    @api.onchange('is_escalated')
     @api.model
     def get_request(self, args=""):
         request_dict = {}
@@ -34,6 +36,15 @@ class ServiceRequest(models.Model):
 
             no_of_requests = self.env['ebs_mod.service.request'].search_count(domain)
             request_dict[key] = no_of_requests
+
+        progress_overdue = self.env['ebs_mod.service.request'].search([('status', '=', 'progress')])
+        for each in progress_overdue:
+            if each.progress_date:
+                today = date.today()
+                if each.progress_date + timedelta(days=each.sla_days) > today:
+                    each.is_overdue = True
+        overdue = self.env['ebs_mod.service.request'].search_count([('is_overdue', '=', True),
+                                                                    ('is_escalated', '=', False)])
         progress_normal = self.env['ebs_mod.service.request'].search_count([('status', '=', 'progress'),
                                                                             ('is_exceptional', '=', False),
                                                                             ('is_escalated', '=', False)])
@@ -41,7 +52,7 @@ class ServiceRequest(models.Model):
                                                                                  ('is_exceptional', '=', True),
                                                                                  ('is_escalated', '=', False)])
         escalated = self.env['ebs_mod.service.request'].search_count([('is_escalated', '=', True)])
-        request_dict['overdue'] = 0
+        request_dict['overdue'] = overdue
         request_dict['progress_normal'] = progress_normal
         request_dict['progress_out_of_scope'] = 0
         request_dict['progress_exceptional'] = progress_exceptional
@@ -164,7 +175,7 @@ class ServiceRequestWorkFlow(models.Model):
         for each_driver in drivers:
             today = datetime.today()
             if args:
-                domain = [('date', '=', args.get('date_day'))]
+                domain = [('delivery_date', '=', args.get('date_day'))]
             else:
                 domain = [('status', '=', 'progress'), ('driver', '=', each_driver.id),
                           ('delivery_date', '=', today)]
