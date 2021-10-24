@@ -102,7 +102,7 @@ class ServiceRequest(models.Model):
     def _date_on_change(self):
         if self.date:
             if self.env.company.disable_future_date_service:
-                if self.date > date.today():
+                if self.date < date.today():
                     self.date = date.today()
 
     contract_id = fields.Many2one(

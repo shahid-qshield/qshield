@@ -2,7 +2,7 @@
 from odoo import models, fields, api, _
 from odoo import exceptions
 from odoo.exceptions import ValidationError
-from datetime import date
+from datetime import datetime
 
 
 class ServiceRequest(models.Model):
@@ -13,7 +13,6 @@ class ServiceRequest(models.Model):
     is_governmental_fees = fields.Boolean()
     governmental_fees = fields.Integer()
 
-    # @api.onchange('is_escalated')
     @api.model
     def get_request(self, args=""):
         request_dict = {}
@@ -29,9 +28,9 @@ class ServiceRequest(models.Model):
         for key in status_dict:
             if args:
                 domain = [('status', '=', key), ('date', '>=', args.get('date_from')),
-                          ('date', '<=', args.get('date_to'))]
+                          ('date', '<=', args.get('date_to')), ('is_escalated', '=', False)]
             else:
-                domain = [('status', '=', key)]
+                domain = [('status', '=', key), ('is_escalated', '=', False)]
 
             no_of_requests = self.env['ebs_mod.service.request'].search_count(domain)
             request_dict[key] = no_of_requests
@@ -47,7 +46,6 @@ class ServiceRequest(models.Model):
         request_dict['progress_out_of_scope'] = 0
         request_dict['progress_exceptional'] = progress_exceptional
         request_dict['escalated'] = escalated
-        # print(request_dict)
         return request_dict
 
 
@@ -164,7 +162,7 @@ class ServiceRequestWorkFlow(models.Model):
         job_ids = self.env['hr.job'].search([('name', 'in', ['PRO', 'Driver'])])
         drivers = self.env['hr.employee'].search([('job_id', 'in', job_ids.ids)])
         for each_driver in drivers:
-            today = date.today()
+            today = datetime.today()
             if args:
                 domain = [('date', '=', args.get('date_day'))]
             else:
