@@ -175,7 +175,8 @@ class ServiceRequestWorkFlow(models.Model):
         for each_driver in drivers:
             today = datetime.today()
             if args:
-                domain = [('delivery_date', '=', args.get('date_day'))]
+                domain = [('status', '=', 'progress'), ('driver', '=', each_driver.id),
+                          ('delivery_date', '=', args.get('date_day'))]
             else:
                 domain = [('status', '=', 'progress'), ('driver', '=', each_driver.id),
                           ('delivery_date', '=', today)]
