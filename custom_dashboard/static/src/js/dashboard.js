@@ -105,6 +105,23 @@ var ServiceDashboard = AbstractAction.extend({
         }, options)
     },
 
+    request_overdue: function(e){
+        var self = this;
+        e.stopPropagation();
+        e.preventDefault();
+        var options = {
+            on_reverse_breadcrumb: this.on_reverse_breadcrumb,
+        };
+        this.do_action({
+            name: _t("Overdue"),
+            type: 'ir.actions.act_window',
+            res_model: 'ebs_mod.service.request',
+            view_mode: 'tree,form',
+            views: [[false, 'list'],[false, 'form']],
+            domain: [['is_overdue','=', true],['is_escalated','=', false]],
+            target: 'current'
+        }, options)
+    },
      request_progress_exceptional: function(e){
         var self = this;
         e.stopPropagation();
