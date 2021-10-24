@@ -111,8 +111,8 @@
 
                 <!--ASSIGNED TASKS-->
                 <h3>ASSIGNED TASKS</h3>
-                <div class="row main-section">
-                     <div style="width:37%;" >
+                <div class="row main-section" style="width:37%;">
+<!--                     <div style="width:37%;" >-->
                         <t t-foreach="widget.employee_progress" t-as="obj" >
                             <div t-attf-class="card get_employee_name title{{obj_index}} card_width_height" t-attf-id="{{obj.employee_id}}"
                                  style="display:inline-block; margin:7px; padding: 5px; cursor: pointer; border-radius: 15px;">
@@ -167,7 +167,8 @@
                     </div>
 
                     <!--TRANSPORT DAILY SCHEDULE-->
-                     <div style="width:63%;">
+                     <div class="row main-section" style="width:63%;">
+<!--                     <div style="width:63%;">-->
                          <h3>TRANSPORT DAILY SCHEDULE</h3>
                           <table class="table" >
                               <thead>
@@ -295,7 +296,7 @@
                             </table>
                     </div>
 
-                </div>
+<!--                </div>-->
 
                 <br/>
 

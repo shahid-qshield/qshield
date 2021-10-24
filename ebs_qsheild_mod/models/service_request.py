@@ -154,6 +154,7 @@ class ServiceRequest(models.Model):
     status = fields.Selection(
         string='Status',
         selection=[('draft', 'Draft'),
+                   ('new', 'New'),
                    ('progress', 'In Progress'),
                    ('hold', 'On Hold'),
                    ('complete', 'Completed'),
@@ -163,6 +164,7 @@ class ServiceRequest(models.Model):
         default='draft')
     status_dict = {
         'draft': 'Draft',
+        'new': 'New',
         'progress': 'In Progress',
         'hold': 'On Hold',
         'complete': 'Completed',
@@ -339,7 +341,6 @@ class ServiceRequest(models.Model):
         res = super(ServiceRequest, self).create(vals)
         for rec in res:
             if rec.service_type_id.for_renewing:
-                print('Create')
                 if rec.service_document_id:
                     rec.service_document_id.renewed = True
         return res
@@ -359,7 +360,6 @@ class ServiceRequest(models.Model):
                         vals['status']] + ".")
         for rec in self:
             if rec.service_type_id.for_renewing:
-                print('Write')
                 if rec.service_document_id:
                     rec.service_document_id.renewed = True
         res = super(ServiceRequest, self).write(vals)
@@ -527,7 +527,10 @@ class ServiceRequest(models.Model):
                 self.sla_days = self.get_date_difference(self.progress_date, workflow_id.complete_data, 1)
         else:
             self.sla_days = 0
-        self.status = 'progress'
+        self.status = 'new'
+
+    def request_new(self):
+        self.status = 'new'
 
     def request_cancel(self):
         for flow in self.service_flow_ids:

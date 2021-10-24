@@ -44,6 +44,9 @@
                         <button name="request_submit" string="submit" type="object"
                                 attrs="{'invisible':[('status','!=','draft')]}"/>
 
+                        <button name="request_new" string="New" type="object"
+                                attrs="{'invisible':[('status','!=','draft')]}"/>
+
                         <button name="request_hold" string="On Hold" type="object"
                                 attrs="{'invisible':[('status','!=','progress')]}"/>
 

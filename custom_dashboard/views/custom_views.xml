@@ -7,6 +7,15 @@
             <field name="priority">16</field>
             <field name="type">form</field>
             <field name="arch" type="xml">
+                <xpath expr="/form/header/button[@name='request_progress']" position="attributes">
+                    <attribute name="attrs">{'invisible': [('status', 'in', ['hold', 'draft'])]}</attribute>
+                </xpath>
+                <xpath expr="//field[@name='is_miscellaneous']" position="after">
+                    <field name="is_exceptional" attrs="{'invisible':[('status','!=', 'progress')]}"/>
+                    <field name="is_escalated"/>
+                    <field name="is_governmental_fees"/>
+                    <field name="governmental_fees" attrs="{'invisible':[('is_governmental_fees','!=', True)]}"/>
+                </xpath>
                 <xpath expr="/form/sheet/notebook/page/field/tree//field[@name='assign_to']" position="after">
                     <field name="delivery_date"/>
                     <field name="time_slot_type"/>
@@ -14,10 +23,11 @@
                     <field name="driver"/>
                 </xpath>
                 <xpath expr="/form/sheet/notebook/page/field/form/sheet/group/group//field[@name='due_date']" position="after">
-                    <field name="delivery_date"/>
-                    <field name="time_slot_type"/>
-                    <field name="destination_id"/>
-                    <field name="driver"/>
+                    <field name="requires_driver"/>
+                    <field name="delivery_date" attrs="{'invisible':[('requires_driver','!=', True)]}"/>
+                    <field name="time_slot_type" attrs="{'invisible':[('requires_driver','!=', True)]}"/>
+                    <field name="destination_id" attrs="{'invisible':[('requires_driver','!=', True)]}"/>
+                    <field name="driver" attrs="{'invisible':[('requires_driver','!=', True)]}"/>
                 </xpath>
             </field>
         </record>
