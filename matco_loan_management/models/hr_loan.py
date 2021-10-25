@@ -54,18 +54,21 @@ class HrLoan(models.Model):
     loan_amount = fields.Float(string="Loan Amount", required=True, help="Loan amount")
     total_amount = fields.Float(string="Total Amount", store=True, readonly=True, compute='_compute_loan_amount',
                                 help="Total loan amount")
-    balance_amount = fields.Float(string="Balance Amount", store=True, compute='_compute_loan_amount', help="Balance amount")
+    balance_amount = fields.Float(string="Balance Amount", store=True, compute='_compute_loan_amount',
+                                  help="Balance amount")
     total_paid_amount = fields.Float(string="Total Paid Amount", store=True, compute='_compute_loan_amount',
                                      help="Total paid amount")
 
     state = fields.Selection([
         ('draft', 'Draft'),
         ('waiting_approval_1', 'Submitted'),
-        ('first_approve','First Approved'),
+        ('first_approve', 'First Approved'),
         ('approve', 'Second Approved'),
         ('refuse', 'Refused'),
         ('cancel', 'Canceled'),
     ], string="State", default='draft', track_visibility='onchange', copy=False, )
+    purpose_of_advance = fields.Char(string='Purpose of Advance')
+    user_id = fields.Many2one('res.users', string='Approved By')
 
     @api.model
     def create(self, values):
@@ -129,7 +132,10 @@ class HrLoan(models.Model):
             if not data.loan_lines:
                 raise ValidationError(_("Please Compute installment"))
             else:
-                self.write({'state': 'approve'})
+                self.write({
+                    'state': 'approve',
+                    'user_id': self.env.user,
+                })
 
     def unlink(self):
         for loan in self:
@@ -160,3 +166,18 @@ class HrEmployee(models.Model):
         self.loan_count = self.env['hr.loan'].search_count([('employee_id', '=', self.id)])
 
     loan_count = fields.Integer(string="Loan Count", compute='_compute_employee_loans')
+    payslip_count = fields.Integer(string="Payslip Count", compute="_compute_employee_payslip")
+
+    def _compute_employee_payslip(self):
+        self.payslip_count = self.env['qshield.payslip'].search_count([('employee_id', '=', self.id)])
+
+    def get_employee_payslips(self):
+        self.ensure_one()
+        return {
+            'type': 'ir.actions.act_window',
+            'name': 'Payslips',
+            'view_mode': 'tree,form',
+            'res_model': 'qshield.payslip',
+            'domain': [('employee_id', '=', self.id)],
+            'context': "{'create': True}"
+        }

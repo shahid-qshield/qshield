@@ -11,7 +11,7 @@
     'company': '',
     'maintainer': '',
     'website': "",
-    'depends': ['base', 'hr', 'hr_contract'],
+    'depends': ['base', 'hr', 'hr_contract', 'qshield_payslip'],
     'data': [
         'data/salary_rule_loan.xml',
         'security/ir.model.access.csv',
