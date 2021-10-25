@@ -18,12 +18,14 @@
                     <field name="governmental_fees" attrs="{'invisible':[('is_governmental_fees','!=', True)]}"/>
                 </xpath>
                 <xpath expr="/form/sheet/notebook/page/field/tree//field[@name='assign_to']" position="after">
-                    <field name="delivery_date"/>
-                    <field name="time_slot_type"/>
-                    <field name="destination_id"/>
-                    <field name="driver"/>
+                    <field name="requires_driver"/>
+                    <field name="delivery_date" attrs="{'invisible':[('requires_driver','!=', True)]}"/>
+                    <field name="time_slot_type" attrs="{'invisible':[('requires_driver','!=', True)]}"/>
+                    <field name="destination_id" attrs="{'invisible':[('requires_driver','!=', True)]}"/>
+                    <field name="driver" attrs="{'invisible':[('requires_driver','!=', True)]}"/>
                 </xpath>
-                <xpath expr="/form/sheet/notebook/page/field/form/sheet/group/group//field[@name='due_date']" position="after">
+                <xpath expr="/form/sheet/notebook/page/field/form/sheet/group/group//field[@name='due_date']"
+                       position="after">
                     <field name="requires_driver"/>
                     <field name="delivery_date" attrs="{'invisible':[('requires_driver','!=', True)]}"/>
                     <field name="time_slot_type" attrs="{'invisible':[('requires_driver','!=', True)]}"/>
