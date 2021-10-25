@@ -14,7 +14,6 @@ class ServiceRequest(models.Model):
     is_governmental_fees = fields.Boolean()
     governmental_fees = fields.Integer()
 
-    @api.onchange('is_escalated')
     @api.model
     def get_request(self, args=""):
         request_dict = {}
@@ -95,49 +94,26 @@ class ServiceRequestWorkFlow(models.Model):
                                                                                     self.destination_id.id),
                                                                                    ('time_slot_type', '=',
                                                                                     self.time_slot_type)])
-            check_date_slot_count = self.env['ebs_mod.service.request.workflow'].search_count(
-                [('driver', '=', self.driver.id),
-                 ('delivery_date', '=',
-                  self.delivery_date),
-                 ('time_slot_type', '=',
-                  self.time_slot_type)])
             if check_date_slot:
                 my_error_msg = "The driver {} is assigned to another task on {} at {}. Destinations: ".format(
                     self.driver.name, self.delivery_date, self.time_slot_type)
-                # previous_dest = ''
-                # count = 0
-                title = _("Take Care")
                 for each_destination in check_date_slot:
-                    # if count == check_date_slot_count:
-                    #     break
-                    # else:
-                    #     previous_dest = each_destination.destination_id.name
                     my_error_msg += ' {},'.format(each_destination.destination_id.name)
-                # count += 1
-                # my_error_msg += ' {}'.format(previous_dest)
-                # my_error_msg = _(my_error_msg)
-                # return {
+                raise ValidationError(my_error_msg)
+                # title = _("Connection Test Succeeded!")
+                # message = _("Everything seems properly set up!")
+                # return_value = {
                 #     'type': 'ir.actions.client',
                 #     'tag': 'display_notification',
+                #     'target': 'current',
                 #     'params': {
                 #         'title': title,
-                #         'message': my_error_msg,
-                #         'sticky': False,
+                #         'message': message,
+                #         'sticky': True,
                 #     }
                 # }
-                # popup = Popup(title='Test popup', content=Label(text='Hello world'), auto_dismiss=False)
-                # popup.open()
-            # title = _("Connection Test Succeeded!")
-            # message = _("Everything seems properly set up!")
-            # return {
-            #     'type': 'ir.actions.client',
-            #     'tag': 'display_notification',
-            #     'params': {
-            #         'title': title,
-            #         'message': message,
-            #         'sticky': False,
-            #     }
-            # }
+                # print(return_value)
+                # return return_value
         else:
             return False
 
