@@ -47,8 +47,10 @@
                         <field name="department_id"/>
                         <field name="job_position"/>
                         <field name="loan_amount" attrs="{'readonly':[('state','=','approve')]}" />
+                        <field name="purpose_of_advance" attrs="{'readonly':[('state','=','approve')]}" />
                         <field name="installment" attrs="{'readonly':[('state','=','approve')]}"/>
                         <field name="payment_date" attrs="{'readonly':[('state','=','approve')]}"/>
+                        <field name="user_id" readonly="1"/>
                         <field name="company_id" options="{'no_create': True}" groups="base.group_multi_company"/>
                         <field name="currency_id" options="{'no_create': True}" groups="base.group_multi_company"/>
                     </group>
@@ -150,6 +152,15 @@
                     icon="fa-calendar"
                     groups="hr.group_hr_manager,hr.group_hr_user">
                     <field name="loan_count" widget="statinfo" string="Loans"/>
+                </button>
+
+
+                <button name="get_employee_payslips"
+                    type="object"
+                    class="oe_stat_button"
+                    icon="fa-calendar"
+                    >
+                    <field name="payslip_count" widget="statinfo" string="Payslips"/>
                 </button>
             </xpath>
         </field>
