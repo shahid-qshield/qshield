@@ -144,13 +144,21 @@ class ServiceRequestWorkFlow(models.Model):
     @api.model
     def get_request(self, args=""):
         request_list = []
-        if args:
-            domain = [('date', '>=', args.get('date_from')), ('date', '<=', args.get('date_to'))]
-        else:
-            domain = []
-        employees = self.env['res.users'].search(domain)
+
+        # domain = [('date', '>=', args.get('date_from')), ('date', '<=', args.get('date_to'))]
+        # domain = [('due_date', '>=', date_from), ('due_date', '<=', date_to)]
+        employees = self.env['res.users'].search([])
         for each_employee in employees:
-            domain = [('status', '=', 'progress'), ('assign_to', '=', each_employee.id)]
+            domain = []
+            if args:
+                year_from, month_from, day_from = map(int, args.get('date_from').split('-'))
+                year_to, month_to, day_to = map(int, args.get('date_to').split('-'))
+                date_from = datetime(year_from, month_from, day_from, 0, 0, 0)
+                date_to = datetime(year_to, month_to, day_to, 0, 0, 0)
+                domain.extend([('due_date', '>=', date_from), ('due_date', '<=', date_to), ('status', '=', 'progress'),
+                               ('assign_to', '=', each_employee.id)])
+            else:
+                domain.extend([('status', '=', 'progress'), ('assign_to', '=', each_employee.id)])
             no_of_requests = self.env['ebs_mod.service.request.workflow'].search_count(domain)
             if no_of_requests:
                 request_dict = {
@@ -165,7 +173,34 @@ class ServiceRequestWorkFlow(models.Model):
             return elem.get('progress')
 
         request_list.sort(key=get_progress, reverse=True)
+        print(request_list)
         return request_list
+
+    # @api.model
+    # def get_request(self, args=""):
+    #     request_list = []
+    #     if args:
+    #         domain = [('date', '>=', args.get('date_from')), ('date', '<=', args.get('date_to'))]
+    #     else:
+    #         domain = []
+    #     employees = self.env['res.users'].search(domain)
+    #     for each_employee in employees:
+    #         domain = [('status', '=', 'progress'), ('assign_to', '=', each_employee.id)]
+    #         no_of_requests = self.env['ebs_mod.service.request.workflow'].search_count(domain)
+    #         if no_of_requests:
+    #             request_dict = {
+    #                 'employee_id': each_employee.id,
+    #                 'employee_name': each_employee.name,
+    #                 'employee_image': each_employee.image_1920,
+    #                 'progress': no_of_requests
+    #             }
+    #             request_list.append(request_dict.copy())
+    #
+    #     def get_progress(elem):
+    #         return elem.get('progress')
+    #
+    #     request_list.sort(key=get_progress, reverse=True)
+    #     return request_list
 
     @api.model
     def get_driver(self, args=""):
@@ -191,7 +226,6 @@ class ServiceRequestWorkFlow(models.Model):
                     request_dict['destination'].append({'destination': each_destination.destination_id.name,
                                                         'slot': each_destination.time_slot_type})
                 request_list.append(request_dict.copy())
-        print(request_list)
         return request_list
 
 
