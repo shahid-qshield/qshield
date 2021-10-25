@@ -1,7 +1,5 @@
 # -*- coding: utf-8 -*-
 from odoo import models, fields, api, _
-from odoo import exceptions
-from odoo.exceptions import ValidationError
 from datetime import datetime, timedelta, date
 
 
@@ -99,21 +97,12 @@ class ServiceRequestWorkFlow(models.Model):
                     self.driver.name, self.delivery_date, self.time_slot_type)
                 for each_destination in check_date_slot:
                     my_error_msg += ' {},'.format(each_destination.destination_id.name)
-                raise ValidationError(my_error_msg)
-                # title = _("Connection Test Succeeded!")
-                # message = _("Everything seems properly set up!")
-                # return_value = {
-                #     'type': 'ir.actions.client',
-                #     'tag': 'display_notification',
-                #     'target': 'current',
-                #     'params': {
-                #         'title': title,
-                #         'message': message,
-                #         'sticky': True,
-                #     }
-                # }
-                # print(return_value)
-                # return return_value
+                title = "Warning"
+                warning = {
+                    'title': title,
+                    'message': my_error_msg,
+                }
+                return {'warning': warning}
         else:
             return False
 
@@ -167,7 +156,6 @@ class ServiceRequestWorkFlow(models.Model):
                     request_dict['destination'].append({'destination': each_destination.destination_id.name,
                                                         'slot': each_destination.time_slot_type})
                 request_list.append(request_dict.copy())
-        print(request_list)
         return request_list
 
 
