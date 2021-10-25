@@ -13,6 +13,7 @@
     'website': "",
     'depends': ['base', 'hr', 'ebs_qshield_employee'],
     'data': [
+        'security/ir.model.access.csv',
         'views/payslip_view.xml',
         'reports/payslip_report.xml',
     ],
