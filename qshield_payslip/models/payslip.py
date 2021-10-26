@@ -84,13 +84,13 @@ class Payslip(models.Model):
                 if contract:
                     record.contract_id = contract.id
 
-    @api.onchange('basic_salary_amount', 'housing_allowance_amount', 'transport_allowance_amount',
-                  'telephone_allowance_amount', 'petrol_allowance_amount', 'other_allowance_amount')
-    @api.depends('basic_salary_amount', 'housing_allowance_amount', 'transport_allowance_amount',
-                 'telephone_allowance_amount', 'petrol_allowance_amount', 'other_allowance_amount')
+    @api.onchange('basic_salary_payable', 'housing_allowance_payable', 'transport_allowance_payable',
+                  'telephone_allowance_payable', 'petrol_allowance_payable', 'other_allowance_payable')
+    @api.depends('basic_salary_payable', 'housing_allowance_payable', 'transport_allowance_payable',
+                 'telephone_allowance_payable', 'petrol_allowance_payable', 'other_allowance_payable')
     def _get_gross_salary(self):
         for record in self:
-            record.gross_salary = record.basic_salary_amount + record.housing_allowance_amount + record.transport_allowance_amount + record.telephone_allowance_amount + record.petrol_allowance_amount + record.other_allowance_amount
+            record.gross_salary = record.basic_salary_payable + record.housing_allowance_payable + record.transport_allowance_payable + record.telephone_allowance_payable + record.petrol_allowance_payable + record.other_allowance_payable
 
     @api.depends('deduction_ids')
     def _get_total_deduction(self):
@@ -98,7 +98,7 @@ class Payslip(models.Model):
         for record in self:
             if record.deduction_ids:
                 for deduction in record.deduction_ids:
-                    record.total_deduction = record.total_deduction + deduction.amount
+                    record.total_deduction = record.total_deduction + deduction.payable
 
     @api.depends('earning_ids')
     def _get_total_earning(self):
@@ -106,7 +106,7 @@ class Payslip(models.Model):
         for record in self:
             if record.earning_ids:
                 for earning in record.earning_ids:
-                    record.total_earning = record.total_earning + earning.amount
+                    record.total_earning = record.total_earning + earning.payable
 
     @api.depends('gross_salary', 'total_earning', 'total_deduction')
     def _get_net_pay(self):
