@@ -11,32 +11,15 @@
                       <input type="date" id="daydate2" name="daydate2" value="2021-12-31"/>
                       <input type="submit" id="btn" class="get_date" />
                     <div class="row1 main-section">
-<!--                         <div class="col-md-2 col-sm-6 request_draft oh-payslip" >-->
-<!--                            <div class="oh-card">-->
-<!--                                <div class="oh-card-body">-->
-<!--        &lt;!&ndash;                            <div class="stat-widget-one">&ndash;&gt;-->
-<!--                                        <div class="stat-icon draft"><p><t t-esc="widget.progress['draft']"/></p></div>-->
-<!--                                        <div class="stat-content">-->
-<!--                                            <div class="stat-text">Draft</div>-->
-<!--            &lt;!&ndash;                                <div class="stat-digit"><t t-esc="widget.login_employee['payslip_count']"/></div>&ndash;&gt;-->
-<!--                                            <div class="stat-digit"></div>-->
-<!--                                        </div>-->
-<!--        &lt;!&ndash;                            </div>&ndash;&gt;-->
-<!--                                </div>-->
-<!--                            </div>-->
-<!--                        </div>-->
 
                         <div class="col-md-2 col-sm-6 request_progress oh-payslip" >
                             <div class="oh-card">
                                 <div class="oh-card-body">
-        <!--                            <div class="stat-widget-one">-->
                                         <div class="stat-icon inprogress"><p><t t-esc="widget.progress['progress_normal']"/></p></div>
                                         <div class="stat-content">
                                             <div class="stat-text">In Progress</div>
-            <!--                                <div class="stat-digit"><t t-esc="widget.login_employee['payslip_count']"/></div>-->
                                             <div class="stat-digit"></div>
                                         </div>
-        <!--                            </div>-->
                                 </div>
                             </div>
                         </div>
