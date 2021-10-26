@@ -41,15 +41,15 @@
                             </div>
                         </div>
 
-                        <div class="col-md-2 col-sm-6 request_overdue oh-payslip" >
+                        <div class="col-md-2 col-sm-6 request_pending oh-payslip" >
                             <div class="oh-card">
                                 <div class="oh-card-body">
-                                    <div class="stat-widget-one overdue-colored">
+                                    <div class="stat-widget-one">
                                         <div class="stat-icon overdue"><p><t t-esc="widget.progress['pending']"/></p></div>
                                         <div class="stat-content ">
                                             <div class="stat-text">Pending</div>
             <!--                                <div class="stat-digit"><t t-esc="widget.login_employee['payslip_count']"/></div>-->
-                                            <div class="stat-digit overdue-colored"></div>
+                                            <div class="stat-digit"></div>
                                         </div>
                                     </div>
                                 </div>
