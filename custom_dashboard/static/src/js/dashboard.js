@@ -83,7 +83,7 @@ var ServiceDashboard = AbstractAction.extend({
             res_model: 'ebs_mod.service.request',
             view_mode: 'tree,form',
             views: [[false, 'list'],[false, 'form']],
-            domain: [['status','=', 'progress'], , ['is_pending', '=', false]],
+            domain: [['status','=', 'new'],['is_pending', '=', false]],
             target: 'current'
         }, options)
     },
