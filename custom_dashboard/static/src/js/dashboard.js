@@ -353,12 +353,11 @@ var ServiceDashboard = AbstractAction.extend({
                     }]
             }).then(function(result) {
                 self.employee_progress =  result
-                console.log(result)
                 jQuery(document).ready(function(){
                     var taskDiv = document.getElementById("tasks")
                     var inner = ''
                     for (var i = 0; i < result.length; i++) {
-                        inner += `<div class="card get_employee_name title${i} card_width_height" id= ${result[i]['employee_id']}
+                        inner += `<div class="card get_employee_name title${i} card_width_height" id= ${result[i]['employee_id']} emp_name=${result[i]['employee_name']}
                                          style="display:inline-block; margin:7px; padding: 5px; cursor: pointer; border-radius: 15px;">
                                         <div class="sub_card" style="display:inline-block;">
                                             <div class="user_image" style="display:inline-block;">
@@ -379,7 +378,6 @@ var ServiceDashboard = AbstractAction.extend({
                     }
                     try {
                           taskDiv.innerHTML = inner
-                          console.log(inner)
                         }
                         catch(err) {
                           console.log(err)

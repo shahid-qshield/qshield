@@ -187,7 +187,7 @@
 <!--                     <div style="width:37%;" >-->
                         <t t-foreach="widget.employee_progress" t-as="obj" >
                             <div t-attf-class="card get_employee_name title{{obj_index}} card_width_height" t-attf-id="{{obj.employee_id}}"
-                                 style="display:inline-block; margin:7px; padding: 5px; cursor: pointer; border-radius: 15px;">
+                                 style="display:inline-block; margin:7px; padding: 5px; cursor: pointer; border-radius: 15px;" t-attf-emp_name="{{obj.employee_name}}">
                                 <div class="sub_card" style="display:inline-block;">
                                     <div class="user_image" style="display:inline-block;">
                                         <img class="img o_we_preview_image rounded-circle o_image_40_cover " t-att-src="widget.get_emp_image_url(obj.employee_id)"
@@ -198,7 +198,6 @@
                                     </div>
 
                                 </div>
-
                               <div t-attf-class="title{{obj_index}}" style="text-transform: capitalize;">
                                 <p class="card-text" style="color:white; font-weight:bold';"><t t-esc="obj.employee_name"/></p>
                               </div>
