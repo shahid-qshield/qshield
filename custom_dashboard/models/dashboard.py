@@ -8,9 +8,10 @@ class ServiceRequest(models.Model):
 
     is_exceptional = fields.Boolean()
     is_escalated = fields.Boolean()
+    is_pending = fields.Boolean()
     is_overdue = fields.Boolean()
-    is_governmental_fees = fields.Boolean()
-    governmental_fees = fields.Integer()
+    is_governmental_fees = fields.Boolean('Governmental Fees')
+    governmental_fees = fields.Integer('Governmental Fees Amount')
 
     @api.model
     def get_request(self, args=""):
@@ -41,20 +42,32 @@ class ServiceRequest(models.Model):
                 if each.progress_date + timedelta(days=each.sla_days) > today:
                     each.is_overdue = True
         overdue = self.env['ebs_mod.service.request'].search_count([('is_overdue', '=', True),
-                                                                    ('is_escalated', '=', False)])
+                                                                    ('is_escalated', '=', False),
+                                                                    ('is_pending', '=', False)])
         progress_normal = self.env['ebs_mod.service.request'].search_count([('status', '=', 'progress'),
                                                                             ('is_exceptional', '=', False),
-                                                                            ('is_escalated', '=', False)])
+                                                                            ('is_escalated', '=', False),
+                                                                            ('is_pending', '=', False)])
         progress_exceptional = self.env['ebs_mod.service.request'].search_count([('status', '=', 'progress'),
                                                                                  ('is_exceptional', '=', True),
-                                                                                 ('is_escalated', '=', False)])
-        escalated = self.env['ebs_mod.service.request'].search_count([('is_escalated', '=', True)])
+                                                                                 ('is_escalated', '=', False),
+                                                                                 ('is_pending', '=', False)])
+        escalated = self.env['ebs_mod.service.request'].search_count([('is_escalated', '=', True),
+                                                                      ('is_pending', '=', False)])
+        pending = self.env['ebs_mod.service.request'].search_count([('is_pending', '=', True)])
         request_dict['overdue'] = overdue
         request_dict['progress_normal'] = progress_normal
         request_dict['progress_out_of_scope'] = 0
         request_dict['progress_exceptional'] = progress_exceptional
         request_dict['escalated'] = escalated
+        request_dict['pending'] = pending
         return request_dict
+
+
+class ServiceTypeWorkflow(models.Model):
+    _inherit = "ebs_mod.service.type.workflow"
+
+    requires_driver = fields.Boolean(required=False, default=False)
 
 
 class ServiceRequestWorkFlow(models.Model):
@@ -64,7 +77,9 @@ class ServiceRequestWorkFlow(models.Model):
         job_ids = self.env['hr.job'].search([('name', 'in', ['PRO', 'Driver'])])
         return [('job_id', 'in', job_ids.ids)] if job_ids else []
 
-    requires_driver = fields.Boolean()
+    requires_driver = fields.Boolean(required=False,
+                                     related="workflow_id.requires_driver",
+                                     store=True, readonly=True)
     driver = fields.Many2one('hr.employee', string='Driver', domain=_domain_drivers)
     time_slot_type = fields.Selection([('7', '7:00 - 7:59 AM'),
                                        ('8', '8:00 - 8:59 AM'),
@@ -88,7 +103,7 @@ class ServiceRequestWorkFlow(models.Model):
             check_date_slot = self.env['ebs_mod.service.request.workflow'].search([('driver', '=', self.driver.id),
                                                                                    ('delivery_date', '=',
                                                                                     self.delivery_date),
-                                                                                   ('destination_id', '=',
+                                                                                   ('destination_id', '!=',
                                                                                     self.destination_id.id),
                                                                                    ('time_slot_type', '=',
                                                                                     self.time_slot_type)])
