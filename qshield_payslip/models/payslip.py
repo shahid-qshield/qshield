@@ -19,12 +19,6 @@ def get_years():
 class Payslip(models.Model):
     _name = 'qshield.payslip'
 
-    @api.model
-    def _get_basic_salary_payable(self):
-        _logger.info('in default1')
-        _logger.info(self.basic_salary_amount)
-        return self.basic_salary_amount
-
     employee_id = fields.Many2one('hr.employee', required=True)
     qid = fields.Char(related='employee_id.identification_id', string='QID')
     designation_id = fields.Many2one('hr.job', related='employee_id.job_id', string='Designation')
@@ -32,23 +26,23 @@ class Payslip(models.Model):
     date_of_joining = fields.Date(string='Date of Joining', related='contract_id.date_start')
     currency_id = fields.Many2one('res.currency', string='Currency', related='contract_id.currency_id')
     month = fields.Selection([
-            ('1', 'JANUARY'),
-            ('2', 'FEBRUARY'),
-            ('3', 'MARCH'),
-            ('4', 'APRIL'),
-            ('5', 'MAY'),
-            ('6', 'JUNE'),
-            ('7', 'JULY'),
-            ('8', 'AUGUST'),
-            ('9', 'SEPTEMBER'),
-            ('10', 'OCTOBER'),
-            ('11', 'NOVEMBER'),
-            ('12', 'DECEMBER'),
-        ])
+        ('1', 'JANUARY'),
+        ('2', 'FEBRUARY'),
+        ('3', 'MARCH'),
+        ('4', 'APRIL'),
+        ('5', 'MAY'),
+        ('6', 'JUNE'),
+        ('7', 'JULY'),
+        ('8', 'AUGUST'),
+        ('9', 'SEPTEMBER'),
+        ('10', 'OCTOBER'),
+        ('11', 'NOVEMBER'),
+        ('12', 'DECEMBER'),
+    ])
     year = fields.Selection(get_years(), string='Year')
 
-    basic_salary_amount = fields.Monetary(related='contract_id.basic_salary', store=True)
-    basic_salary_payable = fields.Monetary(default=_get_basic_salary_payable)
+    basic_salary_amount = fields.Monetary(related='contract_id.basic_salary')
+    basic_salary_payable = fields.Monetary()
 
     housing_allowance_amount = fields.Monetary(related='contract_id.housing_allowance')
     housing_allowance_payable = fields.Monetary()
@@ -125,12 +119,17 @@ class Payslip(models.Model):
             text = record.currency_id.amount_to_text(record.net_pay) + ' Only'
             record.net_pay_in_words = text
 
-    # @api.model
-    # def default_get(self, fields):
-    #     _logger.info('in default_get method')
-    #     _logger.info(self.contract_id.basic_salary)
-    #     res = super(Payslip, self).default_get(fields)
-    #     res.update({
-    #         'basic_salary_payable': self.basic_salary_amount,
-    #     })
-    #     return res
+    @api.onchange('employee_id')
+    def _get_default_basic_salary_payable(self):
+        for record in self:
+            contract = self.env['hr.contract'].search([
+                ('employee_id', '=', record.employee_id.id),
+                ('state', '=', 'open')
+            ], limit=1)
+            if contract:
+                record.basic_salary_payable = contract.basic_salary
+                record.housing_allowance_payable = contract.housing_allowance
+                record.transport_allowance_payable = contract.transport_allowance
+                record.telephone_allowance_payable = contract.telephone_allowance
+                record.petrol_allowance_payable = contract.petrol_allowance
+                record.other_allowance_payable = contract.other_allowance

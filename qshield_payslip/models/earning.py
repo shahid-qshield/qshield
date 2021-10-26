@@ -20,3 +20,8 @@ class Earning(models.Model):
     amount = fields.Float(string='Amount')
     payable = fields.Float(string='Payable', default=_get_basic_salary_payable)
     payslip_id = fields.Many2one('qshield.payslip')
+
+    @api.onchange('amount')
+    def _get_payable_value(self):
+        for record in self:
+            record.payable = record.amount
