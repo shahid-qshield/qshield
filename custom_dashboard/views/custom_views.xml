@@ -1,5 +1,17 @@
 <odoo>
     <data>
+        <record id="service_type_workflow_form_custom" model="ir.ui.view">
+            <field name="name">Service Type Workflow Form Custom</field>
+            <field name="model">ebs_mod.service.type.workflow</field>
+            <field name="inherit_id" ref="ebs_qsheild_mod.service_type_workflow_form"/>
+            <field name="type">form</field>
+            <field name="arch" type="xml">
+                <xpath expr="//field[@name='start_count_flow']" position="after">
+                    <field name="requires_driver"/>
+                </xpath>
+            </field>
+        </record>
+
         <record model="ir.ui.view" id="service_request_form_custom">
             <field name="name">Service Request Form</field>
             <field name="model">ebs_mod.service.request</field>
@@ -13,7 +25,8 @@
                 <xpath expr="//field[@name='is_miscellaneous']" position="after">
                     <field name="is_exceptional" attrs="{'invisible':[('status','!=', 'progress')]}"/>
                     <field name="is_escalated"/>
-                    <field name="is_overdue"/>
+                    <field name="is_pending"/>
+                    <field name="is_overdue" invisible="1"/>
                     <field name="is_governmental_fees"/>
                     <field name="governmental_fees" attrs="{'invisible':[('is_governmental_fees','!=', True)]}"/>
                 </xpath>
@@ -150,6 +163,7 @@
                 parent="ebs_qsheild_mod.services_config"
                 sequence="20"
         />
+
         <menuitem
                 id="service_destination_view_menu"
                 name="Service Destination"
