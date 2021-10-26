@@ -45,6 +45,21 @@
                             <div class="oh-card">
                                 <div class="oh-card-body">
                                     <div class="stat-widget-one overdue-colored">
+                                        <div class="stat-icon overdue"><p><t t-esc="widget.progress['pending']"/></p></div>
+                                        <div class="stat-content ">
+                                            <div class="stat-text">Pending</div>
+            <!--                                <div class="stat-digit"><t t-esc="widget.login_employee['payslip_count']"/></div>-->
+                                            <div class="stat-digit overdue-colored"></div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="col-md-2 col-sm-6 request_overdue oh-payslip" >
+                            <div class="oh-card">
+                                <div class="oh-card-body">
+                                    <div class="stat-widget-one overdue-colored">
                                         <div class="stat-icon overdue"><p><t t-esc="widget.progress['overdue']"/></p></div>
                                         <div class="stat-content ">
                                             <div class="stat-text">OVERDUE</div>
@@ -116,6 +131,22 @@
                                 </div>
                             </div>
                         </div>
+
+                         <div class="col-md-2 col-sm-6 request_escalated oh-payslip" >
+                            <div class="oh-card">
+                                <div class="oh-card-body">
+        <!--                            <div class="stat-widget-one">-->
+                                        <div class="stat-icon escalated"><p><t t-esc="widget.progress['escalated']"/></p></div>
+                                        <div class="stat-content">
+                                            <div class="stat-text">ESCALATED</div>
+            <!--                                <div class="stat-digit"><t t-esc="widget.login_employee['payslip_count']"/></div>-->
+                                            <div class="stat-digit"></div>
+                                        </div>
+        <!--                            </div>-->
+                                </div>
+                            </div>
+                        </div>
+
                     </div>
 
                     <div class="row1 main-section">
@@ -156,21 +187,6 @@
                                         <div class="stat-icon new"><p><t t-esc="widget.progress['new']"/></p></div>
                                         <div class="stat-content">
                                             <div class="stat-text">NEW</div>
-            <!--                                <div class="stat-digit"><t t-esc="widget.login_employee['payslip_count']"/></div>-->
-                                            <div class="stat-digit"></div>
-                                        </div>
-        <!--                            </div>-->
-                                </div>
-                            </div>
-                        </div>
-
-                         <div class="col-md-2 col-sm-6 request_escalated oh-payslip" >
-                            <div class="oh-card">
-                                <div class="oh-card-body">
-        <!--                            <div class="stat-widget-one">-->
-                                        <div class="stat-icon escalated"><p><t t-esc="widget.progress['escalated']"/></p></div>
-                                        <div class="stat-content">
-                                            <div class="stat-text">ESCALATED</div>
             <!--                                <div class="stat-digit"><t t-esc="widget.login_employee['payslip_count']"/></div>-->
                                             <div class="stat-digit"></div>
                                         </div>

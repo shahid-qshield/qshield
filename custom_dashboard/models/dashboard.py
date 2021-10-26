@@ -138,7 +138,6 @@ class ServiceRequestWorkFlow(models.Model):
             return elem.get('progress')
 
         request_list.sort(key=get_progress, reverse=True)
-        print(request_list)
         return request_list
 
     # @api.model
