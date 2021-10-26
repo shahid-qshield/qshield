@@ -8,9 +8,10 @@ class ServiceRequest(models.Model):
 
     is_exceptional = fields.Boolean()
     is_escalated = fields.Boolean()
+    is_pending = fields.Boolean()
     is_overdue = fields.Boolean()
-    is_governmental_fees = fields.Boolean()
-    governmental_fees = fields.Integer()
+    is_governmental_fees = fields.Boolean('Governmental Fees')
+    governmental_fees = fields.Integer('Governmental Fees Amount')
 
     @api.model
     def get_request(self, args=""):
@@ -41,20 +42,32 @@ class ServiceRequest(models.Model):
                 if each.progress_date + timedelta(days=each.sla_days) > today:
                     each.is_overdue = True
         overdue = self.env['ebs_mod.service.request'].search_count([('is_overdue', '=', True),
-                                                                    ('is_escalated', '=', False)])
+                                                                    ('is_escalated', '=', False),
+                                                                    ('is_pending', '=', False)])
         progress_normal = self.env['ebs_mod.service.request'].search_count([('status', '=', 'progress'),
                                                                             ('is_exceptional', '=', False),
-                                                                            ('is_escalated', '=', False)])
+                                                                            ('is_escalated', '=', False),
+                                                                            ('is_pending', '=', False)])
         progress_exceptional = self.env['ebs_mod.service.request'].search_count([('status', '=', 'progress'),
                                                                                  ('is_exceptional', '=', True),
-                                                                                 ('is_escalated', '=', False)])
-        escalated = self.env['ebs_mod.service.request'].search_count([('is_escalated', '=', True)])
+                                                                                 ('is_escalated', '=', False),
+                                                                                 ('is_pending', '=', False)])
+        escalated = self.env['ebs_mod.service.request'].search_count([('is_escalated', '=', True),
+                                                                      ('is_pending', '=', False)])
+        pending = self.env['ebs_mod.service.request'].search_count([('is_pending', '=', True)])
         request_dict['overdue'] = overdue
         request_dict['progress_normal'] = progress_normal
         request_dict['progress_out_of_scope'] = 0
         request_dict['progress_exceptional'] = progress_exceptional
         request_dict['escalated'] = escalated
+        request_dict['pending'] = pending
         return request_dict
+
+
+class ServiceTypeWorkflow(models.Model):
+    _inherit = "ebs_mod.service.type.workflow"
+
+    requires_driver = fields.Boolean(required=False, default=False)
 
 
 class ServiceRequestWorkFlow(models.Model):
@@ -64,7 +77,9 @@ class ServiceRequestWorkFlow(models.Model):
         job_ids = self.env['hr.job'].search([('name', 'in', ['PRO', 'Driver'])])
         return [('job_id', 'in', job_ids.ids)] if job_ids else []
 
-    requires_driver = fields.Boolean()
+    requires_driver = fields.Boolean(required=False,
+                                     related="workflow_id.requires_driver",
+                                     store=True, readonly=True)
     driver = fields.Many2one('hr.employee', string='Driver', domain=_domain_drivers)
     time_slot_type = fields.Selection([('7', '7:00 - 7:59 AM'),
                                        ('8', '8:00 - 8:59 AM'),
@@ -88,7 +103,7 @@ class ServiceRequestWorkFlow(models.Model):
             check_date_slot = self.env['ebs_mod.service.request.workflow'].search([('driver', '=', self.driver.id),
                                                                                    ('delivery_date', '=',
                                                                                     self.delivery_date),
-                                                                                   ('destination_id', '=',
+                                                                                   ('destination_id', '!=',
                                                                                     self.destination_id.id),
                                                                                    ('time_slot_type', '=',
                                                                                     self.time_slot_type)])
@@ -109,13 +124,21 @@ class ServiceRequestWorkFlow(models.Model):
     @api.model
     def get_request(self, args=""):
         request_list = []
-        if args:
-            domain = [('date', '>=', args.get('date_from')), ('date', '<=', args.get('date_to'))]
-        else:
-            domain = []
-        employees = self.env['res.users'].search(domain)
+
+        # domain = [('date', '>=', args.get('date_from')), ('date', '<=', args.get('date_to'))]
+        # domain = [('due_date', '>=', date_from), ('due_date', '<=', date_to)]
+        employees = self.env['res.users'].search([])
         for each_employee in employees:
-            domain = [('status', '=', 'progress'), ('assign_to', '=', each_employee.id)]
+            domain = []
+            if args:
+                year_from, month_from, day_from = map(int, args.get('date_from').split('-'))
+                year_to, month_to, day_to = map(int, args.get('date_to').split('-'))
+                date_from = datetime(year_from, month_from, day_from, 0, 0, 0)
+                date_to = datetime(year_to, month_to, day_to, 0, 0, 0)
+                domain.extend([('due_date', '>=', date_from), ('due_date', '<=', date_to), ('status', '=', 'progress'),
+                               ('assign_to', '=', each_employee.id)])
+            else:
+                domain.extend([('status', '=', 'progress'), ('assign_to', '=', each_employee.id)])
             no_of_requests = self.env['ebs_mod.service.request.workflow'].search_count(domain)
             if no_of_requests:
                 request_dict = {
@@ -131,6 +154,32 @@ class ServiceRequestWorkFlow(models.Model):
 
         request_list.sort(key=get_progress, reverse=True)
         return request_list
+
+    # @api.model
+    # def get_request(self, args=""):
+    #     request_list = []
+    #     if args:
+    #         domain = [('date', '>=', args.get('date_from')), ('date', '<=', args.get('date_to'))]
+    #     else:
+    #         domain = []
+    #     employees = self.env['res.users'].search(domain)
+    #     for each_employee in employees:
+    #         domain = [('status', '=', 'progress'), ('assign_to', '=', each_employee.id)]
+    #         no_of_requests = self.env['ebs_mod.service.request.workflow'].search_count(domain)
+    #         if no_of_requests:
+    #             request_dict = {
+    #                 'employee_id': each_employee.id,
+    #                 'employee_name': each_employee.name,
+    #                 'employee_image': each_employee.image_1920,
+    #                 'progress': no_of_requests
+    #             }
+    #             request_list.append(request_dict.copy())
+    #
+    #     def get_progress(elem):
+    #         return elem.get('progress')
+    #
+    #     request_list.sort(key=get_progress, reverse=True)
+    #     return request_list
 
     @api.model
     def get_driver(self, args=""):

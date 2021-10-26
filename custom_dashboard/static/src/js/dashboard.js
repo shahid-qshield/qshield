@@ -36,6 +36,8 @@ var ServiceDashboard = AbstractAction.extend({
         e.preventDefault();
         var elem = document.getElementById('daydate');
         var elem2 = document.getElementById('daydate2');
+        var myNode = document.getElementById("tasks");
+         myNode.innerHTML = '';
         this.start_date = elem.value;
         this.end_date = elem2.value;
         var options = {
@@ -50,9 +52,7 @@ var ServiceDashboard = AbstractAction.extend({
         e.stopPropagation();
         e.preventDefault();
         var elem = document.getElementById('date_day');
-        console.log(elem)
         this.date_for_drivers = elem.value;
-        console.log(this.date_for_drivers);
         var options = {
             on_reverse_breadcrumb: this.on_reverse_breadcrumb,
         };
@@ -254,8 +254,8 @@ var ServiceDashboard = AbstractAction.extend({
         e.preventDefault();
         var employee_id = parseInt(e.currentTarget.id)
         var employee_name = "" + e.currentTarget.getAttribute("emp_name")
-        console.log(e.currentTarget)
-        console.log(this.date_start)
+//        console.log(e.currentTarget)
+//        console.log(this.date_start)
 
 
         var options = {
@@ -311,7 +311,7 @@ var ServiceDashboard = AbstractAction.extend({
                     }]
             }).then(function(result) {
                 self.progress =  result
-                console.log(result)
+//                console.log(result)
                 $(".draft").text(self.progress['draft']);
                 $(".inprogress").text(self.progress['progress_normal']);
                 $(".hold").text(self.progress['hold']);
@@ -335,8 +335,39 @@ var ServiceDashboard = AbstractAction.extend({
             }).then(function(result) {
                 self.employee_progress =  result
                 console.log(result)
-//                $(".assigned_inprogress").text(self.progress['assigned_inprogress']);
+                jQuery(document).ready(function(){
+                    var taskDiv = document.getElementById("tasks")
+                    var inner = ''
+                    for (var i = 0; i < result.length; i++) {
+                        inner += `<div class="card get_employee_name title${i} card_width_height" id= ${result[i]['employee_id']}
+                                         style="display:inline-block; margin:7px; padding: 5px; cursor: pointer; border-radius: 15px;">
+                                        <div class="sub_card" style="display:inline-block;">
+                                            <div class="user_image" style="display:inline-block;">
+                                                <img class="img o_we_preview_image rounded-circle o_image_40_cover " src=${window.location.origin + '/web/image?model=res.users&field=image_1920&id='+result[i]['employee_id']}
+                                                    style="height: 60px; width: 60px;"/>
+                                            </div>
+                                            <div class="user_progress" style="display:inline-block; margin-left:30px;">
+                                               <p class="card-text assigned_inprogress" style="color:white; font-weight:bold;">${result[i]['progress']}</p>
+                                            </div>
+
+                                        </div>
+
+                                      <div  style="text-transform: capitalize;">
+                                        <p class="card-text" style="color:white; font-weight:bold;">${result[i]['employee_name']}</p>
+                                      </div></div>`
+
+//                       taskDiv.innerHTML += inner
+                    }
+                    try {
+                          taskDiv.innerHTML = inner
+                          console.log(inner)
+                        }
+                        catch(err) {
+                          console.log(err)
+                        }
+                });
             });
+
         var def2 =  self._rpc({
                     model: 'ebs_mod.service.request.workflow',
                     method: 'get_driver',
@@ -346,10 +377,10 @@ var ServiceDashboard = AbstractAction.extend({
 
             }).then(function(result) {
                 self.drivers =  result
-                console.log(result)
+//                console.log(result)
                 jQuery(document).ready(function(){
                 for (var i = 0; i < result.length; i++) {
-                    console.log(result[i]['driver_name'])
+//                    console.log(result[i]['driver_name'])
                     var tbl = document.getElementById('data')
                     var row = tbl.insertRow();
                     var cell1 = row.insertCell()
@@ -368,7 +399,7 @@ var ServiceDashboard = AbstractAction.extend({
                     cell1.innerHTML = result[i]['driver_name'];
 
                     for (var j = 0; j < result[i]['destination'].length; j++){
-                        console.log(result[i]['destination'][j].slot)
+//                        console.log(result[i]['destination'][j].slot)
                         if (result[i]['destination'][j].slot == '7')
                             cell2.innerHTML = result[i]['destination'][j].destination
                         else if (result[i]['destination'][j].slot == '8')
@@ -411,41 +442,12 @@ var ServiceDashboard = AbstractAction.extend({
             });
 
         });
-//                    var node = document.createElement("tr");                 // Create a <li> node
+//                    var node = document.createElement("tr");                 // Create a <tr> node
 //                    var textnode = document.createTextNode(result[i]['driver_name']);         // Create a text node
-//                    node.appendChild(textnode);                              // Append the text to <li>
+//                    node.appendChild(textnode);                              // Append the text to <tr>
 //                    document.getElementById("data").appendChild(node);
 //                    $("#data").append('<tr><td' + 'hello' + '</td></tr>');
 
-//                $('.trows').append('<td>' + result + '</td>');
-//                this.$el
-//                $.each(function(index,result){
-//                    $.each(result, function(index2, value2) {
-//                                console.log(value2)
-//                                alert(index2 + " : " + value2);
-//                    });
-//
-//                });
-
-
-
-//                let tablehtml = '';
-//
-//                for (let i =0; i< result.length; i++) {
-//                    tablehtml = '<tr>
-//                }
-//                $( ".trow" ).each(function( index, result ) {
-//                console.log( index + ": " + $( this ).text() );
-//                // element == this
-////                $( element ).css( "backgroundColor", "yellow" );
-////                if ( $( this ).is( "#stop" ) ) {
-////                 $(".tdata" ).text(result);
-////                 console.log(index, result)
-////                  return false;
-////                }
-//              });
-
-//                $(".drivers").text(result);
 
         var def3 =  self._rpc({
                     model: 'ebs_mod.service.type.consolidation',
@@ -453,10 +455,6 @@ var ServiceDashboard = AbstractAction.extend({
             }).then(function(result) {
                 self.consolidation =  result
             });
-//            var elem = document.getElementById('daydate');
-//        var elem2 = document.getElementById('daydate2');
-//        elem.value='2021-01-01';
-//        elem2.value='2021-12-31';
         return $.when(def0,def1,def2,def3);
 
     },
