@@ -1,0 +1,4 @@
+id,name,model_id:id,group_id:id,perm_read,perm_write,perm_create,perm_unlink
+access_qshield_payslip,access_qshield_payslip,model_qshield_payslip,,1,1,1,1
+access_qshield_earning,access_qshield_earning,model_qshield_earning,,1,1,1,1
+access_qshield_deduction,access_qshield_deduction,model_qshield_deduction,,1,1,1,1

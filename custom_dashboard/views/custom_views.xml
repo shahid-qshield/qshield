@@ -1,0 +1,175 @@
+<odoo>
+    <data>
+        <record id="service_type_workflow_form_custom" model="ir.ui.view">
+            <field name="name">Service Type Workflow Form Custom</field>
+            <field name="model">ebs_mod.service.type.workflow</field>
+            <field name="inherit_id" ref="ebs_qsheild_mod.service_type_workflow_form"/>
+            <field name="type">form</field>
+            <field name="arch" type="xml">
+                <xpath expr="//field[@name='start_count_flow']" position="after">
+                    <field name="requires_driver"/>
+                </xpath>
+            </field>
+        </record>
+
+        <record model="ir.ui.view" id="service_request_form_custom">
+            <field name="name">Service Request Form</field>
+            <field name="model">ebs_mod.service.request</field>
+            <field name="inherit_id" ref="ebs_qsheild_mod.service_request_form"/>
+            <field name="priority">16</field>
+            <field name="type">form</field>
+            <field name="arch" type="xml">
+                <xpath expr="/form/header/button[@name='request_progress']" position="attributes">
+                    <attribute name="attrs">{'invisible': [('status', 'in', ['hold', 'draft'])]}</attribute>
+                </xpath>
+                <xpath expr="//field[@name='is_miscellaneous']" position="after">
+                    <field name="is_exceptional" attrs="{'invisible':[('status','!=', 'progress')]}"/>
+                    <field name="is_escalated"/>
+                    <field name="is_pending"/>
+                    <field name="is_overdue" invisible="1"/>
+                    <field name="is_governmental_fees"/>
+                    <field name="governmental_fees" attrs="{'invisible':[('is_governmental_fees','!=', True)]}"/>
+                </xpath>
+                <xpath expr="/form/sheet/notebook/page/field/tree//field[@name='assign_to']" position="after">
+                    <field name="requires_driver"/>
+                    <field name="delivery_date" attrs="{'invisible':[('requires_driver','!=', True)]}"/>
+                    <field name="time_slot_type" attrs="{'invisible':[('requires_driver','!=', True)]}"/>
+                    <field name="destination_id" attrs="{'invisible':[('requires_driver','!=', True)]}"/>
+                    <field name="driver" attrs="{'invisible':[('requires_driver','!=', True)]}"/>
+                </xpath>
+                <xpath expr="/form/sheet/notebook/page/field/form/sheet/group/group//field[@name='due_date']"
+                       position="after">
+                    <field name="requires_driver"/>
+                    <field name="delivery_date" attrs="{'invisible':[('requires_driver','!=', True)]}"/>
+                    <field name="time_slot_type" attrs="{'invisible':[('requires_driver','!=', True)]}"/>
+                    <field name="destination_id" attrs="{'invisible':[('requires_driver','!=', True)]}"/>
+                    <field name="driver" attrs="{'invisible':[('requires_driver','!=', True)]}"/>
+                </xpath>
+            </field>
+        </record>
+
+        <record model="ir.ui.view" id="service_types_form_custom">
+            <field name="name">Service Types Form</field>
+            <field name="model">ebs_mod.service.types</field>
+            <field name="inherit_id" ref="ebs_qsheild_mod.service_type_form"/>
+            <field name="priority">16</field>
+            <field name="type">form</field>
+            <field name="arch" type="xml">
+                <xpath expr="//field[@name='sla_max']" position="after">
+                    <field name="consolidation_id"/>
+                </xpath>
+            </field>
+        </record>
+
+        <record model="ir.ui.view" id="service_flow_form_custom">
+            <field name="name">Service Flow Form</field>
+            <field name="model">ebs_mod.service.request.workflow</field>
+            <field name="inherit_id" ref="ebs_qsheild_mod.service_flow_form"/>
+            <field name="priority">16</field>
+            <field name="type">form</field>
+            <field name="arch" type="xml">
+                <xpath expr="//field[@name='due_date']" position="after">
+                    <field name="delivery_date"/>
+                    <field name="time_slot_type"/>
+                    <field name="destination_id"/>
+                    <field name="driver"/>
+                </xpath>
+            </field>
+        </record>
+
+        <record model="ir.ui.view" id="service_flow_tree_custom">
+            <field name="name">Service Flow Tree</field>
+            <field name="model">ebs_mod.service.request.workflow</field>
+            <field name="inherit_id" ref="ebs_qsheild_mod.service_flow_tree"/>
+            <field name="priority">16</field>
+            <field name="type">tree</field>
+            <field name="arch" type="xml">
+                <xpath expr="//tree//field[@name='assign_to']" position="after">
+                    <field name="delivery_date" optional="show"/>
+                    <field name="time_slot_type" optional="show"/>
+                    <field name="destination_id" optional="show"/>
+                    <field name="driver" optional="show"/>
+                </xpath>
+            </field>
+        </record>
+
+        <record id="service_type_consolidation_tree" model="ir.ui.view">
+            <field name="name">Service Type Consolidation Tree</field>
+            <field name="model">ebs_mod.service.type.consolidation</field>
+            <field name="arch" type="xml">
+                <tree>
+                    <field name="name"/>
+                    <field name="service_type"/>
+                </tree>
+            </field>
+        </record>
+
+        <record id="service_type_consolidation_form" model="ir.ui.view">
+            <field name="name">Service Type Consolidation Form</field>
+            <field name="model">ebs_mod.service.type.consolidation</field>
+            <field name="arch" type="xml">
+                <form>
+                    <sheet>
+                        <group>
+                            <field name="name"/>
+                            <field name="service_type"/>
+                        </group>
+                    </sheet>
+                </form>
+            </field>
+        </record>
+
+        <record id="service_type_consolidation_window" model="ir.actions.act_window">
+            <field name="name">Service Type Consolidation</field>
+            <field name="res_model">ebs_mod.service.type.consolidation</field>
+            <field name="view_mode">tree,form</field>
+        </record>
+
+        <record id="service_destination_tree" model="ir.ui.view">
+            <field name="name">Service Destination Tree</field>
+            <field name="model">ebs_mod.service.destination</field>
+            <field name="arch" type="xml">
+                <tree>
+                    <field name="name"/>
+                </tree>
+            </field>
+        </record>
+
+        <record id="service_destination_form" model="ir.ui.view">
+            <field name="name">Service Destination Form</field>
+            <field name="model">ebs_mod.service.destination</field>
+            <field name="arch" type="xml">
+                <form>
+                    <sheet>
+                        <group>
+                            <field name="name"/>
+                        </group>
+                    </sheet>
+                </form>
+            </field>
+        </record>
+
+        <record id="service_destination_window" model="ir.actions.act_window">
+            <field name="name">Service Destination</field>
+            <field name="res_model">ebs_mod.service.destination</field>
+            <field name="view_mode">tree,form</field>
+        </record>
+
+
+        <menuitem
+                id="service_type_consolidation_view_menu"
+                name="Service Type Consolidation"
+                action="service_type_consolidation_window"
+                parent="ebs_qsheild_mod.services_config"
+                sequence="20"
+        />
+
+        <menuitem
+                id="service_destination_view_menu"
+                name="Service Destination"
+                action="service_destination_window"
+                parent="ebs_qsheild_mod.services_config"
+                sequence="25"
+        />
+    </data>
+</odoo>

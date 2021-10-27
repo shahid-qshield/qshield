@@ -25,8 +25,9 @@
         'contacts',
         'hr',
         'documents',
-        'helpdesk'
+        'helpdesk',
     ],
+
 
     # always loaded
     'data': [
@@ -60,5 +61,7 @@
         # 'views/documents_assets.xml',
         'portal/contact_payment_portal.xml',
         'demo/demo.xml'
-    ]
+    ],
 }
+
+

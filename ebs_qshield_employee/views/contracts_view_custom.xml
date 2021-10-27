@@ -1,0 +1,30 @@
+<?xml version='1.0' encoding='UTF-8' ?>
+<odoo>
+    <data>
+        <record id="hr_contract_view_custom" model="ir.ui.view">
+            <field name="name">hr.contract.view.custom</field>
+            <field name="model">hr.contract</field>
+            <field name="inherit_id" ref="hr_contract.hr_contract_view_form"/>
+            <field name="arch" type="xml">
+                <xpath expr="//field[@name='department_id']" position="after">
+                    <field name="leave_entitlement"/>
+                    <field name="contract_type"/>
+                    <field name="contract_duration" attrs="{'invisible':[('contract_type','!=','limited')]}"/>
+                </xpath>
+                <xpath expr="//page[@name='information']//group" position="after">
+                    <group name="salary_information">
+                        <group name="salary_info" string="Salary Information">
+                            <field name="basic_salary"/>
+                            <field name="housing_allowance"/>
+                            <field name="transport_allowance"/>
+                            <field name="telephone_allowance"/>
+                            <field name="petrol_allowance"/>
+                            <field name="other_allowance"/>
+                            <field name="other_benefits"/>
+                        </group>
+                    </group>
+                </xpath>
+            </field>
+        </record>
+    </data>
+</odoo>
