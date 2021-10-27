@@ -11,32 +11,30 @@
                       <input type="date" id="daydate2" name="daydate2" value="2021-12-31"/>
                       <input type="submit" id="btn" class="get_date" />
                     <div class="row1 main-section">
-<!--                         <div class="col-md-2 col-sm-6 request_draft oh-payslip" >-->
-<!--                            <div class="oh-card">-->
-<!--                                <div class="oh-card-body">-->
-<!--        &lt;!&ndash;                            <div class="stat-widget-one">&ndash;&gt;-->
-<!--                                        <div class="stat-icon draft"><p><t t-esc="widget.progress['draft']"/></p></div>-->
-<!--                                        <div class="stat-content">-->
-<!--                                            <div class="stat-text">Draft</div>-->
-<!--            &lt;!&ndash;                                <div class="stat-digit"><t t-esc="widget.login_employee['payslip_count']"/></div>&ndash;&gt;-->
-<!--                                            <div class="stat-digit"></div>-->
-<!--                                        </div>-->
-<!--        &lt;!&ndash;                            </div>&ndash;&gt;-->
-<!--                                </div>-->
-<!--                            </div>-->
-<!--                        </div>-->
 
                         <div class="col-md-2 col-sm-6 request_progress oh-payslip" >
                             <div class="oh-card">
                                 <div class="oh-card-body">
-        <!--                            <div class="stat-widget-one">-->
                                         <div class="stat-icon inprogress"><p><t t-esc="widget.progress['progress_normal']"/></p></div>
                                         <div class="stat-content">
                                             <div class="stat-text">In Progress</div>
+                                            <div class="stat-digit"></div>
+                                        </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="col-md-2 col-sm-6 request_pending oh-payslip" >
+                            <div class="oh-card">
+                                <div class="oh-card-body">
+                                    <div class="stat-widget-one">
+                                        <div class="stat-icon overdue"><p><t t-esc="widget.progress['pending']"/></p></div>
+                                        <div class="stat-content ">
+                                            <div class="stat-text">Pending</div>
             <!--                                <div class="stat-digit"><t t-esc="widget.login_employee['payslip_count']"/></div>-->
                                             <div class="stat-digit"></div>
                                         </div>
-        <!--                            </div>-->
+                                    </div>
                                 </div>
                             </div>
                         </div>
@@ -116,6 +114,22 @@
                                 </div>
                             </div>
                         </div>
+
+                         <div class="col-md-2 col-sm-6 request_escalated oh-payslip" >
+                            <div class="oh-card">
+                                <div class="oh-card-body">
+        <!--                            <div class="stat-widget-one">-->
+                                        <div class="stat-icon escalated"><p><t t-esc="widget.progress['escalated']"/></p></div>
+                                        <div class="stat-content">
+                                            <div class="stat-text">ESCALATED</div>
+            <!--                                <div class="stat-digit"><t t-esc="widget.login_employee['payslip_count']"/></div>-->
+                                            <div class="stat-digit"></div>
+                                        </div>
+        <!--                            </div>-->
+                                </div>
+                            </div>
+                        </div>
+
                     </div>
 
                     <div class="row1 main-section">
@@ -164,21 +178,6 @@
                             </div>
                         </div>
 
-                         <div class="col-md-2 col-sm-6 request_escalated oh-payslip" >
-                            <div class="oh-card">
-                                <div class="oh-card-body">
-        <!--                            <div class="stat-widget-one">-->
-                                        <div class="stat-icon escalated"><p><t t-esc="widget.progress['escalated']"/></p></div>
-                                        <div class="stat-content">
-                                            <div class="stat-text">ESCALATED</div>
-            <!--                                <div class="stat-digit"><t t-esc="widget.login_employee['payslip_count']"/></div>-->
-                                            <div class="stat-digit"></div>
-                                        </div>
-        <!--                            </div>-->
-                                </div>
-                            </div>
-                        </div>
-
                     </div>
                 <br/>
 
@@ -188,7 +187,7 @@
 <!--                     <div style="width:37%;" >-->
                         <t t-foreach="widget.employee_progress" t-as="obj" >
                             <div t-attf-class="card get_employee_name title{{obj_index}} card_width_height" t-attf-id="{{obj.employee_id}}"
-                                 style="display:inline-block; margin:7px; padding: 5px; cursor: pointer; border-radius: 15px;">
+                                 style="display:inline-block; margin:7px; padding: 5px; cursor: pointer; border-radius: 15px;" t-attf-emp_name="{{obj.employee_name}}">
                                 <div class="sub_card" style="display:inline-block;">
                                     <div class="user_image" style="display:inline-block;">
                                         <img class="img o_we_preview_image rounded-circle o_image_40_cover " t-att-src="widget.get_emp_image_url(obj.employee_id)"
@@ -199,7 +198,6 @@
                                     </div>
 
                                 </div>
-
                               <div t-attf-class="title{{obj_index}}" style="text-transform: capitalize;">
                                 <p class="card-text" style="color:white; font-weight:bold';"><t t-esc="obj.employee_name"/></p>
                               </div>

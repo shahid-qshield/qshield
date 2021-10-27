@@ -25,6 +25,7 @@ var ServiceDashboard = AbstractAction.extend({
         'click .request_out_of_scope':'request_out_of_scope',
         'click .request_escalated':'request_escalated',
         'click .request_overdue':'request_overdue',
+        'click .request_pending':'request_pending',
         'click .get_employee_name':'get_employee_name',
         'click .get_employee_id':'get_employee_id',
         'click .get_date':'get_date',
@@ -82,7 +83,7 @@ var ServiceDashboard = AbstractAction.extend({
             res_model: 'ebs_mod.service.request',
             view_mode: 'tree,form',
             views: [[false, 'list'],[false, 'form']],
-            domain: [['status','=', 'progress']],
+            domain: [['status','=', 'new'],['is_pending', '=', false]],
             target: 'current'
         }, options)
     },
@@ -100,7 +101,25 @@ var ServiceDashboard = AbstractAction.extend({
             res_model: 'ebs_mod.service.request',
             view_mode: 'tree,form',
             views: [[false, 'list'],[false, 'form']],
-            domain: [['is_escalated','=', true]],
+            domain: [['is_escalated','=', true], ['is_pending', '=', false]],
+            target: 'current'
+        }, options)
+    },
+
+    request_pending: function(e){
+        var self = this;
+        e.stopPropagation();
+        e.preventDefault();
+        var options = {
+            on_reverse_breadcrumb: this.on_reverse_breadcrumb,
+        };
+        this.do_action({
+            name: _t("Pending"),
+            type: 'ir.actions.act_window',
+            res_model: 'ebs_mod.service.request',
+            view_mode: 'tree,form',
+            views: [[false, 'list'],[false, 'form']],
+            domain: [['is_pending', '=', true]],
             target: 'current'
         }, options)
     },
@@ -118,7 +137,7 @@ var ServiceDashboard = AbstractAction.extend({
             res_model: 'ebs_mod.service.request',
             view_mode: 'tree,form',
             views: [[false, 'list'],[false, 'form']],
-            domain: [['is_overdue','=', true],['is_escalated','=', false]],
+            domain: [['is_overdue','=', true],['is_escalated','=', false], ['is_pending', '=', false]],
             target: 'current'
         }, options)
     },
@@ -135,7 +154,7 @@ var ServiceDashboard = AbstractAction.extend({
             res_model: 'ebs_mod.service.request',
             view_mode: 'tree,form',
             views: [[false, 'list'],[false, 'form']],
-            domain: [['status','=', 'progress'],['is_exceptional','=', true],['is_escalated','=', false]],
+            domain: [['status','=', 'progress'],['is_exceptional','=', true],['is_escalated','=', false], ['is_pending', '=', false]],
             target: 'current'
         }, options)
     },
@@ -153,7 +172,7 @@ var ServiceDashboard = AbstractAction.extend({
             res_model: 'ebs_mod.service.request',
             view_mode: 'tree,form',
             views: [[false, 'list'],[false, 'form']],
-            domain: [['status','=', 'draft'], ['is_escalated','=', false]],
+            domain: [['status','=', 'draft'], ['is_escalated','=', false], ['is_pending', '=', false]],
             target: 'current'
         }, options)
     },
@@ -171,7 +190,7 @@ var ServiceDashboard = AbstractAction.extend({
             res_model: 'ebs_mod.service.request',
             view_mode: 'tree,form',
             views: [[false, 'list'],[false, 'form']],
-            domain: [['status','=', 'progress'],['is_exceptional','=', false],['is_escalated','=', false]],
+            domain: [['status','=', 'progress'],['is_exceptional','=', false],['is_escalated','=', false], ['is_pending', '=', false]],
             target: 'current'
         }, options)
     },
@@ -189,7 +208,7 @@ var ServiceDashboard = AbstractAction.extend({
             res_model: 'ebs_mod.service.request',
             view_mode: 'tree,form',
             views: [[false, 'list'],[false, 'form']],
-            domain: [['status','=', 'hold'], ['is_escalated','=', false]],
+            domain: [['status','=', 'hold'], ['is_escalated','=', false], ['is_pending', '=', false]],
             target: 'current'
         }, options)
     },
@@ -207,7 +226,7 @@ var ServiceDashboard = AbstractAction.extend({
             res_model: 'ebs_mod.service.request',
             view_mode: 'tree,form',
             views: [[false, 'list'],[false, 'form']],
-            domain: [['status','=', 'complete'], ['is_escalated','=', false]],
+            domain: [['status','=', 'complete'], ['is_escalated','=', false], ['is_pending', '=', false]],
             target: 'current'
         }, options)
     },
@@ -225,7 +244,7 @@ var ServiceDashboard = AbstractAction.extend({
             res_model: 'ebs_mod.service.request',
             view_mode: 'tree,form',
             views: [[false, 'list'],[false, 'form']],
-            domain: [['status','=', 'cancel'],['is_escalated','=', false]],
+            domain: [['status','=', 'cancel']],
             target: 'current'
         }, options)
     },
@@ -243,7 +262,7 @@ var ServiceDashboard = AbstractAction.extend({
             res_model: 'ebs_mod.service.request',
             view_mode: 'tree,form',
             views: [[false, 'list'],[false, 'form']],
-            domain: [['status','=', 'reject'], ['is_escalated','=', false]],
+            domain: [['status','=', 'reject']],
             target: 'current'
         }, options)
     },
@@ -334,12 +353,11 @@ var ServiceDashboard = AbstractAction.extend({
                     }]
             }).then(function(result) {
                 self.employee_progress =  result
-                console.log(result)
                 jQuery(document).ready(function(){
                     var taskDiv = document.getElementById("tasks")
                     var inner = ''
                     for (var i = 0; i < result.length; i++) {
-                        inner += `<div class="card get_employee_name title${i} card_width_height" id= ${result[i]['employee_id']}
+                        inner += `<div class="card get_employee_name title${i} card_width_height" id= ${result[i]['employee_id']} emp_name=${result[i]['employee_name']}
                                          style="display:inline-block; margin:7px; padding: 5px; cursor: pointer; border-radius: 15px;">
                                         <div class="sub_card" style="display:inline-block;">
                                             <div class="user_image" style="display:inline-block;">
@@ -360,7 +378,6 @@ var ServiceDashboard = AbstractAction.extend({
                     }
                     try {
                           taskDiv.innerHTML = inner
-                          console.log(inner)
                         }
                         catch(err) {
                           console.log(err)

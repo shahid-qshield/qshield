@@ -1038,7 +1038,7 @@ hover
     background-color: #90EE90;
 }
 .overdue-colored{
-    background-color: #f5a4e2;
+    background-color: #ed0202;
 }
 
 h3{
@@ -1132,6 +1132,26 @@ h3{
 }
 .title14{
     background-color: #8FBC8F !important;
+}
+.title15{
+    background-color: #2b945e !important;
+}
+.title16{
+    background-color: #abbab2 !important;
+}
+.title17{
+    background-color: #aae06c !important;
+}.title18{
+    background-color: #162604 !important;
+}.title19{
+    background-color: #452394 !important;
+}.title20{
+    background-color: #1e0f42 !important;
+}.title21{
+    background-color: #7a0471 !important;
+}
+.title22{
+    background-color: #568f72 !important;
 }
 
 .card_width_height{

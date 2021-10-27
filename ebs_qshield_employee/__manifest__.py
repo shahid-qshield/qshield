@@ -14,7 +14,7 @@
     'website': "http://www.ever-bs.com/",
     'category': 'Uncategorized',
     'version': '0.1',
-    'depends': ['base', 'contacts', 'hr', 'hr_contract', 'documents', 'helpdesk', ],
+    'depends': ['base', 'contacts', 'hr', 'hr_contract', 'documents', 'helpdesk', 'documents_hr_contract'],
     'data': [
         'security/ir.model.access.csv',
         'views/employee_view_custom.xml',

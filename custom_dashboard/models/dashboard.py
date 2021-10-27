@@ -124,9 +124,6 @@ class ServiceRequestWorkFlow(models.Model):
     @api.model
     def get_request(self, args=""):
         request_list = []
-
-        # domain = [('date', '>=', args.get('date_from')), ('date', '<=', args.get('date_to'))]
-        # domain = [('due_date', '>=', date_from), ('due_date', '<=', date_to)]
         employees = self.env['res.users'].search([])
         for each_employee in employees:
             domain = []
@@ -153,7 +150,6 @@ class ServiceRequestWorkFlow(models.Model):
             return elem.get('progress')
 
         request_list.sort(key=get_progress, reverse=True)
-        print(request_list)
         return request_list
 
     # @api.model
