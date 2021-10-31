@@ -12,7 +12,7 @@
                 </xpath>
             </field>
         </record>
-        
+
         <record id="res_partner_view_form_custom" model="ir.ui.view">
             <field name="name">res.partner.view.form.custom</field>
             <field name="model">res.partner</field>
@@ -21,6 +21,17 @@
                 <xpath expr="//field[@name='parent_id']" position="after">
                     <field name="employee_id"/>
                 </xpath>
+            </field>
+        </record>
+
+        <record model="ir.actions.server" id="action_partner_to_employee">
+            <field name="name">Create Employee</field>
+            <field name="model_id" ref="model_res_partner"/>
+            <field name="binding_model_id" ref="model_res_partner"/>
+            <field name="state">code</field>
+            <field name="code">
+                if records:
+                    action = records.create_employee()
             </field>
         </record>
     </data>
