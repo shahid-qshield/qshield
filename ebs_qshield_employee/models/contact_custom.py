@@ -31,4 +31,4 @@ class ContactCustom(models.Model):
                     'dependant_id': dependants,
                     'partner_id': rec.id,
                 })
-                rec.employee_id = employee
+                # rec.employee_id = employee
