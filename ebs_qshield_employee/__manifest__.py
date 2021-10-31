@@ -1,15 +1,12 @@
 # -*- coding: utf-8 -*-
 {
     'name': "QShield Module",
-
     'summary': """
         This module contains custom modifications for QSshield Employee Module
         """,
-
     'description': """
        This module contains custom modifications for QSshield Employee Module
     """,
-
     'author': "Maria L Soliman",
     'website': "http://www.ever-bs.com/",
     'category': 'Uncategorized',
