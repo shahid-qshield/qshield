@@ -8,4 +8,3 @@ class ContactCustom(models.Model):
 
     nearest_land_mark = fields.Char()
     fax_number = fields.Char('Fax No.')
-    related_employee = fields.Many2one('hr.employee', string='Related Employee', index=True)
