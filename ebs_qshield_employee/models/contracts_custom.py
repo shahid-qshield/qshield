@@ -17,7 +17,6 @@ class ContractsCustom(models.Model):
                                          ('unlimited', 'Unlimited')],
                                      store=True)
     contract_duration = fields.Integer('Contract Duration')
-    basic_salary = fields.Monetary('Basic Salary')
     housing_allowance = fields.Monetary('Housing Allowance')
     transport_allowance = fields.Monetary('Transport Allowance')
     telephone_allowance = fields.Monetary('Telephone Allowance')
