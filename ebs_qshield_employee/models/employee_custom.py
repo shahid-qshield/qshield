@@ -48,6 +48,9 @@ class EmployeeCustom(models.Model):
         help='Enter here the private address of the employee, not the one linked to your company.',
         groups="hr.group_hr_user", tracking=True,
         domain="['|', ('company_id', '=', False), ('company_id', '=', company_id)]")
+    is_out_sourced = fields.Boolean(string="Out source ?", default=False)
+
+    joining_date = fields.Date(string="Joining Date", default=lambda self: fields.Datetime.now(), required=False )
 
     def employee_information_form(self):
         return self.env.ref('ebs_qshield_employee.action_employee_information_form').report_action(self)
