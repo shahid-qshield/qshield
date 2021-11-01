@@ -81,7 +81,7 @@ class Dependant(models.Model):
 class Emergency(models.Model):
     _name = 'hr.emergency'
 
-    name = fields.Char()
+    name = fields.Char(required=True)
     relation = fields.Char('Relationship')
     address = fields.Char()
     telephone = fields.Char('Telephone No.')
@@ -91,7 +91,7 @@ class Emergency(models.Model):
                                 selection=[
                                     ('qatar', 'Qatar'),
                                     ('home_country', 'Home Country')],
-                                store=True)
+                                store=True, default='home_country')
     hr_employee = fields.Many2one('hr.employee', readonly=True)
 
 
@@ -110,7 +110,7 @@ class Courses(models.Model):
 
     from_date = fields.Date('From')
     to_date = fields.Date('To')
-    course_title = fields.Char()
+    course_title = fields.Char(required=True)
     institution = fields.Char('Institution/Address')
     qualification = fields.Char()
     hr_employee = fields.Many2one('hr.employee', readonly=True)
@@ -119,7 +119,7 @@ class Courses(models.Model):
 class Language(models.Model):
     _name = 'hr.language'
 
-    name = fields.Char()
+    name = fields.Char(required=True)
     spoken = fields.Char()
     oral = fields.Char()
     written = fields.Char()
@@ -129,7 +129,7 @@ class Language(models.Model):
 class History(models.Model):
     _name = 'hr.history'
 
-    position = fields.Char()
+    position = fields.Char(required=True)
     company_institution = fields.Char('Company/Institution')
     date = fields.Date()
     hr_employee = fields.Many2one('hr.employee', readonly=True)
