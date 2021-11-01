@@ -925,7 +925,7 @@
                         </td>
                         <td style="padding:0px;">
                             <span style="display: inline-block;padding-right: 40px;"
-                                  t-field="o.contract_id.basic_salary"/>
+                                  t-field="o.contract_id.wage"/>
                         </td>
                     </tr>
                     <tr>
