@@ -79,7 +79,7 @@
                                         <span>Department:</span>
                                     </td>
                                     <td colspan="">
-                                        <span t-esc="o.department_id.name"/>
+                                        <span t-esc="o.employee_id.department_id.name"/>
                                     </td>
                                     <td>
                                         <t t-if="o.holiday_status_id.type == 'emergency'">
@@ -174,7 +174,7 @@
                                         <span>Total Days Requested:</span>
                                     </td>
                                     <td>
-                                        <span t-esc="o.number_of_days"/>
+                                        <span t-esc="o.initial_requested_days"/>
                                     </td>
                                 </tr>
                             </table>
@@ -210,7 +210,7 @@
                                         <span>Total Days Approved:</span>
                                     </td>
                                     <td>
-                                        <span t-esc="o.total_days_approved"/>
+                                        <span t-esc="o.number_of_days"/>
                                     </td>
                                 </tr>
                                 <tr>
@@ -275,7 +275,7 @@
                                 </tr>
                                 <tr>
                                     <td colspan="2">
-                                        <span>Notes:</span>
+                                        Notes:<span style="padding-right:5px" t-esc="o.name"/>
                                     </td>
                                     <td>
                                         <span>Date:</span>
@@ -335,8 +335,14 @@
                                         <span>Company Loan/Cash Advance</span>
                                     </td>
                                     <td>
-                                        <span style="margin-right:5px">YES(     )</span>
-                                        <span>NO (     )</span>
+                                        <span style="margin-right:5px">YES( <span>
+                                            <t t-if="o.loan_date">
+                                                <input type="checkbox" checked="checked"/>
+                                            </t>   )</span></span>
+                                        <span>NO ( <span>
+                                            <t t-if="not o.loan_date">
+                                                <input type="checkbox" checked="checked"/>
+                                            </t>   )</span></span>
                                     </td>
                                     <td colspan="2">
                                         <span>Date Availed:</span>

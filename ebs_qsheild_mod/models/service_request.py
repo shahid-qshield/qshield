@@ -530,8 +530,8 @@ class ServiceRequest(models.Model):
             self.sla_days = 0
         self.status = 'new'
 
-    def request_new(self):
-        self.status = 'new'
+    # def request_new(self):
+    #     self.status = 'new'
 
     def request_cancel(self):
         for flow in self.service_flow_ids:

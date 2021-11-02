@@ -152,9 +152,9 @@ class InstallmentLine(models.Model):
     date = fields.Date(string="Payment Date", required=True, help="Date of the payment")
     employee_id = fields.Many2one('hr.employee', string="Employee", help="Employee")
     amount = fields.Float(string="Amount", required=True, help="Amount")
-    paid = fields.Boolean(string="Paid", help="Paid")
+    paid = fields.Boolean(string="Is Paid ?", help="Paid")
     loan_id = fields.Many2one('hr.loan', string="Loan Ref.", help="Loan")
-    payslip_id = fields.Many2one('hr.payslip', string="Payslip Ref.", help="Payslip")
+    # payslip_id = fields.Many2one('hr.payslip', string="Payslip Ref.", help="Payslip")
 
 
 class HrEmployee(models.Model):
