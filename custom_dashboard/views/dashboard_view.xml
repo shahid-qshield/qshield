@@ -8,7 +8,7 @@
 
         <menuitem id="menu_service_request_dashboard"
                   name="Services Dashboard"
-                  web_icon="custom_dashboard,static/description/dashboard_icon.png"
+                  web_icon="custom_dashboard,static/description/dashboard.jpg"
                   action="service_request_action_dashboard"
                   sequence="2" groups="base.group_user"/>
 <!--        <menuitem id="menu_service_request_dashboard"-->
