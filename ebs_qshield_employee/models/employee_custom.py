@@ -51,6 +51,7 @@ class EmployeeCustom(models.Model):
     is_out_sourced = fields.Boolean(string="Out source ?", default=False)
 
     joining_date = fields.Date(string="Joining Date", default=lambda self: fields.Datetime.now(), required=False )
+    visa = fields.Many2one(comodel_name="visa.status", string="Visa Status", required=False, )
 
     def employee_information_form(self):
         return self.env.ref('ebs_qshield_employee.action_employee_information_form').report_action(self)

@@ -51,7 +51,7 @@
                                 attrs="{'invisible':[('status','!=','progress')]}"/>
 
                         <button name="request_progress" string="In Progress" type="object"
-                                attrs="{'invisible':[('status','!=','hold')]}"/>
+                                attrs="{'invisible':['|',('status','!=','hold'), ('status','=','complete')]}"/>
 
                         <button name="request_cancel" string="Cancel" type="object"
                                 attrs="{'invisible':[('status','!=','progress')]}"/>
@@ -63,7 +63,7 @@
                                 attrs="{'invisible':[('status','!=','progress')]}"/>
 
                         <button name="request_reject" string="Reject" type="object"
-                                attrs="{'invisible':[('status','=','complete')]}"/>
+                                attrs="{'invisible':['|', ('status','=','draft'), ('status','=','complete')]}"/>
 
                         <field name="status" widget="statusbar"/>
 
@@ -446,7 +446,7 @@
                                 attrs="{'invisible':[('status','!=','progress')]}"/>
 
                         <button name="request_progress" string="In Progress" type="object"
-                                attrs="{'invisible':[('status','!=','hold')]}"/>
+                                attrs="{'invisible':['|',('status','!=','hold'), ('status','=','complete')]}"/>
 
                         <button name="request_cancel" string="Cancel" type="object"
                                 attrs="{'invisible':[('status','!=','progress')]}"/>
@@ -458,7 +458,7 @@
                                 attrs="{'invisible':[('status','!=','progress')]}"/>
 
                         <button name="request_reject" string="Reject" type="object"
-                                attrs="{'invisible':[('status','=','complete')]}"/>
+                                attrs="{'invisible':['|', ('status','=','draft'), ('status','=','complete')]}"/>
 
                         <field name="status" widget="statusbar"/>
 

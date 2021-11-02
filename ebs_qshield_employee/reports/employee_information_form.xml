@@ -1047,5 +1047,6 @@
             name="ebs_qshield_employee.employee_information_form"
             file="ebs_qshield_employee.employee_information_form"
             menu="True"
+            groups="ebs_qshield_employee.group_hr_services"
     />
 </odoo>

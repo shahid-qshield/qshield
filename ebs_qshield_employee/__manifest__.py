@@ -17,9 +17,11 @@
     'depends': ['base', 'contacts', 'hr', 'hr_contract', 'documents', 'helpdesk'],
     'data': [
         'security/ir.model.access.csv',
+        'security/security.xml',
         'views/employee_view_custom.xml',
         'views/contracts_view_custom.xml',
         'views/contacts_view_custom.xml',
+        'views/visa_status.xml',
         'reports/employee_information_form.xml',
     ],
 }

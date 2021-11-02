@@ -3,6 +3,7 @@ from odoo.exceptions import ValidationError
 from datetime import datetime, timedelta, date
 import re
 
+
 class ServiceRequest(models.Model):
     _name = 'ebs_mod.service.request'
     _description = "Service Request"

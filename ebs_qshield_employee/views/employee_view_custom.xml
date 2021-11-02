@@ -17,6 +17,7 @@
                         <field name="middle_name"/>
                         <field name="last_name"/>
                         <field name="is_out_sourced"/>
+                        <field name="visa"/>
                     </group>
                     <group/>
                 </xpath>
