@@ -42,7 +42,7 @@
                             <field name="handover_required"/>
                             <field name="destination_to"/>
                             <field name="job_assigned_to"/>
-                            <field name="total_days_approved" attrs="{'invisible': [('state', '=', 'draft')]}"/>
+<!--                            <field name="total_days_approved" attrs="{'invisible': [('state', '=', 'draft')]}"/>-->
                             <field name="employee_outsource" invisible="1"/>
                         </group>
                     </group>

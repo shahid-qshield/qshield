@@ -358,7 +358,7 @@
                         </td>
                         <td colspan="2" style="padding:0px;">
                             <span style="display: inline-block;padding-right: 40px;"
-                                  t-field="o.visa_expire"/>                            
+                                  t-field="o.visa_expire"/>
                             <!--                                <span style="display: inline-block;padding-right: 40px;"-->
                             <!--                                      t-field="o.partner_id.passport_exp_date"/>-->
                         </td>

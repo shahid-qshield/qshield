@@ -38,7 +38,8 @@
                                         <span>Application Date</span>
                                     </td>
                                     <td>
-                                        <span t-esc="context_timestamp(datetime.datetime.now()).strftime('%Y-%m-%d')"/>
+<!--                                        <span t-esc="context_timestamp(datetime.datetime.now()).strftime('%Y-%m-%d')"/>-->
+                                        <span t-esc="o.create_date.date()"/>
                                     </td>
                                     <td style="text-align: center;" rowspan="5">
                                         <span>Leave Typ(Pls. Tick)</span>

@@ -21,7 +21,7 @@ class HRLeaveCustom(models.Model):
     job_assigned_to = fields.Many2one(comodel_name="hr.employee", string="Job Assigned to",
                                       domain="[('is_out_sourced','=',employee_outsource)]", required=False)
     total_days_available = fields.Float(string="", compute="get_total_days")
-    total_days_approved = fields.Float(string="Total Days Approved", default=0)
+    # total_days_approved = fields.Float(string="Total Days Approved", default=0)
     approved_date = fields.Date(string="", default=lambda self: fields.Datetime.now())
     loan_date = fields.Date(string="", default=lambda self: fields.Datetime.now())
     initial_requested_days = fields.Float(string="", default=0)
@@ -52,15 +52,18 @@ class HRLeaveCustom(models.Model):
     #     print(self.number_of_days)
     #     print(self.requested_days_before_approve)
 
-        return super(HRLeaveCustom, self).write(vals)
+        # return super(HRLeaveCustom, self).write(vals)
 
     @api.depends('employee_id', 'holiday_status_id')
     @api.onchange('employee_id', 'holiday_status_id')
     def get_total_days(self):
-
-        allocation = self.env['hr.leave.allocation'].search([('employee_id', '=', self.employee_id.id),
+        total_allocation = 0
+        allocations = self.env['hr.leave.allocation'].search([('employee_id', '=', self.employee_id.id),
                                                              ('holiday_status_id', '=',
-                                                              self.holiday_status_id.id)]).number_of_days_display
+                                                              self.holiday_status_id.id)]).mapped('number_of_days_display')
+        print(allocations)
+        for allocation in allocations:
+            total_allocation += allocation
 
         approved_leaves = self.env['hr.leave.report'].search([('employee_id', '=', self.employee_id.id),
                                                              ('state', '=','validate')]).mapped('number_of_days')
@@ -85,7 +88,7 @@ class HRLeaveCustom(models.Model):
         balanceAmount = self.env['hr.loan'].search([('employee_id', '=', self.employee_id.id),
                                                     ('state', '=', 'approve')]).balance_amount
 
-        self.total_days_available = allocation + self.total_number_of_approved_leave_days
+        self.total_days_available = total_allocation + self.total_number_of_approved_leave_days
         self.loan_date = loanDate
         self.terms_of_payments = loanInstallmentsNumber
         self.balance_amount = balanceAmount
