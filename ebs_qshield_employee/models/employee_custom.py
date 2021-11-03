@@ -11,6 +11,7 @@ class EmployeeCustom(models.Model):
     driving_license = fields.Boolean('Driving License')
     country_issue = fields.Many2one(comodel_name='res.country', string='Country of Issue')
     partner_id = fields.Many2one('res.partner', string='Related Contact', index=True)
+    work_in = fields.Many2one('res.partner', string='Work In')
     religion_id = fields.Many2one('hr.religion', string='Religion', index=True)
     religion = fields.Selection(string='Religion',
                                 selection=[

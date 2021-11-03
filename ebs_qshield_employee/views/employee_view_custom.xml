@@ -30,6 +30,7 @@
                 </xpath>
                 <xpath expr="//field[@name='user_id']" position="after">
                     <field name="partner_id"/>
+                    <field name="work_in"/>
                 </xpath>
                 <xpath expr="//field[@name='address_home_id']" position="attributes">
                     <attribute name="string">Address (Qatar)</attribute>

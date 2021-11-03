@@ -16,10 +16,11 @@ class HRLeaveCustom(models.Model):
                                               selection=[('y', 'Yes'), ('n', 'No')], required=False)
     handover_required = fields.Selection(string="Handover Required", default="",
                                          selection=[('y', 'Yes'), ('n', 'No')], required=False)
-    employee_outsource = fields.Boolean(string="", related="employee_id.is_out_sourced")
+    employee_outsource = fields.Many2one(string="", related="employee_id.work_in")
     destination_to = fields.Many2one(comodel_name="world.airports", string="Airport Destination", required=False)
     job_assigned_to = fields.Many2one(comodel_name="hr.employee", string="Job Assigned to",
-                                      domain="[('is_out_sourced','=',employee_outsource)]", required=False)
+                                      domain="[('work_in','=',employee_outsource), ('id','!=',employee_id)]",
+                                      required=False)
     total_days_available = fields.Float(string="", compute="get_total_days")
     # total_days_approved = fields.Float(string="Total Days Approved", default=0)
     approved_date = fields.Date(string="", default=lambda self: fields.Datetime.now())

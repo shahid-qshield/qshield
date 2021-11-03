@@ -25,11 +25,12 @@ class ContactCustom(models.Model):
                     'country_id': rec.nationality.id,
                     'gender': rec.gender,
                     'birthday': rec.date,
-                    'job_id': rec.function,
+                    # 'job_id': rec.function,
                     'work_phone': rec.phone,
                     'mobile_phone': rec.mobile,
                     'work_email': rec.email,
                     'dependant_id': dependants,
                     'partner_id': rec.id,
+                    'work_in': rec.sponsor.id,
                 })
                 rec.employee_id = employee

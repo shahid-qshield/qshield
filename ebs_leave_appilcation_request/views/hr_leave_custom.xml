@@ -47,7 +47,7 @@
                         </group>
                     </group>
 
-                                        </xpath>
+                </xpath>
                 <xpath expr="//header" position="inside">
                     <button name="action_finance_department" string="Confirm" type="object"
                                     class="btn-primary" attrs="{'invisible': [('state','!=','finance')]}"
