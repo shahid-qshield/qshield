@@ -5,11 +5,13 @@
             <div class="container-fluid o_hr_dashboard">
                 <h3>OPERATIONS DASHBOARD</h3>
                       <!-- DatePicker -->
-                      <label for="daydate">From</label>
-                      <input type="date" id="daydate" name="daydate" value="2021-01-01"/>
-                      <label for="daydate2">To</label>
-                      <input type="date" id="daydate2" name="daydate2" value="2021-12-31"/>
-                      <input type="submit" id="btn" class="get_date" />
+                    <label for="daydate">From</label>
+                    <input type="date"  id="daydate" name="daydate_from"  value="2021-01-01"/>
+                    <label for="daydate2">To</label>
+                    <input type="date" id="daydate2" name="daydate2_to" value="2021-12-31"/>
+                    <input type="submit" id="btn" class="get_date" />
+
+
                     <div class="row1 main-section">
 
                         <div class="col-md-2 col-sm-6 request_progress service-state" >
