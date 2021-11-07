@@ -82,6 +82,12 @@ class ServiceRequest(models.Model):
         string='Related Company',
         readonly=True
     )
+
+    account_manager = fields.Many2one(
+        comodel_name='hr.employee',
+        string='Account Manager',
+        related='related_company_ro.account_manager'
+    )
     partner_id = fields.Many2one(
         comodel_name='res.partner',
         string='Contact',

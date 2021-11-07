@@ -26,6 +26,7 @@ class ServiceRequest(models.Model):
             'cancel': 'Canceled'
         }
         for key in status_dict:
+            print(args)
             if args:
                 domain = [('status', '=', key), ('date', '>=', args.get('date_from')),
                           ('date', '<=', args.get('date_to')), ('is_escalated', '=', False)]
@@ -132,6 +133,7 @@ class ServiceRequestWorkFlow(models.Model):
                 year_to, month_to, day_to = map(int, args.get('date_to').split('-'))
                 date_from = datetime(year_from, month_from, day_from, 0, 0, 0)
                 date_to = datetime(year_to, month_to, day_to, 0, 0, 0)
+                print(date_from, date_to)
                 domain.extend([('due_date', '>=', date_from), ('due_date', '<=', date_to), ('status', '=', 'progress'),
                                ('assign_to', '=', each_employee.id)])
             else:
@@ -150,6 +152,7 @@ class ServiceRequestWorkFlow(models.Model):
             return elem.get('progress')
 
         request_list.sort(key=get_progress, reverse=True)
+        print(request_list)
         return request_list
 
     # @api.model

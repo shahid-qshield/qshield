@@ -12,6 +12,7 @@
                     <field name="partner_id"/>
                     <field name="service_type_id"/>
                     <field name="related_company_ro"/>
+                    <field name="account_manager"/>
                     <field name="end_date"/>
                     <field name="contract_id" optional="hide"/>
                     <field name="flow_type"/>
@@ -50,8 +51,10 @@
                         <button name="request_hold" string="On Hold" type="object"
                                 attrs="{'invisible':[('status','!=','progress')]}"/>
 
+<!--                        <button name="request_progress" string="In Progress" type="object"-->
+<!--                                attrs="{'invisible':['|',('status','!=','hold')]}"/>-->
                         <button name="request_progress" string="In Progress" type="object"
-                                attrs="{'invisible':['|',('status','!=','hold')]}"/>
+                                attrs="{'invisible': [('status', 'in', ['hold', 'draft', 'progress', 'complete'])]}"/>
 
                         <button name="request_cancel" string="Cancel" type="object"
                                 attrs="{'invisible':[('status','!=','progress')]}"/>
@@ -109,6 +112,7 @@
                                        readonly="True"
                                 />
                                 <field name="related_company_ro" readonly="True"/>
+                                <field name="account_manager"/>
                                 <field name="related_company" invisible="True"/>
                                 <field name="phone"/>
                                 <field name="mobile"/>
@@ -292,6 +296,7 @@
                     <field name="date"/>
                     <field name="service_type_id"/>
                     <field name="related_company_ro"/>
+                    <field name="account_manager"/>
                     <field name="contract_id"/>
                     <field name="partner_id"/>
                     <field name="status"/>
@@ -445,8 +450,10 @@
                         <button name="request_hold" string="On Hold" type="object"
                                 attrs="{'invisible':[('status','!=','progress')]}"/>
 
+<!--&lt;!&ndash;                        <button name="request_progress" string="In Progress" type="object"&ndash;&gt;-->
+<!--                                attrs="{'invisible':['|',('status','!=','hold')]}"/>-->
                         <button name="request_progress" string="In Progress" type="object"
-                                attrs="{'invisible':['|',('status','!=','hold')]}"/>
+                                attrs="{'invisible': [('status', 'in', ['hold', 'draft', 'progress', 'complete'])]}"/>
 
                         <button name="request_cancel" string="Cancel" type="object"
                                 attrs="{'invisible':[('status','!=','progress')]}"/>
@@ -504,6 +511,7 @@
                                        readonly="True"
                                 />
                                 <field name="related_company_ro" readonly="True"/>
+                                <field name="account_manager"/>
                                 <field name="related_company" invisible="True"/>
                                 <field name="phone"/>
                                 <field name="mobile"/>

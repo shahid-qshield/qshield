@@ -215,7 +215,18 @@
                                                     Approved by:
                                                 </b>
                                                 <br/>
-                                                 <span style="margin-left:10px;" t-field="o.user_id"/>
+<!--                                                 <span style="margin-left:10px;" t-field="o.user_id"/>-->
+                                                <t t-if="o.hr_approve_user">
+                                                    <span style="margin-left:10px;" t-field="o.hr_approve_user"/>,
+                                                </t>
+                                                <t t-if="o.finance_approve_user">
+                                                    <span style="margin-left:10px;" t-field="o.finance_approve_user"/>,
+                                                </t>
+                                                <t t-if="o.management_approve_user">
+                                                    <span style="margin-left:10px;" t-field="o.management_approve_user"/>,
+                                                </t>
+
+
 
                                             </td>
                                         </tr>
