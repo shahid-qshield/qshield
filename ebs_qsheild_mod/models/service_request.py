@@ -372,6 +372,11 @@ class ServiceRequest(models.Model):
         res = super(ServiceRequest, self).write(vals)
         return res
 
+    def copy(self, default={}):
+        default['status'] = 'draft'
+        res = super(ServiceRequest, self).copy(default=default)
+        return res
+
     def action_see_documents(self):
         self.ensure_one()
         return {

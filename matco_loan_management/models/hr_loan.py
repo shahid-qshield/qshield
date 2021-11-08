@@ -74,6 +74,7 @@ class HrLoan(models.Model):
     hr_approve_user = fields.Char(string="")
     finance_approve_user = fields.Char(string="Loan Name")
     management_approve_user = fields.Char(string="Loan Name")
+    approved_by = fields.Char(string="Approved by")
 
     # state = fields.Selection([
     #     ('draft', 'Draft'),
@@ -97,19 +98,21 @@ class HrLoan(models.Model):
 
     @api.model
     def create(self, values):
-        res = super(HrLoan, self).create(values)
+        # res = super(HrLoan, self).create(values)
 
         employee_id = self.env['hr.employee'].browse(values['employee_id'])
 
         loan_count = self.env['hr.loan'].search_count(
             [('employee_id', '=', values['employee_id']), ('state', '=', 'approve'),
              ('balance_amount', '!=', 0)])
+        print(loan_count)
         if loan_count:
             raise ValidationError(_("The employee has already a pending installment"))
         else:
-            values['name'] = self.env['ir.sequence'].get('hr.loan.seq') or ' '
+            # values['name'] = self.env['ir.sequence'].get('hr.loan.seq') or ' '
+            values['name'] = self.env['ir.sequence'].next_by_code('hr.loan.seq') or ' '
 
-        return res
+        return super(HrLoan, self).create(values)
 
     def compute_installment(self):
         # print("======compute_installment===========================",self)
@@ -152,6 +155,7 @@ class HrLoan(models.Model):
             else:
                 self.write({'state': 'first_approve'})
         self.hr_approve_user = self.env.user.name
+        self.approved_by = self.hr_approve_user
 
     def action_second_approve(self):
         for data in self:
@@ -160,6 +164,7 @@ class HrLoan(models.Model):
             else:
                 self.write({'state': 'second_approve'})
         self.finance_approve_user = self.env.user.name
+        self.approved_by += ', ' + self.env.user.name
 
     def action_approve(self):
         for data in self:
@@ -171,6 +176,7 @@ class HrLoan(models.Model):
                     'user_id': self.env.user,
                 })
         self.management_approve_user = self.env.user.name
+        self.approved_by += ', ' + self.env.user.name
 
     def unlink(self):
         for loan in self:
