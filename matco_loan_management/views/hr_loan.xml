@@ -64,7 +64,7 @@
                         <field name="payment_date" attrs="{'readonly':[('state','=','approve')]}"/>
                         <field name="user_id" readonly="1" invisible="1"/>
                         <field name="approved_by" readonly="1"/>
-<!--                        <field name="company_id" options="{'no_create': True}" groups="base.group_multi_company"/>-->
+                        <field name="company_id" invisible="1" options="{'no_create': True}" groups="base.group_multi_company"/>
                         <field name="currency_id" options="{'no_create': True}" attrs="{'readonly':[('state','=','approve')]}" groups="base.group_multi_company"/>
                     </group>
                     <notebook>
