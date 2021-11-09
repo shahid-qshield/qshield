@@ -71,9 +71,9 @@
                         <page string="Installments"  >
                             <field name="loan_lines" attrs="{'readonly':[('state','=','approve')]}">
                                 <tree string="Installments" editable="bottom" create="0" edit="0" delete="0">
-                                    <field name="date"/>
+                                    <field name="date" readonly="1"/>
                                     <field name="paid" groups="matco_loan_management.group_finance_department_user"/>
-                                    <field name="amount"/>
+                                    <field name="amount" readonly="1"/>
 <!--                                    <field name="paid" readonly="1" invisible="1"/>-->
                                 </tree>
                             </field>

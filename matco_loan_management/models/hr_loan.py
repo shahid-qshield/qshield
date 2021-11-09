@@ -33,6 +33,7 @@ class HrLoan(models.Model):
             loan.total_amount = loan.loan_amount
             loan.balance_amount = balance_amount
             loan.total_paid_amount = total_paid
+            print(total_paid)
 
     # def _get_current_login_user(self):
     #
@@ -68,7 +69,9 @@ class HrLoan(models.Model):
                                 help="Total loan amount")
     balance_amount = fields.Float(string="Balance Amount", store=True, compute='_compute_loan_amount',
                                   help="Balance amount")
-    total_paid_amount = fields.Float(string="Total Paid Amount", store=True, compute='_compute_loan_amount',
+    # total_paid_amount = fields.Float(string="Total Paid Amount", store=True, compute='_compute_loan_amount',
+    #                                  help="Total paid amount")
+    total_paid_amount = fields.Float(string="Total Paid Amount", store=True, compute="get_paid_amount",
                                      help="Total paid amount")
 
     hr_approve_user = fields.Char(string="")
@@ -133,6 +136,19 @@ class HrLoan(models.Model):
             loan._compute_loan_amount()
 
         return True
+
+    @api.onchange('loan_lines', 'total_paid_amount')
+    @api.depends('loan_lines', 'total_paid_amount')
+    def get_paid_amount(self):
+        # print("==============_compute_loan_amount================================",self)
+        total_paid = 0.0
+        for line in self.loan_lines:
+            # print("====================", line.paid)
+            if line.paid:
+                total_paid += line.amount
+
+        self.total_paid_amount = total_paid
+        self.balance_amount = self.total_amount - self.total_paid_amount
 
     def action_refuse(self):
         return self.write({'state': 'refuse'})
