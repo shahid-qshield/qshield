@@ -192,19 +192,22 @@ class ServiceRequest(models.Model):
         comodel_name='ebs_mod.service.request.workflow',
         inverse_name='service_request_id',
         string='Workflow',
-        required=False)
+        required=False,
+        copy=True)
 
     service_document_ids = fields.One2many(
         comodel_name='documents.document',
         inverse_name='service_id',
         string='Documents',
-        required=False)
+        required=False,
+        copy=True)
 
     expenses_ids = fields.One2many(
         comodel_name='ebs_mod.service.request.expenses',
         inverse_name='service_request_id',
         string='Expenses',
-        required=False)
+        required=False,
+        copy=True)
 
     def _compute_service_document_count(self):
         for rec in self:
