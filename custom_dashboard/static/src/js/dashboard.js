@@ -69,6 +69,7 @@ var ServiceDashboard = AbstractAction.extend({
         this.rejected = ''
         this.cancelled = ''
         this.completed = ''
+        this.dashboards_templates = ['service_request']
         },
 
     request_new: function(e){

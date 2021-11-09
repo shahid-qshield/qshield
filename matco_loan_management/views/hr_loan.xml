@@ -54,18 +54,18 @@
                         </h1>
                     </div>
                     <group col="4">
-                        <field name="employee_id" attrs="{'readonly':[('state','=','approve')]}"/>
-                        <field name="date" attrs="{'readonly':[('state','=','approve')]}"/>
-                        <field name="department_id" attrs="{'readonly':[('state','=','approve')]}"/>
-                        <field name="job_position" attrs="{'readonly':[('state','=','approve')]}"/>
-                        <field name="loan_amount" attrs="{'readonly':[('state','=','approve')]}" />
-                        <field name="purpose_of_advance" attrs="{'readonly':[('state','=','approve')]}" />
-                        <field name="installment" attrs="{'readonly':[('state','=','approve')]}"/>
-                        <field name="payment_date" attrs="{'readonly':[('state','=','approve')]}"/>
+                        <field name="employee_id" attrs="{'readonly':[('state','in',('approve', 'refuse'))]}"/>
+                        <field name="date" attrs="{'readonly':[('state','in',('approve', 'refuse'))]}"/>
+                        <field name="department_id" attrs="{'readonly':[('state','in',('approve', 'refuse'))]}"/>
+                        <field name="job_position" attrs="{'readonly':[('state','in',('approve', 'refuse'))]}"/>
+                        <field name="loan_amount" attrs="{'readonly':[('state','in',('approve', 'refuse'))]}" />
+                        <field name="purpose_of_advance" attrs="{'readonly':[('state','in',('approve', 'refuse'))]}" />
+                        <field name="installment" attrs="{'readonly':[('state','in',('approve', 'refuse'))]}"/>
+                        <field name="payment_date" attrs="{'readonly':[('state','in',('approve', 'refuse'))]}"/>
                         <field name="user_id" readonly="1" invisible="1"/>
                         <field name="approved_by" readonly="1"/>
                         <field name="company_id" invisible="1" options="{'no_create': True}" groups="base.group_multi_company"/>
-                        <field name="currency_id" options="{'no_create': True}" attrs="{'readonly':[('state','=','approve')]}" groups="base.group_multi_company"/>
+                        <field name="currency_id" invisible="1" options="{'no_create': True}" attrs="{'readonly':[('state','in',('approve', 'refuse'))]}" groups="base.group_multi_company"/>
                     </group>
                     <notebook>
                         <page string="Installments"  >
@@ -73,7 +73,7 @@
                             <field name="loan_lines">
                                 <tree string="Installments" editable="bottom" create="0" edit="0" delete="0">
                                     <field name="date" readonly="1"/>
-                                    <field name="paid" groups="matco_loan_management.group_finance_department_user"/>
+                                    <field name="paid" attrs="{'readonly':[('parent.state','=', 'refuse')]}" groups="matco_loan_management.group_finance_department_user"/>
                                     <field name="amount" readonly="1"/>
 <!--                                    <field name="paid" readonly="1" invisible="1"/>-->
                                 </tree>
