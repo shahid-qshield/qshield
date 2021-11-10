@@ -35,6 +35,7 @@ var ServiceDashboard = AbstractAction.extend({
         var self = this;
         e.stopPropagation();
         e.preventDefault();
+
         var elem = document.getElementById('daydate');
         var elem2 = document.getElementById('daydate2');
         var myNode = document.getElementById("tasks");
@@ -68,12 +69,19 @@ var ServiceDashboard = AbstractAction.extend({
         this.rejected = ''
         this.cancelled = ''
         this.completed = ''
-    },
+        this.dashboards_templates = ['service_request']
+        },
 
     request_new: function(e){
         var self = this;
         e.stopPropagation();
         e.preventDefault();
+        var elem = document.getElementById('daydate');
+        var elem2 = document.getElementById('daydate2');
+        var date_form = elem.value;
+        var date_to = elem2.value;
+        console.log(date_form)
+        console.log(date_to)
         var options = {
             on_reverse_breadcrumb: this.on_reverse_breadcrumb,
         };
@@ -83,7 +91,7 @@ var ServiceDashboard = AbstractAction.extend({
             res_model: 'ebs_mod.service.request',
             view_mode: 'tree,form',
             views: [[false, 'list'],[false, 'form']],
-            domain: [['status','=', 'new'],['is_pending', '=', false]],
+            domain: [['status','=', 'new'], ['date', '>=', date_form], ['date', '<=', date_to], ['is_pending', '=', false]],
             target: 'current'
         }, options)
     },
@@ -92,6 +100,12 @@ var ServiceDashboard = AbstractAction.extend({
         var self = this;
         e.stopPropagation();
         e.preventDefault();
+        var elem = document.getElementById('daydate');
+        var elem2 = document.getElementById('daydate2');
+        var date_form = elem.value;
+        var date_to = elem2.value;
+        console.log(date_form)
+        console.log(date_to)
         var options = {
             on_reverse_breadcrumb: this.on_reverse_breadcrumb,
         };
@@ -101,7 +115,29 @@ var ServiceDashboard = AbstractAction.extend({
             res_model: 'ebs_mod.service.request',
             view_mode: 'tree,form',
             views: [[false, 'list'],[false, 'form']],
-            domain: [['is_escalated','=', true], ['is_pending', '=', false]],
+            domain: [['is_escalated','=', true],['date', '>=', date_form], ['date', '<=', date_to], ['is_pending', '=', false]],
+            target: 'current'
+        }, options)
+    },
+
+    request_out_of_scope: function(e){
+        var self = this;
+        e.stopPropagation();
+        e.preventDefault();
+//        var elem = document.getElementById('daydate');
+//        var elem2 = document.getElementById('daydate2');
+//        var date_form = elem.value;
+//        var date_to = elem2.value;
+        var options = {
+            on_reverse_breadcrumb: this.on_reverse_breadcrumb,
+        };
+        this.do_action({
+            name: _t("In Progress Out Of Scope"),
+            type: 'ir.actions.act_window',
+            res_model: 'ebs_mod.service.request',
+            view_mode: 'tree,form',
+            views: [[false, 'list'],[false, 'form']],
+            domain: [['date', '>=', '2060-01-01'], ['date', '<=', '2070-01-01']],
             target: 'current'
         }, options)
     },
@@ -110,6 +146,12 @@ var ServiceDashboard = AbstractAction.extend({
         var self = this;
         e.stopPropagation();
         e.preventDefault();
+        var elem = document.getElementById('daydate');
+        var elem2 = document.getElementById('daydate2');
+        var date_form = elem.value;
+        var date_to = elem2.value;
+        console.log(date_form)
+        console.log(date_to)
         var options = {
             on_reverse_breadcrumb: this.on_reverse_breadcrumb,
         };
@@ -119,7 +161,7 @@ var ServiceDashboard = AbstractAction.extend({
             res_model: 'ebs_mod.service.request',
             view_mode: 'tree,form',
             views: [[false, 'list'],[false, 'form']],
-            domain: [['is_pending', '=', true]],
+            domain: [['is_pending', '=', true], ['date', '<=', date_to], ['date', '>=', date_form]],
             target: 'current'
         }, options)
     },
@@ -128,6 +170,12 @@ var ServiceDashboard = AbstractAction.extend({
         var self = this;
         e.stopPropagation();
         e.preventDefault();
+        var elem = document.getElementById('daydate');
+        var elem2 = document.getElementById('daydate2');
+        var date_form = elem.value;
+        var date_to = elem2.value;
+        console.log(date_form)
+        console.log(date_to)
         var options = {
             on_reverse_breadcrumb: this.on_reverse_breadcrumb,
         };
@@ -137,7 +185,10 @@ var ServiceDashboard = AbstractAction.extend({
             res_model: 'ebs_mod.service.request',
             view_mode: 'tree,form',
             views: [[false, 'list'],[false, 'form']],
-            domain: [['is_overdue','=', true],['is_escalated','=', false], ['is_pending', '=', false]],
+//            domain: [['is_overdue','=', true],['is_escalated','=', false], ['is_pending', '=', false],
+//             ['date', '>=', date_form], ['date', '<=', date_to]],
+            domain: [['is_overdue','=', true], ['date', '>=', date_form], ['date', '<=', date_to],
+            ['is_escalated','=', false], ['is_pending', '=', false]],
             target: 'current'
         }, options)
     },
@@ -145,16 +196,23 @@ var ServiceDashboard = AbstractAction.extend({
         var self = this;
         e.stopPropagation();
         e.preventDefault();
+        var elem = document.getElementById('daydate');
+        var elem2 = document.getElementById('daydate2');
+        var date_form = elem.value;
+        var date_to = elem2.value;
+        console.log(date_form)
+        console.log(date_to)
         var options = {
             on_reverse_breadcrumb: this.on_reverse_breadcrumb,
         };
         this.do_action({
-            name: _t("Draft"),
+            name: _t("In Progress Exceptional"),
             type: 'ir.actions.act_window',
             res_model: 'ebs_mod.service.request',
             view_mode: 'tree,form',
             views: [[false, 'list'],[false, 'form']],
-            domain: [['status','=', 'progress'],['is_exceptional','=', true],['is_escalated','=', false], ['is_pending', '=', false]],
+            domain: [['status','=', 'progress'], ['date', '>=', date_form], ['date', '<=', date_to],
+            ['is_exceptional','=', true],['is_escalated','=', false], ['is_pending', '=', false]],
             target: 'current'
         }, options)
     },
@@ -163,6 +221,12 @@ var ServiceDashboard = AbstractAction.extend({
         var self = this;
         e.stopPropagation();
         e.preventDefault();
+        var elem = document.getElementById('daydate');
+        var elem2 = document.getElementById('daydate2');
+        var date_form = elem.value;
+        var date_to = elem2.value;
+        console.log(date_form)
+        console.log(date_to)
         var options = {
             on_reverse_breadcrumb: this.on_reverse_breadcrumb,
         };
@@ -172,7 +236,7 @@ var ServiceDashboard = AbstractAction.extend({
             res_model: 'ebs_mod.service.request',
             view_mode: 'tree,form',
             views: [[false, 'list'],[false, 'form']],
-            domain: [['status','=', 'draft'], ['is_escalated','=', false], ['is_pending', '=', false]],
+            domain: [['status','=', 'draft'],['date', '>=', date_form], ['date', '<=', date_to], ['is_escalated','=', false], ['is_pending', '=', false]],
             target: 'current'
         }, options)
     },
@@ -181,6 +245,12 @@ var ServiceDashboard = AbstractAction.extend({
         var self = this;
         e.stopPropagation();
         e.preventDefault();
+        var elem = document.getElementById('daydate');
+        var elem2 = document.getElementById('daydate2');
+        var date_form = elem.value;
+        var date_to = elem2.value;
+        console.log(date_form)
+        console.log(date_to)
         var options = {
             on_reverse_breadcrumb: this.on_reverse_breadcrumb,
         };
@@ -190,7 +260,8 @@ var ServiceDashboard = AbstractAction.extend({
             res_model: 'ebs_mod.service.request',
             view_mode: 'tree,form',
             views: [[false, 'list'],[false, 'form']],
-            domain: [['status','=', 'progress'],['is_exceptional','=', false],['is_escalated','=', false], ['is_pending', '=', false]],
+            domain: [['status','=', 'progress'], ['date', '>=', date_form], ['date', '<=', date_to], ['is_exceptional','=', false],
+            ['is_escalated','=', false], ['is_pending', '=', false]],
             target: 'current'
         }, options)
     },
@@ -199,6 +270,12 @@ var ServiceDashboard = AbstractAction.extend({
         var self = this;
         e.stopPropagation();
         e.preventDefault();
+        var elem = document.getElementById('daydate');
+        var elem2 = document.getElementById('daydate2');
+        var date_form = elem.value;
+        var date_to = elem2.value;
+        console.log(date_form)
+        console.log(date_to)
         var options = {
             on_reverse_breadcrumb: this.on_reverse_breadcrumb,
         };
@@ -208,7 +285,7 @@ var ServiceDashboard = AbstractAction.extend({
             res_model: 'ebs_mod.service.request',
             view_mode: 'tree,form',
             views: [[false, 'list'],[false, 'form']],
-            domain: [['status','=', 'hold'], ['is_escalated','=', false], ['is_pending', '=', false]],
+            domain: [['status','=', 'hold'], ['date', '>=', date_form], ['date', '<=', date_to],  ['is_escalated','=', false], ['is_pending', '=', false]],
             target: 'current'
         }, options)
     },
@@ -217,6 +294,12 @@ var ServiceDashboard = AbstractAction.extend({
         var self = this;
         e.stopPropagation();
         e.preventDefault();
+        var elem = document.getElementById('daydate');
+        var elem2 = document.getElementById('daydate2');
+        var date_form = elem.value;
+        var date_to = elem2.value;
+        console.log(date_form)
+        console.log(date_to)
         var options = {
             on_reverse_breadcrumb: this.on_reverse_breadcrumb,
         };
@@ -226,7 +309,7 @@ var ServiceDashboard = AbstractAction.extend({
             res_model: 'ebs_mod.service.request',
             view_mode: 'tree,form',
             views: [[false, 'list'],[false, 'form']],
-            domain: [['status','=', 'complete'], ['is_escalated','=', false], ['is_pending', '=', false]],
+            domain: [['status','=', 'complete'],['date', '>=', date_form], ['date', '<=', date_to], ['is_escalated','=', false], ['is_pending', '=', false]],
             target: 'current'
         }, options)
     },
@@ -235,6 +318,12 @@ var ServiceDashboard = AbstractAction.extend({
         var self = this;
         e.stopPropagation();
         e.preventDefault();
+        var elem = document.getElementById('daydate');
+        var elem2 = document.getElementById('daydate2');
+        var date_form = elem.value;
+        var date_to = elem2.value;
+        console.log(date_form)
+        console.log(date_to)
         var options = {
             on_reverse_breadcrumb: this.on_reverse_breadcrumb,
         };
@@ -244,7 +333,7 @@ var ServiceDashboard = AbstractAction.extend({
             res_model: 'ebs_mod.service.request',
             view_mode: 'tree,form',
             views: [[false, 'list'],[false, 'form']],
-            domain: [['status','=', 'cancel']],
+            domain: [['status','=', 'cancel'], ['date', '>=', date_form], ['date', '<=', date_to]],
             target: 'current'
         }, options)
     },
@@ -253,6 +342,12 @@ var ServiceDashboard = AbstractAction.extend({
         var self = this;
         e.stopPropagation();
         e.preventDefault();
+        var elem = document.getElementById('daydate');
+        var elem2 = document.getElementById('daydate2');
+        var date_form = elem.value;
+        var date_to = elem2.value;
+        console.log(date_form)
+        console.log(date_to)
         var options = {
             on_reverse_breadcrumb: this.on_reverse_breadcrumb,
         };
@@ -261,8 +356,8 @@ var ServiceDashboard = AbstractAction.extend({
             type: 'ir.actions.act_window',
             res_model: 'ebs_mod.service.request',
             view_mode: 'tree,form',
-            views: [[false, 'list'],[false, 'form']],
-            domain: [['status','=', 'reject']],
+            views: [[false, 'list'], [false, 'form']],
+            domain: [['status','=', 'reject'], ['date', '>=', date_form], ['date', '<=', date_to]],
             target: 'current'
         }, options)
     },
@@ -271,11 +366,16 @@ var ServiceDashboard = AbstractAction.extend({
         var self = this;
         e.stopPropagation();
         e.preventDefault();
+        var elem = document.getElementById('daydate');
+        var elem2 = document.getElementById('daydate2');
+        var date_form = elem.value + ' ' + '00:00:00';
+        var date_to = elem2.value + ' ' + '00:00:00';
+        console.log(date_form)
+        console.log(date_to)
         var employee_id = parseInt(e.currentTarget.id)
         var employee_name = "" + e.currentTarget.getAttribute("emp_name")
 //        console.log(e.currentTarget)
 //        console.log(this.date_start)
-
 
         var options = {
             on_reverse_breadcrumb: this.on_reverse_breadcrumb,
@@ -286,7 +386,7 @@ var ServiceDashboard = AbstractAction.extend({
             res_model: 'ebs_mod.service.request.workflow',
             view_mode: 'tree,form',
             views: [[false, 'list'],[false, 'form']],
-            domain: [['status','=', 'progress'],['assign_to','=', employee_id]],
+            domain: [['status','=', 'progress'],['due_date', '>=', date_form], ['due_date', '<=', date_to], ['assign_to','=', employee_id]],
 //            domain: [['status','=', 'progress']],
             target: 'current'
         }, options)
@@ -303,7 +403,7 @@ var ServiceDashboard = AbstractAction.extend({
 
     willStart: function() {
         var self = this;
-            return self.fetch_data();
+        return self.fetch_data();
     },
 
     start: function() {
@@ -321,20 +421,31 @@ var ServiceDashboard = AbstractAction.extend({
 
     fetch_data: function(start_date='',end_date='', date_for_drivers ='') {
         var self = this;
+//        var today = new Date();
+//        var date_today = today.getFullYear()+'-'+(today.getMonth()+1)+'-'+today.getDate();
+//        var year = today.getFullYear();
+//        var month = today.getMonth();
+//        var day = today.getDate();
+//        var date_after_year = today.getFullYear()+1 +'-'+(today.getMonth()+1)+'-'+today.getDate();
+
         var def0 =  self._rpc({
                     model: 'ebs_mod.service.request',
                     method: 'get_request',
                     args: [{
-                            'date_from': self.start_date,
-                            'date_to': self.end_date,
+//                            'date_from': self.start_date ? self.start_date : date_today,
+//                            'date_to': self.end_date ? self.end_date : date_after_year,
+                            'date_from': self.start_date ? self.start_date : '2021-01-01',
+                            'date_to': self.end_date ? self.end_date : '2021-12-31',
                     }]
             }).then(function(result) {
                 self.progress =  result
+                console.log(result)
 //                console.log(result)
                 $(".draft").text(self.progress['draft']);
-                $(".inprogress").text(self.progress['progress_normal']);
+                $(".inprogress").text(self.progress['progress']);
+                $(".pending").text(self.progress['pending']);
                 $(".hold").text(self.progress['hold']);
-                $(".cancel").text(self.progress['draft']);
+                $(".cancel").text(self.progress['cancel']);
                 $(".reject").text(self.progress['reject']);
                 $(".complete").text(self.progress['complete']);
                 $(".overdue").text(self.progress['overdue']);
@@ -348,8 +459,8 @@ var ServiceDashboard = AbstractAction.extend({
                     model: 'ebs_mod.service.request.workflow',
                     method: 'get_request',
                     args: [{
-                            'date_from': self.start_date,
-                            'date_to': self.end_date,
+                            'date_from': self.start_date ? self.start_date : '2021-01-01',
+                            'date_to': self.end_date ? self.end_date : '2021-12-31',
                     }]
             }).then(function(result) {
                 self.employee_progress =  result
@@ -378,10 +489,10 @@ var ServiceDashboard = AbstractAction.extend({
                     }
                     try {
                           taskDiv.innerHTML = inner
-                        }
-                        catch(err) {
-                          console.log(err)
-                        }
+                    }
+                    catch(err) {
+                      console.log(err)
+                    }
                 });
             });
 

@@ -128,12 +128,13 @@ class ServiceRequestWorkFlow(models.Model):
         for each_employee in employees:
             domain = []
             if args:
-                year_from, month_from, day_from = map(int, args.get('date_from').split('-'))
-                year_to, month_to, day_to = map(int, args.get('date_to').split('-'))
-                date_from = datetime(year_from, month_from, day_from, 0, 0, 0)
-                date_to = datetime(year_to, month_to, day_to, 0, 0, 0)
-                domain.extend([('due_date', '>=', date_from), ('due_date', '<=', date_to), ('status', '=', 'progress'),
-                               ('assign_to', '=', each_employee.id)])
+                if args.get('date_from') and args.get('date_to'):
+                    year_from, month_from, day_from = map(int, args.get('date_from').split('-'))
+                    year_to, month_to, day_to = map(int, args.get('date_to').split('-'))
+                    date_from = datetime(year_from, month_from, day_from, 0, 0, 0)
+                    date_to = datetime(year_to, month_to, day_to, 0, 0, 0)
+                    domain.extend([('due_date', '>=', date_from), ('due_date', '<=', date_to), ('status', '=', 'progress'),
+                                   ('assign_to', '=', each_employee.id)])
             else:
                 domain.extend([('status', '=', 'progress'), ('assign_to', '=', each_employee.id)])
             no_of_requests = self.env['ebs_mod.service.request.workflow'].search_count(domain)

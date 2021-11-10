@@ -20,4 +20,7 @@
         'views/custom_views.xml',
         'views/dashboard_view.xml',
     ],
+    'images': ['static/description/dashboard_icon.png'],
+    'installable': True,
+    'application': True,
 }

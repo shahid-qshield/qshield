@@ -3,6 +3,7 @@ from odoo.exceptions import ValidationError
 from datetime import datetime, timedelta, date
 import re
 
+
 class ServiceRequest(models.Model):
     _name = 'ebs_mod.service.request'
     _description = "Service Request"
@@ -80,6 +81,12 @@ class ServiceRequest(models.Model):
         comodel_name='res.partner',
         string='Related Company',
         readonly=True
+    )
+
+    account_manager = fields.Many2one(
+        comodel_name='hr.employee',
+        string='Account Manager',
+        related='related_company_ro.account_manager'
     )
     partner_id = fields.Many2one(
         comodel_name='res.partner',
@@ -185,19 +192,22 @@ class ServiceRequest(models.Model):
         comodel_name='ebs_mod.service.request.workflow',
         inverse_name='service_request_id',
         string='Workflow',
-        required=False)
+        required=False,
+        copy=True)
 
     service_document_ids = fields.One2many(
         comodel_name='documents.document',
         inverse_name='service_id',
         string='Documents',
-        required=False)
+        required=False,
+        copy=True)
 
     expenses_ids = fields.One2many(
         comodel_name='ebs_mod.service.request.expenses',
         inverse_name='service_request_id',
         string='Expenses',
-        required=False)
+        required=False,
+        copy=True)
 
     def _compute_service_document_count(self):
         for rec in self:
@@ -365,6 +375,11 @@ class ServiceRequest(models.Model):
         res = super(ServiceRequest, self).write(vals)
         return res
 
+    def copy(self, default={}):
+        default['status'] = 'draft'
+        res = super(ServiceRequest, self).copy(default=default)
+        return res
+
     def action_see_documents(self):
         self.ensure_one()
         return {
@@ -529,8 +544,8 @@ class ServiceRequest(models.Model):
             self.sla_days = 0
         self.status = 'new'
 
-    def request_new(self):
-        self.status = 'new'
+    # def request_new(self):
+    #     self.status = 'new'
 
     def request_cancel(self):
         for flow in self.service_flow_ids:

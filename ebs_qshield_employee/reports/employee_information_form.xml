@@ -122,19 +122,19 @@
                             <span>Do you posses a valid driving license?</span>
                         </td>
                         <td style="padding:0px;">
-                            <span t-if="o.gender == 'male'">
+                            <span t-if="o.driving_license">
                                 <span style="border:1px solid black;padding-right: 20px;background:Black;margin-left: 5px;margin-right: 5px;"/>
                             </span>
-                            <span t-if="o.gender != 'male'">
+                            <span t-if="not o.driving_license">
                                 <span style="border:1px solid black;padding-right: 20px;margin-left: 5px;margin-right: 5px;"/>
                             </span>
                             <span style="display: inline-block;padding-right: 40px;">Yes</span>
                         </td>
                         <td style="padding:0px;">
-                            <span t-if="o.gender == 'female'">
+                            <span t-if="not o.driving_license">
                                 <span style="border:1px solid black;padding-right: 20px;background:Black;margin-left: 5px;margin-right: 5px;"/>
                             </span>
-                            <span t-if="o.gender != 'female'">
+                            <span t-if="o.driving_license">
                                 <span style="border:1px solid black;padding-right: 20px;margin-left: 5px;margin-right: 5px;"/>
                             </span>
                             <span style="display: inline-block;padding-right: 40px;">No</span>
@@ -350,11 +350,15 @@
                         <td colspan="2" style="padding:0px;">
                             <!--                                <span style="display: inline-block;padding-right: 40px;"-->
                             <!--                                      t-field="o.partner_id.passport_doc.document_number"/>-->
+                            <span style="display: inline-block;padding-right: 40px;"
+                                t-if="o.visa.visa_status"  t-field="o.visa.visa_status"/>
                         </td>
                         <td style="padding:0px;">
                             <span>Expiry Date</span>
                         </td>
                         <td colspan="2" style="padding:0px;">
+                            <span style="display: inline-block;padding-right: 40px;"
+                                    t-if="o.visa_expire"  t-field="o.visa_expire"/>
                             <!--                                <span style="display: inline-block;padding-right: 40px;"-->
                             <!--                                      t-field="o.partner_id.passport_exp_date"/>-->
                         </td>
@@ -925,7 +929,7 @@
                         </td>
                         <td style="padding:0px;">
                             <span style="display: inline-block;padding-right: 40px;"
-                                  t-field="o.contract_id.basic_salary"/>
+                                  t-field="o.contract_id.wage"/>
                         </td>
                     </tr>
                     <tr>
@@ -1047,5 +1051,6 @@
             name="ebs_qshield_employee.employee_information_form"
             file="ebs_qshield_employee.employee_information_form"
             menu="True"
+            groups="ebs_qshield_employee.group_hr_services"
     />
 </odoo>

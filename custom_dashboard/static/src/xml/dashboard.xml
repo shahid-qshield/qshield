@@ -5,17 +5,19 @@
             <div class="container-fluid o_hr_dashboard">
                 <h3>OPERATIONS DASHBOARD</h3>
                       <!-- DatePicker -->
-                      <label for="daydate">From</label>
-                      <input type="date" id="daydate" name="daydate" value="2021-01-01"/>
-                      <label for="daydate2">To</label>
-                      <input type="date" id="daydate2" name="daydate2" value="2021-12-31"/>
-                      <input type="submit" id="btn" class="get_date" />
+                    <label for="daydate">From</label>
+                    <input type="date"  id="daydate" name="daydate_from"  value="2021-01-01"/>
+                    <label for="daydate2">To</label>
+                    <input type="date" id="daydate2" name="daydate2_to" value="2021-12-31"/>
+                    <input type="submit" id="btn" class="get_date" />
+
+
                     <div class="row1 main-section">
 
-                        <div class="col-md-2 col-sm-6 request_progress oh-payslip" >
+                        <div class="col-md-2 col-sm-6 request_progress service-state" >
                             <div class="oh-card">
                                 <div class="oh-card-body">
-                                        <div class="stat-icon inprogress"><p><t t-esc="widget.progress['progress_normal']"/></p></div>
+                                        <div class="stat-icon inprogress"><p><t t-esc="widget.progress['progress']"/></p></div>
                                         <div class="stat-content">
                                             <div class="stat-text">In Progress</div>
                                             <div class="stat-digit"></div>
@@ -24,11 +26,11 @@
                             </div>
                         </div>
 
-                        <div class="col-md-2 col-sm-6 request_pending oh-payslip" >
+                        <div class="col-md-2 col-sm-6 request_pending service-state" >
                             <div class="oh-card">
                                 <div class="oh-card-body">
                                     <div class="stat-widget-one">
-                                        <div class="stat-icon overdue"><p><t t-esc="widget.progress['pending']"/></p></div>
+                                        <div class="stat-icon pending "><p><t t-esc="widget.progress['pending']"/></p></div>
                                         <div class="stat-content ">
                                             <div class="stat-text">Pending</div>
             <!--                                <div class="stat-digit"><t t-esc="widget.login_employee['payslip_count']"/></div>-->
@@ -39,7 +41,7 @@
                             </div>
                         </div>
 
-                        <div class="col-md-2 col-sm-6 request_overdue oh-payslip" >
+                        <div class="col-md-2 col-sm-6 request_overdue service-state" >
                             <div class="oh-card">
                                 <div class="oh-card-body">
                                     <div class="stat-widget-one overdue-colored">
@@ -54,7 +56,7 @@
                             </div>
                         </div>
 
-                        <div class="col-md-2 col-sm-6 request_complete oh-payslip" >
+                        <div class="col-md-2 col-sm-6 request_complete service-state" >
                             <div class="oh-card">
                                 <div class="oh-card-body">
                                     <div class="stat-widget-one complete-colored">
@@ -71,7 +73,7 @@
                     </div>
 
                     <div class="row1 main-section">
-                        <div class="col-md-2 col-sm-6 request_out_of_scope oh-payslip" >
+                        <div class="col-md-2 col-sm-6 request_out_of_scope service-state" >
                             <div class="oh-card">
                                 <div class="oh-card-body">
         <!--                            <div class="stat-widget-one">-->
@@ -85,7 +87,7 @@
                                 </div>
                             </div>
                         </div>
-                        <div class="col-md-2 col-sm-6 request_cancel oh-payslip" >
+                        <div class="col-md-2 col-sm-6 request_cancel service-state" >
                             <div class="oh-card">
                                 <div class="oh-card-body">
         <!--                            <div class="stat-widget-one">-->
@@ -100,7 +102,7 @@
                             </div>
                         </div>
 
-                        <div class="col-md-2 col-sm-6 request_hold oh-payslip" >
+                        <div class="col-md-2 col-sm-6 request_hold service-state" >
                             <div class="oh-card">
                                 <div class="oh-card-body">
         <!--                            <div class="stat-widget-one">-->
@@ -115,7 +117,7 @@
                             </div>
                         </div>
 
-                         <div class="col-md-2 col-sm-6 request_escalated oh-payslip" >
+                         <div class="col-md-2 col-sm-6 request_escalated service-state" >
                             <div class="oh-card">
                                 <div class="oh-card-body">
         <!--                            <div class="stat-widget-one">-->
@@ -133,7 +135,7 @@
                     </div>
 
                     <div class="row1 main-section">
-                        <div class="col-md-2 col-sm-6 request_progress_exceptional oh-payslip" >
+                        <div class="col-md-2 col-sm-6 request_progress_exceptional service-state" >
                             <div class="oh-card">
                                 <div class="oh-card-body">
         <!--                            <div class="stat-widget-one">-->
@@ -148,7 +150,7 @@
                             </div>
                         </div>
 
-                        <div class="col-md-2 col-sm-6 request_reject oh-payslip" >
+                        <div class="col-md-2 col-sm-6 request_reject service-state" >
                             <div class="oh-card">
                                 <div class="oh-card-body">
         <!--                            <div class="stat-widget-one">-->
@@ -163,7 +165,7 @@
                             </div>
                         </div>
 
-                        <div class="col-md-2 col-sm-6 request_new oh-payslip" >
+                        <div class="col-md-2 col-sm-6 request_new service-state" >
                             <div class="oh-card">
                                 <div class="oh-card-body">
         <!--                            <div class="stat-widget-one">-->

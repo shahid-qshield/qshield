@@ -33,6 +33,19 @@ class HrLoan(models.Model):
             loan.total_amount = loan.loan_amount
             loan.balance_amount = balance_amount
             loan.total_paid_amount = total_paid
+            print(total_paid)
+
+    # def _get_current_login_user(self):
+    #
+    #     user_obj = self.env['res.users'].search([])
+    #
+    #     for user_login in user_obj:
+    #
+    #         current_login = self.env.user
+    #
+    #         if user_login == current_login:
+    #             self.processing_staff = current_login
+    #     return
 
     name = fields.Char(string="Loan Name", default="/", readonly=True, help="Name of the loan")
     date = fields.Date(string="Date", default=fields.Date.today(), readonly=True, help="Date")
@@ -56,14 +69,30 @@ class HrLoan(models.Model):
                                 help="Total loan amount")
     balance_amount = fields.Float(string="Balance Amount", store=True, compute='_compute_loan_amount',
                                   help="Balance amount")
-    total_paid_amount = fields.Float(string="Total Paid Amount", store=True, compute='_compute_loan_amount',
+    # total_paid_amount = fields.Float(string="Total Paid Amount", store=True, compute='_compute_loan_amount',
+    #                                  help="Total paid amount")
+    total_paid_amount = fields.Float(string="Total Paid Amount", store=True, compute="get_paid_amount",
                                      help="Total paid amount")
 
+    hr_approve_user = fields.Char(string="")
+    finance_approve_user = fields.Char(string="Loan Name")
+    management_approve_user = fields.Char(string="Loan Name")
+    approved_by = fields.Char(string="Approved by")
+
+    # state = fields.Selection([
+    #     ('draft', 'Draft'),
+    #     ('waiting_approval_1', 'Submitted'),
+    #     ('first_approve', 'First Approved'),
+    #     ('approve', 'Second Approved'),
+    #     ('refuse', 'Refused'),
+    #     ('cancel', 'Canceled'),
+    # ], string="State", default='draft', track_visibility='onchange', copy=False, )
     state = fields.Selection([
         ('draft', 'Draft'),
-        ('waiting_approval_1', 'Submitted'),
-        ('first_approve', 'First Approved'),
-        ('approve', 'Second Approved'),
+        ('waiting_approval_1', 'HR'),
+        ('first_approve', 'Finance'),
+        ('second_approve', 'Management'),
+        ('approve', 'Approved'),
         ('refuse', 'Refused'),
         ('cancel', 'Canceled'),
     ], string="State", default='draft', track_visibility='onchange', copy=False, )
@@ -72,19 +101,21 @@ class HrLoan(models.Model):
 
     @api.model
     def create(self, values):
-        res = super(HrLoan, self).create(values)
+        # res = super(HrLoan, self).create(values)
 
         employee_id = self.env['hr.employee'].browse(values['employee_id'])
 
         loan_count = self.env['hr.loan'].search_count(
             [('employee_id', '=', values['employee_id']), ('state', '=', 'approve'),
              ('balance_amount', '!=', 0)])
+        print(loan_count)
         if loan_count:
             raise ValidationError(_("The employee has already a pending installment"))
         else:
-            values['name'] = self.env['ir.sequence'].get('hr.loan.seq') or ' '
+            # values['name'] = self.env['ir.sequence'].get('hr.loan.seq') or ' '
+            values['name'] = self.env['ir.sequence'].next_by_code('hr.loan.seq') or ' '
 
-        return res
+        return super(HrLoan, self).create(values)
 
     def compute_installment(self):
         # print("======compute_installment===========================",self)
@@ -106,6 +137,19 @@ class HrLoan(models.Model):
 
         return True
 
+    @api.onchange('loan_lines', 'total_paid_amount')
+    @api.depends('loan_lines', 'total_paid_amount')
+    def get_paid_amount(self):
+        # print("==============_compute_loan_amount================================",self)
+        total_paid = 0.0
+        for line in self.loan_lines:
+            # print("====================", line.paid)
+            if line.paid:
+                total_paid += line.amount
+
+        self.total_paid_amount = total_paid
+        self.balance_amount = self.total_amount - self.total_paid_amount
+
     def action_refuse(self):
         return self.write({'state': 'refuse'})
 
@@ -126,6 +170,17 @@ class HrLoan(models.Model):
                 raise ValidationError(_("Please Compute installment"))
             else:
                 self.write({'state': 'first_approve'})
+        self.hr_approve_user = self.env.user.name
+        self.approved_by = self.hr_approve_user
+
+    def action_second_approve(self):
+        for data in self:
+            if not data.loan_lines:
+                raise ValidationError(_("Please Compute installment"))
+            else:
+                self.write({'state': 'second_approve'})
+        self.finance_approve_user = self.env.user.name
+        self.approved_by += ', ' + self.env.user.name
 
     def action_approve(self):
         for data in self:
@@ -136,6 +191,8 @@ class HrLoan(models.Model):
                     'state': 'approve',
                     'user_id': self.env.user,
                 })
+        self.management_approve_user = self.env.user.name
+        self.approved_by += ', ' + self.env.user.name
 
     def unlink(self):
         for loan in self:
@@ -152,9 +209,9 @@ class InstallmentLine(models.Model):
     date = fields.Date(string="Payment Date", required=True, help="Date of the payment")
     employee_id = fields.Many2one('hr.employee', string="Employee", help="Employee")
     amount = fields.Float(string="Amount", required=True, help="Amount")
-    paid = fields.Boolean(string="Paid", help="Paid")
+    paid = fields.Boolean(string="Is Paid ?", help="Paid")
     loan_id = fields.Many2one('hr.loan', string="Loan Ref.", help="Loan")
-    payslip_id = fields.Many2one('hr.payslip', string="Payslip Ref.", help="Payslip")
+    # payslip_id = fields.Many2one('hr.payslip', string="Payslip Ref.", help="Payslip")
 
 
 class HrEmployee(models.Model):

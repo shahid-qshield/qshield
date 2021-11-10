@@ -41,7 +41,7 @@ class Payslip(models.Model):
     ])
     year = fields.Selection(get_years(), string='Year')
 
-    basic_salary_amount = fields.Monetary(related='contract_id.basic_salary')
+    basic_salary_amount = fields.Monetary(related='contract_id.wage')
     basic_salary_payable = fields.Monetary()
 
     housing_allowance_amount = fields.Monetary(related='contract_id.housing_allowance')
@@ -127,7 +127,7 @@ class Payslip(models.Model):
                 ('state', '=', 'open')
             ], limit=1)
             if contract:
-                record.basic_salary_payable = contract.basic_salary
+                record.basic_salary_payable = contract.wage
                 record.housing_allowance_payable = contract.housing_allowance
                 record.transport_allowance_payable = contract.transport_allowance
                 record.telephone_allowance_payable = contract.telephone_allowance

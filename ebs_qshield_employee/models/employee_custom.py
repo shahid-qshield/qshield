@@ -11,6 +11,7 @@ class EmployeeCustom(models.Model):
     driving_license = fields.Boolean('Driving License')
     country_issue = fields.Many2one(comodel_name='res.country', string='Country of Issue')
     partner_id = fields.Many2one('res.partner', string='Related Contact', index=True)
+    work_in = fields.Many2one('res.partner', string='Work In')
     religion_id = fields.Many2one('hr.religion', string='Religion', index=True)
     religion = fields.Selection(string='Religion',
                                 selection=[
@@ -48,6 +49,10 @@ class EmployeeCustom(models.Model):
         help='Enter here the private address of the employee, not the one linked to your company.',
         groups="hr.group_hr_user", tracking=True,
         domain="['|', ('company_id', '=', False), ('company_id', '=', company_id)]")
+    is_out_sourced = fields.Boolean(string="Out source ?", default=False)
+
+    joining_date = fields.Date(string="Joining Date", default=lambda self: fields.Datetime.now(), required=False )
+    visa = fields.Many2one(comodel_name="visa.status", string="Visa Status", required=False, )
 
     def employee_information_form(self):
         return self.env.ref('ebs_qshield_employee.action_employee_information_form').report_action(self)
@@ -81,7 +86,7 @@ class Dependant(models.Model):
 class Emergency(models.Model):
     _name = 'hr.emergency'
 
-    name = fields.Char()
+    name = fields.Char(required=True)
     relation = fields.Char('Relationship')
     address = fields.Char()
     telephone = fields.Char('Telephone No.')
@@ -91,7 +96,7 @@ class Emergency(models.Model):
                                 selection=[
                                     ('qatar', 'Qatar'),
                                     ('home_country', 'Home Country')],
-                                store=True)
+                                store=True, default='home_country')
     hr_employee = fields.Many2one('hr.employee', readonly=True)
 
 
@@ -110,7 +115,7 @@ class Courses(models.Model):
 
     from_date = fields.Date('From')
     to_date = fields.Date('To')
-    course_title = fields.Char()
+    course_title = fields.Char(required=True)
     institution = fields.Char('Institution/Address')
     qualification = fields.Char()
     hr_employee = fields.Many2one('hr.employee', readonly=True)
@@ -119,7 +124,7 @@ class Courses(models.Model):
 class Language(models.Model):
     _name = 'hr.language'
 
-    name = fields.Char()
+    name = fields.Char(required=True)
     spoken = fields.Char()
     oral = fields.Char()
     written = fields.Char()
@@ -129,7 +134,7 @@ class Language(models.Model):
 class History(models.Model):
     _name = 'hr.history'
 
-    position = fields.Char()
+    position = fields.Char(required=True)
     company_institution = fields.Char('Company/Institution')
     date = fields.Date()
     hr_employee = fields.Many2one('hr.employee', readonly=True)

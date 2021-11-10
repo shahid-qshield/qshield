@@ -1,0 +1,418 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <report
+            id="action_employee_information_form"
+            model="hr.leave"
+            string="Leave Application Form"
+            report_type="qweb-pdf"
+            name="ebs_leave_appilcation_request.report_leave_application_template"
+            file="ebs_leave_appilcation_request.leave_application_template"
+            menu="True"
+    />
+    <template id="report_leave_application_template">
+        <t t-call="web.html_container">
+            <t t-foreach="docs" t-as="o">
+                <t t-call="web.internal_layout">
+                    <style>
+                        table, th, td {
+                        border: 1px solid black;
+                        border-collapse: collapse;
+                        }
+                        td, span {
+                        padding: 3px;
+                        }
+                    </style>
+                    <div class="page">
+<!--                        <h5 style="color:white;background-color:Black;text-align: center;">Leave Application Form</h5>-->
+                        <div>
+                            <table style="width:100%;border-collapse: collapse;border-spacing: 0;" cellspacing="0">
+                                <tr style="background-color:Black;">
+                                    <td colspan="6" style="text-align: center; font-weight:bold">
+                                        <span style="color:white;background-color:Black;text-align: center;">
+                                            LEAVE APPLICATION FORM
+                                        </span>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td>
+                                        <span>Application Date</span>
+                                    </td>
+                                    <td>
+<!--                                        <span t-esc="context_timestamp(datetime.datetime.now()).strftime('%Y-%m-%d')"/>-->
+                                        <span t-esc="o.create_date.date()"/>
+                                    </td>
+                                    <td style="text-align: center;" rowspan="5">
+                                        <span>Leave Typ(Pls. Tick)</span>
+                                    </td>
+                                    <td>
+                                        <t t-if="o.holiday_status_id.type == 'annual'">
+                                            <input type="checkbox" checked="checked"/>
+                                        </t>
+                                        <t t-else="">
+                                            <span><input  type="checkbox"/></span>
+                                        </t>
+                                    </td>
+                                    <td>
+                                        Annual Leave
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td>
+                                        <span>Employee Name:</span>
+                                    </td>
+                                    <td>
+                                        <span t-esc="o.employee_id.name"/>
+                                    </td>
+                                    <td>
+                                        <t t-if="o.holiday_status_id.type == 'sick'">
+                                            <input type="checkbox" checked="checked"/>
+                                        </t>
+                                        <t t-else="">
+                                            <span><input  type="checkbox"/></span>
+                                        </t>
+                                    </td>
+                                    <td>
+                                        Sick Leave
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td>
+                                        <span>Department:</span>
+                                    </td>
+                                    <td colspan="">
+                                        <span t-esc="o.employee_id.department_id.name"/>
+                                    </td>
+                                    <td>
+                                        <t t-if="o.holiday_status_id.type == 'emergency'">
+                                            <input type="checkbox" checked="checked"/>
+                                        </t>
+                                        <t t-else="">
+                                            <span><input  type="checkbox"/></span>
+                                        </t>
+                                    </td>
+                                    <td>
+                                        Emergency Leave
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td >
+                                        <span>Joining Date:</span>
+                                    </td>
+                                    <td colspan="">
+                                        <span t-esc="o.employee_id.joining_date"/>
+                                    </td>
+                                    <td>
+                                        <t t-if="o.holiday_status_id.type == 'others'">
+                                            <input type="checkbox" checked="checked"/>
+                                        </t>
+                                        <t t-else="">
+                                            <span><input  type="checkbox"/></span>
+                                        </t>
+                                    </td>
+                                    <td>
+                                        Others (Specify below)
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td>
+                                        <span>Contact # while away:</span>
+                                    </td>
+                                    <td>
+                                        <span t-esc="o.contact_while_away"/>
+                                    </td>
+                                    <td colspan="2">
+
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td>
+                                        <span>Actual Departure:</span>
+                                    </td>
+                                    <td>
+                                        <span t-esc="o.actual_departure"/>
+                                    </td>
+                                    <td>
+                                        <span>Air TicketY/N</span>
+                                    </td>
+                                   <td colspan="2">
+<!--                                        <span t-esc="o.air_ticket"/>-->
+                                       <t t-if="o.air_ticket == 'y'">
+                                            <span>Yes</span>
+                                        </t>
+                                        <t t-else="">
+                                          <span>No</span>
+                                        </t>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td>
+                                        <span>Starting of Leave Date:</span>
+                                    </td>
+                                    <td>
+                                        <span t-esc="o.request_date_from"/>
+                                    </td>
+                                    <td>
+                                        <span>Airport Destination</span>
+                                    </td>
+                                   <td colspan="2">
+                                        <span t-esc="o.destination_to.airport"/>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td>
+                                       <span>End Leave Date</span>
+                                    </td>
+                                    <td>
+                                         <span t-esc="o.request_date_to"/>
+
+                                    </td>
+                                    <td colspan="3" rowspan="2">
+                                        <span>Above Employee Signature</span>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td>
+                                        <span>Total Days Requested:</span>
+                                    </td>
+                                    <td>
+                                        <span t-esc="o.initial_requested_days"/>
+                                    </td>
+                                </tr>
+                            </table>
+                        </div>
+
+                        <br/>
+
+                        <div t-if="o.state != draft">
+                            <table style="width:100%;border-collapse: collapse;border-spacing: 0;" cellspacing="0">
+                                <tr style="background-color:Black;">
+                                    <td colspan="3" style="text-align: left; font-weight:bold">
+                                        <span style="color:white;background-color:Black;text-align: left;">
+                                            HUMAN RESOURCES DEPARTMENT
+                                        </span>
+                                    </td>
+                                    <td colspan="3" style="text-align: left; font-weight:bold">
+                                        <span style="color:white;background-color:Black;text-align: left;">
+                                            DESIGNATED DEPARTMENT
+                                        </span>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td>
+                                        <span>Total Days Entitlement:</span>
+                                    </td>
+                                    <td>
+                                        <t t-if="o.employee_id.contract_id.leave_entitlement">
+                                            <span t-esc="o.employee_id.contract_id.leave_entitlement"/>
+
+                                        </t>
+                                    </td>
+                                    <td>
+                                        <span>Total Days Approved:</span>
+                                    </td>
+                                    <td>
+                                        <span t-esc="o.number_of_days"/>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td>
+                                        <span>Total Days Available:</span>
+                                    </td>
+                                    <td>
+                                        <span t-esc="o.total_days_available"/>
+                                     </td>
+                                    <td>
+                                        <span>Job Assigned to:</span>
+                                    </td>
+                                    <td>
+                                        <span t-esc="o.job_assigned_to.name"/>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td>
+                                        <span>No. of Days Approve:</span>
+                                    </td>
+                                    <td>
+                                        <span t-esc="o.number_of_days"/>
+                                    </td>
+                                    <td>
+                                        <span>Handover Required:</span>
+                                    </td>
+                                    <td>
+<!--                                        <span t-esc="o.handover_required"/>-->
+                                        <t t-if="o.handover_required == 'y'">
+                                            <span>Yes</span>
+                                        </t>
+                                        <t t-else="">
+                                          <span>No</span>
+                                        </t>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td>
+                                        <span>Balance Remaining Leave:</span>
+                                    </td>
+                                    <td>
+                                        <span t-esc="o.total_days_available - o.number_of_days"/>
+                                    </td>
+                                    <td colspan="3" rowspan="2">
+                                         Notes: <span style="padding-right:5px" t-esc="o.report_note"/>
+                                    </td>
+
+                                </tr>
+                                <tr>
+                                    <td>
+                                        <span>Air Ticket Entitlement:</span>
+                                    </td>
+                                    <td>
+                                        <t t-if="o.air_ticket_entitlement == 'y'">
+                                            <span>Yes</span>
+                                        </t>
+                                        <t t-else="">
+                                          <span>No</span>
+                                        </t>
+
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td colspan="2">
+                                        Notes:<span style="padding-right:5px" t-esc="o.name"/>
+                                    </td>
+                                    <td>
+                                        <span>Date:</span>
+                                    </td>
+                                    <td>
+                                        <span t-esc="o.approved_date"/>
+                                    </td>
+
+                                </tr>
+                                <tr>
+                                    <td colspan="3" rowspan="2">
+                                        <span>Signature / Date:</span>
+                                    </td>
+                                    <td colspan="3" rowspan="2">
+                                        <span>Supervisor/Manager Signature:</span>
+                                    </td>
+                                </tr>
+                            </table>
+                            <table style="width:100%;border-collapse: collapse;border-spacing: 0;" cellspacing="0">
+                                <tr>
+                                    <td colspan="6" style="text-align: center; font-weight:bold">
+                                        <span>
+                                            ITEMS TO BE RETURED DURING LEAVE
+                                        </span>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td colspan="6" style="padding:0px;">
+                                        <span><input  type="checkbox"/></span>
+                                        <span style="padding-right: 10px;">Access Card</span>
+                                        <span><input type="checkbox"/></span>
+                                        <span style="padding-right: 10px;">GSM SIM and Mobile Phone </span>
+                                        <span><input type="checkbox"/></span>
+                                        <span style=";padding-right: 10px;">Laptop</span>
+                                        <span><input type="checkbox"/></span>
+                                        <span style="padding-right: 10px;">Company Vehicle</span>
+                                        <span><input type="checkbox"/></span>
+                                        <span style="padding-right: 10px;">Others:</span>
+                                    </td>
+                                </tr>
+                            </table>
+                        </div>
+
+                        <br />
+
+                        <div t-if="o.state != draft">
+                            <table style="width:100%;border-collapse: collapse;border-spacing: 0;" cellspacing="0">
+                                <tr style="background-color:Black;">
+                                    <td colspan="6" style="text-align: center; font-weight:bold">
+                                        <span style="color:white;background-color:Black;text-align: left;">
+                                            FINANCE / ACCOUNTING DEPARTMENT
+                                        </span>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td colspan="1">
+                                        <span>Company Loan/Cash Advance</span>
+                                    </td>
+                                    <td>
+                                        <span style="margin-right:5px">YES( <span>
+                                            <t t-if="o.loan_date">
+                                                <input type="checkbox" checked="checked"/>
+                                            </t>   )</span></span>
+                                        <span>NO ( <span>
+                                            <t t-if="not o.loan_date">
+                                                <input type="checkbox" checked="checked"/>
+                                            </t>   )</span></span>
+                                    </td>
+                                    <td colspan="2">
+                                        <span>Date Availed:</span>
+                                        <span t-esc="o.loan_date"/>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td style="padding:0px;">
+                                        <span>Terms of payment:</span>
+                                    </td>
+                                    <td colspan="5" style="padding:0px;">
+                                        <span t-esc="o.terms_of_payments"/>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td style="padding:0px;">
+                                        <span>Current Outstanding Balance:</span>
+                                    </td>
+                                    <td colspan="5" style="padding:0px;">
+                                        <span t-esc="o.balance_amount"/>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td style="padding:0px;">
+                                        <span>Remarks:</span>
+                                    </td>
+                                    <td colspan="5" style="padding:0px;">
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td style="padding:0px;">
+                                        <span>Date:</span>
+                                    </td>
+                                    <td colspan="5" style="padding:0px;">
+<!--                                        <span t-esc="o.loan_date"/>-->
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td style="padding:0px;">
+                                        <span>Signature:</span>
+                                    </td>
+                                    <td colspan="5" style="padding:0px;">
+                                    </td>
+                                </tr>
+
+                            </table>
+                        </div>
+
+                        <br />
+                        <div t-if="o.state != draft">
+                            <table style="width:100%;border-collapse: collapse;border-spacing: 0;" cellspacing="0">
+                                <tr style="background-color:Black;">
+                                    <td colspan="6" style="text-align: center; font-weight:bold">
+                                        <span style="color:white;background-color:Black;text-align: left;">
+                                            FINAL APPROVAL
+                                        </span>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td colspan="6">
+                                        <span><strong>Managing Partner</strong></span>
+                                    </td>
+                                </tr>
+                            </table>
+                        </div>
+
+                    </div>
+                </t>
+            </t>
+        </t>
+    </template>
+</odoo>

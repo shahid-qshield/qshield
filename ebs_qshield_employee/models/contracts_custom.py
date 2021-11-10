@@ -7,6 +7,10 @@ class ContractsCustom(models.Model):
     _inherit = 'hr.contract'
 
     leave_entitlement = fields.Char('Leave Entitlement')
+    leave_selection = fields.Selection(selection=[
+        ('working_days', 'Working Days'),
+        ('calendar_days', 'Calendar Days')],
+        store=True, default='working_days')
     contract_type = fields.Selection(string='Contract Type',
                                      selection=[
                                          ('limited', 'Limited'),

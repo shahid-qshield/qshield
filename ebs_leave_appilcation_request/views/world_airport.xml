@@ -1,0 +1,47 @@
+<odoo>
+    <data>
+        <record id="world_airports_tree" model="ir.ui.view">
+        <field name="name">World Airports Tree</field>
+        <field name="model">world.airports</field>
+        <field name="arch" type="xml">
+            <tree>
+                <field name="airport"/>
+                <field name="country"/>
+                <field name="airport_code"/>
+            </tree>
+        </field>
+    </record>
+
+        <!-- form view of  model-->
+        <record id="world_airports_form" model="ir.ui.view">
+            <field name="name">World Airports Form</field>
+            <field name="model">world.airports</field>
+            <field name="arch" type="xml">
+                <form>
+                     <sheet>
+                        <group>
+                            <group>
+                                <field name="airport"/>
+                                <field name="country"/>
+                            </group>
+                            <group>
+                                <field name="airport_code"/>
+                            </group>
+                        </group>
+                    </sheet>
+                </form>
+            </field>
+        </record>
+
+        <record id="world_airports_action" model="ir.actions.act_window">
+            <field name="name">World Airports</field>
+            <field name="type">ir.actions.act_window</field>
+            <field name="res_model">world.airports</field>
+            <field name="view_mode">tree,form</field>
+        </record>
+
+
+        <menuitem id="world_airport_menu" name="World Airports List" parent="hr_holidays.menu_hr_holidays_configuration"
+                  sequence="7" action="world_airports_action" />
+    </data>
+</odoo>
