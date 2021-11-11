@@ -9,6 +9,7 @@ class EmployeeCustom(models.Model):
     middle_name = fields.Char()
     last_name = fields.Char()
     driving_license = fields.Boolean('Driving License')
+    qid_number = fields.Char('QID Number')
     country_issue = fields.Many2one(comodel_name='res.country', string='Country of Issue')
     partner_id = fields.Many2one('res.partner', string='Related Contact', index=True)
     work_in = fields.Many2one('res.partner', string='Work In')

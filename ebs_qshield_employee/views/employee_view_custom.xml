@@ -40,6 +40,9 @@
                            context="{'show_address': 1, 'default_type': 'private', 'form_view_ref': 'base.res_partner_view_form_private'}"
                            options="{&quot;always_reload&quot;: True, &quot;highlight_first_line&quot;: True}"/>
                 </xpath>
+                <xpath expr="//field[@name='passport_id']" position="after">
+                    <field name="qid_number"/>
+                </xpath>
                 <xpath expr="//page[@name='personal_information']" position="after">
                     <page name="other_info" string="Personal Information">
                         <group string="Dependant">

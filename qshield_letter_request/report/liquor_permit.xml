@@ -1,0 +1,72 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <template id="linquor_permit_template">
+        <t t-call="web.html_container">
+            <t t-foreach="docs" t-as="o">
+                <t t-call="web.internal_layout">
+                    <div class="page">
+                        <html>
+                            <style>
+                                body{
+                                    text-align: justify;
+                                    font-size:16px
+                                }
+
+                            </style>
+                            <body>
+                                <div style="margin-left:70%">
+                                    <p style="  line-height: 2; text-align: justify;"><strong>Ref. No.
+                                        <span style="padding-right:5px;" t-field="o.name"/><br/>
+                                            Date: <span style="padding-right:5px;"
+                                                        t-esc="o.print_date"/></strong></p>
+                                </div>
+
+                                <div>
+                                    <p style="  line-height: 2;"><strong>Qatar Distribution Company<br/>
+                                        P.O Box 9403<br/>Doha, Qatar</strong></p>
+                                </div><br/>
+
+                                <div align="center" >
+                                    <p style="line-height: 2;">
+                                        <strong>APPLICATION FOR LIQUOR PERMIT<br/>
+                                        MR. <span style="padding-right:5px;" t-field="o.employee_id.name"/></strong>
+                                    </p>
+                                </div>
+                                <div>
+                                    <p>Dear Sir/Mam,</p>
+                                </div>
+                                <br/>
+                                <p style="line-height: 2;">
+                                    We kindly request your office to provide Liquor permit for Mr.  <span style="padding-right:5px;" t-field="o.employee_id.name"/>,
+                                    <span style="padding-right:5px;" t-field="o.employee_id.country_id.name"/> Nationality,
+                                    holding a Passport No. <span style="padding-right:5px;" t-field="o.employee_id.passport_id"/> and QID No.
+                                    <span style="padding-right:5px;" t-field="o.employee_id.qid_number"/> is a confirmed employee of SAP
+                                     <span style="padding-right:5px;" t-field="o.employee_id.company_id.partner_id.name"/>
+                                    Mr. <span style="padding-right:5px;" t-field="o.employee_id.name"/> is employed by our company on
+                                    <span style="padding-right:5px;" t-field="o.employee_id.joining_date"/> and he is currently working as
+                                    <span style="padding-right:5px;" t-field="o.employee_id.job_id.name"/>.
+                                    His monthly gross salary is <span style="padding-right:5px;" t-field="o.gross_salary"/>  (
+                                   <span style="padding-right:5px;" t-field="o.num_word"/>Only) per month, divided by below:<br/>
+                                    <strong>Basic Salary:</strong>  <span style="padding-right:5px;" t-field="o.employee_id.contract_id.wage"/>
+                                    ( <span style="padding-right:5px;" t-field="o.wage_num_word"/> )<br/>
+                                    <strong>Housing /Other Allowance:</strong>
+                                    <span style="padding-right:5px;" t-field="o.all_allowances"/>
+                                    ( <span style="padding-right:5px;" t-field="o.allowances_num_word"/> )
+                                </p>
+                                <p>This certificate has been issued as per his request with no Liabilities on the company.</p>
+                                <div>
+                                    Kind regards,<br/>
+                                    for QSHIELD LLC.,<br/><br/>
+                                    NAME OF SIGNATORY: <span style="padding-right:5px;" t-field="o.signatory_id.name"/><br/>
+                                    DESIGNATION: <span style="padding-right:5px;" t-field="o.signatory_id.job_id.name"/>
+                                </div>
+                           </body>
+                        </html>
+
+                    </div>
+
+                </t>
+            </t>
+        </t>
+    </template>
+</odoo>
