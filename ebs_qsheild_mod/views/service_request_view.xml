@@ -54,7 +54,7 @@
 <!--                        <button name="request_progress" string="In Progress" type="object"-->
 <!--                                attrs="{'invisible':['|',('status','!=','hold')]}"/>-->
                         <button name="request_progress" string="In Progress" type="object"
-                                attrs="{'invisible': [('status', 'in', ['hold', 'draft', 'progress', 'complete'])]}"/>
+                                attrs="{'invisible': [('status', 'in', ['draft', 'progress', 'complete'])]}"/>
 
                         <button name="request_cancel" string="Cancel" type="object"
                                 attrs="{'invisible':[('status','!=','progress')]}"/>
@@ -453,7 +453,7 @@
 <!--&lt;!&ndash;                        <button name="request_progress" string="In Progress" type="object"&ndash;&gt;-->
 <!--                                attrs="{'invisible':['|',('status','!=','hold')]}"/>-->
                         <button name="request_progress" string="In Progress" type="object"
-                                attrs="{'invisible': [('status', 'in', ['hold', 'draft', 'progress', 'complete'])]}"/>
+                                attrs="{'invisible': [('status', 'in', ['draft', 'progress', 'complete'])]}"/>
 
                         <button name="request_cancel" string="Cancel" type="object"
                                 attrs="{'invisible':[('status','!=','progress')]}"/>

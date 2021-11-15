@@ -19,9 +19,9 @@
             <field name="priority">16</field>
             <field name="type">form</field>
             <field name="arch" type="xml">
-                <xpath expr="/form/header/button[@name='request_progress']" position="attributes">
-                    <attribute name="attrs">{'invisible': [('status', 'in', ['hold', 'draft', 'progress', 'complete'])]}</attribute>
-                </xpath>
+<!--                <xpath expr="/form/header/button[@name='request_progress']" position="attributes">-->
+<!--                    <attribute name="attrs">{'invisible': [('status', 'in', ['hold', 'draft', 'progress', 'complete'])]}</attribute>-->
+<!--                </xpath>-->
                 <xpath expr="//field[@name='is_miscellaneous']" position="after">
                     <field name="is_exceptional" attrs="{'invisible':[('status','!=', 'progress')]}"/>
                     <field name="is_escalated"/>
