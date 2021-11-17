@@ -75,7 +75,8 @@ class EBSHRLetterRequest(models.Model):
     allowances_num_word = fields.Char(string="Allowances In Words:", compute='_compute_amount_in_word', store=True)
 
     # amount in words
-    @api.onchange('employee_id')
+    @api.onchange('gross_salary', 'all_allowances','wage_num_word')
+    @api.depends('gross_salary', 'all_allowances','wage_num_word')
     def _compute_amount_in_word(self):
         for rec in self:
             rec.num_word = str(
