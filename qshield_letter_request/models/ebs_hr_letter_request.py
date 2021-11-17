@@ -70,11 +70,12 @@ class EBSHRLetterRequest(models.Model):
         ('ready_for_collection', 'Ready for Collection'),
         ('done', 'Done'),
         ('rejected', 'Rejected')], string='Status', readonly=True, default='draft', tracking=True)
-    num_word = fields.Char(string="Wage In Words:", compute='_compute_amount_in_word')
-    wage_num_word = fields.Char(string="Amount In Words:", compute='_compute_amount_in_word')
-    allowances_num_word = fields.Char(string="Allowances In Words:", compute='_compute_amount_in_word')
+    num_word = fields.Char(string="Wage In Words:", compute='_compute_amount_in_word', store=True)
+    wage_num_word = fields.Char(string="Amount In Words:", compute='_compute_amount_in_word', store=True)
+    allowances_num_word = fields.Char(string="Allowances In Words:", compute='_compute_amount_in_word', store=True)
 
     # amount in words
+    @api.onchange('employee_id')
     def _compute_amount_in_word(self):
         for rec in self:
             rec.num_word = str(
@@ -83,6 +84,7 @@ class EBSHRLetterRequest(models.Model):
                 rec.currency_id.with_context(lang='en_US').amount_to_text(rec.all_allowances)) + ' Qatari Riyals'
             rec.wage_num_word = str(rec.currency_id.with_context(lang='en_US').amount_to_text(
                 rec.employee_id.contract_id.wage)) + ' Qatari Riyals'
+            
 
     @api.onchange('employee_id')
     def _onchange_helpdesk_move_domain(self):
@@ -227,7 +229,7 @@ class EBSHRLetterRequest(models.Model):
                     if not rec.employee_id.joining_date:
                         raise ValidationError(_("Please, fill Employee's Joining date"))
                     if not rec.employee_id.contract_id.wage:
-                        raise ValidationError(_("Please, make sure that the Employee's salary information is filled"))
+                        raise ValidationError(_("Please, make sure that the Employee's Wage is filled"))
                     if not rec.gross_salary:
                         raise ValidationError(_("Please, make sure that the Employee's salary information is filled"))
                     if not rec.all_allowances:
