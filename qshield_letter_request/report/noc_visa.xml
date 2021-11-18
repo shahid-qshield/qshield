@@ -9,7 +9,7 @@
                             <style>
                                 body{
                                     text-align: justify;
-                                    font-size:16px
+                                    font-size:18px
                                 }
 
                             </style>
@@ -22,17 +22,17 @@
                                 </div>
 
                                 <div>
-                                    <p style="  line-height: 2;"><strong>To:
+                                    <p style="  line-height: 2;"><strong>To: Embassy Of
                                         <span style="padding-right:5px;" t-field="o.addressed_to"/><br/>
                                                 Doha, Qatar</strong></p>
                                 </div><br/>
 
                                 <div align="center" >
                                     <p style="line-height: 2;">
-                                        <strong>Subject: No Objection Letter for:
+                                        <strong style="font-size:18px">Subject: No Objection Letter for:
                                          <span style="padding-right:5px;" t-field="o.subject_from"/></strong>
                                     </p>
-                                </div>
+                                </div><br/>
                                 <div>
                                     <p>Dear Sir/Mam,</p>
                                 </div>
@@ -47,7 +47,7 @@
                                     He joined the company on
                                     <span style="padding-right:5px;" t-field="o.employee_id.joining_date"/>
                                     His monthly gross salary is <span style="padding-right:5px;" t-field="o.gross_salary"/>  (
-                                   <span style="padding-right:5px;" t-field="o.num_word"/> Qatari Riyals Only). <br/>
+                                   <span style="padding-right:5px;" t-field="o.num_word"/>). <br/><br/>
                                     Mr.  <span style="padding-right:5px;" t-field="o.employee_id.name"/>
                                     has expressed interest in visiting the country of
                                     <span style="padding-right:5px;" t-field="o.addressed_to"/>
@@ -55,15 +55,16 @@
                                     His travel date has been approved from
                                     <span style="padding-right:5px;" t-field="o.date_from"/>
                                     until <span style="padding-right:5px;" t-field="o.date_to"/>.
-                                </p>
+                                </p><br/><br/>
 
                                 <p>This certificate is being issued upon request of the above employee for whatever
                                     purpose it may serve him best with no liabilities on the company.</p>
+                                <br/><br/><br/><br/><br/>
                                 <div>
                                     Kind regards,<br/>
                                     for QSHIELD LLC.,<br/><br/>
-                                    NAME OF SIGNATORY: <span style="padding-right:5px;" t-field="o.signatory_id.name"/><br/>
-                                    DESIGNATION: <span style="padding-right:5px;" t-field="o.signatory_id.job_id.name"/>
+                                    <strong>NAME OF SIGNATORY:</strong> <span style="padding-right:5px;" t-field="o.signatory_id.name"/><br/>
+                                    <strong>DESIGNATION: </strong><span style="padding-right:5px;" t-field="o.signatory_id.job_id.name"/>
                                 </div>
                            </body>
                         </html>

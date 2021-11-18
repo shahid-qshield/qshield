@@ -9,7 +9,7 @@
                             <style>
                                 body{
                                     text-align: justify;
-                                    font-size:16px
+                                    font-size:18px
                                 }
 
                             </style>
@@ -35,7 +35,7 @@
                                 <div>
                                     <p>Dear Sir/Mam,</p>
                                 </div>
-                                <br/>
+
                                 <p style="line-height: 2;">
                                     We kindly request your office to provide Liquor permit for Mr.  <span style="padding-right:5px;" t-field="o.employee_id.name"/>,
                                     <span style="padding-right:5px;" t-field="o.employee_id.country_id.name"/> Nationality,
@@ -46,19 +46,19 @@
                                     <span style="padding-right:5px;" t-field="o.employee_id.joining_date"/> and he is currently working as
                                     <span style="padding-right:5px;" t-field="o.employee_id.job_id.name"/>.
                                     His monthly gross salary is <span style="padding-right:5px;" t-field="o.gross_salary"/>  (
-                                   <span style="padding-right:5px;" t-field="o.num_word"/>Only) per month, divided by below:<br/>
+                                   <span style="padding-right:5px;" t-field="o.num_word"/>Only) per month, divided by below:<br/><br/>
                                     <strong>Basic Salary:</strong>  <span style="padding-right:5px;" t-field="o.employee_id.contract_id.wage"/>
                                     ( <span style="padding-right:5px;" t-field="o.wage_num_word"/> )<br/>
                                     <strong>Housing /Other Allowance:</strong>
                                     <span style="padding-right:5px;" t-field="o.all_allowances"/>
                                     ( <span style="padding-right:5px;" t-field="o.allowances_num_word"/> )
-                                </p>
+                                </p><br/>
                                 <p>This certificate has been issued as per his request with no Liabilities on the company.</p>
-                                <div>
+                                <div><br/><br/><br/>
                                     Kind regards,<br/>
                                     for QSHIELD LLC.,<br/><br/>
-                                    NAME OF SIGNATORY: <span style="padding-right:5px;" t-field="o.signatory_id.name"/><br/>
-                                    DESIGNATION: <span style="padding-right:5px;" t-field="o.signatory_id.job_id.name"/>
+                                    <strong>NAME OF SIGNATORY:</strong> <span style="padding-right:5px;" t-field="o.signatory_id.name"/><br/>
+                                    <strong>DESIGNATION: </strong> <span style="padding-right:5px;" t-field="o.signatory_id.job_id.name"/>
                                 </div>
                            </body>
                         </html>

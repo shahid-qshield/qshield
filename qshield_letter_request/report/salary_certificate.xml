@@ -9,7 +9,7 @@
                             <style>
                                 body{
                                     text-align: justify;
-                                    font-size:16px
+                                    font-size:18px
                                 }
 
                             </style>
@@ -22,8 +22,8 @@
                                 </div>
 
                                 <div>
-                                    <p style="  line-height: 2;"><strong>ADDRESSED TO
-                                        <span style="padding-right:5px;" t-field="o.addressed_to"/><br/>
+                                    <p style="  line-height: 2;"><strong>ADDRESSED TO:
+                                        <span style="padding-right:7px;" t-field="o.addressed_to"/><br/>
                                         ADDRESS: <span style="padding-right:5px;" t-field="o.address"/>
                                         </strong></p>
                                 </div><br/>
@@ -37,7 +37,7 @@
                                 <div>
                                     <p>Dear Sir/Mam,</p>
                                 </div>
-                                <br/>
+
                                 <p style="line-height: 2;">
                                     This to confirm that Mr.  <span style="padding-right:5px;" t-field="o.employee_id.name"/>,
                                     <span style="padding-right:5px;" t-field="o.employee_id.country_id.name"/>Nationality,
@@ -50,14 +50,15 @@
                                     <span style="padding-right:5px;" t-field="o.employee_id.job_id.name"/>.
                                     His monthly salary amounts to <span style="padding-right:5px;" t-field="o.gross_salary"/>  (
                                    <span style="padding-right:5px;" t-field="o.num_word"/>Only) per monthly.
-                                </p>
+                                </p><br/>
                                 <p>This certificate is being issued upon request of the above employee for whatever
                                     purpose it may serve him best with no liabilities on the company.</p>
+                                <br/><br/><br/>
                                 <div>
-                                    Kind regards,<br/>
-                                    for QSHIELD LLC.,<br/><br/>
-                                    NAME OF SIGNATORY: <span style="padding-right:5px;" t-field="o.signatory_id.name"/><br/>
-                                    DESIGNATION: <span style="padding-right:5px;" t-field="o.signatory_id.job_id.name"/>
+                                    Yours faithfully,<br/>
+                                    for <span style="padding-right:5px;" t-field="o.addressed_to"/>.,<br/><br/>
+                                    <strong>NAME OF SIGNATORY:</strong> <span style="padding-right:5px;" t-field="o.signatory_id.name"/><br/>
+                                    <strong>DESIGNATION: </strong> <span style="padding-right:5px;" t-field="o.signatory_id.job_id.name"/>
                                 </div>
                            </body>
                         </html>

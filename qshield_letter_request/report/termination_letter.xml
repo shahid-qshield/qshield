@@ -9,7 +9,7 @@
                             <style>
                                 body{
                                     text-align: justify;
-                                    font-size:16px
+                                    font-size:18px
                                 }
 
                             </style>
@@ -37,7 +37,6 @@
                                 <div>
                                     <p>Dear <span style="padding-right:5px;" t-field="o.employee_id.name"/>,</p>
                                 </div>
-                                <br/>
                                 <p style="line-height: 2;">
                                     We regret to inform you that your employment with QShield LLC is being terminated,
                                     effective on <span style="padding-right:5px;" t-field="o.termination_date"/>
@@ -51,18 +50,18 @@
 
                                 <p>Kindly ensure to clear any liability under your name, such as car, traffic violation,
                                     bank loan/credit card and dependents. Please provide clearance letter from
-                                    <span style="padding-right:5px;" t-field="o.bank_name"/>
+                                    <span style="padding-right:5px;" t-field="o.bank_name"/>.
 
-                                </p>
+                                </p><br/>
 
                                 <p>
                                     We would like to thank you for your service and wish you all the luck in your
-                                    future endeavor.</p>
+                                    future endeavor.</p><br/><br/><br/><br/>
                                 <div>
                                     Kind regards,<br/>
                                     for QSHIELD LLC.,<br/><br/>
-                                    NAME OF SIGNATORY: <span style="padding-right:5px;" t-field="o.signatory_id.name"/><br/>
-                                    DESIGNATION: <span style="padding-right:5px;" t-field="o.signatory_id.job_id.name"/>
+                                    <strong>NAME OF SIGNATORY:</strong> <span style="padding-right:5px;" t-field="o.signatory_id.name"/><br/>
+                                    <strong>DESIGNATION: </strong> <span style="padding-right:5px;" t-field="o.signatory_id.job_id.name"/>
                                 </div>
                            </body>
                         </html>
