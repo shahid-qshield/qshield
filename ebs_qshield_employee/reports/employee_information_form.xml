@@ -351,14 +351,14 @@
                             <!--                                <span style="display: inline-block;padding-right: 40px;"-->
                             <!--                                      t-field="o.partner_id.passport_doc.document_number"/>-->
                             <span style="display: inline-block;padding-right: 40px;"
-                                t-if="o.visa.visa_status"  t-field="o.visa.visa_status"/>
+                                  t-if="o.visa.visa_status" t-field="o.visa.visa_status"/>
                         </td>
                         <td style="padding:0px;">
                             <span>Expiry Date</span>
                         </td>
                         <td colspan="2" style="padding:0px;">
                             <span style="display: inline-block;padding-right: 40px;"
-                                    t-if="o.visa_expire"  t-field="o.visa_expire"/>
+                                  t-if="o.visa_expire" t-field="o.visa_expire"/>
                             <!--                                <span style="display: inline-block;padding-right: 40px;"-->
                             <!--                                      t-field="o.partner_id.passport_exp_date"/>-->
                         </td>
@@ -406,8 +406,10 @@
                                   t-field="i.gender"/>
                         </td>
                         <td style="padding:0px;">
-                            <span style="display: inline-block;padding-right: 40px;"
-                                  t-esc="i.dob.strftime('%d-%m-%Y')"/>
+                            <t t-if="i.dob">
+                                <span style="display: inline-block;padding-right: 40px;"
+                                      t-esc="i.dob.strftime('%d-%m-%Y')"/>
+                            </t>
                         </td>
                         <td style="padding:0px;">
                             <span t-if="i.accompany == true" style="display: inline-block;padding-right: 40px;">
