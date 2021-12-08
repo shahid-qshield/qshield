@@ -168,7 +168,7 @@
                         >
                             <tree>
                                 <field name="name"/>
-                                 <field name="qatar_id_doc"/>
+                                <field name="qatar_id_doc"/>
                                 <field name="qatarid_exp_date"/>
                                 <field name="date" string="Date of Birth"/>
                                 <field name="gender"/>
@@ -186,8 +186,8 @@
                             <tree>
                                 <field name="name"/>
                                 <field name="parent_id"/>
-                                 <field name="qatar_id_doc"/>
-                                 <field name="qatarid_exp_date"/>
+                                <field name="qatar_id_doc"/>
+                                <field name="qatarid_exp_date"/>
                                 <field name="date" string="Date of Birth"/>
                                 <field name="gender"/>
                                 <field name="image_1920" widget="image" height="30"/>
@@ -210,7 +210,7 @@
                         }">
                             <tree>
                                 <field name="name"/>
-                                 <field name="qatar_id_doc"/>
+                                <field name="qatar_id_doc"/>
                                 <field name="qatarid_exp_date"/>
                                 <field name="date" string="Date of Birth"/>
                                 <field name="gender"/>
@@ -244,8 +244,6 @@
 
                 <xpath expr="//sheet//group//group[1]" position="replace">
                     <group>
-<!--                        add type field by bhavesh parmar-->
-                        <field name="type" invisible="1"/>
                         <field name="is_miscellaneous"/>
                         <field name="parent_id" readonly="context.get('readonly_parent_id', False)"
                                string="Related Contact"
@@ -263,7 +261,7 @@
 
                         <field name="contact_relation_type_id" attrs="{'invisible':[('person_type','!=','child')]}"/>
                         <field name="date_join" attrs="{'invisible':[('person_type','!=','emp')]}"/>
-                        <field  name="date_stop_renew"/>
+                        <field name="date_stop_renew"/>
                         <field name="date_termination" attrs="{'invisible':[('person_type','!=','emp')]}"/>
 
                         <field name="passport_doc" options="{'no_create': True, 'no_create_edit':True}"
@@ -374,7 +372,7 @@
                 </xpath>
                 <xpath expr="//tree//field[@name='email']" position="after">
                     <field name="person_type" string="Type" optional="show"/>
-                    <field  name="date_stop_renew" optional="hide"/>
+                    <field name="date_stop_renew" optional="hide"/>
                 </xpath>
                 <xpath expr="//tree//field[@name='person_type']" position="after">
                     <field name="image_1920" widget="image" height="30"/>
