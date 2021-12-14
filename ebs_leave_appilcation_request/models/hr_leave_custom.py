@@ -2,6 +2,11 @@ from dateutil import relativedelta
 from odoo import models, fields, api
 from datetime import date, datetime
 
+class HrEmployeeBase(models.AbstractModel):
+    _inherit = "hr.employee.base"
+
+    current_leave_state = fields.Selection(selection_add=[('finance', 'Finance')])
+
 
 class HRLeaveCustom(models.Model):
     _inherit = 'hr.leave'
