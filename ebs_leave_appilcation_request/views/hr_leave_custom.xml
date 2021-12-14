@@ -5,22 +5,22 @@
             <field name="model">hr.leave</field>
             <field name="inherit_id" ref="hr_holidays.hr_leave_view_form_manager_approve"/>
             <field name="arch" type="xml">
-                <field  name="name" position="after">
-<!--                    <field name="contact_while_away"/>-->
-<!--                    <field name="actual_departure"/>-->
-<!--                    <field name="air_ticket"/>-->
-<!--                    <field name="air_ticket_entitlement"/>-->
-<!--                    <field name="handover_required"/>-->
-<!--                    <field name="destination_to"/>-->
-<!--                    <field name="job_assigned_to"/>-->
-<!--                    <field name="total_days_approved" attrs="{'invisible': [('state', '=', 'draft')]}"/>-->
-<!--                    <field name="employee_outsource" invisible="1"/>-->
+                <field name="name" position="after">
+                    <!--                    <field name="contact_while_away"/>-->
+                    <!--                    <field name="actual_departure"/>-->
+                    <!--                    <field name="air_ticket"/>-->
+                    <!--                    <field name="air_ticket_entitlement"/>-->
+                    <!--                    <field name="handover_required"/>-->
+                    <!--                    <field name="destination_to"/>-->
+                    <!--                    <field name="job_assigned_to"/>-->
+                    <!--                    <field name="total_days_approved" attrs="{'invisible': [('state', '=', 'draft')]}"/>-->
+                    <!--                    <field name="employee_outsource" invisible="1"/>-->
                 </field>
 
                 <xpath expr="//header" position="inside">
                     <button name="action_finance_department" string="Confirm" type="object"
-                                    class="btn-primary" attrs="{'invisible': [('state','!=','finance')]}"
-                                    groups="ebs_leave_appilcation_request.group_finance_department_user"/>
+                            class="btn-primary" attrs="{'invisible': [('state','!=','finance')]}"
+                            groups="ebs_leave_appilcation_request.group_finance_department_user"/>
                 </xpath>
             </field>
         </record>
@@ -30,11 +30,14 @@
             <field name="model">hr.leave</field>
             <field name="inherit_id" ref="hr_holidays.hr_leave_view_form"/>
             <field name="arch" type="xml">
-                <xpath expr="//sheet"  position="inside">
+                <xpath expr="//sheet" position="inside">
                     <group>
                         <group>
                             <field name="contact_while_away"/>
                             <field name="actual_departure"/>
+                            <field name="employee_id" invisible="1"/>
+                            <field name="hr_contract" invisible="1"/>
+                            <field name="is_approved" invisible="1"/>
                             <field name="air_ticket"/>
                             <field name="air_ticket_entitlement"/>
                         </group>
@@ -42,7 +45,8 @@
                             <field name="handover_required"/>
                             <field name="destination_to"/>
                             <field name="job_assigned_to"/>
-<!--                            <field name="total_days_approved" attrs="{'invisible': [('state', '=', 'draft')]}"/>-->
+                            <field name="end_of_service_benefit"/>
+                            <!--                            <field name="total_days_approved" attrs="{'invisible': [('state', '=', 'draft')]}"/>-->
                             <field name="employee_outsource" invisible="1"/>
                         </group>
                     </group>
@@ -50,32 +54,32 @@
                 </xpath>
                 <xpath expr="//header" position="inside">
                     <button name="action_finance_department" string="Confirm" type="object"
-                                    class="btn-primary" attrs="{'invisible': [('state','!=','finance')]}"
-                                    groups="ebs_leave_appilcation_request.group_finance_department_user"/>
+                            class="btn-primary" attrs="{'invisible': [('state','!=','finance')]}"
+                            groups="ebs_leave_appilcation_request.group_finance_department_user"/>
                 </xpath>
             </field>
         </record>
 
-         <record id="hr_leave_view_form_manager" model="ir.ui.view">
+        <record id="hr_leave_view_form_manager" model="ir.ui.view">
             <field name="name">Manager Approval</field>
             <field name="model">hr.leave</field>
             <field name="inherit_id" ref="hr_holidays.hr_leave_view_form_manager"/>
             <field name="arch" type="xml">
-<!--                <field  name="name" position="after">-->
-<!--                    <field name="contact_while_away"/>-->
-<!--                    <field name="actual_departure"/>-->
-<!--                    <field name="air_ticket"/>-->
-<!--                    <field name="air_ticket_entitlement"/>-->
-<!--                    <field name="handover_required"/>-->
-<!--                    <field name="destination_to"/>-->
-<!--                    <field name="job_assigned_to"/>-->
-<!--                    <field name="total_days_approved" attrs="{'invisible': [('state', '=', 'draft')]}"/>-->
-<!--                    <field name="employee_outsource" invisible="1"/>-->
-<!--                </field>-->
+                <!--                <field  name="name" position="after">-->
+                <!--                    <field name="contact_while_away"/>-->
+                <!--                    <field name="actual_departure"/>-->
+                <!--                    <field name="air_ticket"/>-->
+                <!--                    <field name="air_ticket_entitlement"/>-->
+                <!--                    <field name="handover_required"/>-->
+                <!--                    <field name="destination_to"/>-->
+                <!--                    <field name="job_assigned_to"/>-->
+                <!--                    <field name="total_days_approved" attrs="{'invisible': [('state', '=', 'draft')]}"/>-->
+                <!--                    <field name="employee_outsource" invisible="1"/>-->
+                <!--                </field>-->
                 <xpath expr="//header" position="inside">
                     <button name="action_finance_department" string="Confirm" type="object"
-                                    class="btn-primary" attrs="{'invisible': [('state','!=','finance')]}"
-                                    groups="ebs_leave_appilcation_request.group_finance_department_user"/>
+                            class="btn-primary" attrs="{'invisible': [('state','!=','finance')]}"
+                            groups="ebs_leave_appilcation_request.group_finance_department_user"/>
                 </xpath>
             </field>
         </record>

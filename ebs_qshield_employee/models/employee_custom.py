@@ -52,7 +52,7 @@ class EmployeeCustom(models.Model):
         domain="['|', ('company_id', '=', False), ('company_id', '=', company_id)]")
     is_out_sourced = fields.Boolean(string="Out source ?", default=False)
 
-    joining_date = fields.Date(string="Joining Date", default=lambda self: fields.Datetime.now(), required=False )
+    joining_date = fields.Date(string="Joining Date", default=lambda self: fields.Datetime.now(), required=True)
     visa = fields.Many2one(comodel_name="visa.status", string="Visa Status", required=False, )
 
     def employee_information_form(self):

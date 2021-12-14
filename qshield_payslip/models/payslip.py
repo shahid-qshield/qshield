@@ -1,7 +1,4 @@
 from odoo import models, fields, api, _
-from datetime import datetime
-from dateutil.relativedelta import relativedelta
-from odoo.exceptions import ValidationError, UserError
 import logging
 
 _logger = logging.getLogger(__name__)
@@ -9,7 +6,7 @@ _logger = logging.getLogger(__name__)
 
 def get_years():
     year_list = []
-    for i in range(1990, 2036):
+    for i in range(2010, 2051):
         year_list.append((str(i), str(i)))
     _logger.info('testtest')
     _logger.info(year_list)
@@ -19,7 +16,10 @@ def get_years():
 class Payslip(models.Model):
     _name = 'qshield.payslip'
 
-    employee_id = fields.Many2one('hr.employee', required=True)
+    def _default_employee(self):
+        return self.env.context.get('default_employee_id')
+
+    employee_id = fields.Many2one('hr.employee', required=True, default=_default_employee)
     qid = fields.Char(related='employee_id.identification_id', string='QID')
     designation_id = fields.Many2one('hr.job', related='employee_id.job_id', string='Designation')
     contract_id = fields.Many2one('hr.contract', compute='_get_employee_contract')
@@ -76,6 +76,7 @@ class Payslip(models.Model):
     @api.onchange('employee_id')
     def _get_employee_contract(self):
         for record in self:
+            record.contract_id = False
             if record.employee_id:
                 contract = self.env['hr.contract'].search([
                     ('employee_id', '=', record.employee_id.id),
@@ -116,8 +117,10 @@ class Payslip(models.Model):
     def _get_net_pay_in_words(self):
         text = ''
         for record in self:
-            text = record.currency_id.amount_to_text(record.net_pay) + ' Only'
-            record.net_pay_in_words = text
+            record.net_pay_in_words = ""
+            for each in record.currency_id:
+                text = each.amount_to_text(record.net_pay) + ' Only'
+                record.net_pay_in_words = text
 
     @api.onchange('employee_id')
     def _get_default_basic_salary_payable(self):
