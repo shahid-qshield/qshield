@@ -76,6 +76,7 @@ class Payslip(models.Model):
     @api.onchange('employee_id')
     def _get_employee_contract(self):
         for record in self:
+            record.contract_id = False
             if record.employee_id:
                 contract = self.env['hr.contract'].search([
                     ('employee_id', '=', record.employee_id.id),
@@ -116,8 +117,10 @@ class Payslip(models.Model):
     def _get_net_pay_in_words(self):
         text = ''
         for record in self:
-            text = record.currency_id.amount_to_text(record.net_pay) + ' Only'
-            record.net_pay_in_words = text
+            record.net_pay_in_words = ""
+            for each in record.currency_id:
+                text = each.amount_to_text(record.net_pay) + ' Only'
+                record.net_pay_in_words = text
 
     @api.onchange('employee_id')
     def _get_default_basic_salary_payable(self):
