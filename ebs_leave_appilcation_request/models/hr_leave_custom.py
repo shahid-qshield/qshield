@@ -3,6 +3,12 @@ from odoo import models, fields, api
 from datetime import date, datetime
 
 
+class HrEmployeeBase(models.AbstractModel):
+    _inherit = "hr.employee.base"
+
+    current_leave_state = fields.Selection(selection_add=[('finance', 'Finance')])
+
+
 class HRLeaveCustom(models.Model):
     _inherit = 'hr.leave'
 
@@ -53,21 +59,22 @@ class HRLeaveCustom(models.Model):
     #     print(self.number_of_days)
     #     print(self.requested_days_before_approve)
 
-        # return super(HRLeaveCustom, self).write(vals)
+    # return super(HRLeaveCustom, self).write(vals)
 
     @api.depends('employee_id', 'holiday_status_id')
     @api.onchange('employee_id', 'holiday_status_id')
     def get_total_days(self):
         total_allocation = 0
         allocations = self.env['hr.leave.allocation'].search([('employee_id', '=', self.employee_id.id),
-                                                             ('holiday_status_id', '=',
-                                                              self.holiday_status_id.id)]).mapped('number_of_days_display')
+                                                              ('holiday_status_id', '=',
+                                                               self.holiday_status_id.id)]).mapped(
+            'number_of_days_display')
         print(allocations)
         for allocation in allocations:
             total_allocation += allocation
 
         approved_leaves = self.env['hr.leave.report'].search([('employee_id', '=', self.employee_id.id),
-                                                             ('state', '=','validate')]).mapped('number_of_days')
+                                                              ('state', '=', 'validate')]).mapped('number_of_days')
         # number_of_leaves = self.env['hr.leave'].search([('employee_id', '=', self.employee_id.id),
         #                                                 ('holiday_status_id', '=',
         #                                                  self.holiday_status_id.id)]).mapped('number_of_days')
