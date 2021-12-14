@@ -316,6 +316,15 @@ class ContactCustom(models.Model):
         return res
 
     def write(self, vals):
+        if 'active' in vals:
+            if not vals['active']:
+                for user in self.user_ids:
+                    user.toggle_active()
+            elif vals['active']:
+                super(ContactCustom, self).write(vals)
+                user_ids = self.env['res.users'].search([('partner_id', '=', self.id), ('active', '=', False)])
+                for user in user_ids:
+                    user.toggle_active()
         if 'person_type' in vals:
             if self.person_type == "visitor" and vals['person_type'] == "emp":
                 self.message_post(body="Type Changed From Visitor to Employee")
