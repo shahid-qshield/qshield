@@ -1,0 +1,169 @@
+<odoo>
+    <data>
+        <record id="sale_order_form_view_inherit" model="ir.ui.view">
+            <field name="name">sale.order.form.view.inherit</field>
+            <field name="model">sale.order</field>
+            <field name="inherit_id" ref="sale.view_order_form"/>
+            <field name="arch" type="xml">
+
+                <xpath expr="//header" position="replace">
+                    <header>
+                        <field name="authorized_transaction_ids" invisible="1"/>
+                        <field name="is_approver_user" invisible="1"/>
+                        <field name="is_valid_for_agreement" invisible="1"/>
+                        <field name="user_status" invisible="1"/>
+                        <button name="payment_action_capture" type="object"
+                                string="Capture Transaction" class="oe_highlight"
+                                attrs="{'invisible': [('authorized_transaction_ids', '=', [])]}"/>
+                        <button name="payment_action_void" type="object"
+                                string="Void Transaction"
+                                confirm="Are you sure you want to void the authorized transaction? This action can't be undone."
+                                attrs="{'invisible': [('authorized_transaction_ids', '=', [])]}"/>
+                        <!--                        <button name="%(sale.action_view_sale_advance_payment_inv)d" string="Create Invoice"-->
+                        <!--                                type="action" class="btn-primary"-->
+                        <!--                                attrs="{'invisible': ['|',('invoice_status', '!=', 'to invoice'),'&amp;',('opportunity_id', '!=', False),'|',('invoice_status', '!=', 'to invoice'), ('state', '!=', 'submit_client_operation')]}"/>-->
+                        <!--                        <button name="%(sale.action_view_sale_advance_payment_inv)d" string="Create Invoice"-->
+                        <!--                                type="action"-->
+                        <!--                                context="{'default_advance_payment_method': 'percentage'}"-->
+                        <!--                                attrs="{'invisible': ['|','|',('state', '!=', 'sale'),('invoice_status', '!=', 'no'),'&amp;',('opportunity_id', '!=', False),'|',('invoice_status', '!=', 'no'), ('state', '!=', 'submit_client_operation')]}"/>-->
+                        <button name="%(sale.action_view_sale_advance_payment_inv)d" string="Create Invoice"
+                                type="action" class="btn-primary"
+                                attrs="{'invisible': ['|',('invoice_status', '!=', 'to invoice'),('opportunity_id', '!=', False)]}"/>
+                        <button name="%(sale.action_view_sale_advance_payment_inv)d" string="Create Invoice"
+                                type="action"
+                                context="{'default_advance_payment_method': 'percentage'}"
+                                attrs="{'invisible': ['|','|',('state', '!=', 'sale'),('invoice_status', '!=', 'no'),('opportunity_id', '!=', False)]}"/>
+                        <button name="action_quotation_send" string="Send by Email" type="object" class="btn-primary"
+                                attrs="{'invisible': ['|','&amp;',('opportunity_id', '=', False),('state', 'not in', ['draft']),'&amp;',('opportunity_id', '!=', False),('state', '!=',
+                                        'quotation_approved')]}"/>
+                        <button name="action_quotation_send" type="object" string="Send PRO-FORMA Invoice"
+                                groups="sale.group_proforma_sales" class="btn-primary"
+                                attrs="{'invisible': ['|','|', ('state', '!=', 'draft'), ('invoice_count','&gt;=',1),'&amp;',('opportunity_id', '!=', False),('state', '!=',
+                                        'quotation_approved')]}"
+                                context="{'proforma': True}"/>
+                        <button name="action_confirm" id="action_confirm"
+                                string="Confirm" class="btn-primary" type="object"
+                                attrs="{'invisible': [('state', 'not in', ['sent'])]}"/>
+                        <button name="action_confirm"
+                                string="Confirm" type="object"
+                                attrs="{'invisible': ['|','&amp;',('opportunity_id', '=', False),('state', 'not in', ['draft']),'&amp;',('opportunity_id', '!=', False),('state', '!=',
+                                        'quotation_approved')]}"/>
+                        <button name="action_quotation_send" type="object" string="Send PRO-FORMA Invoice"
+                                groups="sale.group_proforma_sales"
+                                attrs="{'invisible': ['|','|', ('state', '!=', 'draft'), ('invoice_count','&gt;=',1),'&amp;',('opportunity_id', '!=', False),('state', '!=',
+                                        'quotation_approved')]}"
+                                context="{'proforma': True}"/>
+                        <button name="action_quotation_send" string="Send by Email" type="object"
+                                attrs="{'invisible': ['|','&amp;',('opportunity_id', '=', False),('state', 'not in',
+                                        ['sent','sale']),'&amp;',('opportunity_id', '!=', False),('state', '!=',
+                                        'done')]}"/>
+                        <button name="action_cancel" type="object" string="Cancel"
+                                attrs="{'invisible': ['|','&amp;',('opportunity_id', '=', False),('state','not in',['draft','sent','sale']),'&amp;',('opportunity_id', '!=', False),('state', 'in',
+                                        ['cancel','done'])]}"
+                                groups="qshield_crm.qshield_crm_sales_person,qshield_crm.qshield_crm_management"/>
+                        <button name="action_draft" states="cancel" type="object" string="Set to Quotation"
+                                groups="sales_team.group_sale_manager,qshield_crm.qshield_crm_management"/>
+                        <button name="action_done" type="object" string="Lock"
+                                help="If the sale is locked, you can not modify it anymore. However, you will still be able to invoice or deliver."
+                                groups="sales_team.group_sale_manager,qshield_crm.qshield_crm_management"
+                                attrs="{'invisible' :[('opportunity_id','!=',False)]}"/>
+                        <button name="action_unlock" type="object" string="Unlock" states="done"
+                                groups="sales_team.group_sale_manager,qshield_crm.qshield_crm_management"/>
+                        <button name="submit_quotation" string="Submit to Approve" type="object"
+                                attrs="{'invisible': ['|',('state','!=','draft'),('opportunity_id','=',False)]}"
+                                groups="qshield_crm.qshield_crm_sales_person"/>
+                        <button name="approve_quotation" string="Approve" type="object"
+                                attrs="{'invisible':['|',('is_approver_user','!=',True),'|',('user_status','!=','pending'),('state','!=','quotation_submit')]}"
+                                groups="qshield_crm.qshield_crm_management"/>
+                        <button name="%(action_refuse_quotation)d" string="Refuse" type="action"
+                                attrs="{'invisible':['|',('is_approver_user','!=',True),'|',('user_status','!=','pending'),('state','!=','quotation_submit')]}"
+                                groups="qshield_crm.qshield_crm_management"/>
+                        <button name="submit_agreement" string="Submit to Approval Agreement" type="object"
+                                attrs="{'invisible': ['|',('state','not in',['sent','sale']),('is_valid_for_agreement','=',False)]}"
+                                groups="qshield_crm.qshield_crm_sales_person"/>
+                        <button name="approve_agreement" string="Approve Agreement" type="object"
+                                attrs="{'invisible':['|','|',('is_valid_for_agreement','=',False),('is_approver_user','!=',True),'&amp;',('is_approver_user','=',True),'|',('state','!=','agreement_submit'),('user_status','!=','pending')]}"
+                                groups="qshield_crm.qshield_crm_management"/>
+                        <button name="%(action_refuse_quotation)d" string="Refuse Agreement" type="action"
+                                attrs="{'invisible':['|','|',('is_valid_for_agreement','=',False),('is_approver_user','!=',True),'&amp;',('is_approver_user','=',True),'|',('state','!=','agreement_submit'),('user_status','!=','pending')]}"
+                                groups="qshield_crm.qshield_crm_management"/>
+                        <field name="state" widget="statusbar" statusbar_visible="draft,sent,sale"
+                               attrs="{'invisible': [('opportunity_id', '!=', False)]}"/>
+                        <field name="qshield_crm_state" widget="statusbar"
+                               statusbar_visible="draft,quotation_submit,quotation_approved,sent,sale,agreement_submit,submit_client_operation,done,cancel"
+                               attrs="{'invisible': [('opportunity_id', '=', False)]}"/>
+                        <button name="%(action_create_multiple_invoice)d" string="Create Invoices" type="action"
+                                attrs="{'invisible':['|','|',('invoice_status', '!=', 'to invoice'),('state', '!=', 'submit_client_operation'),'|',('invoice_term_ids','=',False),('opportunity_id','=',False)]}"/>
+                    </header>
+                </xpath>
+
+                <field name="payment_term_id" position="after">
+                    <field name="account_manager" attrs="{'invisible': [('state','!=','submit_client_operation')]}"/>
+                    <field name="due_date" attrs="{'invisible': [('state','!=','submit_client_operation')]}"/>
+                    <field name="approver_setting_id" attrs="{'invisible': [('opportunity_id','=',False)]}"
+                           options='{"no_open": True, "no_create": True}'/>
+                    <field name="refuse_quotation_reason"
+                           attrs="{'invisible': ['|',('refuse_quotation_reason','=',False),('opportunity_id','=',False)]}"/>
+                    <field name="refuse_agreement_reason"
+                           attrs="{'invisible': [('refuse_agreement_reason','=',False)]}"/>
+                </field>
+
+                <field name="invoice_status" position="attributes">
+                    <attribute name="states">sale,done,submit_client_operation</attribute>
+                </field>
+
+                <xpath expr="//notebook" position="inside">
+                    <page name="approvers" string="Approvers" attrs="{'invisible':[('opportunity_id','=',False)]}">
+                        <field name="approver_ids" readonly="1" force_save="1"
+                               style="pointer-events:None;">
+                            <tree>
+                                <field name="user_id"/>
+                                <field name="approval_date"/>
+                                <field name="status"/>
+                            </tree>
+                        </field>
+                    </page>
+                    <page name="invoice_terms" string="Invoice Terms"
+                          attrs="{'invisible':[('opportunity_id','=',False)]}">
+                        <field name="invoice_term_ids">
+                            <tree editable="bottom">
+                                <field name="name"/>
+                                <field name="type"/>
+                                <field name="invoice_amount_type"/>
+                                <field name="percentage"
+                                       attrs="{'invisible' : ['|',('type','!=','down'),('invoice_amount_type','!=','percentage')]}"/>
+                                <field name="amount" attrs="{'invisible' : ['|',('type','!=','down'),('invoice_amount_type','!=','amount')]}"/>
+                                <field name="to_invoice"/>
+                                <field name="invoice_id" readonly="1"/>
+                            </tree>
+                        </field>
+                    </page>
+                </xpath>
+            </field>
+        </record>
+
+        <!--  Server Action of Create Invoice from sale order-->
+        <record id="create_invoice_server_action_sale_order" model="ir.actions.server">
+            <field name="name">Create Invoice Individual</field>
+            <field name="type">ir.actions.server</field>
+            <field name="state">code</field>
+            <field name="model_id" ref="qshield_crm.model_sale_order"/>
+            <field name="binding_model_id" ref="sale.model_sale_order"/>
+            <field name="binding_view_types">list</field>
+            <field name="code">
+                action = records.create_invoice_from_server_action()
+            </field>
+        </record>
+
+
+        <record id="action_to_invoice_sale_orders" model="ir.actions.act_window">
+            <field name="name">To invoice Sale Orders</field>
+            <field name="type">ir.actions.act_window</field>
+            <field name="res_model">sale.order</field>
+            <field name="view_mode">tree,form</field>
+            <field name="domain">[('account_manager.user_id','=',uid),('invoice_status','=','to invoice')]</field>
+        </record>
+        <menuitem name="To invoice Sale Order" id="to_invoice_orders" parent="sale.sale_order_menu"
+                  action="qshield_crm.action_to_invoice_sale_orders"/>
+    </data>
+</odoo>

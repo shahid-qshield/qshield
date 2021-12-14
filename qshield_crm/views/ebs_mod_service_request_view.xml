@@ -1,0 +1,16 @@
+<odoo>
+    <data>
+
+        <record id="service_request_type_form_custom_inherit" model="ir.ui.view">
+            <field name="name">service.request.type.form.custom.inherit</field>
+            <field name="model">ebs_mod.service.types</field>
+            <field name="inherit_id" ref="ebs_qsheild_mod.service_type_form"/>
+            <field name="arch" type="xml">
+                <field name="consolidation_id" position="after">
+                    <field name="product_id" context="{'is_service' : 1}"/>
+                </field>
+            </field>
+        </record>
+
+    </data>
+</odoo>
