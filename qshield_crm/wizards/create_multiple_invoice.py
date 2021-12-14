@@ -18,6 +18,16 @@ class CreateMultipleInvoice(models.TransientModel):
     product_id = fields.Many2one('product.product', string='Down Payment Product', domain=[('type', '=', 'service')],
                                  default=_default_product_id)
 
+    def _prepare_deposit_product(self):
+        return {
+            'name': 'Down payment',
+            'type': 'service',
+            'invoice_policy': 'order',
+            'property_account_income_id': self.product_id.property_account_income_id.id,
+            'taxes_id': [(6, 0, self.product_id.taxes_id.ids)],
+            'company_id': False,
+        }
+
     def create_invoices(self):
         if self.invoice_term_ids:
             for invoice_term in self.invoice_term_ids:
