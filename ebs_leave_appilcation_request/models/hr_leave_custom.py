@@ -3,18 +3,12 @@ from odoo import models, fields, api
 from datetime import date, datetime
 
 
-class HrEmployeeBase(models.AbstractModel):
-    _inherit = "hr.employee.base"
-
-    current_leave_state = fields.Selection(selection_add=[('finance', 'Finance')])
-
-
 class HRLeaveCustom(models.Model):
     _inherit = 'hr.leave'
 
     contact_while_away = fields.Char(string="Contact # while away", default="", required=False, )
     actual_departure = fields.Date(string="Actual Departure", default=lambda self: fields.Datetime.now(),
-                                   required=False)
+                                   related='request_date_from', required=False, readonly=False)
     # air_ticket = fields.Boolean(string="Air Ticket ?", default=False)
     air_ticket = fields.Selection(string="Air Ticket ?", default="",
                                   selection=[('y', 'Yes'), ('n', 'No')], required=False)
@@ -35,9 +29,12 @@ class HRLeaveCustom(models.Model):
     requested_days_before_approve = fields.Float(string="", default=0)
     terms_of_payments = fields.Integer(string="", default=0, required=False, )
     balance_amount = fields.Float(string="", store=True)
+    end_of_service_benefit = fields.Float(store=True)
     state = fields.Selection(selection_add=[('finance', 'Finance')])
 
     total_number_of_approved_leave_days = fields.Float(string="get_total_days", default=0)
+    hr_contract = fields.Many2one('hr.contract', related="employee_id.contract_id")
+    is_approved = fields.Boolean(default=False)
 
     # @api.depends('total_days_approved')
     # @api.onchange('total_days_approved')
@@ -69,7 +66,6 @@ class HRLeaveCustom(models.Model):
                                                               ('holiday_status_id', '=',
                                                                self.holiday_status_id.id)]).mapped(
             'number_of_days_display')
-        print(allocations)
         for allocation in allocations:
             total_allocation += allocation
 
@@ -104,12 +100,31 @@ class HRLeaveCustom(models.Model):
 
     def action_validate(self):
         super(HRLeaveCustom, self).action_validate()
+        if self.hr_contract.ticket_balance:
+            print("here")
+            self.is_approved = True
+            self.hr_contract.ticket_balance -= 1
         self.approved_date = datetime.today()
         if not self.employee_id.is_out_sourced:
             self.state = 'finance'
 
+    def action_refuse(self):
+        super(HRLeaveCustom, self).action_refuse()
+        if self.is_approved and self.hr_contract.ticket_balance:
+            self.is_approved = False
+            self.hr_contract.ticket_balance += 1
+
     def action_finance_department(self):
         self.state = 'validate'
+
+    # @api.onchange("state")
+    # @api.depends("state")
+    # def _onchange_state(self):
+    #     print(self)
+    #     for rec in self:
+    #         print(rec.state)
+    #         if rec.state == 'validate':
+    #             print("valid")
 
 
 class HRLeaveTypeCustom(models.Model):

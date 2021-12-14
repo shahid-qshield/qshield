@@ -87,6 +87,7 @@
                                 <field name="priority" widget="priority"/>
                                 <field name="company_id" groups="base.group_multi_company"/>
                                 <field name="bank_name"/>
+                                <field name="end_of_service_benefit"/>
                             </group>
                         </group>
                         <group>

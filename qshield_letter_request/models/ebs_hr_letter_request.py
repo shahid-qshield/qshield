@@ -73,6 +73,7 @@ class EBSHRLetterRequest(models.Model):
     num_word = fields.Char(string="Wage In Words:", compute='_compute_amount_in_word', store=True)
     wage_num_word = fields.Char(string="Amount In Words:", compute='_compute_amount_in_word', store=True)
     allowances_num_word = fields.Char(string="Allowances In Words:", compute='_compute_amount_in_word', store=True)
+    end_of_service_benefit = fields.Float(default=0.0, required=False)
 
     # amount in words
     @api.onchange('gross_salary', 'all_allowances','wage_num_word')
