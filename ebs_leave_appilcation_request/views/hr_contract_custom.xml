@@ -16,11 +16,12 @@
                             <group name="tickets" string="Tickets">
                                 <field name="eligible_for_ticket"/>
                                 <field name="ticket_period" attrs="{'invisible':[('eligible_for_ticket','=',False)]}"/>
-                                <field name="ticket_balance" attrs="{'invisible':[('eligible_for_ticket','=',False)]}"/>
+                                <field name="ticket_balance" attrs="{'invisible':[('eligible_for_ticket','=',False)]}"
+                                       readonly="1"/>
                             </group>
                             <group name="ticket_history" string="Ticket History">
-<!--                                <label name="tickets_history"/>-->
-                                <field name="leave_id" nolabel="1">
+                                <!--                                <label name="tickets_history"/>-->
+                                <field name="leave_id" nolabel="1" readonly="1">
                                     <tree editable="bottom">
                                         <field name="id" invisible="1"/>
                                         <field name="actual_departure"/>
