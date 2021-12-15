@@ -11,27 +11,68 @@
 
 
         <template id="external_layout_header_inherit_cr"
-            inherit_id="web.internal_layout">
+                  inherit_id="web.internal_layout">
             <xpath expr="//div[@class='header']" position="replace">
                 <div class="header">
                     <div>
-                                    <t t-set="address_variable"
-                                       t-value="o.employee_id.company_id.country_id.name + ',' + o.employee_id.company_id.city"/>
-                                    <img src='/web/binary/company_logo'
-                                         style="width: 100px; height: 100px; top: -10px; left: 10px;"/>
+                        <!--                        <t t-set="address_variable"-->
+                        <!--                           t-value="o.employee_id.company_id.country_id.name + ',' + o.employee_id.company_id.city"/>-->
+                        <!--                                    <img src='/web/binary/company_logo'/>-->
+                        <img t-if="company.logo" t-att-src="image_data_uri(company.logo)"
+                             alt="Logo" style="width: 200px; height: 100px; top: -10px; left: 10px;"/>
 
-                                    <span style=" width:200px; float:right; top:0px;"
-                                          t-field="o.employee_id.company_id.street"/>
+                        <!--                        <span style=" width:200px; float:right; top:0px;"-->
+                        <!--                              t-field="o.employee_id.company_id.street"/>-->
 
-                                    <p>
-                                        <span style=" width:200px;float:right; margin-top: -50px; top:10px;"
-                                              t-esc="address_variable"/>
-                                    </p>
-                                    <p style=" width:200px;float:right; margin-top: -30px; top:10px;">Tel:
-                                        <span t-field="o.employee_id.company_id.phone"/>
-                                    </p>
+                        <!--                                    <p>-->
+                        <!--                                        <span style=" width:200px;float:right; margin-top: -50px; top:10px;"-->
+                        <!--                                              t-esc="address_variable"/>-->
+                        <!--                                    </p>-->
+                        <!--                                    <p style=" width:200px;float:right; margin-top: -30px; top:10px;">Tel:-->
+                        <!--                                        <span t-field="o.employee_id.company_id.phone"/>-->
+                        <!--                                    </p>-->
+                    </div>
 
-                                </div>
+                </div>
+            </xpath>
+            <xpath expr="//div[@class='header']" position="after">
+                <div t-attf-class="footer o_standard_footer o_company_#{company.id}_layout">
+                    <div class="text-center" style="border-top: 1px solid black;">
+                        <ul class="list-inline mb4">
+                            <li t-if="company.street" class="list-inline-item d-inline">
+                                <span class="o_force_ltr" t-field="company.street"/>
+                            </li>
+                            <li t-if="company.street2" class="list-inline-item d-inline">
+                                <span class="o_force_ltr" t-field="company.street2"/>
+                            </li>
+                            <li t-if="company.city" class="list-inline-item d-inline">
+                                <span class="o_force_ltr" t-field="company.city"/>
+                            </li>
+                            <li t-if="company.country_id" class="list-inline-item d-inline">
+                                <span class="o_force_ltr" t-field="company.country_id.name"/>
+                            </li>
+                            <li t-if="company.phone" class="list-inline-item d-inline">T:
+                                <span class="o_force_ltr" t-field="company.phone"/>
+                            </li>
+                            <li t-if="company.email" class="list-inline-item d-inline">E:
+                                <span t-field="company.email"/>
+                            </li>
+                            <li t-if="company.website" class="list-inline-item d-inline">W:
+                                <span t-field="company.website"/>
+                            </li>
+                            <li t-if="company.vat" class="list-inline-item d-inline"><t
+                                    t-esc="company.country_id.vat_label or 'Tax ID'"/>:
+                                <span t-field="company.vat"/>
+                            </li>
+                        </ul>
+
+                        <div t-if="report_type == 'pdf'" class="text-muted">
+                            Page:
+                            <span class="page"/>
+                            /
+                            <span class="topage"/>
+                        </div>
+                    </div>
                 </div>
             </xpath>
         </template>
@@ -99,201 +140,205 @@
                                         </td>
                                     </tr>
                                 </table>
-
-                                <table class="table table-sm" style="margin-top:10px;">
-                                    <thead>
-                                        <tr>
-                                            <th scope="col">Monthly Emoluments</th>
-                                            <th scope="col">Amount</th>
-                                            <th scope="col">Payable</th>
-                                        </tr>
-                                    </thead>
-
-                                    <tbody>
-                                        <tr>
-                                            <td>Basic Salary</td>
-                                            <td>
-                                                <span style=" margin-left: 60px;" t-field="o.basic_salary_amount"/>
-                                            </td>
-                                            <td>
-                                                <span style=" margin-left: 60px;" t-field="o.basic_salary_payable"/>
-                                            </td>
-                                        </tr>
-
-
-                                        <tr>
-                                            <td>Housing Allowance</td>
-                                            <td>
-                                                <span style=" margin-left: 60px;" t-field="o.housing_allowance_amount"/>
-                                            </td>
-                                            <td>
-                                                <span style=" margin-left: 60px;"
-                                                      t-field="o.housing_allowance_payable"/>
-                                            </td>
-                                        </tr>
-
-
-                                        <tr>
-                                            <td>Transport Allowance</td>
-                                            <td>
-                                                <span style=" margin-left: 60px;"
-                                                      t-field="o.transport_allowance_amount"/>
-                                            </td>
-                                            <td>
-                                                <span style=" margin-left: 60px;"
-                                                      t-field="o.transport_allowance_payable"/>
-                                            </td>
-                                        </tr>
-
-                                        <tr>
-                                            <td>Telephone Allowance</td>
-                                            <td>
-                                                <span style=" margin-left: 60px;"
-                                                      t-field="o.telephone_allowance_amount"/>
-                                            </td>
-                                            <td>
-                                                <span style=" margin-left: 60px;"
-                                                      t-field="o.telephone_allowance_payable"/>
-                                            </td>
-                                        </tr>
-
-
-                                        <tr>
-                                            <td>Petrol Allowance</td>
-                                            <td>
-                                                <span style=" margin-left: 60px;" t-field="o.petrol_allowance_amount"/>
-                                            </td>
-                                            <td>
-                                                <span style=" margin-left: 60px;" t-field="o.petrol_allowance_payable"/>
-                                            </td>
-                                        </tr>
-
-
-                                        <tr>
-                                            <td>Other Allowance</td>
-                                            <td>
-                                                <span style=" margin-left: 60px;" t-field="o.other_allowance_amount"/>
-                                            </td>
-                                            <td>
-                                                <span style=" margin-left: 60px;" t-field="o.other_allowance_payable"/>
-                                            </td>
-                                        </tr>
-
-
-                                    </tbody>
-                                </table>
-
-
-                                <table style="float:right; top:10px;">
-                                    <tr>
-                                        <td>
-                                            <h5>Gross Salary:</h5>
-                                        </td>
-
-                                        <td>
-                                            <span style=" margin-left: 60px;" t-field="o.gross_salary"/>
-                                        </td>
-                                    </tr>
-                                </table>
-
-                                <table class="table table-sm">
-                                    <thead>
-                                        <tr>
-                                            <th scope="col">Earnings</th>
-                                            <th scope="col">Amount</th>
-                                            <th scope="col">Payable</th>
-                                        </tr>
-                                    </thead>
-
-                                    <tbody>
-                                        <t t-foreach="o.earning_ids" t-as="earning">
+                                <t t-if="o.contract_id">
+                                    <table class="table table-sm" style="margin-top:10px;">
+                                        <thead>
                                             <tr>
+                                                <th scope="col">Monthly Emoluments</th>
+                                                <th scope="col">Amount</th>
+                                                <th scope="col">Payable</th>
+                                            </tr>
+                                        </thead>
+                                        <tbody>
+                                            <tr>
+                                                <td>Basic Salary</td>
                                                 <td>
-                                                    <span style=" margin-left: 60px;" t-field="earning.name"/>
+                                                    <span style=" margin-left: 60px;" t-field="o.basic_salary_amount"/>
                                                 </td>
                                                 <td>
-                                                    <span style=" margin-left: 60px;" t-field="earning.amount"/>
-                                                </td>
-                                                <td>
-                                                    <span style=" margin-left: 60px;" t-field="earning.payable"/>
+                                                    <span style=" margin-left: 60px;" t-field="o.basic_salary_payable"/>
                                                 </td>
                                             </tr>
-                                        </t>
-                                    </tbody>
-                                </table>
 
-                                <table style="float:right; top:10px;">
-                                    <tr>
-                                        <td>
-                                            <h5>Total Earning:</h5>
-                                        </td>
 
-                                        <td>
-                                            <span style=" margin-left: 60px;" t-field="o.total_earning"/>
-                                        </td>
-                                    </tr>
-                                </table>
-
-                                <table class="table table-sm">
-                                    <thead>
-                                        <tr>
-                                            <th scope="col">Deduction</th>
-                                            <th scope="col">Amount</th>
-                                            <th scope="col">Payable</th>
-                                        </tr>
-                                    </thead>
-
-                                    <tbody>
-                                        <t t-foreach="o.deduction_ids" t-as="deduction">
                                             <tr>
+                                                <td>Housing Allowance</td>
                                                 <td>
-                                                    <span style=" margin-left: 60px;" t-field="deduction.name"/>
+                                                    <span style=" margin-left: 60px;"
+                                                          t-field="o.housing_allowance_amount"/>
                                                 </td>
                                                 <td>
-                                                    <span style=" margin-left: 60px;" t-field="deduction.amount"/>
-                                                </td>
-                                                <td>
-                                                    <span style=" margin-left: 60px;" t-field="deduction.payable"/>
+                                                    <span style=" margin-left: 60px;"
+                                                          t-field="o.housing_allowance_payable"/>
                                                 </td>
                                             </tr>
-                                        </t>
-                                    </tbody>
-                                </table>
-
-                                <table style="float:right; top:10px;">
-                                    <tr>
-                                        <td>
-                                            <h5>Total Deduction:</h5>
-                                        </td>
-
-                                        <td>
-                                            <span style=" margin-left: 60px;" t-field="o.total_deduction"/>
-                                        </td>
-                                    </tr>
-                                </table>
 
 
-                                <table style="width:100%; float:left; border: 1px solid gray;">
-                                    <tr>
-                                        <td>
-                                            <h5>NET PAY:</h5>
-                                        </td>
+                                            <tr>
+                                                <td>Transport Allowance</td>
+                                                <td>
+                                                    <span style=" margin-left: 60px;"
+                                                          t-field="o.transport_allowance_amount"/>
+                                                </td>
+                                                <td>
+                                                    <span style=" margin-left: 60px;"
+                                                          t-field="o.transport_allowance_payable"/>
+                                                </td>
+                                            </tr>
 
-                                        <td>
-                                            <span style=" margin-left: 60px;" t-field="o.net_pay"/>
-                                        </td>
-                                    </tr>
-                                    <tr>
-                                        <td>
-                                            <h5>(in words)</h5>
-                                        </td>
+                                            <tr>
+                                                <td>Telephone Allowance</td>
+                                                <td>
+                                                    <span style=" margin-left: 60px;"
+                                                          t-field="o.telephone_allowance_amount"/>
+                                                </td>
+                                                <td>
+                                                    <span style=" margin-left: 60px;"
+                                                          t-field="o.telephone_allowance_payable"/>
+                                                </td>
+                                            </tr>
 
-                                        <td>
-                                            <span style=" margin-left: 60px;" t-field="o.net_pay_in_words"/>
-                                        </td>
-                                    </tr>
-                                </table>
 
+                                            <tr>
+                                                <td>Petrol Allowance</td>
+                                                <td>
+                                                    <span style=" margin-left: 60px;"
+                                                          t-field="o.petrol_allowance_amount"/>
+                                                </td>
+                                                <td>
+                                                    <span style=" margin-left: 60px;"
+                                                          t-field="o.petrol_allowance_payable"/>
+                                                </td>
+                                            </tr>
+
+
+                                            <tr>
+                                                <td>Other Allowance</td>
+                                                <td>
+                                                    <span style=" margin-left: 60px;"
+                                                          t-field="o.other_allowance_amount"/>
+                                                </td>
+                                                <td>
+                                                    <span style=" margin-left: 60px;"
+                                                          t-field="o.other_allowance_payable"/>
+                                                </td>
+                                            </tr>
+
+
+                                        </tbody>
+                                    </table>
+
+
+                                    <table style="float:right; top:10px;">
+                                        <tr>
+                                            <td>
+                                                <h5>Gross Salary:</h5>
+                                            </td>
+
+                                            <td>
+                                                <span style=" margin-left: 60px;" t-field="o.gross_salary"/>
+                                            </td>
+                                        </tr>
+                                    </table>
+
+                                    <table class="table table-sm">
+                                        <thead>
+                                            <tr>
+                                                <th scope="col">Earnings</th>
+                                                <th scope="col">Amount</th>
+                                                <th scope="col">Payable</th>
+                                            </tr>
+                                        </thead>
+
+                                        <tbody>
+                                            <t t-foreach="o.earning_ids" t-as="earning">
+                                                <tr>
+                                                    <td>
+                                                        <span style=" margin-left: 60px;" t-field="earning.name"/>
+                                                    </td>
+                                                    <td>
+                                                        <span style=" margin-left: 60px;" t-field="earning.amount"/>
+                                                    </td>
+                                                    <td>
+                                                        <span style=" margin-left: 60px;" t-field="earning.payable"/>
+                                                    </td>
+                                                </tr>
+                                            </t>
+                                        </tbody>
+                                    </table>
+
+                                    <table style="float:right; top:10px;">
+                                        <tr>
+                                            <td>
+                                                <h5>Total Earning:</h5>
+                                            </td>
+
+                                            <td>
+                                                <span style=" margin-left: 60px;" t-field="o.total_earning"/>
+                                            </td>
+                                        </tr>
+                                    </table>
+
+                                    <table class="table table-sm">
+                                        <thead>
+                                            <tr>
+                                                <th scope="col">Deduction</th>
+                                                <th scope="col">Amount</th>
+                                                <th scope="col">Payable</th>
+                                            </tr>
+                                        </thead>
+
+                                        <tbody>
+                                            <t t-foreach="o.deduction_ids" t-as="deduction">
+                                                <tr>
+                                                    <td>
+                                                        <span style=" margin-left: 60px;" t-field="deduction.name"/>
+                                                    </td>
+                                                    <td>
+                                                        <span style=" margin-left: 60px;" t-field="deduction.amount"/>
+                                                    </td>
+                                                    <td>
+                                                        <span style=" margin-left: 60px;" t-field="deduction.payable"/>
+                                                    </td>
+                                                </tr>
+                                            </t>
+                                        </tbody>
+                                    </table>
+
+                                    <table style="float:right; top:10px;">
+                                        <tr>
+                                            <td>
+                                                <h5>Total Deduction:</h5>
+                                            </td>
+
+                                            <td>
+                                                <span style=" margin-left: 60px;" t-field="o.total_deduction"/>
+                                            </td>
+                                        </tr>
+                                    </table>
+
+
+                                    <table style="width:100%; float:left; border: 1px solid gray;">
+                                        <tr>
+                                            <td>
+                                                <h5>NET PAY:</h5>
+                                            </td>
+
+                                            <td>
+                                                <span style=" margin-left: 60px;" t-field="o.net_pay"/>
+                                            </td>
+                                        </tr>
+                                        <tr>
+                                            <td>
+                                                <h5>(in words)</h5>
+                                            </td>
+
+                                            <td>
+                                                <span style=" margin-left: 60px;" t-field="o.net_pay_in_words"/>
+                                            </td>
+                                        </tr>
+                                    </table>
+                                </t>
                                 <table style="margin-top:10px; width:50%; float:left; border: 1px solid gray;">
                                     <thead>
                                         <tr style="border: 1px solid gray;">
