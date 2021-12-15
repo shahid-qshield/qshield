@@ -2,6 +2,7 @@ from dateutil import relativedelta
 from odoo import models, fields, api
 from datetime import date, datetime
 
+
 class HrEmployeeBase(models.AbstractModel):
     _inherit = "hr.employee.base"
 
@@ -66,41 +67,42 @@ class HRLeaveCustom(models.Model):
     @api.depends('employee_id', 'holiday_status_id')
     @api.onchange('employee_id', 'holiday_status_id')
     def get_total_days(self):
-        total_allocation = 0
-        allocations = self.env['hr.leave.allocation'].search([('employee_id', '=', self.employee_id.id),
-                                                              ('holiday_status_id', '=',
-                                                               self.holiday_status_id.id)]).mapped(
-            'number_of_days_display')
-        for allocation in allocations:
-            total_allocation += allocation
+        for record in self:
+            total_allocation = 0
+            allocations = self.env['hr.leave.allocation'].search([('employee_id', '=', record.employee_id.id),
+                                                                  ('holiday_status_id', '=',
+                                                                   record.holiday_status_id.id)]).mapped(
+                'number_of_days_display')
+            for allocation in allocations:
+                total_allocation += allocation
 
-        approved_leaves = self.env['hr.leave.report'].search([('employee_id', '=', self.employee_id.id),
-                                                              ('state', '=', 'validate')]).mapped('number_of_days')
-        # number_of_leaves = self.env['hr.leave'].search([('employee_id', '=', self.employee_id.id),
-        #                                                 ('holiday_status_id', '=',
-        #                                                  self.holiday_status_id.id)]).mapped('number_of_days')
-        # print(approved_leaves)
+            approved_leaves = self.env['hr.leave.report'].search([('employee_id', '=', record.employee_id.id),
+                                                                  ('state', '=', 'validate')]).mapped('number_of_days')
+            # number_of_leaves = self.env['hr.leave'].search([('employee_id', '=', self.employee_id.id),
+            #                                                 ('holiday_status_id', '=',
+            #                                                  self.holiday_status_id.id)]).mapped('number_of_days')
+            # print(approved_leaves)
 
-        self.total_number_of_approved_leave_days = 0
-        self.total_days_available = 0
-        for leave in approved_leaves:
-            if leave < 0:
-                self.total_number_of_approved_leave_days += leave
-        # print(self.total_number_of_approved_leave_days)
-        # print(allocation + self.total_number_of_approved_leave_days)
-        # print(self.total_days_available)
+            record.total_number_of_approved_leave_days = 0
+            record.total_days_available = 0
+            for leave in approved_leaves:
+                if leave < 0:
+                    record.total_number_of_approved_leave_days += leave
+            # print(self.total_number_of_approved_leave_days)
+            # print(allocation + self.total_number_of_approved_leave_days)
+            # print(self.total_days_available)
 
-        loanDate = self.env['hr.loan'].search([('employee_id', '=', self.employee_id.id),
-                                               ('state', '=', 'approve')]).date
-        loanInstallmentsNumber = self.env['hr.loan'].search([('employee_id', '=', self.employee_id.id),
-                                                             ('state', '=', 'approve')]).installment
-        balanceAmount = self.env['hr.loan'].search([('employee_id', '=', self.employee_id.id),
-                                                    ('state', '=', 'approve')]).balance_amount
+            loanDate = self.env['hr.loan'].search([('employee_id', '=', record.employee_id.id),
+                                                   ('state', '=', 'approve')]).date
+            loanInstallmentsNumber = self.env['hr.loan'].search([('employee_id', '=', record.employee_id.id),
+                                                                 ('state', '=', 'approve')]).installment
+            balanceAmount = self.env['hr.loan'].search([('employee_id', '=', record.employee_id.id),
+                                                        ('state', '=', 'approve')]).balance_amount
 
-        self.total_days_available = total_allocation + self.total_number_of_approved_leave_days
-        self.loan_date = loanDate
-        self.terms_of_payments = loanInstallmentsNumber
-        self.balance_amount = balanceAmount
+            record.total_days_available = total_allocation + record.total_number_of_approved_leave_days
+            record.loan_date = loanDate
+            record.terms_of_payments = loanInstallmentsNumber
+            record.balance_amount = balanceAmount
         # print(self.total_days_available)
 
     def action_validate(self):
