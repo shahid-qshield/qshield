@@ -8,1039 +8,1043 @@
             border-collapse: collapse;
             }
         </style>
-        <div class="page">
-            <h5 style="color:white;background-color:Black;text-align: center;">Employee Information Form</h5>
-            <p style="text-align: center;">
-                <strong>Section (1):</strong>
-                <span style="border-bottom: 4px double #000 !important;">
-                    Personal Information
-                </span>
-            </p>
-            <p style="text-align: left;margin-bottom: 0!important;">
-                <i>Please Complete the information in <strong>
-                    BLOCK LETTERS</strong>.
-                </i>
-            </p>
-            <div>
-                <table style="width:100%;border-collapse: collapse;border-spacing: 0;" cellspacing="0">
-                    <tr>
-                        <td style="padding:0px;">
-                            <span>Last Name</span>
-                        </td>
-                        <td style="padding:0px;">
-                            <span style="display: inline-block;padding-right: 40px;"
-                                  t-field="o.last_name"/>
-                        </td>
-                        <td style="padding:0px;">
-                            <span>First Name</span>
-                        </td>
-                        <td style="padding:0px;">
-                            <span style="display: inline-block;padding-right: 40px;"
-                                  t-field="o.first_name"/>
-                        </td>
-                        <td style="padding:0px;">
-                            <span>Middle Name</span>
-                        </td>
-                        <td style="padding:0px;">
-                            <span style="display: inline-block;padding-right: 40px;"
-                                  t-field="o.middle_name"/>
-                        </td>
-                    </tr>
-                    <tr>
-                        <td colspan="3" style="padding:0px;">
-                            <span>Gender</span>
-                        </td>
-                        <td colspan="2" style="padding:0px;">
-                            <span t-if="o.gender == 'male'">
-                                <span style="border:1px solid black;padding-right: 20px;background:Black;margin-left: 5px;margin-right: 5px;"/>
-                            </span>
-                            <span t-if="o.gender != 'male'">
-                                <span style="border:1px solid black;padding-right: 20px;margin-left: 5px;margin-right: 5px;"/>
-                            </span>
-                            <span style="display: inline-block;padding-right: 40px;">Male</span>
-                        </td>
-                        <td style="padding:0px;">
-                            <span t-if="o.gender == 'female'">
-                                <span style="border:1px solid black;padding-right: 20px;background:Black;margin-left: 5px;margin-right: 5px;"/>
-                            </span>
-                            <span t-if="o.gender != 'female'">
-                                <span style="border:1px solid black;padding-right: 20px;margin-left: 5px;margin-right: 5px;"/>
-                            </span>
-                            <span style="display: inline-block;padding-right: 40px;">Female</span>
-                        </td>
-                    </tr>
-                    <tr>
-                        <td style="padding:0px;">
-                            <span>Nationality</span>
-                        </td>
-                        <td colspan="2" style="padding:0px;">
-                            <span style="display: inline-block;padding-right: 40px;"
-                                  t-field="o.country_id.name"/>
-                        </td>
-                        <td colspan="2" style="padding:0px;">
-                            <span>Marital Status</span>
-                        </td>
-                        <td style="padding:0px;">
-                            <span style="display: inline-block;padding-right: 40px;"
-                                  t-field="o.marital"/>
-                        </td>
-                    </tr>
-                    <tr>
-                        <td style="padding:0px;">
-                            <span>Date of Birth</span>
-                        </td>
-                        <td colspan="2" style="padding:0px;">
-                            <span style="display: inline-block;padding-right: 40px;"
-                                  t-field="o.birthday"/>
-                        </td>
-                        <td style="padding:0px;">
-                            <span>Place of Birth</span>
-                        </td>
-                        <td colspan="2" style="padding:0px;">
-                            <span style="display: inline-block;padding-right: 40px;"
-                                  t-field="o.place_of_birth"/>
-                        </td>
-                    </tr>
-                    <tr>
-                        <td colspan="2" style="padding:0px;">
-                            <span>Home Leave Destination</span>
-                        </td>
-                        <td colspan="2" style="padding:0px;">
-                            <span style="display: inline-block;padding-right: 40px;"
-                                  t-field="o.home_leave_destination.name"/>
-                        </td>
-                        <td style="padding:0px;">
-                            <span>Religion</span>
-                        </td>
-                        <td style="padding:0px;">
-                            <span style="display: inline-block;padding-right: 40px;"
-                                  t-field="o.religion"/>
-                        </td>
-                    </tr>
-                    <tr>
-                        <td colspan="2" style="padding:0px;">
-                            <span>Do you posses a valid driving license?</span>
-                        </td>
-                        <td style="padding:0px;">
-                            <span t-if="o.driving_license">
-                                <span style="border:1px solid black;padding-right: 20px;background:Black;margin-left: 5px;margin-right: 5px;"/>
-                            </span>
-                            <span t-if="not o.driving_license">
-                                <span style="border:1px solid black;padding-right: 20px;margin-left: 5px;margin-right: 5px;"/>
-                            </span>
-                            <span style="display: inline-block;padding-right: 40px;">Yes</span>
-                        </td>
-                        <td style="padding:0px;">
-                            <span t-if="not o.driving_license">
-                                <span style="border:1px solid black;padding-right: 20px;background:Black;margin-left: 5px;margin-right: 5px;"/>
-                            </span>
-                            <span t-if="o.driving_license">
-                                <span style="border:1px solid black;padding-right: 20px;margin-left: 5px;margin-right: 5px;"/>
-                            </span>
-                            <span style="display: inline-block;padding-right: 40px;">No</span>
-                        </td>
-                        <td style="padding:0px;">
-                            <span>Country of issue</span>
-                        </td>
-                        <td style="padding:0px;">
-                            <span style="display: inline-block;padding-right: 40px;"
-                                  t-field="o.home_leave_destination.name"/>
-                        </td>
-                    </tr>
-                </table>
-            </div>
-            <br/>
-            <div>
-                <table style="width:100%;border-collapse: collapse;border-spacing: 0;" cellspacing="0">
-                    <tr style="background-color:Black;">
-                        <td colspan="6" style="padding:0px;">
-                            <span style="color:white;background-color:Black;text-align: left;">Address (QATAR)
-                            </span>
-                        </td>
-                    </tr>
-                    <tr>
-                        <td colspan="6" style="padding:0px;">
-                            <span style="display: inline-block;padding-right: 10px;"
-                                  t-field="o.address_home_id.street"/>
-                            -
-                            <span style="display: inline-block;padding-right: 10px;"
-                                  t-field="o.address_home_id.city"/>
-                            -
-                            <span style="display: inline-block;padding-right: 10px;"
-                                  t-field="o.address_home_id.state_id.name"/>
-                            -
-                            <span style="display: inline-block;padding-right: 10px;"
-                                  t-field="o.address_home_id.zip"/>
-                            -
-                            <span style="display: inline-block;padding-right: 10px;"
-                                  t-field="o.address_home_id.country_id.name"/>
-                        </td>
-                    </tr>
-                    <tr>
-                        <td colspan="6" style="padding:0px;">
-                            <span style="display: inline-block;padding-right: 40px;"
-                                  t-field="o.address_home_id.street2"/>
-                        </td>
-                    </tr>
-                    <tr>
-                        <td style="padding:0px;">
-                            <span>Nearest Land Mark</span>
-                        </td>
-                        <td colspan="5" style="padding:0px;">
-                            <span style="display: inline-block;padding-right: 40px;"
-                                  t-field="o.address_home_id.nearest_land_mark"/>
-                        </td>
-                    </tr>
-                    <tr>
-                        <td style="padding:0px;">
-                            <span>Telephone No.</span>
-                        </td>
-                        <td colspan="5" style="padding:0px;">
-                            <span style="display: inline-block;padding-right: 40px;"
-                                  t-field="o.address_home_id.phone"/>
-                        </td>
-                    </tr>
-                    <tr>
-                        <td style="padding:0px;">
-                            <span>Mobile No.</span>
-                        </td>
-                        <td colspan="5" style="padding:0px;">
-                            <span style="display: inline-block;padding-right: 40px;"
-                                  t-field="o.address_home_id.mobile"/>
-                        </td>
-                    </tr>
-                    <tr>
-                        <td style="padding:0px;">
-                            <span>Fax No.</span>
-                        </td>
-                        <td colspan="5" style="padding:0px;">
-                            <span style="display: inline-block;padding-right: 40px;"
-                                  t-field="o.address_home_id.fax_number"/>
-                        </td>
-                    </tr>
-                    <tr>
-                        <td style="padding:0px;">
-                            <span>Email</span>
-                        </td>
-                        <td colspan="5" style="padding:0px;">
-                            <span style="display: inline-block;padding-right: 40px;"
-                                  t-field="o.address_home_id.email"/>
-                        </td>
-                    </tr>
-                </table>
-            </div>
-            <br/>
-            <div>
-                <table style="width:100%;border-collapse: collapse;border-spacing: 0;" cellspacing="0">
-                    <tr style="background-color:Black;">
-                        <td colspan="6" style="padding:0px;">
-                            <span style="color:white;background-color:Black;text-align: left;">Address (Home
-                                Country)
-                            </span>
-                        </td>
-                    </tr>
-                    <tr>
-                        <td colspan="6" style="padding:0px;">
-                            <span style="display: inline-block;padding-right: 10px;"
-                                  t-field="o.address_home_country.street"/>
-                            -
-                            <span style="display: inline-block;padding-right: 10px;"
-                                  t-field="o.address_home_country.city"/>
-                            -
-                            <span style="display: inline-block;padding-right: 10px;"
-                                  t-field="o.address_home_country.state_id.name"/>
-                            -
-                            <span style="display: inline-block;padding-right: 10px;"
-                                  t-field="o.address_home_country.zip"/>
-                            -
-                            <span style="display: inline-block;padding-right: 10px;"
-                                  t-field="o.address_home_country.country_id.name"/>
-                        </td>
-                    </tr>
-                    <tr>
-                        <td colspan="6" style="padding:0px;">
-                            <span style="display: inline-block;padding-right: 40px;"
-                                  t-field="o.address_home_country.street2"/>
-                        </td>
-                    </tr>
-                    <tr>
-                        <td style="padding:0px;">
-                            <span>Nearest Land Mark</span>
-                        </td>
-                        <td colspan="5" style="padding:0px;">
-                            <span style="display: inline-block;padding-right: 40px;"
-                                  t-field="o.address_home_country.nearest_land_mark"/>
-                        </td>
-                    </tr>
-                    <tr>
-                        <td style="padding:0px;">
-                            <span>Telephone No.</span>
-                        </td>
-                        <td colspan="5" style="padding:0px;">
-                            <span style="display: inline-block;padding-right: 40px;"
-                                  t-field="o.address_home_country.phone"/>
-                        </td>
-                    </tr>
-                    <tr>
-                        <td style="padding:0px;">
-                            <span>Mobile No.</span>
-                        </td>
-                        <td colspan="5" style="padding:0px;">
-                            <span style="display: inline-block;padding-right: 40px;"
-                                  t-field="o.address_home_country.mobile"/>
-                        </td>
-                    </tr>
-                    <tr>
-                        <td style="padding:0px;">
-                            <span>Fax No.</span>
-                        </td>
-                        <td colspan="5" style="padding:0px;">
-                            <span style="display: inline-block;padding-right: 40px;"
-                                  t-field="o.address_home_country.fax_number"/>
-                        </td>
-                    </tr>
-                    <tr>
-                        <td style="padding:0px;">
-                            <span>Email</span>
-                        </td>
-                        <td colspan="5" style="padding:0px;">
-                            <span style="display: inline-block;padding-right: 40px;"
-                                  t-field="o.address_home_country.email"/>
-                        </td>
-                    </tr>
-                </table>
-            </div>
-            <br/>
-            <div>
-                <table style="width:100%;border-collapse: collapse;border-spacing: 0;" cellspacing="0">
-                    <tr style="background-color:Black;">
-                        <td colspan="6" style="padding:0px;">
-                            <span style="color:white;background-color:Black;text-align: left;">Citizenship</span>
-                        </td>
-                    </tr>
-                    <tr>
-                        <td style="padding:0px;">
-                            <span>Nationality</span>
-                        </td>
-                        <td colspan="5" style="padding:0px;">
-                            <span style="display: inline-block;padding-right: 40px;"
-                                  t-field="o.country_id.name"/>
-                        </td>
-                    </tr>
-                    <tr>
-                        <td style="padding:0px;">
-                            <span>Passport No.</span>
-                        </td>
-                        <td colspan="2" style="padding:0px;">
-                            <span style="display: inline-block;padding-right: 40px;"
-                                  t-field="o.partner_id.passport_doc.document_number"/>
-                        </td>
-                        <td style="padding:0px;">
-                            <span>Expiry Date</span>
-                        </td>
-                        <td colspan="2" style="padding:0px;">
-                            <span style="display: inline-block;padding-right: 40px;"
-                                  t-field="o.partner_id.passport_exp_date"/>
-                        </td>
-                    </tr>
-                    <tr>
-                        <td style="padding:0px;">
-                            <span>Visa Status</span>
-                        </td>
-                        <td colspan="2" style="padding:0px;">
-                            <!--                                <span style="display: inline-block;padding-right: 40px;"-->
-                            <!--                                      t-field="o.partner_id.passport_doc.document_number"/>-->
-                            <span style="display: inline-block;padding-right: 40px;"
-                                t-if="o.visa.visa_status"  t-field="o.visa.visa_status"/>
-                        </td>
-                        <td style="padding:0px;">
-                            <span>Expiry Date</span>
-                        </td>
-                        <td colspan="2" style="padding:0px;">
-                            <span style="display: inline-block;padding-right: 40px;"
-                                    t-if="o.visa_expire"  t-field="o.visa_expire"/>
-                            <!--                                <span style="display: inline-block;padding-right: 40px;"-->
-                            <!--                                      t-field="o.partner_id.passport_exp_date"/>-->
-                        </td>
-                    </tr>
-                </table>
-            </div>
-            <div style="page-break-after: always;"/>
-            <div>
-                <table style="width:100%;border-collapse: collapse;border-spacing: 0;" cellspacing="0">
-                    <tr style="background-color:Black;">
-                        <td colspan="6" style="padding:0px;">
-                            <span style="color:white;background-color:Black;text-align: left;">Family Data (if
-                                applicable)
-                            </span>
-                        </td>
-                    </tr>
-                    <tr>
-                        <td style="padding:0px;">
-                            <span style="margin-left:40px;"/>
-                        </td>
-                        <td style="padding:0px;">
-                            <span>Name</span>
-                        </td>
-                        <td style="padding:0px;">
-                            <span>Sex</span>
-                        </td>
-                        <td style="padding:0px;">
-                            <span>Date of Birth</span>
-                        </td>
-                        <td colspan="2" style="padding:0px;">
-                            <span>Are they Accompaning You?</span>
-                        </td>
-                    </tr>
-                    <tr t-foreach="o.dependant_id" t-as="i">
-                        <td style="padding:0px;">
-                            <span style="display: inline-block;padding-right: 60px;"
-                                  t-field="i.relation"/>
-                        </td>
-                        <td style="padding:0px;">
-                            <span style="display: inline-block;padding-right: 40px;"
-                                  t-field="i.name"/>
-                        </td>
-                        <td style="padding:0px;">
-                            <span style="display: inline-block;padding-right: 40px;"
-                                  t-field="i.gender"/>
-                        </td>
-                        <td style="padding:0px;">
-                            <span style="display: inline-block;padding-right: 40px;"
-                                  t-esc="i.dob.strftime('%d-%m-%Y')"/>
-                        </td>
-                        <td style="padding:0px;">
-                            <span t-if="i.accompany == true" style="display: inline-block;padding-right: 40px;">
-                                Yes
-                            </span>
-                            <span t-if="i.accompany == false" style="display: inline-block;padding-right: 40px;">
-                                No
-                            </span>
-                        </td>
-                    </tr>
-                </table>
-            </div>
-            <br/>
-            <div>
-                <table style="width:100%;border-collapse: collapse;border-spacing: 0;" cellspacing="0">
-                    <tr style="background-color:Black;">
-                        <td colspan="6" style="padding:0px;">
-                            <span style="color:white;background-color:Black;text-align: left;">Person(s) to be
-                                Contacted in Emergency (QATAR)
-                            </span>
-                        </td>
-                    </tr>
-                    <tr>
-                        <td style="padding:0px;">
-                            <span style="margin-left:40px;"/>
-                        </td>
-                        <td colspan="2" style="padding:0px;">
-                            <span>Person 1</span>
-                        </td>
-                        <td colspan="2" style="padding:0px;">
-                            <span>Person 2</span>
-                        </td>
-                    </tr>
-                    <tr>
-                        <td style="padding:0px;">
-                            <span>Name</span>
-                        </td>
-                        <td t-foreach="o.emergency_id" t-as="em" t-if="em.location == 'qatar'" colspan="2"
-                            style="padding:0px;">
-                            <span style="display: inline-block;padding-right: 40px;"
-                                  t-field="em.name"/>
-                        </td>
-                    </tr>
-                    <tr>
-                        <td style="padding:0px;">
-                            <span>Relationship</span>
-                        </td>
-                        <td t-foreach="o.emergency_id" t-as="em" t-if="em.location == 'qatar'" colspan="2"
-                            style="padding:0px;">
-                            <span style="display: inline-block;padding-right: 40px;"
-                                  t-field="em.relation"/>
-                        </td>
-                    </tr>
-                    <tr>
-                        <td style="padding:0px;">
-                            <span>Address</span>
-                        </td>
-                        <td t-foreach="o.emergency_id" t-as="em" t-if="em.location == 'qatar'" colspan="2"
-                            style="padding:0px;">
-                            <span style="display: inline-block;padding-right: 40px;"
-                                  t-field="em.address"/>
-                        </td>
-                    </tr>
-                    <tr>
-                        <td style="padding:0px;">
-                            <span>Telephone No.</span>
-                        </td>
-                        <td t-foreach="o.emergency_id" t-as="em" t-if="em.location == 'qatar'" colspan="2"
-                            style="padding:0px;">
-                            <span style="display: inline-block;padding-right: 40px;"
-                                  t-field="em.telephone"/>
-                        </td>
-                    </tr>
-                    <tr>
-                        <td style="padding:0px;">
-                            <span>Mobile No.</span>
-                        </td>
-                        <td t-foreach="o.emergency_id" t-as="em" t-if="em.location == 'qatar'" colspan="2"
-                            style="padding:0px;">
-                            <span style="display: inline-block;padding-right: 40px;"
-                                  t-field="em.mobile"/>
-                        </td>
-                    </tr>
-                    <tr>
-                        <td style="padding:0px;">
-                            <span>Fax</span>
-                        </td>
-                        <td t-foreach="o.emergency_id" t-as="em" t-if="em.location == 'qatar'" colspan="2"
-                            style="padding:0px;">
-                            <span style="display: inline-block;padding-right: 40px;"
-                                  t-field="em.fax"/>
-                        </td>
-                    </tr>
-                </table>
-            </div>
-            <br/>
-            <div>
-                <table style="width:100%;border-collapse: collapse;border-spacing: 0;" cellspacing="0">
-                    <tr style="background-color:Black;">
-                        <td colspan="6" style="padding:0px;">
-                            <span style="color:white;background-color:Black;text-align: left;">Person(s) to be
-                                Contacted in Emergency (Home Country)
-                            </span>
-                        </td>
-                    </tr>
-                    <tr>
-                        <td style="padding:0px;">
-                            <span style="margin-left:40px;"/>
-                        </td>
-                        <td colspan="2" style="padding:0px;">
-                            <span>Person 1</span>
-                        </td>
-                        <td colspan="2" style="padding:0px;">
-                            <span>Person 2</span>
-                        </td>
-                    </tr>
-                    <tr>
-                        <td style="padding:0px;">
-                            <span>Name</span>
-                        </td>
-                        <td t-foreach="o.emergency_id" t-as="em" t-if="em.location == 'home_country'" colspan="2"
-                            style="padding:0px;">
-                            <span style="display: inline-block;padding-right: 40px;"
-                                  t-field="em.name"/>
-                        </td>
-                    </tr>
-                    <tr>
-                        <td style="padding:0px;">
-                            <span>Relationship</span>
-                        </td>
-                        <td t-foreach="o.emergency_id" t-as="em" t-if="em.location == 'home_country'" colspan="2"
-                            style="padding:0px;">
-                            <span style="display: inline-block;padding-right: 40px;"
-                                  t-field="em.relation"/>
-                        </td>
-                    </tr>
-                    <tr>
-                        <td style="padding:0px;">
-                            <span>Address</span>
-                        </td>
-                        <td t-foreach="o.emergency_id" t-as="em" t-if="em.location == 'home_country'" colspan="2"
-                            style="padding:0px;">
-                            <span style="display: inline-block;padding-right: 40px;"
-                                  t-field="em.address"/>
-                        </td>
-                    </tr>
-                    <tr>
-                        <td style="padding:0px;">
-                            <span>Telephone No.</span>
-                        </td>
-                        <td t-foreach="o.emergency_id" t-as="em" t-if="em.location == 'home_country'" colspan="2"
-                            style="padding:0px;">
-                            <span style="display: inline-block;padding-right: 40px;"
-                                  t-field="em.telephone"/>
-                        </td>
-                    </tr>
-                    <tr>
-                        <td style="padding:0px;">
-                            <span>Mobile No.</span>
-                        </td>
-                        <td t-foreach="o.emergency_id" t-as="em" t-if="em.location == 'home_country'" colspan="2"
-                            style="padding:0px;">
-                            <span style="display: inline-block;padding-right: 40px;"
-                                  t-field="em.mobile"/>
-                        </td>
-                    </tr>
-                    <tr>
-                        <td style="padding:0px;">
-                            <span>Fax</span>
-                        </td>
-                        <td t-foreach="o.emergency_id" t-as="em" t-if="em.location == 'home_country'" colspan="2"
-                            style="padding:0px;">
-                            <span style="display: inline-block;padding-right: 40px;"
-                                  t-field="em.fax"/>
-                        </td>
-                    </tr>
-                </table>
-            </div>
-            <div style="page-break-after: always;"/>
-            <p style="text-align: center;">
-                <strong>Section (2):</strong>
-                <span style="border-bottom: 4px double #000 !important;">
-                    Professional Information
-                </span>
-            </p>
-            <br/>
-            <div>
-                <table style="width:100%;border-collapse: collapse;border-spacing: 0;" cellspacing="0">
-                    <tr style="background-color:Black;">
-                        <td colspan="6" style="padding:0px;">
-                            <span style="color:white;background-color:Black;text-align: left;">School, College,
-                                University
-                            </span>
-                        </td>
-                    </tr>
-                    <tr>
-                        <td style="padding:0px;">
-                            <span>Year</span>
-                        </td>
-                        <td style="padding:0px;">
-                            <span>Degree</span>
-                        </td>
-                        <td style="padding:0px;">
-                            <span>School/College</span>
-                        </td>
-                        <td style="padding:0px;">
-                            <span>University</span>
-                        </td>
-                    </tr>
-                    <tr t-foreach="o.education_id" t-as="i">
-                        <td style="padding:0px;">
-                            <span style="display: inline-block;padding-right: 60px;"
-                                  t-field="i.year"/>
-                        </td>
-                        <td style="padding:0px;">
-                            <span style="display: inline-block;padding-right: 40px;"
-                                  t-field="i.degree"/>
-                        </td>
-                        <td style="padding:0px;">
-                            <span style="display: inline-block;padding-right: 40px;"
-                                  t-field="i.school_college"/>
-                        </td>
-                        <td style="padding:0px;">
-                            <span style="display: inline-block;padding-right: 40px;"
-                                  t-field="i.university"/>
-                        </td>
-                    </tr>
-                </table>
-            </div>
-            <p>Please identify the most recent Courses or Professional Development Seminars if attended.</p>
-            <br/>
-            <div>
-                <table style="width:100%;border-collapse: collapse;border-spacing: 0;" cellspacing="0">
-                    <tr style="background-color:Black;">
-                        <td colspan="6" style="padding:0px;">
-                            <span style="color:white;background-color:Black;text-align: left;">Courses/Professional
-                                Development
-                            </span>
-                        </td>
-                    </tr>
-                    <tr>
-                        <td style="padding:0px;">
-                            <span>From</span>
-                        </td>
-                        <td style="padding:0px;">
-                            <span>To</span>
-                        </td>
-                        <td style="padding:0px;">
-                            <span>Course Title</span>
-                        </td>
-                        <td style="padding:0px;">
-                            <span>Institution</span>
-                        </td>
-                        <td style="padding:0px;">
-                            <span>Qualification</span>
-                        </td>
-                    </tr>
-                    <tr t-foreach="o.courses_id" t-as="i">
-                        <td style="padding:0px;">
-                            <span style="display: inline-block;padding-right: 60px;"
-                                  t-esc="i.from_date.strftime('%d-%m-%Y')"/>
-                        </td>
-                        <td style="padding:0px;">
-                            <span style="display: inline-block;padding-right: 40px;"
-                                  t-esc="i.to_date.strftime('%d-%m-%Y')"/>
-                        </td>
-                        <td style="padding:0px;">
-                            <span style="display: inline-block;padding-right: 40px;"
-                                  t-field="i.course_title"/>
-                        </td>
-                        <td style="padding:0px;">
-                            <span style="display: inline-block;padding-right: 40px;"
-                                  t-field="i.institution"/>
-                        </td>
-                        <td style="padding:0px;">
-                            <span style="display: inline-block;padding-right: 40px;"
-                                  t-field="i.qualification"/>
-                        </td>
-                    </tr>
-                </table>
-            </div>
-            <br/>
-            <div>
-                <table style="width:100%;border-collapse: collapse;border-spacing: 0;" cellspacing="0">
-                    <tr style="background-color:Black;">
-                        <td colspan="6" style="padding:0px;">
-                            <span style="color:white;background-color:Black;text-align: left;">Language Skills
-                            </span>
-                        </td>
-                    </tr>
-                    <tr>
-                        <td style="padding:0px;">
-                            <span style="margin-left:40px;"/>
-                        </td>
-                        <td style="padding:0px;">
-                            <span>Spoken</span>
-                        </td>
-                        <td style="padding:0px;">
-                            <span>Oral</span>
-                        </td>
-                        <td style="padding:0px;">
-                            <span>Written</span>
-                        </td>
-                    </tr>
-                    <tr t-foreach="o.language_id" t-as="i">
-                        <td style="padding:0px;">
-                            <span style="display: inline-block;padding-right: 60px;"
-                                  t-field="i.name"/>
-                        </td>
-                        <td style="padding:0px;">
-                            <span style="display: inline-block;padding-right: 40px;"
-                                  t-field="i.spoken"/>
-                        </td>
-                        <td style="padding:0px;">
-                            <span style="display: inline-block;padding-right: 40px;"
-                                  t-field="i.oral"/>
-                        </td>
-                        <td style="padding:0px;">
-                            <span style="display: inline-block;padding-right: 40px;"
-                                  t-field="i.written"/>
-                        </td>
-                    </tr>
-                </table>
-            </div>
-            <br/>
-            <div>
-                <p style="margin-bottom: 0!important;">List the last three significant job positions you have had
-                    and with whom (most recent first
-                    please).
+        <t t-call="web.internal_layout">
+            <div class="page">
+                <h5 style="color:white;background-color:Black;text-align: center;">Employee Information Form</h5>
+                <p style="text-align: center;">
+                    <strong>Section (1):</strong>
+                    <span style="border-bottom: 4px double #000 !important;">
+                        Personal Information
+                    </span>
                 </p>
-                <table style="width:100%;border-collapse: collapse;border-spacing: 0;" cellspacing="0">
-                    <tr style="background-color:Black;">
-                        <td colspan="6" style="padding:0px;">
-                            <span style="color:white;background-color:Black;text-align: left;">Employment History
-                            </span>
-                        </td>
-                    </tr>
-                    <tr>
-                        <td style="padding:0px;">
-                            <span>Position</span>
-                        </td>
-                        <td style="padding:0px;">
-                            <span>Company/Institution</span>
-                        </td>
-                        <td style="padding:0px;">
-                            <span>Date</span>
-                        </td>
-                    </tr>
-                    <tr t-foreach="o.history_id" t-as="i">
-                        <td style="padding:0px;">
-                            <span style="display: inline-block;padding-right: 60px;"
-                                  t-field="i.position"/>
-                        </td>
-                        <td style="padding:0px;">
-                            <span style="display: inline-block;padding-right: 40px;"
-                                  t-field="i.company_institution"/>
-                        </td>
-                        <td style="padding:0px;">
-                            <span style="display: inline-block;padding-right: 40px;"
-                                  t-esc="i.date.strftime('%d-%m-%Y')"/>
-                        </td>
-                    </tr>
-                </table>
+                <p style="text-align: left;margin-bottom: 0!important;">
+                    <i>Please Complete the information in <strong>
+                        BLOCK LETTERS</strong>.
+                    </i>
+                </p>
+                <div>
+                    <table style="width:100%;border-collapse: collapse;border-spacing: 0;" cellspacing="0">
+                        <tr>
+                            <td style="padding:0px;">
+                                <span>Last Name</span>
+                            </td>
+                            <td style="padding:0px;">
+                                <span style="display: inline-block;padding-right: 40px;"
+                                      t-field="o.last_name"/>
+                            </td>
+                            <td style="padding:0px;">
+                                <span>First Name</span>
+                            </td>
+                            <td style="padding:0px;">
+                                <span style="display: inline-block;padding-right: 40px;"
+                                      t-field="o.first_name"/>
+                            </td>
+                            <td style="padding:0px;">
+                                <span>Middle Name</span>
+                            </td>
+                            <td style="padding:0px;">
+                                <span style="display: inline-block;padding-right: 40px;"
+                                      t-field="o.middle_name"/>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td colspan="3" style="padding:0px;">
+                                <span>Gender</span>
+                            </td>
+                            <td colspan="2" style="padding:0px;">
+                                <span t-if="o.gender == 'male'">
+                                    <span style="border:1px solid black;padding-right: 20px;background:Black;margin-left: 5px;margin-right: 5px;"/>
+                                </span>
+                                <span t-if="o.gender != 'male'">
+                                    <span style="border:1px solid black;padding-right: 20px;margin-left: 5px;margin-right: 5px;"/>
+                                </span>
+                                <span style="display: inline-block;padding-right: 40px;">Male</span>
+                            </td>
+                            <td style="padding:0px;">
+                                <span t-if="o.gender == 'female'">
+                                    <span style="border:1px solid black;padding-right: 20px;background:Black;margin-left: 5px;margin-right: 5px;"/>
+                                </span>
+                                <span t-if="o.gender != 'female'">
+                                    <span style="border:1px solid black;padding-right: 20px;margin-left: 5px;margin-right: 5px;"/>
+                                </span>
+                                <span style="display: inline-block;padding-right: 40px;">Female</span>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td style="padding:0px;">
+                                <span>Nationality</span>
+                            </td>
+                            <td colspan="2" style="padding:0px;">
+                                <span style="display: inline-block;padding-right: 40px;"
+                                      t-field="o.country_id.name"/>
+                            </td>
+                            <td colspan="2" style="padding:0px;">
+                                <span>Marital Status</span>
+                            </td>
+                            <td style="padding:0px;">
+                                <span style="display: inline-block;padding-right: 40px;"
+                                      t-field="o.marital"/>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td style="padding:0px;">
+                                <span>Date of Birth</span>
+                            </td>
+                            <td colspan="2" style="padding:0px;">
+                                <span style="display: inline-block;padding-right: 40px;"
+                                      t-field="o.birthday"/>
+                            </td>
+                            <td style="padding:0px;">
+                                <span>Place of Birth</span>
+                            </td>
+                            <td colspan="2" style="padding:0px;">
+                                <span style="display: inline-block;padding-right: 40px;"
+                                      t-field="o.place_of_birth"/>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td colspan="2" style="padding:0px;">
+                                <span>Home Leave Destination</span>
+                            </td>
+                            <td colspan="2" style="padding:0px;">
+                                <span style="display: inline-block;padding-right: 40px;"
+                                      t-field="o.home_leave_destination.name"/>
+                            </td>
+                            <td style="padding:0px;">
+                                <span>Religion</span>
+                            </td>
+                            <td style="padding:0px;">
+                                <span style="display: inline-block;padding-right: 40px;"
+                                      t-field="o.religion"/>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td colspan="2" style="padding:0px;">
+                                <span>Do you posses a valid driving license?</span>
+                            </td>
+                            <td style="padding:0px;">
+                                <span t-if="o.driving_license">
+                                    <span style="border:1px solid black;padding-right: 20px;background:Black;margin-left: 5px;margin-right: 5px;"/>
+                                </span>
+                                <span t-if="not o.driving_license">
+                                    <span style="border:1px solid black;padding-right: 20px;margin-left: 5px;margin-right: 5px;"/>
+                                </span>
+                                <span style="display: inline-block;padding-right: 40px;">Yes</span>
+                            </td>
+                            <td style="padding:0px;">
+                                <span t-if="not o.driving_license">
+                                    <span style="border:1px solid black;padding-right: 20px;background:Black;margin-left: 5px;margin-right: 5px;"/>
+                                </span>
+                                <span t-if="o.driving_license">
+                                    <span style="border:1px solid black;padding-right: 20px;margin-left: 5px;margin-right: 5px;"/>
+                                </span>
+                                <span style="display: inline-block;padding-right: 40px;">No</span>
+                            </td>
+                            <td style="padding:0px;">
+                                <span>Country of issue</span>
+                            </td>
+                            <td style="padding:0px;">
+                                <span style="display: inline-block;padding-right: 40px;"
+                                      t-field="o.home_leave_destination.name"/>
+                            </td>
+                        </tr>
+                    </table>
+                </div>
+                <br/>
+                <div>
+                    <table style="width:100%;border-collapse: collapse;border-spacing: 0;" cellspacing="0">
+                        <tr style="background-color:Black;">
+                            <td colspan="6" style="padding:0px;">
+                                <span style="color:white;background-color:Black;text-align: left;">Address (QATAR)
+                                </span>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td colspan="6" style="padding:0px;">
+                                <span style="display: inline-block;padding-right: 10px;"
+                                      t-field="o.address_home_id.street"/>
+                                -
+                                <span style="display: inline-block;padding-right: 10px;"
+                                      t-field="o.address_home_id.city"/>
+                                -
+                                <span style="display: inline-block;padding-right: 10px;"
+                                      t-field="o.address_home_id.state_id.name"/>
+                                -
+                                <span style="display: inline-block;padding-right: 10px;"
+                                      t-field="o.address_home_id.zip"/>
+                                -
+                                <span style="display: inline-block;padding-right: 10px;"
+                                      t-field="o.address_home_id.country_id.name"/>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td colspan="6" style="padding:0px;">
+                                <span style="display: inline-block;padding-right: 40px;"
+                                      t-field="o.address_home_id.street2"/>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td style="padding:0px;">
+                                <span>Nearest Land Mark</span>
+                            </td>
+                            <td colspan="5" style="padding:0px;">
+                                <span style="display: inline-block;padding-right: 40px;"
+                                      t-field="o.address_home_id.nearest_land_mark"/>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td style="padding:0px;">
+                                <span>Telephone No.</span>
+                            </td>
+                            <td colspan="5" style="padding:0px;">
+                                <span style="display: inline-block;padding-right: 40px;"
+                                      t-field="o.address_home_id.phone"/>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td style="padding:0px;">
+                                <span>Mobile No.</span>
+                            </td>
+                            <td colspan="5" style="padding:0px;">
+                                <span style="display: inline-block;padding-right: 40px;"
+                                      t-field="o.address_home_id.mobile"/>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td style="padding:0px;">
+                                <span>Fax No.</span>
+                            </td>
+                            <td colspan="5" style="padding:0px;">
+                                <span style="display: inline-block;padding-right: 40px;"
+                                      t-field="o.address_home_id.fax_number"/>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td style="padding:0px;">
+                                <span>Email</span>
+                            </td>
+                            <td colspan="5" style="padding:0px;">
+                                <span style="display: inline-block;padding-right: 40px;"
+                                      t-field="o.address_home_id.email"/>
+                            </td>
+                        </tr>
+                    </table>
+                </div>
+                <br/>
+                <div>
+                    <table style="width:100%;border-collapse: collapse;border-spacing: 0;" cellspacing="0">
+                        <tr style="background-color:Black;">
+                            <td colspan="6" style="padding:0px;">
+                                <span style="color:white;background-color:Black;text-align: left;">Address (Home
+                                    Country)
+                                </span>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td colspan="6" style="padding:0px;">
+                                <span style="display: inline-block;padding-right: 10px;"
+                                      t-field="o.address_home_country.street"/>
+                                -
+                                <span style="display: inline-block;padding-right: 10px;"
+                                      t-field="o.address_home_country.city"/>
+                                -
+                                <span style="display: inline-block;padding-right: 10px;"
+                                      t-field="o.address_home_country.state_id.name"/>
+                                -
+                                <span style="display: inline-block;padding-right: 10px;"
+                                      t-field="o.address_home_country.zip"/>
+                                -
+                                <span style="display: inline-block;padding-right: 10px;"
+                                      t-field="o.address_home_country.country_id.name"/>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td colspan="6" style="padding:0px;">
+                                <span style="display: inline-block;padding-right: 40px;"
+                                      t-field="o.address_home_country.street2"/>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td style="padding:0px;">
+                                <span>Nearest Land Mark</span>
+                            </td>
+                            <td colspan="5" style="padding:0px;">
+                                <span style="display: inline-block;padding-right: 40px;"
+                                      t-field="o.address_home_country.nearest_land_mark"/>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td style="padding:0px;">
+                                <span>Telephone No.</span>
+                            </td>
+                            <td colspan="5" style="padding:0px;">
+                                <span style="display: inline-block;padding-right: 40px;"
+                                      t-field="o.address_home_country.phone"/>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td style="padding:0px;">
+                                <span>Mobile No.</span>
+                            </td>
+                            <td colspan="5" style="padding:0px;">
+                                <span style="display: inline-block;padding-right: 40px;"
+                                      t-field="o.address_home_country.mobile"/>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td style="padding:0px;">
+                                <span>Fax No.</span>
+                            </td>
+                            <td colspan="5" style="padding:0px;">
+                                <span style="display: inline-block;padding-right: 40px;"
+                                      t-field="o.address_home_country.fax_number"/>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td style="padding:0px;">
+                                <span>Email</span>
+                            </td>
+                            <td colspan="5" style="padding:0px;">
+                                <span style="display: inline-block;padding-right: 40px;"
+                                      t-field="o.address_home_country.email"/>
+                            </td>
+                        </tr>
+                    </table>
+                </div>
+                <br/>
+                <div>
+                    <table style="width:100%;border-collapse: collapse;border-spacing: 0;" cellspacing="0">
+                        <tr style="background-color:Black;">
+                            <td colspan="6" style="padding:0px;">
+                                <span style="color:white;background-color:Black;text-align: left;">Citizenship</span>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td style="padding:0px;">
+                                <span>Nationality</span>
+                            </td>
+                            <td colspan="5" style="padding:0px;">
+                                <span style="display: inline-block;padding-right: 40px;"
+                                      t-field="o.country_id.name"/>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td style="padding:0px;">
+                                <span>Passport No.</span>
+                            </td>
+                            <td colspan="2" style="padding:0px;">
+                                <span style="display: inline-block;padding-right: 40px;"
+                                      t-field="o.partner_id.passport_doc.document_number"/>
+                            </td>
+                            <td style="padding:0px;">
+                                <span>Expiry Date</span>
+                            </td>
+                            <td colspan="2" style="padding:0px;">
+                                <span style="display: inline-block;padding-right: 40px;"
+                                      t-field="o.partner_id.passport_exp_date"/>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td style="padding:0px;">
+                                <span>Visa Status</span>
+                            </td>
+                            <td colspan="2" style="padding:0px;">
+                                <!--                                <span style="display: inline-block;padding-right: 40px;"-->
+                                <!--                                      t-field="o.partner_id.passport_doc.document_number"/>-->
+                                <span style="display: inline-block;padding-right: 40px;"
+                                      t-if="o.visa.visa_status" t-field="o.visa.visa_status"/>
+                            </td>
+                            <td style="padding:0px;">
+                                <span>Expiry Date</span>
+                            </td>
+                            <td colspan="2" style="padding:0px;">
+                                <span style="display: inline-block;padding-right: 40px;"
+                                      t-if="o.visa_expire" t-field="o.visa_expire"/>
+                                <!--                                <span style="display: inline-block;padding-right: 40px;"-->
+                                <!--                                      t-field="o.partner_id.passport_exp_date"/>-->
+                            </td>
+                        </tr>
+                    </table>
+                </div>
+                <div style="page-break-after: always;"/>
+                <div>
+                    <table style="width:100%;border-collapse: collapse;border-spacing: 0;" cellspacing="0">
+                        <tr style="background-color:Black;">
+                            <td colspan="6" style="padding:0px;">
+                                <span style="color:white;background-color:Black;text-align: left;">Family Data (if
+                                    applicable)
+                                </span>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td style="padding:0px;">
+                                <span style="margin-left:40px;"/>
+                            </td>
+                            <td style="padding:0px;">
+                                <span>Name</span>
+                            </td>
+                            <td style="padding:0px;">
+                                <span>Sex</span>
+                            </td>
+                            <td style="padding:0px;">
+                                <span>Date of Birth</span>
+                            </td>
+                            <td colspan="2" style="padding:0px;">
+                                <span>Are they Accompaning You?</span>
+                            </td>
+                        </tr>
+                        <tr t-foreach="o.dependant_id" t-as="i">
+                            <td style="padding:0px;">
+                                <span style="display: inline-block;padding-right: 60px;"
+                                      t-field="i.relation"/>
+                            </td>
+                            <td style="padding:0px;">
+                                <span style="display: inline-block;padding-right: 40px;"
+                                      t-field="i.name"/>
+                            </td>
+                            <td style="padding:0px;">
+                                <span style="display: inline-block;padding-right: 40px;"
+                                      t-field="i.gender"/>
+                            </td>
+                            <t t-if="i.dob">
+                                <td style="padding:0px;">
+                                    <span style="display: inline-block;padding-right: 40px;"
+                                          t-esc="i.dob.strftime('%d-%m-%Y')"/>
+                                </td>
+                            </t>
+                            <td style="padding:0px;">
+                                <span t-if="i.accompany == true" style="display: inline-block;padding-right: 40px;">
+                                    Yes
+                                </span>
+                                <span t-if="i.accompany == false" style="display: inline-block;padding-right: 40px;">
+                                    No
+                                </span>
+                            </td>
+                        </tr>
+                    </table>
+                </div>
+                <br/>
+                <div>
+                    <table style="width:100%;border-collapse: collapse;border-spacing: 0;" cellspacing="0">
+                        <tr style="background-color:Black;">
+                            <td colspan="6" style="padding:0px;">
+                                <span style="color:white;background-color:Black;text-align: left;">Person(s) to be
+                                    Contacted in Emergency (QATAR)
+                                </span>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td style="padding:0px;">
+                                <span style="margin-left:40px;"/>
+                            </td>
+                            <td colspan="2" style="padding:0px;">
+                                <span>Person 1</span>
+                            </td>
+                            <td colspan="2" style="padding:0px;">
+                                <span>Person 2</span>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td style="padding:0px;">
+                                <span>Name</span>
+                            </td>
+                            <td t-foreach="o.emergency_id" t-as="em" t-if="em.location == 'qatar'" colspan="2"
+                                style="padding:0px;">
+                                <span style="display: inline-block;padding-right: 40px;"
+                                      t-field="em.name"/>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td style="padding:0px;">
+                                <span>Relationship</span>
+                            </td>
+                            <td t-foreach="o.emergency_id" t-as="em" t-if="em.location == 'qatar'" colspan="2"
+                                style="padding:0px;">
+                                <span style="display: inline-block;padding-right: 40px;"
+                                      t-field="em.relation"/>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td style="padding:0px;">
+                                <span>Address</span>
+                            </td>
+                            <td t-foreach="o.emergency_id" t-as="em" t-if="em.location == 'qatar'" colspan="2"
+                                style="padding:0px;">
+                                <span style="display: inline-block;padding-right: 40px;"
+                                      t-field="em.address"/>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td style="padding:0px;">
+                                <span>Telephone No.</span>
+                            </td>
+                            <td t-foreach="o.emergency_id" t-as="em" t-if="em.location == 'qatar'" colspan="2"
+                                style="padding:0px;">
+                                <span style="display: inline-block;padding-right: 40px;"
+                                      t-field="em.telephone"/>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td style="padding:0px;">
+                                <span>Mobile No.</span>
+                            </td>
+                            <td t-foreach="o.emergency_id" t-as="em" t-if="em.location == 'qatar'" colspan="2"
+                                style="padding:0px;">
+                                <span style="display: inline-block;padding-right: 40px;"
+                                      t-field="em.mobile"/>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td style="padding:0px;">
+                                <span>Fax</span>
+                            </td>
+                            <td t-foreach="o.emergency_id" t-as="em" t-if="em.location == 'qatar'" colspan="2"
+                                style="padding:0px;">
+                                <span style="display: inline-block;padding-right: 40px;"
+                                      t-field="em.fax"/>
+                            </td>
+                        </tr>
+                    </table>
+                </div>
+                <br/>
+                <div>
+                    <table style="width:100%;border-collapse: collapse;border-spacing: 0;" cellspacing="0">
+                        <tr style="background-color:Black;">
+                            <td colspan="6" style="padding:0px;">
+                                <span style="color:white;background-color:Black;text-align: left;">Person(s) to be
+                                    Contacted in Emergency (Home Country)
+                                </span>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td style="padding:0px;">
+                                <span style="margin-left:40px;"/>
+                            </td>
+                            <td colspan="2" style="padding:0px;">
+                                <span>Person 1</span>
+                            </td>
+                            <td colspan="2" style="padding:0px;">
+                                <span>Person 2</span>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td style="padding:0px;">
+                                <span>Name</span>
+                            </td>
+                            <td t-foreach="o.emergency_id" t-as="em" t-if="em.location == 'home_country'" colspan="2"
+                                style="padding:0px;">
+                                <span style="display: inline-block;padding-right: 40px;"
+                                      t-field="em.name"/>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td style="padding:0px;">
+                                <span>Relationship</span>
+                            </td>
+                            <td t-foreach="o.emergency_id" t-as="em" t-if="em.location == 'home_country'" colspan="2"
+                                style="padding:0px;">
+                                <span style="display: inline-block;padding-right: 40px;"
+                                      t-field="em.relation"/>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td style="padding:0px;">
+                                <span>Address</span>
+                            </td>
+                            <td t-foreach="o.emergency_id" t-as="em" t-if="em.location == 'home_country'" colspan="2"
+                                style="padding:0px;">
+                                <span style="display: inline-block;padding-right: 40px;"
+                                      t-field="em.address"/>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td style="padding:0px;">
+                                <span>Telephone No.</span>
+                            </td>
+                            <td t-foreach="o.emergency_id" t-as="em" t-if="em.location == 'home_country'" colspan="2"
+                                style="padding:0px;">
+                                <span style="display: inline-block;padding-right: 40px;"
+                                      t-field="em.telephone"/>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td style="padding:0px;">
+                                <span>Mobile No.</span>
+                            </td>
+                            <td t-foreach="o.emergency_id" t-as="em" t-if="em.location == 'home_country'" colspan="2"
+                                style="padding:0px;">
+                                <span style="display: inline-block;padding-right: 40px;"
+                                      t-field="em.mobile"/>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td style="padding:0px;">
+                                <span>Fax</span>
+                            </td>
+                            <td t-foreach="o.emergency_id" t-as="em" t-if="em.location == 'home_country'" colspan="2"
+                                style="padding:0px;">
+                                <span style="display: inline-block;padding-right: 40px;"
+                                      t-field="em.fax"/>
+                            </td>
+                        </tr>
+                    </table>
+                </div>
+                <div style="page-break-after: always;"/>
+                <p style="text-align: center;">
+                    <strong>Section (2):</strong>
+                    <span style="border-bottom: 4px double #000 !important;">
+                        Professional Information
+                    </span>
+                </p>
+                <br/>
+                <div>
+                    <table style="width:100%;border-collapse: collapse;border-spacing: 0;" cellspacing="0">
+                        <tr style="background-color:Black;">
+                            <td colspan="6" style="padding:0px;">
+                                <span style="color:white;background-color:Black;text-align: left;">School, College,
+                                    University
+                                </span>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td style="padding:0px;">
+                                <span>Year</span>
+                            </td>
+                            <td style="padding:0px;">
+                                <span>Degree</span>
+                            </td>
+                            <td style="padding:0px;">
+                                <span>School/College</span>
+                            </td>
+                            <td style="padding:0px;">
+                                <span>University</span>
+                            </td>
+                        </tr>
+                        <tr t-foreach="o.education_id" t-as="i">
+                            <td style="padding:0px;">
+                                <span style="display: inline-block;padding-right: 60px;"
+                                      t-field="i.year"/>
+                            </td>
+                            <td style="padding:0px;">
+                                <span style="display: inline-block;padding-right: 40px;"
+                                      t-field="i.degree"/>
+                            </td>
+                            <td style="padding:0px;">
+                                <span style="display: inline-block;padding-right: 40px;"
+                                      t-field="i.school_college"/>
+                            </td>
+                            <td style="padding:0px;">
+                                <span style="display: inline-block;padding-right: 40px;"
+                                      t-field="i.university"/>
+                            </td>
+                        </tr>
+                    </table>
+                </div>
+                <p>Please identify the most recent Courses or Professional Development Seminars if attended.</p>
+                <br/>
+                <div>
+                    <table style="width:100%;border-collapse: collapse;border-spacing: 0;" cellspacing="0">
+                        <tr style="background-color:Black;">
+                            <td colspan="6" style="padding:0px;">
+                                <span style="color:white;background-color:Black;text-align: left;">Courses/Professional
+                                    Development
+                                </span>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td style="padding:0px;">
+                                <span>From</span>
+                            </td>
+                            <td style="padding:0px;">
+                                <span>To</span>
+                            </td>
+                            <td style="padding:0px;">
+                                <span>Course Title</span>
+                            </td>
+                            <td style="padding:0px;">
+                                <span>Institution</span>
+                            </td>
+                            <td style="padding:0px;">
+                                <span>Qualification</span>
+                            </td>
+                        </tr>
+                        <tr t-foreach="o.courses_id" t-as="i">
+                            <td style="padding:0px;">
+                                <span style="display: inline-block;padding-right: 60px;"
+                                      t-esc="i.from_date.strftime('%d-%m-%Y')"/>
+                            </td>
+                            <td style="padding:0px;">
+                                <span style="display: inline-block;padding-right: 40px;"
+                                      t-esc="i.to_date.strftime('%d-%m-%Y')"/>
+                            </td>
+                            <td style="padding:0px;">
+                                <span style="display: inline-block;padding-right: 40px;"
+                                      t-field="i.course_title"/>
+                            </td>
+                            <td style="padding:0px;">
+                                <span style="display: inline-block;padding-right: 40px;"
+                                      t-field="i.institution"/>
+                            </td>
+                            <td style="padding:0px;">
+                                <span style="display: inline-block;padding-right: 40px;"
+                                      t-field="i.qualification"/>
+                            </td>
+                        </tr>
+                    </table>
+                </div>
+                <br/>
+                <div>
+                    <table style="width:100%;border-collapse: collapse;border-spacing: 0;" cellspacing="0">
+                        <tr style="background-color:Black;">
+                            <td colspan="6" style="padding:0px;">
+                                <span style="color:white;background-color:Black;text-align: left;">Language Skills
+                                </span>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td style="padding:0px;">
+                                <span style="margin-left:40px;"/>
+                            </td>
+                            <td style="padding:0px;">
+                                <span>Spoken</span>
+                            </td>
+                            <td style="padding:0px;">
+                                <span>Oral</span>
+                            </td>
+                            <td style="padding:0px;">
+                                <span>Written</span>
+                            </td>
+                        </tr>
+                        <tr t-foreach="o.language_id" t-as="i">
+                            <td style="padding:0px;">
+                                <span style="display: inline-block;padding-right: 60px;"
+                                      t-field="i.name"/>
+                            </td>
+                            <td style="padding:0px;">
+                                <span style="display: inline-block;padding-right: 40px;"
+                                      t-field="i.spoken"/>
+                            </td>
+                            <td style="padding:0px;">
+                                <span style="display: inline-block;padding-right: 40px;"
+                                      t-field="i.oral"/>
+                            </td>
+                            <td style="padding:0px;">
+                                <span style="display: inline-block;padding-right: 40px;"
+                                      t-field="i.written"/>
+                            </td>
+                        </tr>
+                    </table>
+                </div>
+                <br/>
+                <div>
+                    <p style="margin-bottom: 0!important;">List the last three significant job positions you have had
+                        and with whom (most recent first
+                        please).
+                    </p>
+                    <table style="width:100%;border-collapse: collapse;border-spacing: 0;" cellspacing="0">
+                        <tr style="background-color:Black;">
+                            <td colspan="6" style="padding:0px;">
+                                <span style="color:white;background-color:Black;text-align: left;">Employment History
+                                </span>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td style="padding:0px;">
+                                <span>Position</span>
+                            </td>
+                            <td style="padding:0px;">
+                                <span>Company/Institution</span>
+                            </td>
+                            <td style="padding:0px;">
+                                <span>Date</span>
+                            </td>
+                        </tr>
+                        <tr t-foreach="o.history_id" t-as="i">
+                            <td style="padding:0px;">
+                                <span style="display: inline-block;padding-right: 60px;"
+                                      t-field="i.position"/>
+                            </td>
+                            <td style="padding:0px;">
+                                <span style="display: inline-block;padding-right: 40px;"
+                                      t-field="i.company_institution"/>
+                            </td>
+                            <td style="padding:0px;">
+                                <span style="display: inline-block;padding-right: 40px;"
+                                      t-esc="i.date.strftime('%d-%m-%Y')"/>
+                            </td>
+                        </tr>
+                    </table>
+                </div>
+                <br/>
+                <div>
+                    <table style="width:100%;border-collapse: collapse;border-spacing: 0;" cellspacing="0">
+                        <tr>
+                            <td style="padding:0px;width: 200px;">
+                                <span>Employee Name</span>
+                            </td>
+                            <td colspan="3" style="padding:0px;">
+                                <span style="display: inline-block;width:200px;"
+                                      t-field="o.name"/>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td style="padding:0px;">
+                                <span>Signature</span>
+                            </td>
+                            <td style="padding:0px;">
+                                <span style="margin-left:50px;"/>
+                            </td>
+                            <td style="padding:0px;width: 200px;">
+                                <span>Date</span>
+                            </td>
+                            <td style="padding:0px;">
+                                <span style="margin-left:50px;"/>
+                            </td>
+                        </tr>
+                    </table>
+                </div>
+                <div style="page-break-after: always;"/>
+                <p style="text-align: center;">
+                    <strong>Section (3):</strong>
+                    <span style="border-bottom: 4px double #000 !important;">
+                        HR Information
+                    </span>
+                </p>
+                <br/>
+                <p style="margin-bottom: 0!important;">Information to be filled by the HR Department Only</p>
+                <div>
+                    <table t-if="o.contract_id" style="width:100%;border-collapse: collapse;border-spacing: 0;"
+                           cellspacing="0">
+                        <tr style="background-color:Black;">
+                            <td colspan="6" style="padding:0px;">
+                                <span style="color:white;background-color:Black;text-align: left;">Employee Information
+                                </span>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td style="padding:0px;">
+                                <span>Employee Name</span>
+                            </td>
+                            <td style="padding:0px;">
+                                <span style="display: inline-block;width:200px;"
+                                      t-field="o.name"/>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td style="padding:0px;">
+                                <span>QID Number</span>
+                            </td>
+                            <td style="padding:0px;">
+                                <span style="display: inline-block;padding-right: 40px;"
+                                      t-field="o.partner_id.qatar_id_doc.document_number"/>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td style="padding:0px;">
+                                <span>Designation</span>
+                            </td>
+                            <td style="padding:0px;">
+                                <span style="display: inline-block;padding-right: 40px;"
+                                      t-field="o.contract_id.job_id"/>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td style="padding:0px;">
+                                <span>Department</span>
+                            </td>
+                            <td style="padding:0px;">
+                                <span style="display: inline-block;padding-right: 40px;"
+                                      t-field="o.contract_id.department_id"/>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td style="padding:0px;">
+                                <span>Date of Joining</span>
+                            </td>
+                            <td style="padding:0px;">
+                                <span style="display: inline-block;padding-right: 40px;"
+                                      t-field="o.contract_id.date_start"/>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td style="padding:0px;">
+                                <span>Home Unit</span>
+                            </td>
+                            <td style="padding:0px;">
+                                <span style="display: inline-block;padding-right: 40px;"
+                                      t-field="o.contract_id.date_start"/>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td style="padding:0px;">
+                                <span>Work Location</span>
+                            </td>
+                            <td style="padding:0px;">
+                                <span style="display: inline-block;padding-right: 40px;"
+                                      t-field="o.work_location"/>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td style="padding:0px;">
+                                <span>Contract Type</span>
+                            </td>
+                            <td style="padding:0px;">
+                                <span style="display: inline-block;padding-right: 40px;"
+                                      t-field="o.contract_id.contract_type"/>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td style="padding:0px;">
+                                <span>Contract Duration</span>
+                            </td>
+                            <td t-if="o.contract_id.contract_type == 'limited'" style="padding:0px;">
+                                <span style="display: inline-block;padding-right: 40px;"
+                                      t-field="o.contract_id.contract_duration"/>
+                            </td>
+                            <td t-if="o.contract_id.contract_type == 'unlimited'" style="padding:0px;">
+                                <span style="display: inline-block;padding-right: 40px;">Unlimited</span>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td style="padding:0px;">
+                                <span>Leave Entitlement</span>
+                            </td>
+                            <td style="padding:0px;">
+                                <span style="display: inline-block;padding-right: 40px;"
+                                      t-field="o.contract_id.leave_entitlement"/>
+                            </td>
+                        </tr>
+                    </table>
+                </div>
+                <br/>
+                <div>
+                    <table t-if="o.contract_id" style="width:100%;border-collapse: collapse;border-spacing: 0;"
+                           cellspacing="0">
+                        <tr style="background-color:Black;">
+                            <td colspan="6" style="padding:0px;">
+                                <span style="color:white;background-color:Black;text-align: left;">Salary Information
+                                </span>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td style="padding:0px;">
+                                <span>Basic Salary</span>
+                            </td>
+                            <td style="padding:0px;">
+                                <span style="display: inline-block;padding-right: 40px;"
+                                      t-field="o.contract_id.wage"/>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td style="padding:0px;">
+                                <span>Housing Allowance</span>
+                            </td>
+                            <td style="padding:0px;">
+                                <span style="display: inline-block;padding-right: 40px;"
+                                      t-field="o.contract_id.housing_allowance"/>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td style="padding:0px;">
+                                <span>Transport Allowance</span>
+                            </td>
+                            <td style="padding:0px;">
+                                <span style="display: inline-block;padding-right: 40px;"
+                                      t-field="o.contract_id.transport_allowance"/>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td style="padding:0px;">
+                                <span>Telephone Allowance</span>
+                            </td>
+                            <td style="padding:0px;">
+                                <span style="display: inline-block;padding-right: 40px;"
+                                      t-field="o.contract_id.telephone_allowance"/>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td style="padding:0px;">
+                                <span>Petrol Allowance</span>
+                            </td>
+                            <td style="padding:0px;">
+                                <span style="display: inline-block;padding-right: 40px;"
+                                      t-field="o.contract_id.petrol_allowance"/>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td style="padding:0px;">
+                                <span>Other Allowance (if any)</span>
+                            </td>
+                            <td style="padding:0px;">
+                                <span style="display: inline-block;padding-right: 40px;"
+                                      t-field="o.contract_id.other_allowance"/>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td style="padding:0px;">
+                                <span>Other Benefits (if any)</span>
+                            </td>
+                            <td style="padding:0px;">
+                                <span style="display: inline-block;padding-right: 40px;"
+                                      t-field="o.contract_id.other_benefits"/>
+                            </td>
+                        </tr>
+                    </table>
+                </div>
+                <br/>
+                <div>
+                    <table style="width:100%;border-collapse: collapse;border-spacing: 0;" cellspacing="0">
+                        <tr>
+                            <td colspan="4" style="padding:0px;width: 200px;">
+                                <span>Human Resources Manager</span>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td style="padding:0px;width: 200px;">
+                                <span>Name</span>
+                            </td>
+                            <td colspan="3" style="padding:0px;">
+                                <span style="margin-left:100px;"/>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td style="padding:0px;">
+                                <span>Signature</span>
+                            </td>
+                            <td style="padding:0px;">
+                                <span style="margin-left:50px;"/>
+                            </td>
+                            <td style="padding:0px;width: 200px;">
+                                <span>Date</span>
+                            </td>
+                            <td style="padding:0px;">
+                                <span style="margin-left:50px;"/>
+                            </td>
+                        </tr>
+                    </table>
+                </div>
             </div>
-            <br/>
-            <div>
-                <table style="width:100%;border-collapse: collapse;border-spacing: 0;" cellspacing="0">
-                    <tr>
-                        <td style="padding:0px;width: 200px;">
-                            <span>Employee Name</span>
-                        </td>
-                        <td colspan="3" style="padding:0px;">
-                            <span style="display: inline-block;width:200px;"
-                                  t-field="o.name"/>
-                        </td>
-                    </tr>
-                    <tr>
-                        <td style="padding:0px;">
-                            <span>Signature</span>
-                        </td>
-                        <td style="padding:0px;">
-                            <span style="margin-left:50px;"/>
-                        </td>
-                        <td style="padding:0px;width: 200px;">
-                            <span>Date</span>
-                        </td>
-                        <td style="padding:0px;">
-                            <span style="margin-left:50px;"/>
-                        </td>
-                    </tr>
-                </table>
-            </div>
-            <div style="page-break-after: always;"/>
-            <p style="text-align: center;">
-                <strong>Section (3):</strong>
-                <span style="border-bottom: 4px double #000 !important;">
-                    HR Information
-                </span>
-            </p>
-            <br/>
-            <p style="margin-bottom: 0!important;">Information to be filled by the HR Department Only</p>
-            <div>
-                <table t-if="o.contract_id" style="width:100%;border-collapse: collapse;border-spacing: 0;"
-                       cellspacing="0">
-                    <tr style="background-color:Black;">
-                        <td colspan="6" style="padding:0px;">
-                            <span style="color:white;background-color:Black;text-align: left;">Employee Information
-                            </span>
-                        </td>
-                    </tr>
-                    <tr>
-                        <td style="padding:0px;">
-                            <span>Employee Name</span>
-                        </td>
-                        <td style="padding:0px;">
-                            <span style="display: inline-block;width:200px;"
-                                  t-field="o.name"/>
-                        </td>
-                    </tr>
-                    <tr>
-                        <td style="padding:0px;">
-                            <span>QID Number</span>
-                        </td>
-                        <td style="padding:0px;">
-                            <span style="display: inline-block;padding-right: 40px;"
-                                  t-field="o.partner_id.qatar_id_doc.document_number"/>
-                        </td>
-                    </tr>
-                    <tr>
-                        <td style="padding:0px;">
-                            <span>Designation</span>
-                        </td>
-                        <td style="padding:0px;">
-                            <span style="display: inline-block;padding-right: 40px;"
-                                  t-field="o.contract_id.job_id"/>
-                        </td>
-                    </tr>
-                    <tr>
-                        <td style="padding:0px;">
-                            <span>Department</span>
-                        </td>
-                        <td style="padding:0px;">
-                            <span style="display: inline-block;padding-right: 40px;"
-                                  t-field="o.contract_id.department_id"/>
-                        </td>
-                    </tr>
-                    <tr>
-                        <td style="padding:0px;">
-                            <span>Date of Joining</span>
-                        </td>
-                        <td style="padding:0px;">
-                            <span style="display: inline-block;padding-right: 40px;"
-                                  t-field="o.contract_id.date_start"/>
-                        </td>
-                    </tr>
-                    <tr>
-                        <td style="padding:0px;">
-                            <span>Home Unit</span>
-                        </td>
-                        <td style="padding:0px;">
-                            <span style="display: inline-block;padding-right: 40px;"
-                                  t-field="o.contract_id.date_start"/>
-                        </td>
-                    </tr>
-                    <tr>
-                        <td style="padding:0px;">
-                            <span>Work Location</span>
-                        </td>
-                        <td style="padding:0px;">
-                            <span style="display: inline-block;padding-right: 40px;"
-                                  t-field="o.work_location"/>
-                        </td>
-                    </tr>
-                    <tr>
-                        <td style="padding:0px;">
-                            <span>Contract Type</span>
-                        </td>
-                        <td style="padding:0px;">
-                            <span style="display: inline-block;padding-right: 40px;"
-                                  t-field="o.contract_id.contract_type"/>
-                        </td>
-                    </tr>
-                    <tr>
-                        <td style="padding:0px;">
-                            <span>Contract Duration</span>
-                        </td>
-                        <td t-if="o.contract_id.contract_type == 'limited'" style="padding:0px;">
-                            <span style="display: inline-block;padding-right: 40px;"
-                                  t-field="o.contract_id.contract_duration"/>
-                        </td>
-                        <td t-if="o.contract_id.contract_type == 'unlimited'" style="padding:0px;">
-                            <span style="display: inline-block;padding-right: 40px;">Unlimited</span>
-                        </td>
-                    </tr>
-                    <tr>
-                        <td style="padding:0px;">
-                            <span>Leave Entitlement</span>
-                        </td>
-                        <td style="padding:0px;">
-                            <span style="display: inline-block;padding-right: 40px;"
-                                  t-field="o.contract_id.leave_entitlement"/>
-                        </td>
-                    </tr>
-                </table>
-            </div>
-            <br/>
-            <div>
-                <table t-if="o.contract_id" style="width:100%;border-collapse: collapse;border-spacing: 0;"
-                       cellspacing="0">
-                    <tr style="background-color:Black;">
-                        <td colspan="6" style="padding:0px;">
-                            <span style="color:white;background-color:Black;text-align: left;">Salary Information
-                            </span>
-                        </td>
-                    </tr>
-                    <tr>
-                        <td style="padding:0px;">
-                            <span>Basic Salary</span>
-                        </td>
-                        <td style="padding:0px;">
-                            <span style="display: inline-block;padding-right: 40px;"
-                                  t-field="o.contract_id.wage"/>
-                        </td>
-                    </tr>
-                    <tr>
-                        <td style="padding:0px;">
-                            <span>Housing Allowance</span>
-                        </td>
-                        <td style="padding:0px;">
-                            <span style="display: inline-block;padding-right: 40px;"
-                                  t-field="o.contract_id.housing_allowance"/>
-                        </td>
-                    </tr>
-                    <tr>
-                        <td style="padding:0px;">
-                            <span>Transport Allowance</span>
-                        </td>
-                        <td style="padding:0px;">
-                            <span style="display: inline-block;padding-right: 40px;"
-                                  t-field="o.contract_id.transport_allowance"/>
-                        </td>
-                    </tr>
-                    <tr>
-                        <td style="padding:0px;">
-                            <span>Telephone Allowance</span>
-                        </td>
-                        <td style="padding:0px;">
-                            <span style="display: inline-block;padding-right: 40px;"
-                                  t-field="o.contract_id.telephone_allowance"/>
-                        </td>
-                    </tr>
-                    <tr>
-                        <td style="padding:0px;">
-                            <span>Petrol Allowance</span>
-                        </td>
-                        <td style="padding:0px;">
-                            <span style="display: inline-block;padding-right: 40px;"
-                                  t-field="o.contract_id.petrol_allowance"/>
-                        </td>
-                    </tr>
-                    <tr>
-                        <td style="padding:0px;">
-                            <span>Other Allowance (if any)</span>
-                        </td>
-                        <td style="padding:0px;">
-                            <span style="display: inline-block;padding-right: 40px;"
-                                  t-field="o.contract_id.other_allowance"/>
-                        </td>
-                    </tr>
-                    <tr>
-                        <td style="padding:0px;">
-                            <span>Other Benefits (if any)</span>
-                        </td>
-                        <td style="padding:0px;">
-                            <span style="display: inline-block;padding-right: 40px;"
-                                  t-field="o.contract_id.other_benefits"/>
-                        </td>
-                    </tr>
-                </table>
-            </div>
-            <br/>
-            <div>
-                <table style="width:100%;border-collapse: collapse;border-spacing: 0;" cellspacing="0">
-                    <tr>
-                        <td colspan="4" style="padding:0px;width: 200px;">
-                            <span>Human Resources Manager</span>
-                        </td>
-                    </tr>
-                    <tr>
-                        <td style="padding:0px;width: 200px;">
-                            <span>Name</span>
-                        </td>
-                        <td colspan="3" style="padding:0px;">
-                            <span style="margin-left:100px;"/>
-                        </td>
-                    </tr>
-                    <tr>
-                        <td style="padding:0px;">
-                            <span>Signature</span>
-                        </td>
-                        <td style="padding:0px;">
-                            <span style="margin-left:50px;"/>
-                        </td>
-                        <td style="padding:0px;width: 200px;">
-                            <span>Date</span>
-                        </td>
-                        <td style="padding:0px;">
-                            <span style="margin-left:50px;"/>
-                        </td>
-                    </tr>
-                </table>
-            </div>
-        </div>
+        </t>
     </template>
 
     <template id="employee_information_form">
         <t t-call="web.html_container">
-            <div class="header">
-                <img t-attf-src="/web/binary/company_logo" alt="Logo"/>
-            </div>
+<!--            <div class="header">-->
+<!--                <img t-attf-src="/web/binary/company_logo" alt="Logo"/>-->
+<!--            </div>-->
             <t t-foreach="docs" t-as="o">
                 <t t-call="ebs_qshield_employee.report_employee_information_form" t-lang="lang"/>
             </t>
-            <div class="footer" style="text-align: right;">
-                <div style="border-bottom: 1px solid black;"/>
-                <p>
-                    <span>Employee Information Form</span>
-                    <span>- Page</span>
-                    <span class="page"/>
-                    of
-                    <span class="topage"/>
-                </p>
-            </div>
+<!--            <div class="footer" style="text-align: right;">-->
+<!--                <div style="border-bottom: 1px solid black;"/>-->
+<!--                <p>-->
+<!--                    <span>Employee Information Form</span>-->
+<!--                    <span>- Page</span>-->
+<!--                    <span class="page"/>-->
+<!--                    of-->
+<!--                    <span class="topage"/>-->
+<!--                </p>-->
+<!--            </div>-->
         </t>
     </template>
     <report
