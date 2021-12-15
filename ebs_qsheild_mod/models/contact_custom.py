@@ -316,6 +316,7 @@ class ContactCustom(models.Model):
         return res
 
     def write(self, vals):
+        active_before = self.active
         if 'active' in vals:
             if not vals['active']:
                 for user in self.user_ids:
@@ -335,9 +336,8 @@ class ContactCustom(models.Model):
                 rec.related_company = new_res.id
                 rec.sponsor = new_res.sponsor.id
             self.message_post(
-                body="Related contact changed from '" + self.parent_id.name + "' to '" + new_res.name + "'")
+                body="Related contact changed from '" + 'fefes' + "' to '" + new_res.name + "'")
 
-        active_before = self.active
         res = super(ContactCustom, self).write(vals)
         active_after = self.active
         if active_after != active_before:
