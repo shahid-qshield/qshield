@@ -54,6 +54,21 @@ class EmployeeCustom(models.Model):
 
     joining_date = fields.Date(string="Joining Date", default=lambda self: fields.Datetime.now(), required=True)
     visa = fields.Many2one(comodel_name="visa.status", string="Visa Status", required=False, )
+    custom_document_count = fields.Integer(compute="_compute_document_count", store=False)
+
+    def _compute_document_count(self):
+        for record in self:
+            count = 0
+            document_count = self.env['documents.document'].search_count(
+                [('partner_id', '!=', False), ('partner_id', '=', record.partner_id.id)])
+            if document_count:
+                count = document_count
+            record.custom_document_count = count
+
+    def action_see_own_documents(self):
+        action = self.env.ref('ebs_qshield_employee.custom_document_action').read()[0]
+        action['domain'] = [('partner_id', '!=', False), ('partner_id', '=', self.partner_id.id)]
+        return action
 
     def employee_information_form(self):
         return self.env.ref('ebs_qshield_employee.action_employee_information_form').report_action(self)

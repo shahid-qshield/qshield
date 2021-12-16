@@ -1,6 +1,51 @@
 <?xml version='1.0' encoding='UTF-8' ?>
 <odoo>
     <data>
+        <!--        <record id="documents.document_action" model="ir.actions.act_window">
+                    <field name="domain">[('partner_id','=',partner_id)]</field>
+                </record>-->
+
+        <record id="custom_document_action" model="ir.actions.act_window">
+            <field name="name">Custom Documents Action</field>
+            <field name="res_model">documents.document</field>
+            <field name="view_mode">kanban,tree,form</field>
+            <field name="domain">[]</field>
+            <field name="view_ids" eval="[(5, 0, 0),
+        (0, 0, {'view_mode': 'kanban', 'view_id': ref('documents.document_view_kanban')}),
+        (0, 0, {'view_mode': 'tree', 'view_id': False}),
+        (0, 0, {'view_mode': 'form', 'view_id': ref('documents.document_view_form')})]"/>
+            <field name="help" type="html">
+                <p class="o_view_nocontent_smiling_face">Upload <span class="font-weight-normal">a file or</span> drag
+                    <span class="font-weight-normal">it here.</span>
+                </p>
+            </field>
+        </record>
+
+
+        <record id="hr_employee_view_form_custom_inherit" model="ir.ui.view">
+            <field name="name">hr.employee.view.custom.documents.custom.inherit</field>
+            <field name="model">hr.employee</field>
+            <field name="inherit_id" ref="documents_hr.hr_employee_view_form"/>
+            <field name="arch" type="xml">
+                <xpath expr="//button[@name='%(documents.document_action)d']"
+                       position="replace">
+                    <button name="action_see_own_documents"
+                            class="oe_stat_button" groups="documents.group_documents_user"
+                            attrs="{'invisible': [('user_id','=', False)]}" icon="fa-file-text" type="object">
+                        <field name="custom_document_count" widget="statinfo" string="Document Count"/>
+                    </button>
+                    <!--                    <button name="%(ebs_qshield_employee.custom_document_action)d"-->
+                    <!--                            context="{'search_default_owner_id': user_id, 'default_owner_id': user_id}"-->
+                    <!--                            class="oe_stat_button" groups="documents.group_documents_user"-->
+                    <!--                            attrs="{'invisible': [('user_id','=', False)]}" icon="fa-file-text" type="action">-->
+                    <!--                        <field name="custom_document_count" widget="statinfo"/>-->
+                    <!--                    </button>-->
+                </xpath>
+
+
+            </field>
+        </record>
+
         <record id="hr_employee_view_custom" model="ir.ui.view">
             <field name="name">hr.employee.view.custom</field>
             <field name="model">hr.employee</field>
