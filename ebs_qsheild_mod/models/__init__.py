@@ -16,6 +16,6 @@ from . import service_request_workflow
 from . import payment_transaction
 from . import res_config_settings_custom
 from . import res_company_custom
-
+from . import excluded_company
 
 

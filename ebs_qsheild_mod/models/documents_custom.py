@@ -101,6 +101,8 @@ class DocumentsCustom(models.Model):
         required=False,
         default=False)
 
+    archive_from_contact = fields.Boolean()
+
     @api.constrains('document_number')
     def _check_document_number(self):
         for rec in self:
@@ -230,82 +232,85 @@ class DocumentsCustom(models.Model):
             [('active', '=', 'True'), ('renewed', '=', False), ('date_stop_renew', '=', False),
              ('notify', '=', True), ],
             order='related_company ASC'))
+        excluded_company_list = self.env['excluded.company'].search([])
+        excluded_company_ids = excluded_company_list.mapped('related_companies')
         partners = self.env['res.partner'].search([])
         for partner in partners:
             if partner.date_stop_renew:
                 documents.extend(self.env['documents.document'].search(
                     [
                         ('active', '=', 'True'), ('renewed', '=', False), ('partner_id', '=', partner.id),
-                        ('expiry_date', '<', partner.date_stop_renew), ('date_stop_renew', '!=', False),
-                        ('notify', '=', True),
+                        ('expiry_date', '<', partner.date_stop_renew),   ('date_stop_renew', '!=', False),
+                        ('notify', '=', True)
                     ], order='related_company ASC'))
         documents.sort(key=lambda x: x.related_company, reverse=True)
         if documents:
             base_url = self.env['ir.config_parameter'].get_param('web.base.url')
             for document in documents:
-                Remaining_Days_for_expiry = 0
-                if document.expiry_date:
-                    Remaining_Days_for_expiry = (datetime.strptime(str(document.expiry_date), fmt) - datetime.strptime(
-                        str(fields.Date.today()), fmt)).days
-                document_days = 0
-                if document.expiry_date:
-                    document_days = self.get_date_difference(document.expiry_date, fields.Date.today(), )
-                if document_days <= document.days_before_notifaction:
-                    # sheet.write(row, 0, number, text_style)
-                    ##############################################
-                    sheet.write(row, 0,
-                                document.related_company.name if document.related_company else document.partner_id.name,
-                                text_style)
+                if document.related_company.id not in excluded_company_ids.ids:
+                    Remaining_Days_for_expiry = 0
+                    if document.expiry_date:
+                        Remaining_Days_for_expiry = (datetime.strptime(str(document.expiry_date), fmt) - datetime.strptime(
+                            str(fields.Date.today()), fmt)).days
+                    document_days = 0
+                    if document.expiry_date:
+                        document_days = self.get_date_difference(document.expiry_date, fields.Date.today(), )
+                    if document_days <= document.days_before_notifaction:
+                        # sheet.write(row, 0, number, text_style)
+                        ##############################################
+                        sheet.write(row, 0,
+                                    document.related_company.name if document.related_company else document.partner_id.name,
+                                    text_style)
 
-                    ###############################
-                    sheet.write_url(row=row, col=1, url=str(
-                        base_url) + '/web#id={id}&action={action_id}&model=documents.document&view_type=form'.format(
-                        id=document.id, action_id=self.env.ref('documents.document_action').id),
-                                    string=document.partner_id.name if document.partner_id else "False")
-                    #########################
-                    status = ''
-                    if Remaining_Days_for_expiry <= 0:
-                        status = 'Expired'
-                    if Remaining_Days_for_expiry > 0:
-                        status = 'Active'
-                    sheet.write(row, 2, status,
-                                text_style)
-                    ######################
-                    person = ' '
-                    if document.person_type == "company":
-                        person = 'Company'
-                    if document.person_type == "emp":
-                        person = 'Employee'
-                    if document.person_type == "visitor":
-                        person = 'Visitor'
-                    if document.person_type == "child":
-                        person = 'Dependent'
-                    sheet.write(row, 3, person,
-                                text_style)
-                    ######################
-                    sheet.write(row, 4, document.related_contact.name if document.related_contact.name else ' ',
-                                text_style)
-                    ############################
-                    sheet.write(row, 5, document.sponsor.name, text_style)
-                    ##############################
-                    sheet.write(row, 6, document.document_type_id.name, text_style)
-                    ##############################
-                    sheet.write(row, 7, document.document_number, text_style)
-                    ##################################
-                    sheet.write(row, 8,
-                                document.related_company.account_manager.name if document.related_company.account_manager else " ",
-                                text_style)
-                    ###############################
-                    sheet.write(row, 9, Remaining_Days_for_expiry, text_style)
-                    #########################
-                    sheet.write(row, 10, fields.Date.to_string(
-                        document.partner_id.date_stop_renew) if document.partner_id.date_stop_renew else " ",
-                                text_style)
-                    #########################
-                    sheet.write(row, 11, fields.Date.to_string(document.expiry_date) if document.expiry_date else " ",
-                                text_style)
-                    row += 1
-                    number += 1
+                        ###############################
+                        sheet.write_url(row=row, col=1, url=str(
+                            base_url) + '/web#id={id}&action={action_id}&model=documents.document&view_type=form'.format(
+                            id=document.id, action_id=self.env.ref('documents.document_action').id),
+                                        string=document.partner_id.name if document.partner_id else "False")
+                        #########################
+                        status = ''
+                        if Remaining_Days_for_expiry <= 0:
+                            status = 'Expired'
+                        if Remaining_Days_for_expiry > 0:
+                            status = 'Active'
+                        sheet.write(row, 2, status,
+                                    text_style)
+                        ######################
+                        person = ' '
+                        if document.person_type == "company":
+                            person = 'Company'
+                        if document.person_type == "emp":
+                            person = 'Employee'
+                        if document.person_type == "visitor":
+                            person = 'Visitor'
+                        if document.person_type == "child":
+                            person = 'Dependent'
+                        sheet.write(row, 3, person,
+                                    text_style)
+                        ######################
+                        sheet.write(row, 4, document.related_contact.name if document.related_contact.name else ' ',
+                                    text_style)
+                        ############################
+                        sheet.write(row, 5, document.sponsor.name, text_style)
+                        ##############################
+                        sheet.write(row, 6, document.document_type_id.name, text_style)
+                        ##############################
+                        sheet.write(row, 7, document.document_number, text_style)
+                        ##################################
+                        sheet.write(row, 8,
+                                    document.related_company.account_manager.name if document.related_company.account_manager else " ",
+                                    text_style)
+                        ###############################
+                        sheet.write(row, 9, Remaining_Days_for_expiry, text_style)
+                        #########################
+                        sheet.write(row, 10, fields.Date.to_string(
+                            document.partner_id.date_stop_renew) if document.partner_id.date_stop_renew else " ",
+                                    text_style)
+                        #########################
+                        sheet.write(row, 11, fields.Date.to_string(document.expiry_date) if document.expiry_date else " ",
+                                    text_style)
+                        row += 1
+                        number += 1
         workbook.close()
         output.seek(0)
         generated_file = response.stream.write(output.read())
