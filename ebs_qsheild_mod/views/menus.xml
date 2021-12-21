@@ -59,7 +59,7 @@
 
     <menuitem
             id="excluded_company_menu"
-            name="Excluded Company"
+            name="Excluded Contacts"
             action="excluded_company_action"
             parent="documents.Config"
             sequence="7"

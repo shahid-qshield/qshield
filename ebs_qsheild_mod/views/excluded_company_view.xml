@@ -3,24 +3,24 @@
     <data>
         <!--list view -->
         <record id="excluded_company_tree" model="ir.ui.view">
-            <field name="name">Excluded Company Tree</field>
+            <field name="name">Excluded Contact Tree</field>
             <field name="model">excluded.company</field>
             <field name="arch" type="xml">
                 <tree>
-                    <field name="related_companies" widget="many2many_tags" string="Related Companies"/>
+                    <field name="related_companies" widget="many2many_tags" string="Related Contacts"/>
                 </tree>
             </field>
         </record>
         <!--form view -->
         <record id="excluded_company_form" model="ir.ui.view">
-            <field name="name">Excluded Company form</field>
+            <field name="name">Excluded Contact form</field>
             <field name="model">excluded.company</field>
             <field name="arch" type="xml">
                 <form>
                     <sheet>
                         <group>
                             <group>
-                                <field name="related_companies" widget="many2many_tags" string="Related Companies"
+                                <field name="related_companies" widget="many2many_tags" string="Related Contacts"
                                        domain="[('person_type','=','company')]"/>
                             </group>
                         </group>
@@ -30,7 +30,7 @@
         </record>
         <!--window -->
         <record id="excluded_company_action" model="ir.actions.act_window">
-            <field name="name">Excluded Company</field>
+            <field name="name">Excluded Contacts</field>
             <field name="res_model">excluded.company</field>
             <field name="view_mode">tree,form</field>
         </record>
