@@ -18,8 +18,14 @@
                         <!--                        <t t-set="address_variable"-->
                         <!--                           t-value="o.employee_id.company_id.country_id.name + ',' + o.employee_id.company_id.city"/>-->
                         <!--                                    <img src='/web/binary/company_logo'/>-->
-                        <img t-if="company.logo" t-att-src="image_data_uri(company.logo)"
-                             alt="Logo" style="width: 200px; height: 100px; top: -10px; left: 10px;"/>
+
+
+                        <!--                        <img t-if="company.logo" t-att-src="image_data_uri(company.logo)"-->
+                        <!--                             alt="Logo" style="width: 200px; height: 100px; top: -10px; left: 10px;"/>-->
+
+                        <img src="qshield_payslip/static/src/img/company_logo.png"
+                             style="width:250px; height: 100px;top: -10px; left: 10px;"/>
+
 
                         <!--                        <span style=" width:200px; float:right; top:0px;"-->
                         <!--                              t-field="o.employee_id.company_id.street"/>-->
@@ -37,41 +43,44 @@
             </xpath>
             <xpath expr="//div[@class='header']" position="after">
                 <div t-attf-class="footer o_standard_footer o_company_#{company.id}_layout">
-                    <div class="text-center" style="border-top: 1px solid black;">
+                    <!--                    <div class="text-center" style="border-top: 1px solid black;">-->
+                    <div class="text-center" style="font-family:'Times New Roman', Times, serif; padding-top: 30px;">
                         <ul class="list-inline mb4">
                             <li t-if="company.street" class="list-inline-item d-inline">
-                                <span class="o_force_ltr" t-field="company.street"/>
+                                <span style="font-size:12px;font-weight:normal;" t-field="company.street"/>
                             </li>
                             <li t-if="company.street2" class="list-inline-item d-inline">
-                                <span class="o_force_ltr" t-field="company.street2"/>
+                                <span style="font-size:12px;font-weight:normal;" t-field="company.street2"/>
                             </li>
                             <li t-if="company.city" class="list-inline-item d-inline">
-                                <span class="o_force_ltr" t-field="company.city"/>
+                                <span style="font-size:12px;font-weight:normal;" t-field="company.city"/>
                             </li>
                             <li t-if="company.country_id" class="list-inline-item d-inline">
-                                <span class="o_force_ltr" t-field="company.country_id.name"/>
+                                <span style="font-size:12px;font-weight:normal;" t-field="company.country_id.name"/>
                             </li>
-                            <li t-if="company.phone" class="list-inline-item d-inline">T:
-                                <span class="o_force_ltr" t-field="company.phone"/>
+                            <li t-if="company.phone" class="list-inline-item d-inline"
+                                style="font-size:12px;font-weight:normal;">T:
+                                <span t-field="company.phone"/>
                             </li>
-                            <li t-if="company.email" class="list-inline-item d-inline">E:
+                            <li t-if="company.email" class="list-inline-item d-inline"
+                                style="font-size:12px;font-weight:normal;">E:
                                 <span t-field="company.email"/>
                             </li>
-                            <li t-if="company.website" class="list-inline-item d-inline">W:
+                            <li t-if="company.website" class="list  -inline-item d-inline"
+                                style="font-size:12px;font-weight:normal;">W:
                                 <span t-field="company.website"/>
                             </li>
                             <li t-if="company.vat" class="list-inline-item d-inline"><t
                                     t-esc="company.country_id.vat_label or 'Tax ID'"/>:
-                                <span t-field="company.vat"/>
+                                <span style="font-size:12px;font-weight:normal;" t-field="company.vat"/>
                             </li>
                         </ul>
-
-                        <div t-if="report_type == 'pdf'" class="text-muted">
-                            Page:
-                            <span class="page"/>
-                            /
-                            <span class="topage"/>
-                        </div>
+                        <!--                        <div t-if="report_type == 'pdf'" class="text-muted">-->
+                        <!--                            Page:-->
+                        <!--                            <span class="page"/>-->
+                        <!--                            /-->
+                        <!--                            <span class="topage"/>-->
+                        <!--                        </div>-->
                     </div>
                 </div>
             </xpath>
@@ -83,91 +92,104 @@
                 <t t-foreach="docs" t-as="o">
                     <t t-call="web.internal_layout">
                         <div class="page">
-                            <h4 class="text-center" style=" margin-left: 30px;">PAY SLIP</h4>
-
+                            <h4 style=" margin-left: 300px;">PAY SLIP</h4>
+                            <br/>
                             <div>
-                                <table>
-                                    <tr>
-                                        <td>
-                                            <h5>Employee:</h5>
-                                        </td>
+                                <div class="row">
+                                    <table>
+                                        <tr>
+                                            <td>
+                                                <span>Employee:</span>
+                                            </td>
 
-                                        <td>
-                                            <span style=" margin-left: 60px;" t-field="o.employee_id.name"/>
-                                        </td>
-                                    </tr>
+                                            <td>
+                                                <span style=" margin-left: 60px;" t-field="o.employee_id.name"/>
+                                            </td>
+                                        </tr>
 
-                                    <tr>
-                                        <td>
-                                            <h5>
-                                                QID no:
-                                            </h5>
-                                        </td>
-                                        <td>
-                                            <span style=" margin-left: 60px;" t-field="o.qid"/>
-                                        </td>
-                                    </tr>
+                                        <tr>
+                                            <td>
+                                                <span>
+                                                    QID no:
+                                                </span>
+                                            </td>
+                                            <td>
+                                                <span style=" margin-left: 60px;" t-field="o.qid"/>
+                                            </td>
+                                        </tr>
 
-                                    <tr>
-                                        <td>
-                                            <h5>Designation:</h5>
-                                        </td>
+                                        <tr>
+                                            <td>
+                                                <span>Designation:</span>
+                                            </td>
 
-                                        <td>
-                                            <span style=" margin-left: 60px;" t-field="o.designation_id.name"/>
-                                        </td>
-                                    </tr>
+                                            <td>
+                                                <span style=" margin-left: 60px;" t-field="o.designation_id.name"/>
+                                            </td>
+                                        </tr>
 
-                                    <tr>
-                                        <td>
-                                            <h5>Date of Joining:</h5>
-                                        </td>
+                                        <tr>
+                                            <td>
+                                                <span>Date of Joining:</span>
+                                            </td>
 
-                                        <td>
-                                            <span style=" margin-left: 60px;" t-field="o.date_of_joining"/>
-                                        </td>
-                                    </tr>
+                                            <td>
+                                                <span style=" margin-left: 60px;" t-field="o.date_of_joining"/>
+                                            </td>
+                                        </tr>
 
 
-                                    <tr>
-                                        <td>
-                                            <h5>Payroll Month:</h5>
-                                        </td>
+                                        <tr>
+                                            <td>
+                                                <span>Payroll Month:</span>
+                                            </td>
 
-                                        <td>
-                                            <span style=" margin-left: 60px;" t-field="o.month"/>
-                                            <span style=" margin-left: 10px;" t-field="o.year"/>
-                                        </td>
-                                    </tr>
-                                </table>
+                                            <td>
+                                                <span style=" margin-left: 60px;" t-field="o.month"/>
+                                                <span style=" margin-left: 10px;" t-field="o.year"/>
+                                            </td>
+                                        </tr>
+                                    </table>
+                                    <div class="col-3" name="company_address" style=" margin-left: 250px;">
+                                        <div t-field="o.employee_id.company_id.partner_id"
+                                             t-options='{"widget": "contact", "fields": ["address"], "no_marker": true}'
+                                        />
+                                        <span>Tel :
+                                            <t t-esc="o.employee_id.company_id.phone"></t>
+                                        </span>
+                                        <br/>
+                                        <span>Fax :
+                                            <t t-esc="o.employee_id.company_id.phone"></t>
+                                        </span>
+                                    </div>
+                                </div>
+
                                 <t t-if="o.contract_id">
                                     <table class="table table-sm" style="margin-top:10px;">
                                         <thead>
                                             <tr>
-                                                <th scope="col">Monthly Emoluments</th>
-                                                <th scope="col">Amount</th>
-                                                <th scope="col">Payable</th>
+                                                <th scope="col" style="text-align: left;">Monthly Emoluments</th>
+                                                <th scope="col" style="text-align: right;">Amount</th>
+                                                <th scope="col" style="text-align: right;">Payable</th>
                                             </tr>
                                         </thead>
-                                        <tbody>
+                                        <tbody style="font-size:12px;">
                                             <tr>
-                                                <td>Basic Salary</td>
-                                                <td>
+                                                <td style="text-align: left;">Basic Salary</td>
+                                                <td style="text-align: right;">
                                                     <span style=" margin-left: 60px;" t-field="o.basic_salary_amount"/>
                                                 </td>
-                                                <td>
+                                                <td style="text-align: right;">
                                                     <span style=" margin-left: 60px;" t-field="o.basic_salary_payable"/>
                                                 </td>
                                             </tr>
-
-
                                             <tr>
-                                                <td>Housing Allowance</td>
-                                                <td>
+                                                <td style="text-align:left;">Housing Allowance</td>
+                                                <td style="text-align: right;">
                                                     <span style=" margin-left: 60px;"
                                                           t-field="o.housing_allowance_amount"/>
                                                 </td>
-                                                <td>
+                                                <td style="text-align: right;">
                                                     <span style=" margin-left: 60px;"
                                                           t-field="o.housing_allowance_payable"/>
                                                 </td>
@@ -175,24 +197,24 @@
 
 
                                             <tr>
-                                                <td>Transport Allowance</td>
-                                                <td>
+                                                <td style="text-align: left;">Transport Allowance</td>
+                                                <td style="text-align: right;">
                                                     <span style=" margin-left: 60px;"
                                                           t-field="o.transport_allowance_amount"/>
                                                 </td>
-                                                <td>
+                                                <td style="text-align: right;">
                                                     <span style=" margin-left: 60px;"
                                                           t-field="o.transport_allowance_payable"/>
                                                 </td>
                                             </tr>
 
                                             <tr>
-                                                <td>Telephone Allowance</td>
-                                                <td>
+                                                <td style="text-align: left;">Telephone Allowance</td>
+                                                <td style="text-align: right;">
                                                     <span style=" margin-left: 60px;"
                                                           t-field="o.telephone_allowance_amount"/>
                                                 </td>
-                                                <td>
+                                                <td style="text-align: right;">
                                                     <span style=" margin-left: 60px;"
                                                           t-field="o.telephone_allowance_payable"/>
                                                 </td>
@@ -200,12 +222,12 @@
 
 
                                             <tr>
-                                                <td>Petrol Allowance</td>
-                                                <td>
+                                                <td style="text-align: left;">Petrol Allowance</td>
+                                                <td style="text-align: right;">
                                                     <span style=" margin-left: 60px;"
                                                           t-field="o.petrol_allowance_amount"/>
                                                 </td>
-                                                <td>
+                                                <td style="text-align: right;">
                                                     <span style=" margin-left: 60px;"
                                                           t-field="o.petrol_allowance_payable"/>
                                                 </td>
@@ -213,12 +235,12 @@
 
 
                                             <tr>
-                                                <td>Other Allowance</td>
-                                                <td>
+                                                <td style="text-align:left;">Other Allowance</td>
+                                                <td style="text-align: right;">
                                                     <span style=" margin-left: 60px;"
                                                           t-field="o.other_allowance_amount"/>
                                                 </td>
-                                                <td>
+                                                <td style="text-align: right;">
                                                     <span style=" margin-left: 60px;"
                                                           t-field="o.other_allowance_payable"/>
                                                 </td>
@@ -230,9 +252,9 @@
 
 
                                     <table style="float:right; top:10px;">
-                                        <tr>
+                                        <tr style="text-align: right;">
                                             <td>
-                                                <h5>Gross Salary:</h5>
+                                                <span>Gross Salary:</span>
                                             </td>
 
                                             <td>
@@ -244,22 +266,22 @@
                                     <table class="table table-sm">
                                         <thead>
                                             <tr>
-                                                <th scope="col">Earnings</th>
-                                                <th scope="col">Amount</th>
-                                                <th scope="col">Payable</th>
+                                                <th scope="col" style="text-align: left;">Earnings</th>
+                                                <th scope="col" style="text-align: right;">Amount</th>
+                                                <th scope="col" style="text-align: right;">Payable</th>
                                             </tr>
                                         </thead>
 
-                                        <tbody>
+                                        <tbody style="text-align: right;font-size:12px;">
                                             <t t-foreach="o.earning_ids" t-as="earning">
                                                 <tr>
-                                                    <td>
+                                                    <td style="text-align: left;">
                                                         <span style=" margin-left: 60px;" t-field="earning.name"/>
                                                     </td>
-                                                    <td>
+                                                    <td style="text-align: right;">
                                                         <span style=" margin-left: 60px;" t-field="earning.amount"/>
                                                     </td>
-                                                    <td>
+                                                    <td style="text-align: right;">
                                                         <span style=" margin-left: 60px;" t-field="earning.payable"/>
                                                     </td>
                                                 </tr>
@@ -268,9 +290,9 @@
                                     </table>
 
                                     <table style="float:right; top:10px;">
-                                        <tr>
+                                        <tr style="text-align: right;">
                                             <td>
-                                                <h5>Total Earning:</h5>
+                                                <span>Total Earning:</span>
                                             </td>
 
                                             <td>
@@ -282,22 +304,22 @@
                                     <table class="table table-sm">
                                         <thead>
                                             <tr>
-                                                <th scope="col">Deduction</th>
-                                                <th scope="col">Amount</th>
-                                                <th scope="col">Payable</th>
+                                                <th scope="col" style="text-align: left;">Deduction</th>
+                                                <th scope="col" style="text-align: right;">Amount</th>
+                                                <th scope="col" style="text-align: right;">Payable</th>
                                             </tr>
                                         </thead>
 
-                                        <tbody>
+                                        <tbody style="font-size:12px;">
                                             <t t-foreach="o.deduction_ids" t-as="deduction">
                                                 <tr>
-                                                    <td>
+                                                    <td style="text-align: left;">
                                                         <span style=" margin-left: 60px;" t-field="deduction.name"/>
                                                     </td>
-                                                    <td>
+                                                    <td style="text-align: right;">
                                                         <span style=" margin-left: 60px;" t-field="deduction.amount"/>
                                                     </td>
-                                                    <td>
+                                                    <td style="text-align: right;">
                                                         <span style=" margin-left: 60px;" t-field="deduction.payable"/>
                                                     </td>
                                                 </tr>
@@ -306,9 +328,9 @@
                                     </table>
 
                                     <table style="float:right; top:10px;">
-                                        <tr>
+                                        <tr style="text-align: right;">
                                             <td>
-                                                <h5>Total Deduction:</h5>
+                                                <span>Total Deduction:</span>
                                             </td>
 
                                             <td>
@@ -319,18 +341,18 @@
 
 
                                     <table style="width:100%; float:left; border: 1px solid gray;">
-                                        <tr>
+                                        <tr style="text-align: right;">
                                             <td>
-                                                <h5>NET PAY:</h5>
+                                                <span>NET PAY:</span>
                                             </td>
 
                                             <td>
                                                 <span style=" margin-left: 60px;" t-field="o.net_pay"/>
                                             </td>
                                         </tr>
-                                        <tr>
+                                        <tr style="text-align: right;">
                                             <td>
-                                                <h5>(in words)</h5>
+                                                <span>(in words)</span>
                                             </td>
 
                                             <td>
@@ -340,8 +362,8 @@
                                     </table>
                                 </t>
                                 <table style="margin-top:10px; width:50%; float:left; border: 1px solid gray;">
-                                    <thead>
-                                        <tr style="border: 1px solid gray;">
+                                    <thead style="text-align: right;">
+                                        <tr>
                                             <th class="text-center">Payment Details</th>
                                             <th></th>
                                         </tr>
@@ -350,7 +372,7 @@
                                     <tbody style="border: 1px solid gray;">
                                         <tr>
                                             <td>
-                                                <h5>Payment Mode:</h5>
+                                                <span>Payment Mode:</span>
                                             </td>
 
                                             <td>
@@ -360,7 +382,7 @@
 
                                         <tr>
                                             <td>
-                                                <h5>Bank:</h5>
+                                                <span>Bank:</span>
                                             </td>
 
                                             <td>
@@ -370,7 +392,7 @@
 
                                         <tr>
                                             <td>
-                                                <h5>Account Number:</h5>
+                                                <span>Account Number:</span>
                                             </td>
 
                                             <td>
@@ -379,18 +401,19 @@
                                         </tr>
                                     </tbody>
                                 </table>
-
-                                <table style="margin-top:10px; float:left;">
-                                    <tr>
-                                        <td>
-                                            <h5>System generated document, no signature required</h5>
-                                            <h5>Amount paid to your account in Qatari Riyals........</h5>
-                                        </td>
-                                    </tr>
-
-                                </table>
-
-                                <table style="margin-top:80px; float:left; width:50%;">
+                                <div style="margin-top:10px; float:left;">
+                                    <span>System generated document, no signature required</span>
+                                    <span>Amount paid to your account in Qatari Riyals........</span>
+                                </div>
+                                <!--                                <table style="margin-top:10px; float:left;">-->
+                                <!--                                    <tr>-->
+                                <!--                                        <td>-->
+                                <!--                                            <span>System generated document, no signature required</span>>-->
+                                <!--                                            <span>Amount paid to your account in Qatari Riyals........</span>-->
+                                <!--                                        </td>-->
+                                <!--                                    </tr>-->
+                                <!--                                </table>-->
+                                <table style="margin-top:10px; float:left; width:50%;">
                                     <tr>
                                         <td>
                                             <hr style="border: 1px solid gray;"/>
@@ -398,11 +421,10 @@
                                     </tr>
                                     <tr>
                                         <td>
-                                            <h5>Employee's Signature</h5>
+                                            <span>Employee's Signature</span>
                                         </td>
                                     </tr>
                                 </table>
-
 
                             </div>
                         </div>
