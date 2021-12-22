@@ -25,3 +25,4 @@ access_ebs_mod_res_partner_user,base.res_partner,model_res_partner,ebs_qsheild_m
 access_ebs_mod_payment_transaction,ebs_qsheild_mod.ebs_mod_payment_transaction,model_ebs_mod_payment_transaction,,1,1,1,1
 
 access_ebs_documents_document,ebs.documents.document,documents.model_documents_document,,1,1,1,0
+access_excluded_company,excluded.company,model_excluded_company,,1,1,1,1

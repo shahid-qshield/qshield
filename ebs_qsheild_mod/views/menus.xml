@@ -57,6 +57,14 @@
             sequence="6"
     />
 
+    <menuitem
+            id="excluded_company_menu"
+            name="Excluded Contacts"
+            action="excluded_company_action"
+            parent="documents.Config"
+            sequence="7"
+    />
+
 
     <menuitem
             name="Services"

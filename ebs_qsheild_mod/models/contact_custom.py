@@ -355,7 +355,12 @@ class ContactCustom(models.Model):
         document_list = self.env['documents.document'].search(
             [('partner_id', '=', self.id), ('active', '=', (not active))])
         for rec in document_list:
-            rec.active = active
+            if not active:
+                rec.archive_from_contact = True
+                rec.active = active
+            elif active and rec.archive_from_contact:
+                rec.archive_from_contact = False
+                rec.active = active
 
     def _get_name(self):
         if self.person_type:

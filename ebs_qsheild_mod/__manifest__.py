@@ -56,6 +56,7 @@
         'views/service_expenses_view.xml',
         'views/contact_payment_transaction_view.xml',
         'views/setting_view.xml',
+        'views/excluded_company_view.xml',
         'views/menus.xml',
         'views/end_date_update_server_action.xml',
         # 'views/documents_assets.xml',
