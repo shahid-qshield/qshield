@@ -1,0 +1,79 @@
+<odoo>
+    <data>
+        <record id="hr_employee_view_custom_inherit" model="ir.ui.view">
+            <field name="name">hr.employee.view.custom.inherit</field>
+            <field name="model">hr.employee</field>
+            <field name="inherit_id" ref="ebs_qshield_employee.hr_employee_view_custom"/>
+            <field name="arch" type="xml">
+                <button name="employee_information_form" position="attributes">
+                    <attribute name="groups">ebs_qshield_employee.group_hr_services</attribute>
+                </button>
+            </field>
+        </record>
+
+
+        <record id="ebs_hr_employee_custom_form_inherit" model="ir.ui.view">
+            <field name="name">ebs.hr.employee.custom.form.inherit</field>
+            <field name="model">hr.employee</field>
+            <field name="inherit_id" ref="qshield_letter_request.ebs_hr_employee_custom_form"/>
+            <field name="arch" type="xml">
+
+                <!--                old group for letter request groups="hr.group_hr_manager"-->
+                <button name="%(qshield_letter_request.open_view_ebs_hr_letter_request)d" position="attributes">
+                    <attribute name="groups">ebs_qshield_employee.group_hr_services</attribute>
+                </button>
+                <!--                old group for letter request groups="base.group_user"-->
+                <button name="%(qshield_letter_request.act_hr_letter_request_list)d" position="attributes">
+                    <attribute name="groups">ebs_qshield_employee.group_hr_services</attribute>
+                </button>
+
+
+            </field>
+        </record>
+
+
+        <record id="view_employee_form_loan_inherit_custom" model="ir.ui.view">
+            <field name="name">view.employee.form.loan.inherit.custom</field>
+            <field name="model">hr.employee</field>
+            <field name="inherit_id" ref="matco_loan_management.view_employee_form_loan_inherit"/>
+            <field name="arch" type="xml">
+                <button name="get_employee_payslips" position="attributes">
+                    <attribute name="groups">ebs_qshield_employee.group_hr_services</attribute>
+                </button>
+                <!--                old groups for loan button  groups="hr.group_hr_manager,hr.group_hr_user"-->
+
+                <button name="%(matco_loan_management.act_hr_employee_loan_request)d" position="attributes">
+                    <attribute name="groups">ebs_qshield_employee.group_hr_services</attribute>
+                </button>
+
+            </field>
+        </record>
+
+
+        <record id="view_employee_form_leave_inherit_custom" model="ir.ui.view">
+            <field name="name">view.employee.form.leave.inherit.custom</field>
+            <field name="model">hr.employee</field>
+            <field name="inherit_id" ref="hr_holidays.view_employee_form_leave_inherit"/>
+            <field name="arch" type="xml">
+                <!--                old group for time off button groups="base.group_user"-->
+                <button name="%(hr_holidays.act_hr_employee_holiday_request)d" position="attributes">
+                    <attribute name="groups">ebs_qshield_employee.group_hr_services</attribute>
+                </button>
+
+            </field>
+        </record>
+
+
+        <record id="matco_loan_management.act_hr_employee_loan_request" model="ir.actions.act_window">
+            <field name="groups_id"
+                   eval="[(6,0,[ref('ebs_qshield_employee.group_hr_services')])]"/>
+        </record>
+
+        <record id="hr_holidays.act_hr_employee_holiday_request" model="ir.actions.server">
+            <field name="groups_id"
+                   eval="[(6,0,[ref('ebs_qshield_employee.group_hr_services')])]"/>
+        </record>
+
+
+    </data>
+</odoo>

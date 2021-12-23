@@ -1,0 +1,33 @@
+<odoo>
+    <data>
+        <!--        old groups base.group_user-->
+        <record model="ir.ui.menu" id="qshield_letter_request.menu_ebs_hr_letter_request">
+
+            <field name="groups_id"
+                   eval="[(6,0,[ref('ebs_qshield_employee.group_hr_services')])]"/>
+        </record>
+
+        <!--        old groups base.group_user-->
+
+        <record model="ir.ui.menu" id="hr_holidays.menu_hr_holidays_root">
+            <field name="groups_id"
+                   eval="[(6,0,[ref('ebs_qshield_employee.group_hr_services')])]"/>
+        </record>
+
+        <!--        old groups-->
+
+        <record model="ir.ui.menu" id="matco_loan_management.menu_hr_loans_and_advances">
+            <field name="groups_id"
+                   eval="[(6,0,[ref('ebs_qshield_employee.group_hr_services')])]"/>
+        </record>
+
+
+        <!--        old groups-->
+
+        <record model="ir.ui.menu" id="qshield_payslip.qshield_payslip_menue_action">
+            <field name="groups_id"
+                   eval="[(6,0,[ref('ebs_qshield_employee.group_hr_services')])]"/>
+        </record>
+
+    </data>
+</odoo>
