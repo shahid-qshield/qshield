@@ -8,29 +8,41 @@
                         <html>
                             <style>
                                 body{
-                                    text-align: justify;
-                                    font-size:18px
+                                text-align: justify;
+                                font-size:18px
                                 }
 
                             </style>
                             <body>
                                 <div style="margin-left:70%">
-                                    <p style="  line-height: 2; text-align: justify;"><strong>Ref. No.
-                                        <span style="padding-right:5px;" t-field="o.name"/><br/>
-                                            Date: <span style="padding-right:5px;"
-                                                        t-esc="o.print_date"/></strong></p>
+                                    <p style="  line-height: 2; text-align: justify;">
+                                        <strong>Ref. No.
+                                            <span style="padding-right:5px;" t-field="o.name"/>
+                                            <br/>
+                                            Date:
+                                            <span style="padding-right:5px;"
+                                                  t-esc="o.print_date"/>
+                                        </strong>
+                                    </p>
                                 </div>
 
                                 <div>
-                                    <p style="  line-height: 2;"><strong>
-                                        <span style="padding-right:5px;" t-field="o.addressed_to"/><br/>
-                                                Doha, Qatar</strong></p>
-                                </div><br/>
+                                    <p style="  line-height: 2;">
+                                        <strong>
+                                            <span style="padding-right:5px;" t-field="o.addressed_to"/>
+                                            <br/>
+                                            Doha, Qatar
+                                        </strong>
+                                    </p>
+                                </div>
+                                <br/>
 
-                                <div align="center" >
+                                <div align="center">
                                     <p style="line-height: 2;">
                                         <strong>SUBJECT: SALARY CERTIFICATE Of
-                                        MR. <span style="padding-right:5px;" t-field="o.employee_id.name"/></strong>
+                                            MR.
+                                            <span style="padding-right:5px;" t-field="o.employee_id.name"/>
+                                        </strong>
                                     </p>
                                 </div>
                                 <div>
@@ -38,48 +50,95 @@
                                 </div>
 
                                 <p style="line-height: 2;">
-                                    This is to certify that Mr.  <span style="padding-right:5px;" t-field="o.employee_id.name"/>,
+                                    This is to certify that Mr.<span style="padding-right:5px;"
+                                                                     t-field="o.employee_id.name"/>,
                                     holding QID No.
                                     <span style="padding-right:5px;" t-field="o.employee_id.qid_number"/>
                                     is confirmed employee of QShield LLC., Commercial Registration No.
-                                    <span style="padding-right:5px;" t-field="o.employee_id.company_id.company_registry"/>.
+                                    <span style="padding-right:5px;"
+                                          t-field="o.employee_id.company_id.company_registry"/>.
                                     He joined the company on
                                     <span style="padding-right:5px;" t-field="o.employee_id.joining_date"/>
                                     and he is currently working as
                                     <span style="padding-right:5px;" t-field="o.employee_id.job_id.name"/>.
-                                     His present salary is <span style="padding-right:5px;" t-field="o.gross_salary"/>  (
-                                   <span style="padding-right:5px;" t-field="o.num_word"/>) per month.
+                                    His present salary is
+                                    <span style="padding-right:5px;" t-field="o.gross_salary"/>
+                                    (
+                                    <span style="padding-right:5px;" t-field="o.num_word"/>) per month.
                                     He is also entitled to company accommodation, air ticket and leave salary.
+                                    He is residing in
+                                    <t t-if="o.employee_id.address_home_id">
+                                        <span style="padding-right:5px;"
+                                              t-field="o.employee_id.address_home_id.street">
+                                        </span>,
+                                        <span style="padding-right:5px;"
+                                              t-field="o.employee_id.address_home_id.street2">
+                                        </span>,
+                                        <span style="padding-right:5px;"
+                                              t-field="o.employee_id.address_home_id.city">
+                                        </span>,
+                                        <span style="padding-right:5px;"
+                                              t-field="o.employee_id.address_home_id.state_id.name">
+                                        </span>,
+                                        <span style="padding-right:5px;"
+                                              t-field="o.employee_id.address_home_id.zip">
+                                        </span>,
+                                        <span style="padding-right:5px;"
+                                              t-field="o.employee_id.address_home_id.country_id.name">,
+                                        </span>
+                                    </t>
                                 </p>
                                 <p>
-                                    To assist Mr. <span style="padding-right:5px;" t-field="o.employee_id.name"/> in
-                                    <span style="padding-right:5px;" t-field="o.subject_from"/> from your bank,
+                                    To assist Mr.
+                                    <span style="padding-right:5px;" t-field="o.employee_id.name"/>
+                                    in
+                                    <span style="padding-right:5px;" t-field="o.subject_from"/>
+                                    from your bank,
                                     we confirm that the monthly salary will continue to be paid to employee’s bank
                                     Account once the account number is availed.
                                 </p>
                                 <p>
                                     We confirm that his monthly salary less any authorized deduction will continue to be
-                                    transferred to his account with your bank. The above will not cancel this instruction
+                                    transferred to his account with your bank. The above will not cancel this
+                                    instruction
                                     unless a clearance letter is produced from
-                                    <span style="padding-right:5px;" t-field="o.addressed_to"/> confirming
+                                    <span style="padding-right:5px;" t-field="o.addressed_to"/>
+                                    confirming
                                     that the liabilities have been repaid in full.
                                 </p>
                                 <p>
-                                    If Mr. <span style="padding-right:5px;" t-field="o.employee_id.name"/> resigns or terminate s his employment,
+                                    If Mr.
+                                    <span style="padding-right:5px;" t-field="o.employee_id.name"/>
+                                    resigns or terminates his employment,
                                     we will inform you accordingly and pay all amounts due to him inclusive of end of
-                                    service benefits to his account with <span style="padding-right:5px;" t-field="o.addressed_to"/>.
+                                    service benefits to his account with<span style="padding-right:5px;"
+                                                                              t-field="o.addressed_to"/>.
+                                    Currently employee End of service amounts is QAR
+                                    <span style="padding-right:5px;"
+                                          t-field="o.end_of_service_benefit"/>
+                                    <t t-if="o.end_of_service_benefit > 0">/-</t>
+                                    <t t-if="o.end_of_service_benefit_word">(<span style="padding-right:5px;"
+                                                                                   t-field="o.end_of_service_benefit_word"/>)
+                                    </t>
                                 </p>
 
                                 <p>The above-named employee fully understands that QShield LLC., does not in any way
                                     hold itself responsible for any debits incurred by the employee and that the opening
-                                    and granting of the facilities is the sole discretion of your bank.</p>
+                                    and granting of the facilities is the sole discretion of your bank.
+                                </p>
                                 <div>
-                                    Kind regards,<br/>
-                                    for QSHIELD LLC.,<br/><br/>
-                                    <strong>NAME OF SIGNATORY:</strong> <span style="padding-right:5px;" t-field="o.signatory_id.name"/><br/>
-                                    <strong>DESIGNATION: </strong> <span style="padding-right:5px;" t-field="o.signatory_id.job_id.name"/>
+                                    Kind regards,
+                                    <br/>
+                                    for QSHIELD LLC.,
+                                    <br/>
+                                    <br/>
+                                    <strong>NAME OF SIGNATORY:</strong>
+                                    <span style="padding-right:5px;" t-field="o.signatory_id.name"/>
+                                    <br/>
+                                    <strong>DESIGNATION:</strong>
+                                    <span style="padding-right:5px;" t-field="o.signatory_id.job_id.name"/>
                                 </div>
-                           </body>
+                            </body>
                         </html>
 
                     </div>

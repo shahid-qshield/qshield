@@ -3,7 +3,6 @@ from odoo import models, fields, _, api
 from odoo.exceptions import ValidationError
 from datetime import date, datetime
 
-
 _request_type = [
     ('noc_visa_application', 'Noc Visa Application'),
     ('salary_certificate', 'Salary Certificate'),
@@ -57,8 +56,8 @@ class EBSHRLetterRequest(models.Model):
     description = fields.Text(string="Description", copy=False)
     company_id = fields.Many2one('res.company', string='Company', required=True,
                                  default=lambda self: self.env.company)
-    gross_salary = fields.Monetary(string='',compute='get_gross_salary_and_allowances' ,store=True)
-    all_allowances = fields.Monetary(string='', compute='get_gross_salary_and_allowances',store=True)
+    gross_salary = fields.Monetary(string='', compute='get_gross_salary_and_allowances', store=True)
+    all_allowances = fields.Monetary(string='', compute='get_gross_salary_and_allowances', store=True)
 
     currency_id = fields.Many2one('res.currency', string='Currency', required=True,
                                   default=lambda self: self.env.user.company_id.currency_id)
@@ -74,10 +73,11 @@ class EBSHRLetterRequest(models.Model):
     wage_num_word = fields.Char(string="Amount In Words:", compute='_compute_amount_in_word', store=True)
     allowances_num_word = fields.Char(string="Allowances In Words:", compute='_compute_amount_in_word', store=True)
     end_of_service_benefit = fields.Float(default=0.0, required=False)
+    end_of_service_benefit_word = fields.Char(string="Amount In Words:", compute='_compute_amount_in_word', store=True)
 
     # amount in words
-    @api.onchange('gross_salary', 'all_allowances','wage_num_word')
-    @api.depends('gross_salary', 'all_allowances','wage_num_word')
+    @api.onchange('gross_salary', 'all_allowances', 'wage_num_word', 'end_of_service_benefit')
+    @api.depends('gross_salary', 'all_allowances', 'wage_num_word', 'end_of_service_benefit')
     def _compute_amount_in_word(self):
         for rec in self:
             rec.num_word = str(
@@ -86,6 +86,8 @@ class EBSHRLetterRequest(models.Model):
                 rec.currency_id.with_context(lang='en_US').amount_to_text(rec.all_allowances)) + ' Qatari Riyals'
             rec.wage_num_word = str(rec.currency_id.with_context(lang='en_US').amount_to_text(
                 rec.employee_id.contract_id.wage)) + ' Qatari Riyals'
+            rec.end_of_service_benefit_word = str(rec.currency_id.with_context(lang='en_US').amount_to_text(
+                rec.end_of_service_benefit)) + ' Qatari Riyals'
 
     # @api.onchange('gross_salary', 'employee_id', 'all_allowances')
     # @api.depends('gross_salary', 'employee_id', 'all_allowances')
@@ -272,7 +274,6 @@ class EBSHRLetterRequest(models.Model):
                         raise ValidationError(_("Please, select Signatory"))
                     if not rec.signatory_id.job_id:
                         raise ValidationError(_("Please, fill Signatory job position"))
-
 
     #             if rec.type == 'salary_breakdown':
     #                 if not rec.employee_id.qid_doc_number:
