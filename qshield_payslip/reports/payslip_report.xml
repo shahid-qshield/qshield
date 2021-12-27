@@ -41,12 +41,11 @@
                             <div>
                                 <div class="row" style="margin-left:0;margin-right:0; font-size:13px;">
                                     <table>
-                                        <tr>
-                                            <td>
+                                        <tr style="width:100%;">
+                                            <td style="width:30%;">
                                                 <span>Employee:</span>
                                             </td>
-
-                                            <td>
+                                            <td style="width:70%;">
                                                 <span style=" margin-left: 60px;" t-field="o.employee_id.name"/>
                                             </td>
                                         </tr>
