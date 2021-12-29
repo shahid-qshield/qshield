@@ -24,6 +24,7 @@
     'data': [
         'security/ir.model.access.csv',
         'security/qshiled_security_groups.xml',
+        'report/qshied_proposal_report.xml',
         'data/ir_mail_activity.xml',
         'data/ir_cron_create_invoice.xml',
         'wizards/refuse_quotation_view.xml',

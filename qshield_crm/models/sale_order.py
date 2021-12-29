@@ -4,6 +4,7 @@ from odoo import models, fields, api
 from datetime import datetime, date
 from odoo.tools import float_is_zero, float_compare
 from odoo.exceptions import UserError
+from dateutil.relativedelta import relativedelta
 
 
 class SaleOrder(models.Model):
@@ -37,6 +38,31 @@ class SaleOrder(models.Model):
     refuse_agreement_reason = fields.Text(string="Refuse Agreement Reason")
     is_valid_for_agreement = fields.Boolean(compute='compute_is_valid_for_agreement')
     invoice_term_ids = fields.One2many('invoice.term.line', 'sale_id', 'Invoicing Terms')
+    is_agreement = fields.Selection([('is_retainer', 'Is Retainer'), ('one_time_payment', 'One time Payment')],
+                                    default='is_retainer')
+    start_date = fields.Date(string="Start Date")
+    end_date = fields.Date(string="End Date")
+
+    def get_contract_duration(self):
+        diff = relativedelta(self.end_date, self.start_date)
+        if self.end_date and self.start_date:
+            if diff.months == 0:
+                 return str(diff.days) + ' Days '
+            else:
+                 return str(diff.months) + ' Months '
+        else:
+            return ""
+
+    def action_quotation_send(self):
+        action = super(SaleOrder, self).action_quotation_send()
+        if self.opportunity_id and self.state in ['draft', 'quotation_submit', 'quotation_approved', 'sent']:
+            context = action.get('context')
+            template_id = self.env['ir.model.data'].xmlid_to_res_id(
+                'qshield_crm.email_template_qshield_proposal_quotation',
+                raise_if_not_found=False)
+            context.update({'default_template_id': template_id})
+            action.update({'context': context})
+        return action
 
     @api.model
     def create(self, values):
@@ -209,8 +235,8 @@ class SaleOrder(models.Model):
         else:
             product_ids = self.order_line.mapped('product_id').ids
             service_types = self.env['ebs_mod.service.types'].search([('product_id', 'in', product_ids)])
-            start_date = datetime.strftime(self.create_date, '%Y-%m-%d')
-            end_date = datetime.strftime(datetime.now(), '%Y-%m-%d')
+            start_date = datetime.strftime(self.start_date, '%Y-%m-%d')
+            end_date = datetime.strftime(self.end_date, '%Y-%m-%d')
             contract = self.env['ebs_mod.contracts'].create({
                 'name': 'Contract for sale order of ' + self.name,
                 'start_date': start_date,

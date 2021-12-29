@@ -55,8 +55,8 @@
                                 context="{'proforma': True}"/>
                         <button name="action_quotation_send" string="Send by Email" type="object"
                                 attrs="{'invisible': ['|','&amp;',('opportunity_id', '=', False),('state', 'not in',
-                                        ['sent','sale']),'&amp;',('opportunity_id', '!=', False),('state', '!=',
-                                        'done')]}"/>
+                                        ['sent','sale']),'&amp;',('opportunity_id', '!=', False),('state', 'in',
+                                        ['draft','quotation_submit','quotation_approved'])]}"/>
                         <button name="action_cancel" type="object" string="Cancel"
                                 attrs="{'invisible': ['|','&amp;',('opportunity_id', '=', False),('state','not in',['draft','sent','sale']),'&amp;',('opportunity_id', '!=', False),('state', 'in',
                                         ['cancel','done'])]}"
@@ -98,6 +98,8 @@
                 </xpath>
 
                 <field name="payment_term_id" position="after">
+                    <field name="is_agreement" string="Is Agreement" widget="radio"
+                           attrs="{'invisible': [('opportunity_id','=',False)]}"/>
                     <field name="account_manager" attrs="{'invisible': [('state','!=','submit_client_operation')]}"/>
                     <field name="due_date" attrs="{'invisible': [('state','!=','submit_client_operation')]}"/>
                     <field name="approver_setting_id" attrs="{'invisible': [('opportunity_id','=',False)]}"
@@ -107,7 +109,12 @@
                     <field name="refuse_agreement_reason"
                            attrs="{'invisible': [('refuse_agreement_reason','=',False)]}"/>
                 </field>
-
+                <field name="partner_id" position="after">
+                    <field name="start_date"
+                           attrs="{'invisible': [('opportunity_id','=',False)],'readonly':[('state','!=','draft')],'required' : [('opportunity_id','!=',False),('state','=','draft')]}"/>
+                    <field name="end_date"
+                           attrs="{'invisible': [('opportunity_id','=',False)],'readonly':[('state','!=','draft')],'required' : [('opportunity_id','!=',False),('state','=','draft')]}"/>
+                </field>
                 <field name="invoice_status" position="attributes">
                     <attribute name="states">sale,done,submit_client_operation</attribute>
                 </field>
@@ -132,7 +139,8 @@
                                 <field name="invoice_amount_type"/>
                                 <field name="percentage"
                                        attrs="{'invisible' : ['|',('type','!=','down'),('invoice_amount_type','!=','percentage')]}"/>
-                                <field name="amount" attrs="{'invisible' : ['|',('type','!=','down'),('invoice_amount_type','!=','amount')]}"/>
+                                <field name="amount"
+                                       attrs="{'invisible' : ['|',('type','!=','down'),('invoice_amount_type','!=','amount')]}"/>
                                 <field name="to_invoice"/>
                                 <field name="invoice_id" readonly="1"/>
                             </tree>
