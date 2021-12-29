@@ -35,15 +35,18 @@ class ServiceRequest(models.Model):
             no_of_requests = self.env['ebs_mod.service.request'].search_count(domain)
             request_dict[key] = no_of_requests
 
-        progress_overdue = self.env['ebs_mod.service.request'].search([('status', '=', 'progress')])
+        progress_overdue = self.env['ebs_mod.service.request'].search(
+            [('status', '=', 'progress'), ('date', '>=', args.get('date_from')), ('date', '<=', args.get('date_to'))])
         for each in progress_overdue:
             if each.progress_date:
                 today = date.today()
-                if each.progress_date + timedelta(days=each.sla_days) > today:
+                if each.progress_date + timedelta(days=each.exceeded_days) < today:
                     each.is_overdue = True
         overdue = self.env['ebs_mod.service.request'].search_count([('is_overdue', '=', True),
                                                                     ('is_escalated', '=', False),
-                                                                    ('is_pending', '=', False)])
+                                                                    ('is_pending', '=', False),
+                                                                    ('date', '>=', args.get('date_from')),
+                                                                    ('date', '<=', args.get('date_to'))])
         progress_normal = self.env['ebs_mod.service.request'].search_count([('status', '=', 'progress'),
                                                                             ('is_exceptional', '=', False),
                                                                             ('is_escalated', '=', False),
@@ -134,8 +137,9 @@ class ServiceRequestWorkFlow(models.Model):
                     year_to, month_to, day_to = map(int, args.get('date_to').split('-'))
                     date_from = datetime(year_from, month_from, day_from, 0, 0, 0)
                     date_to = datetime(year_to, month_to, day_to, 0, 0, 0)
-                    domain.extend([('due_date', '>=', date_from), ('due_date', '<=', date_to), ('status', '=', 'progress'),
-                                   ('assign_to', '=', each_employee.id)])
+                    domain.extend(
+                        [('due_date', '>=', date_from), ('due_date', '<=', date_to), ('status', '=', 'progress'),
+                         ('assign_to', '=', each_employee.id)])
             else:
                 domain.extend([('status', '=', 'progress'), ('assign_to', '=', each_employee.id)])
             no_of_requests = self.env['ebs_mod.service.request.workflow'].search_count(domain)
