@@ -4,6 +4,17 @@ from odoo import models, fields, api, _
 from odoo.exceptions import ValidationError
 
 
+class HrEmployeeInherit(models.Model):
+    _inherit = 'hr.employee'
+
+    def write(self, vals):
+        active = vals.get('active')
+        if self.partner_id and active is not None:
+            self.partner_id.write({'active': active})
+        res = super(HrEmployeeInherit, self).write(vals)
+        return res
+
+
 class ContactCustom(models.Model):
     _inherit = 'res.partner'
 
