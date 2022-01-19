@@ -9,8 +9,8 @@ class HrEmployeeInherit(models.Model):
 
     def write(self, vals):
         active = vals.get('active')
-        if self.partner_id and active is not None:
-            self.partner_id.write({'active': active})
+        if self.sudo().user_id and self.sudo().user_id.partner_id and active is not None:
+            self.sudo().user_id.partner_id.write({'active': active})
         res = super(HrEmployeeInherit, self).write(vals)
         return res
 

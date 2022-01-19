@@ -240,7 +240,7 @@ class DocumentsCustom(models.Model):
                 documents.extend(self.env['documents.document'].search(
                     [
                         ('active', '=', 'True'), ('renewed', '=', False), ('partner_id', '=', partner.id),
-                        ('expiry_date', '<', partner.date_stop_renew),   ('date_stop_renew', '!=', False),
+                        ('expiry_date', '<', partner.date_stop_renew), ('date_stop_renew', '!=', False),
                         ('notify', '=', True)
                     ], order='related_company ASC'))
         documents.sort(key=lambda x: x.related_company, reverse=True)
@@ -250,7 +250,8 @@ class DocumentsCustom(models.Model):
                 if document.related_company.id not in excluded_company_ids.ids:
                     Remaining_Days_for_expiry = 0
                     if document.expiry_date:
-                        Remaining_Days_for_expiry = (datetime.strptime(str(document.expiry_date), fmt) - datetime.strptime(
+                        Remaining_Days_for_expiry = (
+                                datetime.strptime(str(document.expiry_date), fmt) - datetime.strptime(
                             str(fields.Date.today()), fmt)).days
                     document_days = 0
                     if document.expiry_date:
@@ -307,7 +308,8 @@ class DocumentsCustom(models.Model):
                             document.partner_id.date_stop_renew) if document.partner_id.date_stop_renew else " ",
                                     text_style)
                         #########################
-                        sheet.write(row, 11, fields.Date.to_string(document.expiry_date) if document.expiry_date else " ",
+                        sheet.write(row, 11,
+                                    fields.Date.to_string(document.expiry_date) if document.expiry_date else " ",
                                     text_style)
                         row += 1
                         number += 1
@@ -405,6 +407,19 @@ class DocumentsCustom(models.Model):
 
     def access_content(self):
         return super(DocumentsCustom, self).access_content()
+
+    def contact_archived_document_issue(self):
+        contact_ids = self.env['res.partner'].sudo().search(
+            [('active', '=', False)])
+        for contact_id in contact_ids:
+            documents = self.env['documents.document'].sudo().search(
+                [('partner_id', '=', contact_id.id), ('active', '=', False)], order='expiry_date desc')
+            document_types_list = []
+            for document in documents:
+                if not document.document_type_id.id in document_types_list:
+                    document.write({'archive_from_contact': True})
+                    document_types_list.append(document.document_type_id.id)
+        return True
 
 
 class DocumentsFolderCustom(models.Model):
