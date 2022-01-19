@@ -66,5 +66,32 @@
             <field name="model_id" ref="model_documents_document"/>
             <field name="code" eval="'model.notify_document_before_expired_to_partner()'"/>
         </record>
+
+
+        <record id="ir_cron_fix_contact_archived_document_issue" model="ir.cron">
+            <field name="name">Contact Archived Document Issue Fix Schedule Action</field>
+            <field name="model_id" ref="model_documents_document"/>
+            <field name="state">code</field>
+            <field name="code">model.contact_archived_document_issue()</field>
+            <field name="active">False</field>
+            <field name="user_id" ref="base.user_root"/>
+            <field name="interval_number">1</field>
+            <field name="interval_type">days</field>
+            <field name="numbercall">-1</field>
+            <field name="doall">True</field>
+        </record>
+
+        <record id="ir_cron_fix_employee_archived_document_issue" model="ir.cron">
+            <field name="name">Employee Archived Document Issue Fix Schedule Action</field>
+            <field name="model_id" ref="model_documents_document"/>
+            <field name="state">code</field>
+            <field name="code">model.employee_archived_document_issue()</field>
+            <field name="active">False</field>
+            <field name="user_id" ref="base.user_root"/>
+            <field name="interval_number">1</field>
+            <field name="interval_type">days</field>
+            <field name="numbercall">-1</field>
+            <field name="doall">True</field>
+        </record>
     </data>
 </odoo>
