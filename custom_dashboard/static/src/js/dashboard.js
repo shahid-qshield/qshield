@@ -41,6 +41,7 @@ var ServiceDashboard = AbstractAction.extend({
         var myNode = document.getElementById("tasks");
          myNode.innerHTML = '';
         this.start_date = elem.value;
+        console.log('start date',typeof(this.start_date));
         this.end_date = elem2.value;
         var options = {
             on_reverse_breadcrumb: this.on_reverse_breadcrumb,
@@ -411,7 +412,7 @@ var ServiceDashboard = AbstractAction.extend({
         this.set("title", 'Dashboard');
         return this._super().then(function() {
 
-            self.render_dashboards();
+//            self.render_dashboards();
         });
     },
 
@@ -421,8 +422,6 @@ var ServiceDashboard = AbstractAction.extend({
 
     fetch_data: function(start_date='',end_date='', date_for_drivers ='') {
         var self = this;
-//        var today = new Date();
-//        var date_today = today.getFullYear()+'-'+(today.getMonth()+1)+'-'+today.getDate();
 //        var year = today.getFullYear();
 //        var month = today.getMonth();
 //        var day = today.getDate();
@@ -439,8 +438,9 @@ var ServiceDashboard = AbstractAction.extend({
                     }]
             }).then(function(result) {
                 self.progress =  result
-                console.log(result)
-//                console.log(result)
+                var today = new Date(new Date().getFullYear(), 11, 31);
+                var date_today = today.getFullYear()+'-'+(today.getMonth()+1)+'-'+today.getDate();
+                self.end_date_field = date_today
                 $(".draft").text(self.progress['draft']);
                 $(".inprogress").text(self.progress['progress']);
                 $(".pending").text(self.progress['pending']);
@@ -589,8 +589,12 @@ var ServiceDashboard = AbstractAction.extend({
 
     render_dashboards: function() {
         var self = this;
+        let now = new Date();
+        let today = now.getFullYear() + '-' + (now.getMonth() + 1) + '-' + now.getDate() ;
+        console.log(today);
         _.each(this.dashboards_templates, function(template) {
-            self.$('.o_hr_dashboard').append(QWeb.render(template, {widget: self}));
+            console.log('ddddddddddddddddddddddddddd');
+            self.$('.o_hr_dashboard').append(QWeb.render(template, {widget: self,today : today}));
         });
 
     },
