@@ -1,6 +1,6 @@
 from odoo import models, fields, api, _
 from odoo.exceptions import ValidationError
-from datetime import datetime, timedelta
+from datetime import datetime, timedelta, date
 
 
 class ServiceRequestWorkFlow(models.Model):
@@ -111,12 +111,19 @@ class ServiceRequestWorkFlow(models.Model):
         required=False,
         default=lambda self: self.env.user,
     )
+
+    @api.onchange('due_date')
+    def _due_date_on_change(self):
+        if self.due_date:
+            if self.env.company.disable_future_date_service:
+                if self.due_date < datetime.now():
+                    self.due_date = datetime.now()
+
     @api.depends('status')
     def compute_submission_date(self):
         for rec in self:
             if rec.is_application_submission and rec.status == 'complete':
                 rec.complete_data = fields.Date.today()
-
 
     def create_service_activity(self):
         if self.due_date and self.assign_to:
@@ -156,7 +163,7 @@ class ServiceRequestWorkFlow(models.Model):
                     self.service_request_id.is_started = True
                     self.service_request_id.start_date = datetime.today()
                     self.service_request_id.estimated_end_date = (
-                                datetime.now().date() + timedelta(days=(self.service_request_id.sla_max or 0)))
+                            datetime.now().date() + timedelta(days=(self.service_request_id.sla_max or 0)))
                 # if vals['status'] == 'progress':
                 #     if self.start_count_flow:
                 #         self.service_request_id.start_date = datetime.today()
