@@ -6,9 +6,9 @@
                 <h3>OPERATIONS DASHBOARD</h3>
                       <!-- DatePicker -->
                     <label for="daydate">From</label>
-                    <input type="date"  id="daydate" name="daydate_from"  value="2021-01-01"/>
+                    <input type="date"  id="daydate" name="daydate_from" value="2021-01-01"/>
                     <label for="daydate2">To</label>
-                    <input type="date" id="daydate2" name="daydate2_to" value="2021-12-31"/>
+                    <input type="date" id="daydate2" name="daydate2_to" t-att-value="widget.end_date_field"/>
                     <input type="submit" id="btn" class="get_date" />
 
 
@@ -16,10 +16,10 @@
 
                         <div class="col-md-2 col-sm-6 request_progress service-state" >
                             <div class="oh-card">
-                                <div class="oh-card-body">
+                                <div class="oh-card-body" style="background-color: #efefef;">
                                         <div class="stat-icon inprogress"><p><t t-esc="widget.progress['progress']"/></p></div>
                                         <div class="stat-content">
-                                            <div class="stat-text">In Progress</div>
+                                            <div class="stat-text">IN PROGRESS</div>
                                             <div class="stat-digit"></div>
                                         </div>
                                 </div>
@@ -29,10 +29,10 @@
                         <div class="col-md-2 col-sm-6 request_pending service-state" >
                             <div class="oh-card">
                                 <div class="oh-card-body">
-                                    <div class="stat-widget-one">
+                                    <div class="stat-widget-one" style="background-color: #efefef;">
                                         <div class="stat-icon pending "><p><t t-esc="widget.progress['pending']"/></p></div>
-                                        <div class="stat-content ">
-                                            <div class="stat-text">Pending</div>
+                                        <div class="stat-content">
+                                            <div class="stat-text">PENDING</div>
             <!--                                <div class="stat-digit"><t t-esc="widget.login_employee['payslip_count']"/></div>-->
                                             <div class="stat-digit"></div>
                                         </div>
@@ -62,7 +62,7 @@
                                     <div class="stat-widget-one complete-colored">
                                         <div class="stat-icon complete"><p><t t-esc="widget.progress['complete']"/></p></div>
                                         <div class="stat-content ">
-                                            <div class="stat-text">Completed</div>
+                                            <div class="stat-text">COMPLETED</div>
             <!--                                <div class="stat-digit"><t t-esc="widget.login_employee['payslip_count']"/></div>-->
                                             <div class="stat-digit complete-colored"></div>
                                         </div>
@@ -75,7 +75,7 @@
                     <div class="row1 main-section">
                         <div class="col-md-2 col-sm-6 request_out_of_scope service-state" >
                             <div class="oh-card">
-                                <div class="oh-card-body">
+                                <div class="oh-card-body" style="background-color: #efefef;">
         <!--                            <div class="stat-widget-one">-->
                                         <div class="stat-icon progress_out_of_scope"><p><t t-esc="widget.progress['progress_out_of_scope']"/></p></div>
                                         <div class="stat-content">
@@ -89,7 +89,7 @@
                         </div>
                         <div class="col-md-2 col-sm-6 request_cancel service-state" >
                             <div class="oh-card">
-                                <div class="oh-card-body">
+                                <div class="oh-card-body" style="background-color: #efefef;">
         <!--                            <div class="stat-widget-one">-->
                                         <div class="stat-icon cancel"><p><t t-esc="widget.progress['cancel']"/></p></div>
                                         <div class="stat-content">
@@ -104,11 +104,11 @@
 
                         <div class="col-md-2 col-sm-6 request_hold service-state" >
                             <div class="oh-card">
-                                <div class="oh-card-body">
+                                <div class="oh-card-body" style="background-color: #efefef;">
         <!--                            <div class="stat-widget-one">-->
                                         <div class="stat-icon hold"><p><t t-esc="widget.progress['hold']"/></p></div>
                                         <div class="stat-content">
-                                            <div class="stat-text">ON HOLD</div>
+                                            <div class="stat-text" >ON HOLD</div>
             <!--                                <div class="stat-digit"><t t-esc="widget.login_employee['payslip_count']"/></div>-->
                                             <div class="stat-digit"></div>
                                         </div>
@@ -119,7 +119,7 @@
 
                          <div class="col-md-2 col-sm-6 request_escalated service-state" >
                             <div class="oh-card">
-                                <div class="oh-card-body">
+                                <div class="oh-card-body" style="background-color: #efefef;">
         <!--                            <div class="stat-widget-one">-->
                                         <div class="stat-icon escalated"><p><t t-esc="widget.progress['escalated']"/></p></div>
                                         <div class="stat-content">
@@ -137,7 +137,7 @@
                     <div class="row1 main-section">
                         <div class="col-md-2 col-sm-6 request_progress_exceptional service-state" >
                             <div class="oh-card">
-                                <div class="oh-card-body">
+                                <div class="oh-card-body" style="background-color: #efefef;">
         <!--                            <div class="stat-widget-one">-->
                                         <div class="stat-icon progress_exceptional"><p><t t-esc="widget.progress['progress_exceptional']"/></p></div>
                                         <div class="stat-content">
@@ -152,7 +152,7 @@
 
                         <div class="col-md-2 col-sm-6 request_reject service-state" >
                             <div class="oh-card">
-                                <div class="oh-card-body">
+                                <div class="oh-card-body" style="background-color: #efefef;">
         <!--                            <div class="stat-widget-one">-->
                                         <div class="stat-icon reject"><p><t t-esc="widget.progress['reject']"/></p></div>
                                         <div class="stat-content">
@@ -167,7 +167,7 @@
 
                         <div class="col-md-2 col-sm-6 request_new service-state" >
                             <div class="oh-card">
-                                <div class="oh-card-body">
+                                <div class="oh-card-body" style="background-color: #efefef;">
         <!--                            <div class="stat-widget-one">-->
                                         <div class="stat-icon new"><p><t t-esc="widget.progress['new']"/></p></div>
                                         <div class="stat-content">
