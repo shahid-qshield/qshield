@@ -1,5 +1,5 @@
 from odoo import models, fields, api, _
-from odoo.exceptions import ValidationError
+from odoo.exceptions import ValidationError, UserError
 from datetime import datetime, timedelta, date
 import re
 
@@ -566,17 +566,20 @@ class ServiceRequest(models.Model):
         self.status = 'cancel'
 
     def request_reject(self):
-        for flow in self.service_flow_ids:
-            flow.status = 'reject'
-
-        workflow_id = self.env['ebs_mod.service.request.workflow'].search(
-            [('service_request_id', '=', self.id), ('is_application_submission', '=', True)], limit=1)
-        if workflow_id:
-            complete_date = workflow_id.complete_data
-            if self.end_date:
-                self.sla_days = self.get_date_difference(self.end_date.date(), complete_date, 1)
+        if self.env.user.has_group('ebs_qsheild_mod.qshield_account_manager'):
+            raise UserError('Account manager groups are not allowed to reject service')
         else:
-            self.sla_days = 0
+            for flow in self.service_flow_ids:
+                flow.status = 'reject'
+
+            workflow_id = self.env['ebs_mod.service.request.workflow'].search(
+                [('service_request_id', '=', self.id), ('is_application_submission', '=', True)], limit=1)
+            if workflow_id:
+                complete_date = workflow_id.complete_data
+                if self.end_date:
+                    self.sla_days = self.get_date_difference(self.end_date.date(), complete_date, 1)
+            else:
+                self.sla_days = 0
         # self.end_date = datetime.today()
         # if self.progress_date and self.end_date:
         #     self.sla_days = self.get_date_difference(self.progress_date, self.end_date.date(), 1)
@@ -609,7 +612,10 @@ class ServiceRequest(models.Model):
         self.status = 'hold'
 
     def request_progress(self):
-        self.status = 'progress'
+        if self.env.user.has_group('ebs_qsheild_mod.qshield_account_manager'):
+            raise UserError('Account manager groups are not allowed to set in progress status')
+        else:
+            self.status = 'progress'
 
     def request_draft(self):
         if len(self.service_flow_ids) == 0 and len(self.service_document_ids) == 0 and len(self.expenses_ids) == 0:
