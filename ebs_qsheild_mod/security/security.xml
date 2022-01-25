@@ -74,7 +74,7 @@
 
     <record model="res.groups" id="qshield_account_manager">
         <field name="name">Account manager</field>
-        <field name="category_id" ref="module_category_qshield_account_manager"/>
+        <!--        <field name="category_id" ref="module_category_qshield_account_manager"/>-->
     </record>
 
 
@@ -90,7 +90,7 @@
     </record>
 
     <record id="rule_of_other_service_for_account_manager" model="ir.rule">
-        <field name="name">Record rule of  Other service for Account manager</field>
+        <field name="name">Record rule of Other service for Account manager</field>
         <field name="model_id" ref="model_ebs_mod_service_request"/>
         <field name="domain_force">[('status', 'not in',['draft','new'])]</field>
         <field name="groups" eval="[(4, ref('ebs_qsheild_mod.qshield_account_manager'))]"/>
