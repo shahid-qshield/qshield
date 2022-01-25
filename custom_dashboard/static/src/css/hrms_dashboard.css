@@ -288,73 +288,100 @@ h3{
 }*/
 
 .title0{
+/*
     background-color: #8A2BE2 !important;
+*/
+    color:black;
+    background-color: #efefef !important;
+
 }
 
 .title1{
-    background-color: #0000FF !important;
+    background-color: #efefef !important;
+ /*   background-color: #0000FF !important;*/
 }
 
 .title2{
-    background-color: #FF7F50 !important;
+    background-color: #efefef !important;
+/*    background-color: #FF7F50 !important;*/
 }
 
 .title3{
-    background-color: #A52A2A !important;
+    background-color: #efefef !important;
+/*    background-color: #A52A2A !important;*/
 }
 
 .title4{
-    background-color: #5F9EA0 !important;
+    background-color: #efefef !important;
+/*    background-color: #5F9EA0 !important;*/
 }
 .title5{
-    background-color: #6495ED !important;
+    background-color: #efefef !important;
+/*    background-color: #6495ED !important;*/
 }
 .title6{
-    background-color: #DC143C !important;
+    background-color: #efefef !important;
+/*    background-color: #DC143C !important;*/
 }
 .title7{
-    background-color: #4b586e !important;
+    background-color: #efefef !important;
+/*    background-color: #4b586e !important;*/
 }
 .title8{
-    background-color: #CD5C5C !important;
+    background-color: #efefef !important;
+/*    background-color: #CD5C5C !important;*/
 }
 .title9{
-    background-color: #D2691E !important;
+    background-color: #efefef !important;
+/*    background-color: #D2691E !important;*/
 }
 .title10{
-    background-color: #B8860B !important;
+    background-color: #efefef !important;
+/*    background-color: #B8860B !important;*/
 }
 .title11{
-    background-color: #006400 !important;
+    background-color: #efefef !important;
+/*    background-color: #006400 !important;*/
 }
 .title12{
-    background-color: #00008B !important;
+    background-color: #efefef !important;
+/*    background-color: #00008B !important;*/
 }
 .title13{
-    background-color: #9932CC !important;
+    background-color: #efefef !important;
+/*    background-color: #9932CC !important;*/
 }
 .title14{
-    background-color: #8FBC8F !important;
+    background-color: #efefef !important;
+/*    background-color: #8FBC8F !important;*/
 }
 .title15{
-    background-color: #2b945e !important;
+    background-color: #efefef !important;
+/*    background-color: #2b945e !important;*/
 }
 .title16{
-    background-color: #abbab2 !important;
+    background-color: #efefef !important;
+/*    background-color: #abbab2 !important;*/
 }
 .title17{
-    background-color: #aae06c !important;
+    background-color: #efefef !important;
+/*    background-color: #aae06c !important;*/
 }.title18{
-    background-color: #162604 !important;
+    background-color: #efefef !important;
+/*    background-color: #162604 !important;*/
 }.title19{
-    background-color: #452394 !important;
+    background-color: #efefef !important;
+/*    background-color: #452394 !important;*/
 }.title20{
-    background-color: #1e0f42 !important;
+    background-color: #efefef !important;
+/*    background-color: #1e0f42 !important;*/
 }.title21{
-    background-color: #7a0471 !important;
+    background-color: #efefef !important;
+/*    background-color: #7a0471 !important;*/
 }
 .title22{
-    background-color: #568f72 !important;
+    background-color: #efefef !important;
+/*    background-color: #568f72 !important;*/
 }
 
 .card_width_height{
