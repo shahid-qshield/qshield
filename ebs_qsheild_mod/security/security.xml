@@ -72,13 +72,6 @@
         <field name="category_id" ref="base.module_category_hidden"/>
     </record>
 
-
-    <record model="ir.module.category" id="module_category_qshield_account_manager">
-        <field name="name">QShield Account manager</field>
-        <field name="description">Category for QShield Account manager</field>
-        <field name="sequence">55</field>
-    </record>
-
     <record model="res.groups" id="qshield_account_manager">
         <field name="name">Account manager</field>
         <field name="category_id" ref="module_category_qshield_account_manager"/>
