@@ -45,16 +45,16 @@
                         <button name="request_submit" string="submit" type="object"
                                 attrs="{'invisible':[('status','!=','draft')]}"/>
 
-<!--                        <button name="request_new" string="New" type="object"-->
-<!--                                attrs="{'invisible':[('status','!=','draft')]}"/>-->
+                        <!--                        <button name="request_new" string="New" type="object"-->
+                        <!--                                attrs="{'invisible':[('status','!=','draft')]}"/>-->
 
                         <button name="request_hold" string="On Hold" type="object"
                                 attrs="{'invisible':[('status','!=','progress')]}"/>
 
-<!--                        <button name="request_progress" string="In Progress" type="object"-->
-<!--                                attrs="{'invisible':['|',('status','!=','hold')]}"/>-->
+                        <!--                        <button name="request_progress" string="In Progress" type="object"-->
+                        <!--                                attrs="{'invisible':['|',('status','!=','hold')]}"/>-->
                         <button name="request_progress" string="In Progress" type="object"
-                                attrs="{'invisible': [('status', 'in', ['draft', 'progress', 'complete'])]}"/>
+                                attrs="{'invisible': [('status', 'in', ['draft', 'progress', 'complete','cancel','reject'])]}"/>
 
                         <button name="request_cancel" string="Cancel" type="object"
                                 attrs="{'invisible':[('status','!=','progress')]}"/>
@@ -450,10 +450,10 @@
                         <button name="request_hold" string="On Hold" type="object"
                                 attrs="{'invisible':[('status','!=','progress')]}"/>
 
-<!--&lt;!&ndash;                        <button name="request_progress" string="In Progress" type="object"&ndash;&gt;-->
-<!--                                attrs="{'invisible':['|',('status','!=','hold')]}"/>-->
+                        <!--&lt;!&ndash;                        <button name="request_progress" string="In Progress" type="object"&ndash;&gt;-->
+                        <!--                                attrs="{'invisible':['|',('status','!=','hold')]}"/>-->
                         <button name="request_progress" string="In Progress" type="object"
-                                attrs="{'invisible': [('status', 'in', ['draft', 'progress', 'complete'])]}"/>
+                                attrs="{'invisible': [('status', 'in', ['draft', 'progress', 'complete','cancel','reject'])]}"/>
 
                         <button name="request_cancel" string="Cancel" type="object"
                                 attrs="{'invisible':[('status','!=','progress')]}"/>

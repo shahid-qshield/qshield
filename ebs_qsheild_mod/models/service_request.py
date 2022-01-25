@@ -639,6 +639,14 @@ class ServiceRequest(models.Model):
                 flow.unlink()
         return super(ServiceRequest, self).unlink()
 
+    @api.constrains('name')
+    def _check_service_request_duplicate_name(self):
+        for record in self:
+            if record.status not in 'draft':
+                if self.env['ebs_mod.service.request'].search([('name', '=', record.name), ('id', '!=', record.id)]):
+                    raise ValidationError(
+                        _("The service request name is already used in another request please set a unique name"))
+
 
 class ServiceRequestExpenses(models.Model):
     _name = "ebs_mod.service.request.expenses"
