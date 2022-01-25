@@ -59,8 +59,8 @@
                         <button name="request_cancel" string="Cancel" type="object"
                                 attrs="{'invisible':[('status','!=','progress')]}"/>
 
-                        <button name="request_draft" string="Draft" type="object"
-                                attrs="{'invisible':[('status','!=','cancel')]}"/>
+<!--                        <button name="request_draft" string="Draft" type="object"-->
+<!--                                attrs="{'invisible':[('status','!=','cancel')]}"/>-->
 
                         <button name="request_complete" string="Complete" type="object"
                                 attrs="{'invisible':[('status','!=','progress')]}"/>
@@ -458,8 +458,8 @@
                         <button name="request_cancel" string="Cancel" type="object"
                                 attrs="{'invisible':[('status','!=','progress')]}"/>
 
-                        <button name="request_draft" string="Draft" type="object"
-                                attrs="{'invisible':[('status','!=','cancel')]}"/>
+<!--                        <button name="request_draft" string="Draft" type="object"-->
+                        <!--                                attrs="{'invisible':[('status','!=','cancel')]}"/>-->
 
                         <button name="request_complete" string="Complete" type="object"
                                 attrs="{'invisible':[('status','!=','progress')]}"/>
