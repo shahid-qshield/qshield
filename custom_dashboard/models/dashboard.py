@@ -64,7 +64,7 @@ class ServiceRequest(models.Model):
         request_dict['progress_exceptional'] = progress_exceptional
         request_dict['escalated'] = escalated
         request_dict['pending'] = pending
-        print(request_dict)
+        print(request_dict,args)
         return request_dict
 
 

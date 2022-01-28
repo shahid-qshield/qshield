@@ -46,6 +46,7 @@ var ServiceDashboard = AbstractAction.extend({
         var options = {
             on_reverse_breadcrumb: this.on_reverse_breadcrumb,
         };
+        console.log('3333333333333333333333333-------',this.start_date,this.end_date);
         this.fetch_data(this.start_date,this.end_date,'');
 
     },
@@ -420,13 +421,27 @@ var ServiceDashboard = AbstractAction.extend({
         return window.location.origin + '/web/image?model=res.users&field=image_1920&id='+employee;
     },
 
-    fetch_data: function(start_date='',end_date='', date_for_drivers ='') {
+    fetch_data: function(start_date=false,end_date=false, date_for_drivers =false) {
         var self = this;
 //        var year = today.getFullYear();
 //        var month = today.getMonth();
 //        var day = today.getDate();
 //        var date_after_year = today.getFullYear()+1 +'-'+(today.getMonth()+1)+'-'+today.getDate();
+        console.log('3333333333333333',start_date,end_date);
+        console.log('11111111111111111111111111',self.end_date,self.start_date);
+        var today = new Date(new Date().getFullYear(), 11, 31);
+        var date_today = today.getFullYear()+'-'+(today.getMonth()+1)+'-'+today.getDate();
+        if(typeof(self.end_date) != 'undefined')
+        {
+        console.log('----in ifff-----------------------',self.end_date);
+        self.end_date_field = self.end_date;
+        }
+        else
+        {
+        console.log('----in else-------------------------');
+        self.end_date_field = date_today
 
+        }
         var def0 =  self._rpc({
                     model: 'ebs_mod.service.request',
                     method: 'get_request',
@@ -434,13 +449,10 @@ var ServiceDashboard = AbstractAction.extend({
 //                            'date_from': self.start_date ? self.start_date : date_today,
 //                            'date_to': self.end_date ? self.end_date : date_after_year,
                             'date_from': self.start_date ? self.start_date : '2021-01-01',
-                            'date_to': self.end_date ? self.end_date : '2021-12-31',
+                            'date_to': self.end_date ? self.end_date :self.end_date_field,
                     }]
             }).then(function(result) {
                 self.progress =  result
-                var today = new Date(new Date().getFullYear(), 11, 31);
-                var date_today = today.getFullYear()+'-'+(today.getMonth()+1)+'-'+today.getDate();
-                self.end_date_field = date_today
                 $(".draft").text(self.progress['draft']);
                 $(".inprogress").text(self.progress['progress']);
                 $(".pending").text(self.progress['pending']);
@@ -476,13 +488,13 @@ var ServiceDashboard = AbstractAction.extend({
                                                     style="height: 60px; width: 60px;"/>
                                             </div>
                                             <div class="user_progress" style="display:inline-block; margin-left:30px;">
-                                               <p class="card-text assigned_inprogress" style="color:white; font-weight:bold;">${result[i]['progress']}</p>
+                                               <p class="card-text assigned_inprogress" style="color:black; font-weight:bold;">${result[i]['progress']}</p>
                                             </div>
 
                                         </div>
 
                                       <div  style="text-transform: capitalize;">
-                                        <p class="card-text" style="color:white; font-weight:bold;">${result[i]['employee_name']}</p>
+                                        <p class="card-text" style="color:black; font-weight:bold;">${result[i]['employee_name']}</p>
                                       </div></div>`
 
 //                       taskDiv.innerHTML += inner
@@ -589,12 +601,8 @@ var ServiceDashboard = AbstractAction.extend({
 
     render_dashboards: function() {
         var self = this;
-        let now = new Date();
-        let today = now.getFullYear() + '-' + (now.getMonth() + 1) + '-' + now.getDate() ;
-        console.log(today);
         _.each(this.dashboards_templates, function(template) {
-            console.log('ddddddddddddddddddddddddddd');
-            self.$('.o_hr_dashboard').append(QWeb.render(template, {widget: self,today : today}));
+            self.$('.o_hr_dashboard').append(QWeb.render(template, {widget: self}));
         });
 
     },
