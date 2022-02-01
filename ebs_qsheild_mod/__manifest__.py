@@ -35,6 +35,7 @@
         'security/ir.model.access.csv',
         'cron/document_cron_job.xml',
         'data/sequence.xml',
+        'data/mail_template.xml',
         'views/views.xml',
         'views/templates.xml',
         'wizards/create_contact_document_wiz.xml',

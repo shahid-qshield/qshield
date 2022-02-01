@@ -373,6 +373,16 @@ class ServiceRequest(models.Model):
                 if rec.service_document_id:
                     rec.service_document_id.renewed = True
         res = super(ServiceRequest, self).write(vals)
+        if vals.get('status') == 'complete' and self.status == 'complete':
+            template = self.env.ref('ebs_qsheild_mod.mail_template_of_notify_complete_service',
+                                    raise_if_not_found=False)
+            user_sudo = self.env.user
+            if template:
+                account_manager_email = self.account_manager.work_email
+                complete_date = datetime.now().strftime('%Y-%m-%d %H:%M')
+                template.sudo().with_context(username=user_sudo.name, complete_date=complete_date,
+                                             email=account_manager_email).send_mail(self.id,
+                                                                                    force_send=True)
         return res
 
     def copy(self, default={}):
