@@ -472,7 +472,7 @@ var ServiceDashboard = AbstractAction.extend({
                     method: 'get_request',
                     args: [{
                             'date_from': self.start_date ? self.start_date : '2021-01-01',
-                            'date_to': self.end_date ? self.end_date : '2021-12-31',
+                            'date_to': self.end_date ? self.end_date :self.end_date_field,
                     }]
             }).then(function(result) {
                 self.employee_progress =  result
