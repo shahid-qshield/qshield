@@ -356,6 +356,9 @@ class ServiceRequest(models.Model):
         return res
 
     def write(self, vals):
+        if self.status not in ['draft', 'new'] and self.env.user.has_group(
+                'ebs_qsheild_mod.qshield_account_manager') and not vals.get('message_main_attachment_id'):
+            raise UserError('Account manager group user not allowed write this service')
         if vals.get('related_company', False):
             vals['related_company_ro'] = vals['related_company']
         if vals.get('cost_center', False):
