@@ -18,12 +18,12 @@
     'version': '1.0.0',
 
     # any module necessary for this one to work correctly
-    'depends': ['base', 'crm', 'sale_crm', 'ebs_qsheild_mod'],
+    'depends': ['base', 'crm', 'sale_crm', 'ebs_qsheild_mod', 'sale_management'],
 
     # always loaded
     'data': [
-        'security/ir.model.access.csv',
         'security/qshiled_security_groups.xml',
+        'security/ir.model.access.csv',
         'report/qshied_proposal_report.xml',
         'data/ir_mail_activity.xml',
         'data/ir_cron_create_invoice.xml',
