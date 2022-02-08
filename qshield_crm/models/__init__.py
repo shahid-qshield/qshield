@@ -8,3 +8,4 @@ from . import crm_lead
 from . import invoice_term_line
 from . import account_move
 from . import ebs_mod_service_request_type
+from . import hr_employee

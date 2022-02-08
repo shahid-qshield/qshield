@@ -100,7 +100,8 @@
                 <field name="payment_term_id" position="after">
                     <field name="is_agreement" string="Is Agreement" widget="radio"
                            attrs="{'invisible': [('opportunity_id','=',False)]}"/>
-                    <field name="account_manager" attrs="{'invisible': [('state','!=','submit_client_operation')]}"/>
+                    <field name="account_manager" context="{'account_manager':True}"
+                           attrs="{'invisible': [('state','!=','submit_client_operation')]}"/>
                     <field name="due_date" attrs="{'invisible': [('state','!=','submit_client_operation')]}"/>
                     <field name="approver_setting_id" attrs="{'invisible': [('opportunity_id','=',False)]}"
                            options='{"no_open": True, "no_create": True}'/>
