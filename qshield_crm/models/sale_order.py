@@ -307,6 +307,13 @@ class SaleOrder(models.Model):
                     self.message_post(body=msg)
         return res
 
+    def action_unlock(self):
+        for rec in self:
+            if rec.opportunity_id:
+                rec.write({'state': 'submit_client_operation'})
+            else:
+                super(SaleOrder, rec).action_unlock()
+
 
 class SaleOrderLine(models.Model):
     _inherit = 'sale.order.line'
