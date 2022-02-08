@@ -1,0 +1,183 @@
+<odoo>
+    <data>
+
+        <record id="view_crm_lead2opportunity_partner_custom_inherit" model="ir.ui.view">
+            <field name="name">view.crm.lead2opportunity.partner.inherit</field>
+            <field name="model">crm.lead2opportunity.partner</field>
+            <field name="inherit_id" ref="crm.view_crm_lead2opportunity_partner"/>
+            <field name="arch" type="xml">
+                <xpath expr="//group[@name='action']" position="replace">
+                    <group name="action" attrs="{'invisible': [('name', '!=', 'convert')]}" string="Customer" col="1">
+                        <field name="custom_action" nolabel="1" widget="radio"/>
+                        <field name="action" nolabel="1" widget="radio" invisible="1"/>
+                        <group col="2">
+                            <field name="partner_id" widget="res_partner_many2one"
+                                   context="{'res_partner_search_mode': 'customer', 'show_vat': True}"
+                                   attrs="{'required': [('custom_action', '=', 'exist')], 'invisible':[('custom_action','!=','exist')]}"/>
+                        </group>
+                    </group>
+                </xpath>
+                <field name="name" position="attributes">
+                    <attribute name="invisible">1</attribute>
+                </field>
+            </field>
+        </record>
+
+
+        <record id="crm_case_form_view_oppor_custom_inherit" model="ir.ui.view">
+            <field name="name">crm.view.oppor.form.inherit</field>
+            <field name="model">crm.lead</field>
+            <field name="inherit_id" ref="sale_crm.crm_case_form_view_oppor"/>
+            <field name="arch" type="xml">
+                <xpath expr="//button[@name='action_sale_quotations_new']" position="attributes">
+                    <attribute name="groups">qshield_crm.qshield_crm_sales_person,qshield_crm.qshield_crm_management
+                    </attribute>
+                </xpath>
+            </field>
+        </record>
+
+        <record id="crm_lead_form_inherit_view_custom_inherit" model="ir.ui.view">
+            <field name="name">crm.lead.form.inherit</field>
+            <field name="model">crm.lead</field>
+            <field name="inherit_id" ref="crm.crm_lead_view_form"/>
+            <field name="arch" type="xml">
+                <xpath expr="//h2" position="replace">
+                    <h2></h2>
+                </xpath>
+                <xpath expr="//button[@name='action_set_won_rainbowman']" position="attributes">
+                    <attribute name="groups">qshield_crm.qshield_crm_sales_person,qshield_crm.qshield_crm_management
+                    </attribute>
+                </xpath>
+                <xpath expr="//button[@name='%(crm.crm_lead_lost_action)d']" position="attributes">
+                    <attribute name="groups">qshield_crm.qshield_crm_sales_person,qshield_crm.qshield_crm_management
+                    </attribute>
+                </xpath>
+                <xpath expr="//button[@name='%(crm.action_crm_lead2opportunity_partner)d']" position="attributes">
+                    <attribute name="groups">qshield_crm.qshield_crm_sales_person,qshield_crm.qshield_crm_management
+                    </attribute>
+                </xpath>
+
+                <xpath expr="//button[@name='action_set_lost']" position="attributes">
+                    <attribute name="groups">qshield_crm.qshield_crm_sales_person,qshield_crm.qshield_crm_management
+                    </attribute>
+                </xpath>
+
+                <xpath expr="//group" position="replace">
+                    <group>
+                        <group>
+                            <field name="team_id" invisible="1"/>
+                            <field name="partner_id" widget="res_partner_many2one" string="Customer"
+                                   options="{'no_create': True}" invisible="1"/>
+                            <label for="contact_name" string="Point of contact Name"/>
+                            <div class="o_row">
+                                <field name="contact_name"/>
+                                <field name="title" placeholder="Title" domain="[]"
+                                       options="{&quot;no_open&quot;: True}" invisible="1"/>
+                            </div>
+                            <field name="website" string="Company Website"/>
+                            <field name="tag_ids" widget="many2many_tags"
+                                   options="{'color_field': 'color', 'no_create_edit': True}" string="Tag"/>
+                            <field name="source_id" string="Source"/>
+                        </group>
+                        <group>
+                            <field name="email_from" string="Point of contact Email"/>
+                            <field name="function" string="Point of contact Job Position"/>
+                            <field name="phone" widget="phone" options="{'enable_sms': True}"
+                                   string="Point of contact Phone Number"/>
+                            <field name="referred" string="Referenced By"/>
+                        </group>
+                    </group>
+                </xpath>
+                <xpath expr="//notebook" position="attributes">
+                    <attribute name="invisible">1</attribute>
+                </xpath>
+
+            </field>
+        </record>
+
+        <record model='ir.ui.menu' id='crm.crm_menu_sales'>
+            <field name="groups_id"
+                   eval="[(4,ref('qshield_crm.qshield_crm_sales_person')),(4,ref('qshield_crm.qshield_crm_management'))]"/>
+        </record>
+
+
+        <record id="crm_case_tree_view_lead_custom_inherit" model="ir.ui.view">
+            <field name="name">crm.case.tree.view.lead.custom.inherit</field>
+            <field name="model">crm.lead</field>
+            <field name="inherit_id" ref="crm.crm_case_tree_view_leads"/>
+            <field name="arch" type="xml">
+                <field name="contact_name" position="attributes">
+                    <attribute name="string">Point of contact Name</attribute>
+                </field>
+                <field name="email_from" position="attributes">
+                    <attribute name="string">Point of contact Email</attribute>
+                </field>
+                <field name="phone" position="attributes">
+                    <attribute name="string">Point of contact Phone</attribute>
+                </field>
+                <field name="city" position="attributes">
+                    <attribute name="invisible">1</attribute>
+                </field>
+                <field name="country_id" position="attributes">
+                    <attribute name="invisible">1</attribute>
+                </field>
+                <field name="team_id" position="attributes">
+                    <attribute name="invisible">1</attribute>
+                </field>
+                <field name="user_id" position="attributes">
+                    <attribute name="string">Created By</attribute>
+                </field>
+                <field name="tag_ids" position="attributes">
+                    <attribute name="invisible">1</attribute>
+                </field>
+                <field name="company_id" position="attributes">
+                    <attribute name="invisible">1</attribute>
+                </field>
+                <field name="name" position="after">
+                    <field name="company_name"/>
+                </field>
+
+                <field name="company_id" position="after">
+                    <field name="source_id"/>
+                </field>
+            </field>
+        </record>
+
+
+        <record id="crm_case_tree_view_oppor_custom_inherit" model="ir.ui.view">
+            <field name="name">crm.case.tree.view.oppor.custom.inherit</field>
+            <field name="model">crm.lead</field>
+            <field name="inherit_id" ref="crm.crm_case_tree_view_oppor"/>
+            <field name="arch" type="xml">
+                <field name="country_id" position="attributes">
+                    <attribute name="invisible">1</attribute>
+                </field>
+                <field name="activity_date_deadline" position="attributes">
+                    <attribute name="invisible">1</attribute>
+                </field>
+                <field name="user_id" position="attributes">
+                    <attribute name="string">Created By</attribute>
+                </field>
+                <field name="activity_summary" position="attributes">
+                    <attribute name="invisible">1</attribute>
+                </field>
+                <field name="stage_id" position="attributes">
+                    <attribute name="invisible">1</attribute>
+                </field>
+                <field name="planned_revenue" position="attributes">
+                    <attribute name="invisible">1</attribute>
+                </field>
+                <field name="probability" position="attributes">
+                    <attribute name="invisible">1</attribute>
+                </field>
+                <field name="team_id" position="attributes">
+                    <attribute name="invisible">1</attribute>
+                </field>
+                <field name="company_id" position="after">
+                    <field name="source_id"/>
+                </field>
+            </field>
+        </record>
+
+    </data>
+</odoo>

@@ -1,0 +1,305 @@
+<odoo>
+    <data>
+        <report id="action_report_qshield_proposal_quotation"
+                string="Qshield Proposal(Quotation)"
+                model="sale.order"
+                report_type="qweb-pdf"
+                file="qshield_crm.report_qshield_proposal_quotation"
+                name="qshield_crm.report_qshield_proposal_quotation"/>
+
+
+        <template id="report_qshield_proposal_quotation">
+            <t t-call="web.html_container">
+                <t t-foreach="docs" t-as="o">
+                    <t t-call="web.internal_layout">
+                        <div class="page">
+                            <html>
+                                <style>
+                                    body{
+                                    text-align: justify;
+                                    font-size:18px
+                                    }
+                                </style>
+                                <link href='https://fonts.googleapis.com/css?family=Playfair Display' rel='stylesheet'/>
+                                <link href="http://fonts.cdnfonts.com/css/aakar" rel="stylesheet"/>
+                                <link href="http://fonts.cdnfonts.com/css/times-new-roman" rel="stylesheet"/>
+                                <link href='https://fonts.googleapis.com/css?family=Montserrat' rel='stylesheet'/>
+                                <body>
+                                    <br/>
+                                    <p style="font-family: 'aakar', sans-serif;text-align:center;font-size:22px;margin-top:12%;">
+                                        PROPOSAL
+                                    </p>
+                                    <br/>
+                                    <p style="font-family: 'Playfair Display'; text-align:center;font-size:22px;">
+                                        PROFESSIONAL SERVICES
+                                    </p>
+                                    <br/>
+                                    <p style="font-family: 'Playfair Display'; text-align:center;font-size:18px;">for
+                                    </p>
+                                    <p style="font-family: 'Playfair Display';text-align:center;font-size:30px;">
+                                        <t t-esc="o.partner_id.name"/>
+                                    </p>
+                                    <br/>
+                                    <br/>
+                                    <p style="font-family: 'Playfair Display'; text-align:center;font-size:22px;">
+                                        Prepared By
+                                    </p>
+                                    <br/>
+                                    <p style="font-family: 'Playfair Display'; text-align:center;font-size:26px;">
+                                        <t t-esc="o.user_id.name"/>
+                                    </p>
+                                    <br/>
+                                    <p style="text-align:center;font-size:22px;font-family: 'Playfair Display';">
+                                        Date
+                                    </p>
+                                    <div style="font-family: 'Playfair Display';text-align:center;color: #000000; font-size: 22px;">
+                                        <t t-esc="datetime.date.today().strftime('%Y-%m-%d')"/>
+                                    </div>
+                                    <br/>
+                                    <br/>
+                                    <strong style="color:#e59b08;font-family: 'Times New Roman', Times, serif;">
+                                        ABOUT US
+                                    </strong>
+                                    <br/>
+                                    <p style="font-family: 'Montserrat';">
+                                        QShield is Qatar's leading Corporate immigration services provider, working with
+                                        an array of Blue Chip clients across multiple sectors including IT, education,
+                                        healthcare, defense, financial services and others.
+                                    </p>
+                                    <p style="font-family: 'Montserrat';">
+                                        We work closely with our clients to provide consultancy and advisory services to
+                                        help them set up and grow their business in Qatar by managing their teams'
+                                        immigration and mobility in compliance with international standards and local
+                                        laws and regulations using a state of the art proprietary technology platform
+                                        combined with an unmatched level of personal services.
+                                    </p>
+                                    <br/>
+                                    <br/>
+                                    <strong style="color:#e59b08;font-family: 'Times New Roman', Times, serif;">CORE VALUES
+                                    </strong>
+                                    <br/>
+                                    <strong style="font-family: 'Times New Roman', Times, serif;">Compliant</strong>
+                                    <p style="font-family: 'Montserrat';">
+                                        We conduct our business with the highest standards of compliance with
+                                        international standards and local laws and regulations to protect our customers
+                                        best interests at all times.
+                                    </p>
+                                    <br/>
+                                    <strong style="font-family: 'Times New Roman', Times, serif;">Individual</strong>
+                                    <p style="font-family: 'Montserrat';">We handle each case with utmost respect to our customers' needs, time and
+                                        privacy. We realize that our work touches the lives of our customers and we take
+                                        that very personally.
+                                    </p>
+                                    <br/>
+                                    <strong style="font-family: 'Times New Roman', Times, serif;">Reliable</strong>
+                                    <p style="font-family: 'Montserrat';">We understand that the world is moving faster than ever before and we want to
+                                        keep ahead. We embrace and develop technology that helps us to be always
+                                        connected and available for our customers.
+                                    </p>
+                                    <br/>
+                                    <strong style="font-family: 'Times New Roman', Times, serif;">QSHIELD EXPERTISE</strong>
+                                    <p style="font-family: 'Montserrat';">Our clients' needs vary based on their sectors and industries. In order to serve
+                                        them in the best possible way, we have developed expert leaders within our team
+                                        who understand the specific requirements and dynamics of clients' work
+                                    </p>
+                                    <br/>
+                                    <strong style="color:#e59b08;font-family: 'Times New Roman', Times, serif;">OUR SERVICES</strong>
+                                    <br/>
+                                    <strong style="font-family: 'Times New Roman', Times, serif;">Consultancy and Advisory Services</strong>
+                                    <br/>
+                                    <strong style="font-family: 'Times New Roman', Times, serif;">Compliance audit</strong>
+                                    <p style="font-family: 'Montserrat';">Our team of legal and business specialists will review your company's current
+                                        status including workflow, procedures and processes and provide a detailed
+                                        report on areas for improvement to ensure full compliance with the country of
+                                        origin and Qatar's relevant laws and regulations. Our report will address the
+                                        various levels of actions required by your local HR team, Global Mobility
+                                        Director, legal department and any other relevant parties.
+                                    </p>
+                                    <br/>
+                                    <br/>
+                                    <strong style="font-family: 'Times New Roman', Times, serif;">Mobility and immigration planning</strong>
+                                    <p style="font-family: 'Montserrat';">Working with your HR managers, our customer relations managers will help you to
+                                        plan your future mobility activities on short, mid and long term taking into
+                                        consideration factors of cost, transaction duration and compliance. We will also
+                                        provide you with a detailed implementation procedure and timeline.
+                                    </p>
+                                    <br/>
+                                    <br/>
+                                    <strong style="font-family: 'Times New Roman', Times, serif;">Training</strong>
+                                    <p style="font-family: 'Montserrat';">Entering a new market can require that you familiarize your organization with
+                                        laws, regulations and procedures in the new destination. Our customer
+                                        relationship team will prepare and deliver the appropriate training program to
+                                        achieve that. In addition, we provide training for your relevant team members on
+                                        our proprietary portal to ensure that our business relation is fully transparent
+                                        and efficient.
+                                    </p>
+                                    <br/>
+                                    <strong style="font-family: 'Times New Roman', Times, serif;">Immigration services management</strong>
+                                    <p style="font-family: 'Montserrat';">Documents procurement</p>
+                                    <p style="font-family: 'Montserrat';">In every new market, you need to make sure that your staff are equipped with the
+                                        correct and valid documentation at all times. Our customer relationship managers
+                                        will employ their expertise and features of our proprietary portal to ensure
+                                        that your operation is fully compliant, so that your staff members can focus on
+                                        doing their jobs with minimum distraction. An individual record will be created
+                                        for each of the employees on the portal where reminders and alerts will be set
+                                        up in due time to ensure smooth management of all immigration documentations.
+                                    </p>
+                                    <strong style="font-family: 'Times New Roman', Times, serif;">On ground support</strong>
+                                    <p style="font-family: 'Montserrat';">We appreciate and value your time so to complement the state of the art
+                                        technology our portal provides, we have a dedicated customer service team that
+                                        will handle all (on ground) logistics related to your staff immigration
+                                        procedures. We will guide you and accompany you every step of the way to ensure
+                                        that every member of your team gets all his documents, tests, clearances etc...
+                                        Done in time and compliance. After all, we are people serving people and we take
+                                        our work very personally.
+                                    </p>
+                                    <br/>
+                                    <strong style="color:#e59b08;font-family: 'Times New Roman', Times, serif;">Business setup licensing</strong>
+                                    <p style="font-family: 'Montserrat';">Let our highly experienced and qualified government specialists liaise with the
+                                        Ministry of Trade, Ministry of Labor and Immigration Office on your behalf.
+                                        We help companies navigate through complex government bureaucracy with ease
+                                        along these lines and more:
+                                    </p>
+                                    <ul style="font-family: 'Montserrat';">
+                                        <li>Commercial Registration</li>
+                                        <li>Civil Defense License</li>
+                                        <li>Municipality License</li>
+                                        <li>Immigration License</li>
+                                        <li>Ministry of Business and Trade</li>
+                                        <li>Supreme Education Council</li>
+                                        <li>Shipping License</li>
+                                        <li>Tax Card</li>
+                                    </ul>
+                                    <br/>
+                                    <strong style="color:#e59b08;font-family: 'Times New Roman', Times, serif;">TECHNOLOGY PLATFORM</strong>
+                                    <p style="font-family: 'Montserrat';">As a visionary global mobility services provider in Qatar, we always need to be
+                                        at the forefront of business and technological innovation.
+                                        Whereas other service providers are dealing with manual and paper-based
+                                        processes and spreadsheets to track progress, we maintain high levels of client
+                                        satisfaction by automating immigration processes. We have achieved this through
+                                        developing our unique proprietary technology platform therefore increasing the
+                                        processing speed of client requests, minimizing human error, and ensuring the
+                                        highest levels of compliance and reliability. By embracing technology, we have
+                                        enabled our staff to focus more on managing the relationship with clients and
+                                        giving the required attention to specific customers' requests.
+                                    </p>
+                                    <strong style="color:#e59b08;font-family: 'Times New Roman', Times, serif;">BUSINESS REQUIREMENTS</strong>
+                                    <ul style="font-family: 'Montserrat';">
+                                        <li>Corporate Documents Maintenance</li>
+                                        <li>Labor Quota</li>
+                                        <li>Employees Residency Services/dependent</li>
+                                        <li>Business visa</li>
+                                        <li>Traffic Department</li>
+                                        <li>Document Attestation</li>
+                                        <li>Gate passes</li>
+                                    </ul>
+                                    <p style="font-family: 'Montserrat';">As a visionary global mobility services provider in Qatar, we always need to be
+                                        at the forefront of business and technological innovation.
+                                        Whereas other service providers are dealing with manual and paper-based
+                                        processes and spreadsheets to track progress, we maintain high levels of client
+                                        satisfaction by automating immigration processes. We have achieved this through
+                                        developing our unique proprietary technology platform therefore increasing the
+                                        processing speed of client requests, minimizing human error, and ensuring the
+                                        highest levels of compliance and reliability. By embracing technology, we have
+                                        enabled our staff to focus more on managing the relationship with clients and
+                                        giving the required attention to specific customers' requests.
+                                    </p>
+                                    <div style="text-align: center;">
+                                        <img src="/qshield_crm/static/src/img/image1.png"/>
+                                    </div>
+                                    <br/>
+                                    <br/>
+                                    <table style="border-left: 1px solid gray;border-right: 1px solid gray;font-family: 'Montserrat';border-bottom: 1px solid gray; width:100%;float:left;">
+                                        <t t-set="total_value" t-value="0"/>
+                                        <t t-foreach="consolidation_list" t-as="consolidation">
+                                            <t t-if="o.id == consolidation.get('doc_id')">
+                                                <tr style="border-top: 1px solid gray;width:100%;float:left;background-color:#eef1f1;">
+                                                    <td style="border-right: 1px solid gray; width:70%;float:left;">
+                                                        <span t-esc="consolidation.get('consolidation_name')"/>
+                                                    </td>
+                                                    <td style="width:30%;float:left;">
+                                                    </td>
+                                                </tr>
+                                                <t t-foreach="consolidation.get('service_type_list')"
+                                                   t-as="service_type">
+                                                    <tr style="width:100%;float:left;">
+
+                                                        <td style="border-right: 1px solid gray; width:70%;float:left;">
+                                                            <ul>
+                                                                <li>
+                                                                    <span t-esc="service_type.get('service_type_name')"/>
+                                                                </li>
+                                                            </ul>
+                                                        </td>
+                                                        <td style="width:30%;float:left;">
+                                                            <span t-esc="service_type.get('quantity')"/>
+                                                        </td>
+                                                        <t t-set="total_value"
+                                                           t-value="total_value+service_type.get('price')"/>
+                                                    </tr>
+                                                </t>
+
+                                            </t>
+                                        </t>
+                                        <t t-if="total_value > 0">
+                                            <tr style="height: 25px;width:100%;float:left; border-top: 1px solid gray;">
+                                                <td style="border-right: 1px solid gray; width:70%;float:left;">
+                                                    Total
+                                                </td>
+                                                <td style="width:30%;float:left;">
+                                                    QR
+                                                    <span t-esc="total_value"></span>
+                                                </td>
+                                            </tr>
+                                        </t>
+                                    </table>
+                                    <br/>
+                                    <p style="font-family: 'Montserrat';">TERMS and CONDITIONS</p>
+                                    <ul style="font-family: 'Montserrat';">
+                                        <li>
+                                            <t t-if="o.is_agreement == 'is_retainer'">
+                                                Is Retainer QAR
+                                                <span t-esc="total_value"/>
+                                            </t>
+                                            <t t-if="o.is_agreement == 'one_time_payment'">
+                                                One Time Payment QAR
+                                                <span t-esc="total_value"/>
+                                            </t>
+                                        </li>
+                                        <li>For anything additional from the 30 agreed employees, charges might</li>
+                                        <li>apply. Will discuss upon request.</li>
+                                        <li>Government fees and 3rd party compensation to be billed separately</li>
+                                        <li>against actual receipt.</li>
+                                        <li><span t-esc="o.get_contract_duration()"/>contract , renewable upon mutual agreement.</li>
+                                        <li>Payment terms are
+                                            <t t-if="o.payment_term_id">
+                                                <span t-esc="o.payment_term_id.name"/>
+                                            </t>
+                                        </li>
+                                        <li>Out of scope services will fall under the full list of services table and
+                                        </li>
+                                        <li>charges</li>
+                                    </ul>
+                                    <span style="font-family: 'Montserrat';">Thank you!</span>
+                                    <br/>
+                                    <span style="font-family: 'Montserrat';">For more information contact:</span>
+                                    <br/>
+                                    <span style="font-family: 'Montserrat';">Antoine Klimos</span>
+                                    <br/>
+                                    <span style="font-family: 'Montserrat';">Business Development Director</span>
+                                    <br/>
+                                    <span style="font-family: 'Montserrat';">E. tonyk@qshield.com</span>
+                                    <br/>
+                                    <span style="font-family: 'Montserrat';">T. +974 4032 0200 ext. 236</span>
+                                    <br/>
+                                    <span style="font-family: 'Montserrat';">M. +974 33413269</span>
+                                </body>
+                            </html>
+                        </div>
+
+                    </t>
+                </t>
+            </t>
+        </template>
+    </data>
+</odoo>
