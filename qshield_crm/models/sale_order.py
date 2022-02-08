@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 
-from odoo import models, fields, api, _
+from odoo import models, fields, api
 from datetime import datetime, date
 from odoo.tools import float_is_zero, float_compare
 from odoo.exceptions import UserError
@@ -16,7 +16,7 @@ class SaleOrder(models.Model):
         ('quotation_approved', 'Quotation Approved'),
         ('sent', 'Quotation Sent'),
         ('sale', 'Sales Order'),
-        ('agreement_submit', 'Agreement Submitted'),
+        ('agreement_submit', 'Agreement Submit'),
         ('submit_client_operation', 'Submit Client To operation'),
         ('done', 'Locked'),
         ('cancel', 'Cancelled'),
@@ -43,15 +43,13 @@ class SaleOrder(models.Model):
     start_date = fields.Date(string="Start Date")
     end_date = fields.Date(string="End Date")
 
-    # is_notification_sent_to_account_manager = fields.Boolean(string="Is Notification Sent To Account Manager")
-
     def get_contract_duration(self):
         diff = relativedelta(self.end_date, self.start_date)
         if self.end_date and self.start_date:
             if diff.months == 0:
-                return str(diff.days) + ' Days '
+                 return str(diff.days) + ' Days '
             else:
-                return str(diff.months) + ' Months '
+                 return str(diff.months) + ' Months '
         else:
             return ""
 
@@ -296,23 +294,6 @@ class SaleOrder(models.Model):
             for approver in self.approver_ids:
                 approver.write({'status': 'draft'})
         return res
-
-    def action_confirm(self):
-        res = super(SaleOrder, self).action_confirm()
-        if res:
-            for rec in self:
-                if rec.opportunity_id:
-                    rec.opportunity_id.action_set_won_rainbowman()
-                    msg = (_('Opportunity Won {}'.format(rec.opportunity_id.name)))
-                    self.message_post(body=msg)
-        return res
-
-    # def action_confirm(self):
-    #     res = super(SaleOrder, self).action_confirm()
-    #     for order in self:
-    #         if order.sale_order_template_id and order.sale_order_template_id.mail_template_id:
-    #             self.sale_order_template_id.mail_template_id.send_mail(order.id)
-    #     return res
 
 
 class SaleOrderLine(models.Model):

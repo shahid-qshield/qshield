@@ -78,7 +78,7 @@
                         <button name="%(action_refuse_quotation)d" string="Refuse" type="action"
                                 attrs="{'invisible':['|',('is_approver_user','!=',True),'|',('user_status','!=','pending'),('state','!=','quotation_submit')]}"
                                 groups="qshield_crm.qshield_crm_management"/>
-                        <button name="submit_agreement" string="Submit Agreement For Approval" type="object"
+                        <button name="submit_agreement" string="Submit to Approval Agreement" type="object"
                                 attrs="{'invisible': ['|',('state','not in',['sent','sale']),('is_valid_for_agreement','=',False)]}"
                                 groups="qshield_crm.qshield_crm_sales_person"/>
                         <button name="approve_agreement" string="Approve Agreement" type="object"
@@ -169,7 +169,7 @@
             <field name="type">ir.actions.act_window</field>
             <field name="res_model">sale.order</field>
             <field name="view_mode">tree,form</field>
-            <field name="domain">[('invoice_status','=','to invoice')]</field>
+            <field name="domain">[('account_manager.user_id','=',uid),('invoice_status','=','to invoice')]</field>
         </record>
         <menuitem name="To invoice Sale Order" id="to_invoice_orders" parent="sale.sale_order_menu"
                   action="qshield_crm.action_to_invoice_sale_orders"/>
