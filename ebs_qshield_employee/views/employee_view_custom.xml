@@ -1,0 +1,168 @@
+<?xml version='1.0' encoding='UTF-8' ?>
+<odoo>
+    <data>
+        <!--        <record id="documents.document_action" model="ir.actions.act_window">
+                    <field name="domain">[('partner_id','=',partner_id)]</field>
+                </record>-->
+
+        <record id="custom_document_action" model="ir.actions.act_window">
+            <field name="name">Custom Documents Action</field>
+            <field name="res_model">documents.document</field>
+            <field name="view_mode">kanban,tree,form</field>
+            <field name="domain">[]</field>
+            <field name="view_ids" eval="[(5, 0, 0),
+        (0, 0, {'view_mode': 'kanban', 'view_id': ref('documents.document_view_kanban')}),
+        (0, 0, {'view_mode': 'tree', 'view_id': False}),
+        (0, 0, {'view_mode': 'form', 'view_id': ref('documents.document_view_form')})]"/>
+            <field name="help" type="html">
+                <p class="o_view_nocontent_smiling_face">Upload <span class="font-weight-normal">a file or</span> drag
+                    <span class="font-weight-normal">it here.</span>
+                </p>
+            </field>
+        </record>
+
+
+        <record id="hr_employee_view_form_custom_inherit" model="ir.ui.view">
+            <field name="name">hr.employee.view.custom.documents.custom.inherit</field>
+            <field name="model">hr.employee</field>
+            <field name="inherit_id" ref="documents_hr.hr_employee_view_form"/>
+            <field name="arch" type="xml">
+                <xpath expr="//button[@name='%(documents.document_action)d']"
+                       position="replace">
+                    <button name="action_see_own_documents"
+                            class="oe_stat_button" groups="documents.group_documents_user"
+                            attrs="{'invisible': [('user_id','=', False)]}" icon="fa-file-text" type="object">
+                        <field name="custom_document_count" widget="statinfo" string="Document Count"/>
+                    </button>
+                    <!--                    <button name="%(ebs_qshield_employee.custom_document_action)d"-->
+                    <!--                            context="{'search_default_owner_id': user_id, 'default_owner_id': user_id}"-->
+                    <!--                            class="oe_stat_button" groups="documents.group_documents_user"-->
+                    <!--                            attrs="{'invisible': [('user_id','=', False)]}" icon="fa-file-text" type="action">-->
+                    <!--                        <field name="custom_document_count" widget="statinfo"/>-->
+                    <!--                    </button>-->
+                </xpath>
+
+
+            </field>
+        </record>
+
+        <record id="hr_employee_view_custom" model="ir.ui.view">
+            <field name="name">hr.employee.view.custom</field>
+            <field name="model">hr.employee</field>
+            <field name="inherit_id" ref="hr.view_employee_form"/>
+            <field name="arch" type="xml">
+                <xpath expr="//form/header" position="inside">
+                    <button class="oe_stat_button" type="object" name="employee_information_form"
+                            string="Print Employee Information Form"
+                            icon="fa-file-text-o"/>
+                </xpath>
+                <xpath expr="//form/sheet/group/group" position="before">
+                    <group>
+                        <field name="first_name"/>
+                        <field name="middle_name"/>
+                        <field name="last_name"/>
+                        <field name="is_out_sourced"/>
+                        <field name="visa"/>
+                    </group>
+                    <group/>
+                </xpath>
+                <xpath expr="//field[@name='parent_id']" position="after">
+                    <field name="religion"/>
+                    <field name="home_leave_destination"/>
+                    <field name="driving_license"/>
+                    <field name="country_issue"/>
+                    <field name="joining_date"/>
+                </xpath>
+                <xpath expr="//field[@name='user_id']" position="after">
+                    <field name="partner_id"/>
+                    <field name="work_in"/>
+                </xpath>
+                <xpath expr="//field[@name='address_home_id']" position="attributes">
+                    <attribute name="string">Address (Qatar)</attribute>
+                </xpath>
+                <xpath expr="//field[@name='address_home_id']" position="after">
+                    <field name="address_home_country"
+                           context="{'show_address': 1, 'default_type': 'private', 'form_view_ref': 'base.res_partner_view_form_private'}"
+                           options="{&quot;always_reload&quot;: True, &quot;highlight_first_line&quot;: True}"/>
+                </xpath>
+                <xpath expr="//field[@name='passport_id']" position="after">
+                    <field name="qid_number"/>
+                </xpath>
+                <xpath expr="//page[@name='personal_information']" position="after">
+                    <page name="other_info" string="Personal Information">
+                        <group string="Dependant">
+                            <field name="dependant_id" nolabel="1">
+                                <tree editable="bottom">
+                                    <field name="name"/>
+                                    <field name="gender"/>
+                                    <field name="dob"/>
+                                    <field name="accompany"/>
+                                    <field name="relation"/>
+                                </tree>
+                            </field>
+                        </group>
+                        <group string="Emergency">
+                            <field name="emergency_id" nolabel="1">
+                                <tree editable="bottom">
+                                    <field name="name"/>
+                                    <field name="relation"/>
+                                    <field name="address"/>
+                                    <field name="telephone"/>
+                                    <field name="mobile"/>
+                                    <field name="fax"/>
+                                    <field name="location"/>
+                                </tree>
+                            </field>
+                        </group>
+                        <group string="School/College/University">
+                            <field name="education_id" nolabel="1">
+                                <tree editable="bottom">
+                                    <field name="year"/>
+                                    <field name="degree"/>
+                                    <field name="school_college"/>
+                                    <field name="university"/>
+                                </tree>
+                            </field>
+                        </group>
+                        <group string="Courses">
+                            <field name="courses_id" nolabel="1">
+                                <tree editable="bottom">
+                                    <field name="from_date"/>
+                                    <field name="to_date"/>
+                                    <field name="course_title"/>
+                                    <field name="institution"/>
+                                    <field name="qualification"/>
+                                </tree>
+                            </field>
+                        </group>
+                        <group string="Languages">
+                            <field name="language_id" nolabel="1">
+                                <tree editable="bottom">
+                                    <field name="name"/>
+                                    <field name="spoken"/>
+                                    <field name="oral"/>
+                                    <field name="written"/>
+                                </tree>
+                            </field>
+                        </group>
+                        <group string="Employment History">
+                            <field name="history_id" nolabel="1">
+                                <tree editable="bottom">
+                                    <field name="position"/>
+                                    <field name="company_institution"/>
+                                    <field name="date"/>
+                                </tree>
+                            </field>
+                        </group>
+                    </page>
+                </xpath>
+                <xpath expr="//page[@name='personal_information']//group/group[4]" position="attributes">
+                    <attribute name="invisible">True</attribute>
+                </xpath>
+                <xpath expr="//page[@name='personal_information']//group/group[5]" position="attributes">
+                    <attribute name="invisible">True</attribute>
+                </xpath>
+            </field>
+        </record>
+    </data>
+</odoo>
