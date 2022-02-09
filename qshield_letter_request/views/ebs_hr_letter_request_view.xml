@@ -1,0 +1,262 @@
+<odoo>
+    <data>
+
+        <record model="ir.ui.view" id="view_ebs_hr_letter_request_list">
+            <field name="name">ebs.hr.letter.request.list</field>
+            <field name="model">ebs.hr.letter.request</field>
+            <field name="arch" type="xml">
+                <tree string="Letter Request"
+                      decoration-muted="state == 'done'"
+                      decoration-info="state == 'draft'"
+                      decoration-success="state == 'ready_for_collection'">
+                    <field name="name"/>
+                    <field name="date"/>
+                    <field name="employee_id"/>
+                    <field name="type"/>
+                    <field name="addressed_to"/>
+                    <field name="signatory_id"/>
+                    <field name="priority" widget="priority" optional="show" readonly="1"/>
+                    <field name="state" optional="show"/>
+                    <field name="company_id" optional="show" groups="base.group_multi_company"/>
+                </tree>
+            </field>
+        </record>
+
+        <record model="ir.ui.view" id="view_ebs_hr_letter_request_form">
+            <field name="name">ebs.hr.letter.request.form</field>
+            <field name="model">ebs.hr.letter.request</field>
+            <field name="arch" type="xml">
+                <form string="Letter Request">
+                    <header>
+                        <button name="action_draft" type="object"
+                                string="Reset To Draft" states="submitted,ready_for_collection,rejected,under_process"
+                                class="oe_highlight" groups="hr.group_hr_manager"/>
+
+                        <button name="action_submit" type="object"
+                                string="Submit" states="draft"
+                                class="oe_highlight" groups="base.group_user"/>
+
+                        <button name="action_reject" type="object"
+                                string="Reject" states="submitted,under_process"
+                                class="oe_highlight" groups="hr.group_hr_manager"/>
+                        <button name="action_under_process" type="object"
+                                string="Under Process" states="submitted"
+                                class="oe_highlight" groups="hr.group_hr_manager"/>
+                        <button name="action_print_state" type="object"
+                                string="Go to Print State" states="under_process"
+                                class="oe_highlight" groups="hr.group_hr_manager"/>
+                        <button name="action_ready_for_collection" type="object"
+                                string="Ready For Collection" states="print"
+                                class="oe_highlight" groups="hr.group_hr_manager"/>
+                        <button name="action_done" type="object"
+                                string="Done" states="ready_for_collection"
+                                class="oe_highlight" groups="hr.group_hr_manager"/>
+                        <button name="action_print" type="object"
+                                string="Print Letter" states="print"
+                                class="oe_highlight" groups="hr.group_hr_manager"/>
+                        <field name="state" widget="statusbar"
+                               statusbar_visible="draft,submitted,print,ready_for_collection,done"/>
+                    </header>
+                    <sheet>
+                        <h1>
+                            <field name="name" readonly="1"/>
+                        </h1>
+                        <group>
+                            <group>
+                                <field name="employee_id" options="{'no_create': True,'no_create_edit':True}"/>
+                                <field name="type"/>
+                                <field name="subject_from"
+                                   attrs="{'invisible': [('type', 'in', ['salary_certificate', 'liquor_permit', 'termination_letter'])]}" />
+
+                                <field name="date_from"
+                                   attrs="{'invisible': [('type', 'in', ['salary_certificate', 'bank_salary_certificate', 'liquor_permit', 'termination_letter'])]}" />
+
+                                <field name="date_to"
+                                   attrs="{'invisible': [('type', 'in', ['salary_certificate', 'bank_salary_certificate', 'liquor_permit', 'termination_letter'])]}" />
+                                <field name="notice_period"
+                                   attrs="{'invisible': [('type', '!=','termination_letter')]}" />
+                                <field name="termination_date"
+                                  attrs="{'invisible': [('type', '!=','termination_letter')]}" />
+                                <field name="date" readonly="1"/>
+                            </group>
+                            <group>
+                                <field name="addressed_to"/>
+                                <field name="address" attrs="{'invisible': [('type', '!=','salary_certificate')]}"/>
+                                <field name="signatory_id" options="{'no_create': True,'no_create_edit':True}"
+                                       domain="[('signatory', '=',True)]" context="{'default_signatory': True}"/>
+                                <field name="priority" widget="priority"/>
+                                <field name="company_id" groups="base.group_multi_company"/>
+                                <field name="bank_name"/>
+                                <field name="end_of_service_benefit"/>
+                            </group>
+                        </group>
+                        <group>
+                            <notebook>
+                                <page string="Internal Notes">
+                                    <field name="description" placeholder="Add a description..."/>
+                                </page>
+                            </notebook>
+                        </group>
+                    </sheet>
+                    <div class="oe_chatter">
+                        <field name="message_follower_ids" widget="mail_followers"/>
+                        <field name="message_ids" widget="mail_thread"/>
+                    </div>
+                </form>
+            </field>
+        </record>
+
+        <record id="view_letter_request_filter" model="ir.ui.view">
+            <field name="name">ebs.hr.letter.request.search</field>
+            <field name="model">ebs.hr.letter.request</field>
+            <field name="arch" type="xml">
+                <search string="Letter Requests">
+                    <field name="employee_id" string="Employee"/>
+                    <field name="signatory_id" string="Signatory"/>
+                    <field name="type"/>
+                    <separator/>
+                    <filter string="Done" name="letter_done" domain="[('state', '=', 'done')]"/>
+                    <filter string="Ready For Collection" name="letter_ready_for_collection"
+                            domain="[('state', '=', 'ready_for_collection')]"/>
+                    <group expand="0" string="Group By">
+                        <filter name="group_employee" string="Employee" domain="[]"
+                                context="{'group_by': 'employee_id'}"/>
+                        <filter name="group_signatory_id" string="Signatory" domain="[]"
+                                context="{'group_by': 'signatory_id'}"/>
+                        <filter name="group_type" string="Type" domain="[]"
+                                context="{'group_by': 'type'}"/>
+                    </group>
+                    <searchpanel>
+                        <field name="company_id" groups="base.group_multi_company" icon="fa-building"/>
+                    </searchpanel>
+                </search>
+            </field>
+        </record>
+        <record id="open_view_ebs_hr_letter_request" model="ir.actions.act_window">
+            <field name="name">Letter Request</field>
+            <field name="res_model">ebs.hr.letter.request</field>
+            <field name="view_mode">tree,form</field>
+            <field name="domain">[]</field>
+            <field name="context">{}</field>
+            <field name="search_view_id" ref="view_letter_request_filter"/>
+            <field name="help" type="html">
+                <p class="o_view_nocontent_smiling_face">
+                    Add a new Letter Request
+                </p>
+            </field>
+        </record>
+
+        <record id="ebs_hr_letter_request_action_view_tree" model="ir.actions.act_window.view">
+            <field name="sequence" eval="1"/>
+            <field name="view_mode">tree</field>
+            <field name="view_id" ref="view_ebs_hr_letter_request_list"/>
+            <field name="act_window_id" ref="open_view_ebs_hr_letter_request"/>
+        </record>
+
+        <record id="ebs_hr_letter_request_action_view_form" model="ir.actions.act_window.view">
+            <field name="sequence" eval="2"/>
+            <field name="view_mode">form</field>
+            <field name="view_id" ref="view_ebs_hr_letter_request_form"/>
+            <field name="act_window_id" ref="open_view_ebs_hr_letter_request"/>
+        </record>
+
+        <menuitem
+                id="menu_ebs_hr_letter_request"
+                name="Letter Request"
+                action="open_view_ebs_hr_letter_request"
+                parent="hr.menu_hr_root"
+                sequence="4"
+                groups="base.group_user"
+        />
+
+
+        <record id="inherited_letter_request_view_form_inherit_user_write_access_ondraft" model="ir.ui.view">
+            <field name="name">inherited.ebs.hr.letter.request.form.hr.user.custom </field>
+            <field name="model">ebs.hr.letter.request</field>
+            <field name="inherit_id" ref="view_ebs_hr_letter_request_form"/>
+            <field name="groups_id" eval="[(6, 0, [ref('base.group_user')])]"/>
+            <field name="arch" type="xml">
+                <xpath expr="//field[@name='employee_id']" position="attributes">
+                    <attribute name="attrs">   {
+                        'readonly': [('state', 'in', ['submitted', 'ready_for_collection', 'done', 'under_process',
+                                                      'rejected'])]}   </attribute>
+                </xpath>
+                <xpath expr="//field[@name='type']" position="attributes">
+                    <attribute name="attrs">   {
+                        'readonly': [('state', 'in', ['submitted', 'ready_for_collection', 'done', 'under_process',
+                                                      'rejected'])]}   </attribute>
+                </xpath>
+                <xpath expr="//field[@name='date']" position="attributes">
+                    <attribute name="attrs">   {
+                        'readonly': [('state', 'in', ['submitted', 'ready_for_collection', 'done', 'under_process',
+                                                      'rejected'])]}   </attribute>
+                </xpath>
+                <xpath expr="//field[@name='addressed_to']" position="attributes">
+                    <attribute name="attrs">   {
+                        'readonly': [('state', 'in', ['submitted', 'ready_for_collection', 'done', 'under_process',
+                                                      'rejected'])]}   </attribute>
+                </xpath>
+                <xpath expr="//field[@name='signatory_id']" position="attributes">
+                    <attribute name="attrs">   {
+                        'readonly': [('state', 'in', ['submitted', 'ready_for_collection', 'done', 'under_process',
+                                                      'rejected'])]}   </attribute>
+                </xpath>
+                <xpath expr="//field[@name='priority']" position="attributes">
+                    <attribute name="attrs">   {
+                        'readonly': [('state', 'in', ['submitted', 'ready_for_collection', 'done', 'under_process',
+                                                      'rejected'])]}   </attribute>
+                </xpath>
+                <xpath expr="//field[@name='company_id']" position="attributes">
+                    <attribute name="attrs">   {
+                        'readonly': [('state', 'in', ['submitted', 'ready_for_collection', 'done', 'under_process',
+                                                      'rejected'])]}   </attribute>
+                </xpath>
+            </field>
+        </record>
+        <record id="inherited_letter_request_view_form_inherit_user_write_access_ondraft_ready_submitted"
+                model="ir.ui.view">
+            <field name="name">inherited.ebs.hr.letter.request.form.hr.manager.custom</field>
+            <field name="model">ebs.hr.letter.request</field>
+            <field name="inherit_id" ref="view_ebs_hr_letter_request_form"/>
+            <field name="groups_id" eval="[(6, 0, [ref('hr.group_hr_manager')])]"/>
+            <field name="arch" type="xml">
+                <xpath expr="//field[@name='employee_id']" position="attributes">
+                    <attribute name="attrs">   {
+                        'readonly': [('state', 'in', ['ready_for_collection', 'done', 'under_process',
+                                                      'rejected'])]}   </attribute>
+                </xpath>
+                <xpath expr="//field[@name='type']" position="attributes">
+                    <attribute name="attrs">   {
+                        'readonly': [('state', 'in', ['ready_for_collection', 'done', 'under_process',
+                                                      'rejected'])]}   </attribute>
+                </xpath>
+                <xpath expr="//field[@name='date']" position="attributes">
+                    <attribute name="attrs">   {
+                        'readonly': [('state', 'in', ['ready_for_collection', 'done', 'under_process',
+                                                      'rejected'])]}   </attribute>
+                </xpath>
+                <xpath expr="//field[@name='addressed_to']" position="attributes">
+                    <attribute name="attrs">   {
+                        'readonly': [('state', 'in', ['ready_for_collection', 'done', 'under_process',
+                                                      'rejected'])]}   </attribute>
+                </xpath>
+                <xpath expr="//field[@name='signatory_id']" position="attributes">
+                    <attribute name="attrs">   {
+                        'readonly': [('state', 'in', ['ready_for_collection', 'done', 'under_process',
+                                                      'rejected'])]}   </attribute>
+                </xpath>
+                <xpath expr="//field[@name='priority']" position="attributes">
+                    <attribute name="attrs">   {
+                        'readonly': [('state', 'in', ['ready_for_collection', 'done', 'under_process',
+                                                      'rejected'])]}   </attribute>
+                </xpath>
+                <xpath expr="//field[@name='company_id']" position="attributes">
+                    <attribute name="attrs">   {
+                        'readonly': [('state', 'in', ['ready_for_collection', 'done', 'under_process',
+                                                      'rejected'])]}   </attribute>
+                </xpath>
+            </field>
+        </record>
+
+    </data>
+</odoo>

@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data>
+        <template id="form_header">
+<!--            <div class="header">-->
+
+
+<!--                <div class="float-left">-->
+<!--                    <img t-if="o.image"-->
+<!--                         height="100px"-->
+<!--                         t-att-src="image_data_uri(o.image)"-->
+<!--                         style="  margin-left: auto;-->
+<!--                                  margin-top: 20px;-->
+<!--                                  width: 100px;"-->
+<!--                         alt="Logo"/>-->
+<!--                </div>-->
+
+<!--                <div class="float-right">-->
+<!--                    <img src='/dowaa_employee_status_report/static/description/dowaa.jpg'-->
+<!--                         style="height: 100px; width: 200px;margin-top:1.2em"/>-->
+<!--                </div>-->
+<!--            </div>-->
+<!--            <br/><br/><br/>-->
+<!--            <br/>-->
+
+        </template>
+
+
+    </data>
+</odoo>

@@ -1,0 +1,64 @@
+<odoo>
+    <data>
+        <!-- Linquor Permit -->
+        <record id="qdc_linquor_permit" model="ir.actions.report">
+            <field name="name">QDC - Linquor Permit</field>
+            <field name="model">ebs.hr.letter.request</field>
+            <field name="report_type">qweb-pdf</field>
+            <field name="report_name">qshield_letter_request.linquor_permit_template</field>
+            <field name="report_file">qshield_letter_request.report_linquor_permit_template</field>
+            <field name="print_report_name">object.employee_id.name</field>
+            <field name="binding_model_id" eval="False"/>
+            <field name="binding_type">report</field>
+        </record>
+
+        <!-- Noc Visa -->
+        <record id="noc_visa_application" model="ir.actions.report">
+            <field name="name">NOC VISA APPLICATION</field>
+            <field name="model">ebs.hr.letter.request</field>
+            <field name="report_type">qweb-pdf</field>
+            <field name="report_name">qshield_letter_request.noc_visa_template</field>
+            <field name="report_file">qshield_letter_request.report_noc_visa_template</field>
+            <field name="print_report_name">object.employee_id.name</field>
+            <field name="binding_model_id" eval="False"/>
+            <field name="binding_type">report</field>
+        </record>
+
+        <!-- Termination Letter -->
+        <record id="termination_letter" model="ir.actions.report">
+            <field name="name">Termination Letter</field>
+            <field name="model">ebs.hr.letter.request</field>
+            <field name="report_type">qweb-pdf</field>
+            <field name="report_name">qshield_letter_request.termination_letter</field>
+            <field name="report_file">qshield_letter_request.report_termination_letter_template</field>
+            <field name="print_report_name">object.employee_id.name</field>
+            <field name="binding_model_id" eval="False"/>
+            <field name="binding_type">report</field>
+        </record>
+
+        <!-- Salary Certificate -->
+        <record id="salary_certificate" model="ir.actions.report">
+            <field name="name">Salary Certificate</field>
+            <field name="model">ebs.hr.letter.request</field>
+            <field name="report_type">qweb-pdf</field>
+            <field name="report_name">qshield_letter_request.salary_certificate_template</field>
+            <field name="report_file">qshield_letter_request.report_salary_certificate_template</field>
+            <field name="print_report_name">object.employee_id.name</field>
+            <field name="binding_model_id" eval="False"/>
+            <field name="binding_type">report</field>
+        </record>
+
+        <!-- Salary Certificate -->
+        <record id="salary_certificate_to_bank" model="ir.actions.report">
+            <field name="name">Salary Certificate</field>
+            <field name="model">ebs.hr.letter.request</field>
+            <field name="report_type">qweb-pdf</field>
+            <field name="report_name">qshield_letter_request.salary_certificate_to_bank_template</field>
+            <field name="report_file">qshield_letter_request.report_salary_certificate_to_bank_template</field>
+            <field name="print_report_name">object.employee_id.name</field>
+            <field name="binding_model_id" eval="False"/>
+            <field name="binding_type">report</field>
+        </record>
+
+    </data>
+</odoo>

@@ -1,0 +1,75 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <template id="termination_letter">
+        <t t-call="web.html_container">
+            <t t-foreach="docs" t-as="o">
+                <t t-call="web.internal_layout">
+                    <div class="page">
+                        <html>
+                            <style>
+                                body{
+                                    text-align: justify;
+                                    font-size:18px
+                                }
+
+                            </style>
+                            <body>
+                                <div style="margin-left:70%">
+                                    <p style="  line-height: 2; text-align: justify;"><strong>Ref. No.
+                                        <span style="padding-right:5px;" t-field="o.name"/><br/>
+                                            Date: <span style="padding-right:5px;"
+                                                        t-esc="o.print_date"/></strong></p>
+                                </div>
+
+                                <div>
+                                    <p style="  line-height: 2;"><strong>To:
+                                        <span style="padding-right:5px;" t-field="o.employee_id.name"/><br/>
+                                                COMPANY NAME
+                                    <span style="padding-right:5px;" t-field="o.employee_id.company_id.partner_id.name"/>
+                                    </strong></p>
+                                </div><br/>
+
+                                <div align="center" >
+                                    <p style="line-height: 2;">
+                                        <strong>Termination of Employment</strong>
+                                    </p>
+                                </div>
+                                <div>
+                                    <p>Dear <span style="padding-right:5px;" t-field="o.employee_id.name"/>,</p>
+                                </div>
+                                <p style="line-height: 2;">
+                                    We regret to inform you that your employment with QShield LLC is being terminated,
+                                    effective on <span style="padding-right:5px;" t-field="o.termination_date"/>
+                                     and this (<span style="padding-right:5px;" t-field="o.notice_period"/>) notice period.
+
+                                </p>
+
+                                <p>QShield will give the full support to all employees as usual. In order to
+                                    proceed accordingly, please consider this letter as a formal notice. Handover of all
+                                    company property would be processed before you leave.</p>
+
+                                <p>Kindly ensure to clear any liability under your name, such as car, traffic violation,
+                                    bank loan/credit card and dependents. Please provide clearance letter from
+                                    <span style="padding-right:5px;" t-field="o.bank_name"/>.
+
+                                </p><br/>
+
+                                <p>
+                                    We would like to thank you for your service and wish you all the luck in your
+                                    future endeavor.</p><br/><br/><br/><br/>
+                                <div>
+                                    Kind regards,<br/>
+                                    for QSHIELD LLC.,<br/><br/>
+                                    <strong>NAME OF SIGNATORY:</strong> <span style="padding-right:5px;" t-field="o.signatory_id.name"/><br/>
+                                    <strong>DESIGNATION: </strong> <span style="padding-right:5px;" t-field="o.signatory_id.job_id.name"/>
+                                </div>
+                           </body>
+                        </html>
+
+                    </div>
+
+                </t>
+            </t>
+        </t>
+    </template>
+</odoo>

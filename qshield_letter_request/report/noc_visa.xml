@@ -1,0 +1,78 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <template id="noc_visa_template">
+        <t t-call="web.html_container">
+            <t t-foreach="docs" t-as="o">
+                <t t-call="web.internal_layout">
+                    <div class="page">
+                        <html>
+                            <style>
+                                body{
+                                    text-align: justify;
+                                    font-size:18px
+                                }
+
+                            </style>
+                            <body>
+                                <div style="margin-left:70%">
+                                    <p style="  line-height: 2; text-align: justify;"><strong>Ref. No.
+                                        <span style="padding-right:5px;" t-field="o.name"/><br/>
+                                            Date: <span style="padding-right:5px;"
+                                                        t-esc="o.print_date"/></strong></p>
+                                </div>
+
+                                <div>
+                                    <p style="  line-height: 2;"><strong>To: Embassy Of
+                                        <span style="padding-right:5px;" t-field="o.addressed_to"/><br/>
+                                                Doha, Qatar</strong></p>
+                                </div><br/>
+
+                                <div align="center" >
+                                    <p style="line-height: 2;">
+                                        <strong style="font-size:18px">Subject: No Objection Letter for:
+                                         <span style="padding-right:5px;" t-field="o.subject_from"/></strong>
+                                    </p>
+                                </div><br/>
+                                <div>
+                                    <p>Dear Sir/Mam,</p>
+                                </div>
+                                <br/>
+                                <p style="line-height: 2;">
+                                    This is to certify that Mr.  <span style="padding-right:5px;" t-field="o.employee_id.name"/>,
+                                    <span style="padding-right:5px;" t-field="o.employee_id.country_id.name"/>Nationality,
+                                     holding a Passport No. <span style="padding-right:5px;" t-field="o.employee_id.passport_id"/> and QID No.
+                                    <span style="padding-right:5px;" t-field="o.employee_id.qid_number"/>
+                                    is working with QShield LLC. As
+                                    <span style="padding-right:5px;" t-field="o.employee_id.job_id.name"/>.
+                                    He joined the company on
+                                    <span style="padding-right:5px;" t-field="o.employee_id.joining_date"/>
+                                    His monthly gross salary is <span style="padding-right:5px;" t-field="o.gross_salary"/>  (
+                                   <span style="padding-right:5px;" t-field="o.num_word"/>). <br/><br/>
+                                    Mr.  <span style="padding-right:5px;" t-field="o.employee_id.name"/>
+                                    has expressed interest in visiting the country of
+                                    <span style="padding-right:5px;" t-field="o.addressed_to"/>
+                                     Our organization has NO Objection regarding his visit.
+                                    His travel date has been approved from
+                                    <span style="padding-right:5px;" t-field="o.date_from"/>
+                                    until <span style="padding-right:5px;" t-field="o.date_to"/>.
+                                </p><br/><br/>
+
+                                <p>This certificate is being issued upon request of the above employee for whatever
+                                    purpose it may serve him best with no liabilities on the company.</p>
+                                <br/><br/><br/><br/><br/>
+                                <div>
+                                    Kind regards,<br/>
+                                    for QSHIELD LLC.,<br/><br/>
+                                    <strong>NAME OF SIGNATORY:</strong> <span style="padding-right:5px;" t-field="o.signatory_id.name"/><br/>
+                                    <strong>DESIGNATION: </strong><span style="padding-right:5px;" t-field="o.signatory_id.job_id.name"/>
+                                </div>
+                           </body>
+                        </html>
+
+                    </div>
+
+                </t>
+            </t>
+        </t>
+    </template>
+</odoo>
