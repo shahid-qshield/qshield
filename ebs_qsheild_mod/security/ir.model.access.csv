@@ -26,3 +26,5 @@ access_ebs_mod_payment_transaction,ebs_qsheild_mod.ebs_mod_payment_transaction,m
 
 access_ebs_documents_document,ebs.documents.document,documents.model_documents_document,,1,1,1,0
 access_excluded_company,excluded.company,model_excluded_company,,1,1,1,1
+access_ebs_mod_service_request_account_manager,ebs_mod.service.request.account.manager,model_ebs_mod_service_request,ebs_qsheild_mod.qshield_account_manager,1,1,1,0
+access_ebs_mod_service_request_operational_manager,ebs_mod.service.request.operational.manager,model_ebs_mod_service_request,ebs_qsheild_mod.qshield_operational_manager,1,1,0,0

@@ -42,32 +42,67 @@
                                 'default_issue_date':end_date
                                 }"
                         />
+
                         <button name="request_submit" string="submit" type="object"
-                                attrs="{'invisible':[('status','!=','draft')]}"/>
+                                attrs="{'invisible':[('status','!=','draft')]}"
+                                groups="ebs_qsheild_mod.qshield_account_manager"/>
 
                         <!--                        <button name="request_new" string="New" type="object"-->
                         <!--                                attrs="{'invisible':[('status','!=','draft')]}"/>-->
 
                         <button name="request_hold" string="On Hold" type="object"
-                                attrs="{'invisible':[('status','!=','progress')]}"/>
+                                attrs="{'invisible':[('status','!=','new')]}"
+                                groups="ebs_qsheild_mod.qshield_operational_manager"/>
+
+                        <button name="request_pending" string="Pending from Gov" type="object"
+                                attrs="{'invisible':[('status','!=','new')]}"
+                                groups="ebs_qsheild_mod.qshield_operational_manager"/>
+
 
                         <!--                        <button name="request_progress" string="In Progress" type="object"-->
                         <!--                                attrs="{'invisible':['|',('status','!=','hold')]}"/>-->
                         <button name="request_progress" string="In Progress" type="object"
-                                attrs="{'invisible': [('status', 'in', ['draft', 'progress', 'complete','cancel','reject'])]}"/>
+                                attrs="{'invisible': [('status', 'not in', ['new', 'hold', 'pending'])]}"
+                                groups="ebs_qsheild_mod.qshield_operational_manager"/>
 
                         <button name="request_cancel" string="Cancel" type="object"
-                                attrs="{'invisible':[('status','!=','progress')]}"/>
+                                attrs="{'invisible':[('status','not in',['pending_payment','pending','hold','progress'])]}"
+                                groups="ebs_qsheild_mod.qshield_operational_manager"/>
+
+                        <button name="request_escalated" string="Escalated" type="object"
+                                attrs="{'invisible':[('status','not in',['pending_payment','pending','hold','progress'])]}"
+                                groups="ebs_qsheild_mod.qshield_operational_manager"/>
+
+                        <button name="request_incomplete" string="Incomplete" type="object"
+                                attrs="{'invisible':[('status','not in',['pending_payment','hold','progress'])]}"
+                                groups="ebs_qsheild_mod.qshield_operational_manager"/>
+
+                        <button name="request_pending_payment" string="Pending Payment" type="object"
+                                attrs="{'invisible':[('status','not in',['pending','progress'])]}"
+                                groups="ebs_qsheild_mod.qshield_operational_manager"/>
 
                         <!--                        <button name="request_draft" string="Draft" type="object"-->
                         <!--                                attrs="{'invisible':[('status','!=','cancel')]}"/>-->
 
                         <button name="request_complete" string="Complete" type="object"
-                                attrs="{'invisible':[('status','!=','progress')]}"/>
+                                attrs="{'invisible':[('status','not in',['progress','pending_payment'])]}"
+                                groups="ebs_qsheild_mod.qshield_operational_manager"/>
 
                         <button name="request_reject" string="Reject" type="object"
-                                attrs="{'invisible':[('status','in',['draft','complete','reject'])]}"/>
+                                attrs="{'invisible':[('status','!=','new')]}"
+                                groups="ebs_qsheild_mod.qshield_operational_manager"/>
 
+                        <button name="request_escalated_in_progress" string="Escalated in Progress" type="object"
+                                attrs="{'invisible':[('status','!=','escalated')]}"
+                                groups="ebs_qsheild_mod.qshield_operational_manager"/>
+
+                        <button name="request_escalated_in_complete" string="Escalated Incomplete" type="object"
+                                attrs="{'invisible':[('status','!=','escalated')]}"
+                                groups="ebs_qsheild_mod.qshield_operational_manager"/>
+
+                        <button name="request_escalated_complete" string="Escalated Completed" type="object"
+                                attrs="{'invisible':[('status','!=','escalated')]}"
+                                groups="ebs_qsheild_mod.qshield_operational_manager"/>
                         <field name="status" widget="statusbar"/>
 
 
@@ -445,27 +480,60 @@
                         />
 
                         <button name="request_submit" string="submit" type="object"
-                                attrs="{'invisible':[('status','!=','draft')]}"/>
+                                attrs="{'invisible':[('status','!=','draft')]}"
+                                groups="ebs_qsheild_mod.qshield_account_manager"/>
 
                         <button name="request_hold" string="On Hold" type="object"
-                                attrs="{'invisible':[('status','!=','progress')]}"/>
+                                attrs="{'invisible':[('status','!=','new')]}"
+                                groups="ebs_qsheild_mod.qshield_operational_manager"/>
+
+                        <button name="request_pending" string="Pending from Gov" type="object"
+                                attrs="{'invisible':[('status','!=','new')]}"
+                                groups="ebs_qsheild_mod.qshield_operational_manager"/>
 
                         <!--&lt;!&ndash;                        <button name="request_progress" string="In Progress" type="object"&ndash;&gt;-->
                         <!--                                attrs="{'invisible':['|',('status','!=','hold')]}"/>-->
                         <button name="request_progress" string="In Progress" type="object"
-                                attrs="{'invisible': [('status', 'in', ['draft', 'progress', 'complete','cancel','reject'])]}"/>
-
+                                attrs="{'invisible': [('status', 'not in', ['new', 'hold', 'pending'])]}"
+                                groups="ebs_qsheild_mod.qshield_operational_manager"/>
                         <button name="request_cancel" string="Cancel" type="object"
-                                attrs="{'invisible':[('status','!=','progress')]}"/>
+                                attrs="{'invisible':[('status','not in',['pending_payment','pending','hold','progress'])]}"
+                                groups="ebs_qsheild_mod.qshield_operational_manager"/>
+
+                        <button name="request_escalated" string="Escalated" type="object"
+                                attrs="{'invisible':[('status','not in',['pending_payment','pending','hold','progress'])]}"
+                                groups="ebs_qsheild_mod.qshield_operational_manager"/>
+
+                        <button name="request_incomplete" string="Incomplete" type="object"
+                                attrs="{'invisible':[('status','not in',['pending_payment','hold','progress'])]}"
+                                groups="ebs_qsheild_mod.qshield_operational_manager"/>
+
+                        <button name="request_pending_payment" string="Pending Payment" type="object"
+                                attrs="{'invisible':[('status','not in',['pending','progress'])]}"
+                                groups="ebs_qsheild_mod.qshield_operational_manager"/>
 
                         <!--                        <button name="request_draft" string="Draft" type="object"-->
                         <!--                                attrs="{'invisible':[('status','!=','cancel')]}"/>-->
 
                         <button name="request_complete" string="Complete" type="object"
-                                attrs="{'invisible':[('status','!=','progress')]}"/>
+                                attrs="{'invisible':[('status','not in',['progress','pending_payment'])]}"
+                                groups="ebs_qsheild_mod.qshield_operational_manager"/>
 
                         <button name="request_reject" string="Reject" type="object"
-                                attrs="{'invisible':[('status','in',['draft','complete','reject'])]}"/>
+                                attrs="{'invisible':[('status','!=','new')]}"
+                                groups="ebs_qsheild_mod.qshield_operational_manager"/>
+
+                        <button name="request_escalated_in_progress" string="Escalated in Progress" type="object"
+                                attrs="{'invisible':[('status','!=','escalated')]}"
+                                groups="ebs_qsheild_mod.qshield_operational_manager"/>
+
+                        <button name="request_escalated_in_complete" string="Escalated Incomplete" type="object"
+                                attrs="{'invisible':[('status','!=','escalated')]}"
+                                groups="ebs_qsheild_mod.qshield_operational_manager"/>
+
+                        <button name="request_escalated_complete" string="Escalated Completed" type="object"
+                                attrs="{'invisible':[('status','!=','escalated')]}"
+                                groups="ebs_qsheild_mod.qshield_operational_manager"/>
 
                         <field name="status" widget="statusbar"/>
 

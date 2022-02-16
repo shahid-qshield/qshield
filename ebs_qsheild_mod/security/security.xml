@@ -74,10 +74,11 @@
 
     <record model="res.groups" id="qshield_account_manager">
         <field name="name">Account manager</field>
-        <!--        <field name="category_id" ref="module_category_qshield_account_manager"/>-->
     </record>
 
-
+    <record model="res.groups" id="qshield_operational_manager">
+        <field name="name">Operational manager</field>
+    </record>
     <!--    <record id="rule_of_draft_and_new_service_for_account_manager" model="ir.rule">
             <field name="name">Record rule of Draft or new service for Account manager</field>
             <field name="model_id" ref="model_ebs_mod_service_request"/>

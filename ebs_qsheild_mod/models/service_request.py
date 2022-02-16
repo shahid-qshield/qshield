@@ -160,13 +160,20 @@ class ServiceRequest(models.Model):
         required=False)
     status = fields.Selection(
         string='Status',
-        selection=[('draft', 'Draft'),
+        selection=[('draft', 'In Draft'),
                    ('new', 'New'),
-                   ('progress', 'In Progress'),
                    ('hold', 'On Hold'),
+                   ('pending', 'Pending from Gov'),
+                   ('progress', 'In Progress'),
+                   ('pending_payment', 'Pending Payment'),
+                   ('escalated', 'Escalated'),
+                   ('reject', 'Rejected'),
                    ('complete', 'Completed'),
-                   ('cancel', 'Canceled'),
-                   ('reject', 'Rejected')],
+                   ('incomplete', 'Incomplete'),
+                   ('escalated_progress', 'Escalated In Progress'),
+                   ('escalated_incomplete', 'Escalated Incomplete'),
+                   ('escalated_complete', 'Escalated Completed'),
+                   ('cancel', 'Cancelled by client')],
         required=False,
         default='draft')
     status_dict = {
@@ -174,6 +181,13 @@ class ServiceRequest(models.Model):
         'new': 'New',
         'progress': 'In Progress',
         'hold': 'On Hold',
+        'pending': 'Pending from Gov',
+        'pending_payment': 'Pending Payment',
+        'escalated': 'Escalated',
+        'incomplete': 'Incomplete',
+        'escalated_incomplete': 'Escalated Incomplete',
+        'escalated_progress': 'Escalated In Progress',
+        'escalated_complete': 'Escalated Completed',
         'complete': 'Completed',
         'reject': 'Rejected',
         'cancel': 'Canceled'
@@ -226,6 +240,19 @@ class ServiceRequest(models.Model):
     exceeded_date = fields.Date('Exceeded Date')
     exceeded_days = fields.Integer('Exceeded Days', compute="_compute_exceeded_days", store=True)
     sla_min_max = fields.Char('SLA Timeline', compute='_concatenate_min_max')
+    draft_date = fields.Date('Draft Date')
+    new_date = fields.Date('New Date')
+    onhold_date = fields.Date('Onhold date')
+    pending_from_gov_date = fields.Date('Pending from gov date')
+    in_progress_date = fields.Date('In progress Date')
+    pending_payment_date = fields.Date('pending payment Date')
+    escalated_date = fields.Date('Escalated Date')
+    rejected_date = fields.Date('Rejected Date')
+    incomplete_date = fields.Date('Incomplete date')
+    escalated_in_progress_date = fields.Date('Escalated in progress date')
+    escalated_incomplete_date = fields.Date('Escalated incomplete date')
+    escalated_complete_date = fields.Date('Escalated complete date')
+    cancel_date = fields.Date('cancel date')
 
     service_document_id = fields.Many2one(
         comodel_name='documents.document',
@@ -350,6 +377,7 @@ class ServiceRequest(models.Model):
         vals['related_company_ro'] = vals['related_company']
         res = super(ServiceRequest, self).create(vals)
         for rec in res:
+            rec.draft_date = date.today()
             if rec.service_type_id.for_renewing:
                 if rec.service_document_id:
                     rec.service_document_id.renewed = True
@@ -547,6 +575,7 @@ class ServiceRequest(models.Model):
         self.name = comp_ref + "-" + service_red + "-" + month + year + "-" + code
 
         self.progress_date = fields.Date.today()
+        self.new_date = fields.Date.today()
 
         workflow_id = self.env['ebs_mod.service.request.workflow'].search(
             [('service_request_id', '=', self.id), ('is_application_submission', '=', True)], limit=1)
@@ -567,7 +596,7 @@ class ServiceRequest(models.Model):
             [('service_request_id', '=', self.id), ('is_application_submission', '=', True)], limit=1)
         if workflow_id:
             complete_date = workflow_id.complete_data
-            if self.end_date:
+            if self.end_date and complete_date:
                 self.sla_days = self.get_date_difference(self.end_date.date(), complete_date, 1)
         else:
             self.sla_days = 0
@@ -576,6 +605,7 @@ class ServiceRequest(models.Model):
         #     self.sla_days = self.get_date_difference(self.progress_date, self.end_date.date(), 1)
         # else:
         #     self.sla_days = 0
+        self.cancel_date = date.today()
         self.status = 'cancel'
 
     def request_reject(self):
@@ -589,7 +619,7 @@ class ServiceRequest(models.Model):
                 [('service_request_id', '=', self.id), ('is_application_submission', '=', True)], limit=1)
             if workflow_id:
                 complete_date = workflow_id.complete_data
-                if self.end_date:
+                if self.end_date and complete_date:
                     self.sla_days = self.get_date_difference(self.end_date.date(), complete_date, 1)
             else:
                 self.sla_days = 0
@@ -598,6 +628,7 @@ class ServiceRequest(models.Model):
         #     self.sla_days = self.get_date_difference(self.progress_date, self.end_date.date(), 1)
         # else:
         #     self.sla_days = 0
+        self.rejected_date = date.today()
         self.status = 'reject'
 
     def request_complete(self):
@@ -613,7 +644,7 @@ class ServiceRequest(models.Model):
                 [('service_request_id', '=', self.id), ('is_application_submission', '=', True)], limit=1)
             if workflow_id:
                 complete_date = workflow_id.complete_data
-                if self.end_date:
+                if self.end_date and complete_date:
                     self.sla_days = self.get_date_difference(self.end_date.date(), complete_date, 1)
             else:
                 self.sla_days = 0
@@ -622,18 +653,73 @@ class ServiceRequest(models.Model):
             raise ValidationError(_("Workflow still pending or in progress."))
 
     def request_hold(self):
+        self.onhold_date = date.today()
         self.status = 'hold'
+
+    def request_pending(self):
+        self.pending_from_gov_date = date.today()
+        self.status = 'pending'
+
+    def request_escalated(self):
+        self.escalated_date = date.today()
+        self.status = 'escalated'
+
+    def request_escalated_in_progress(self):
+        self.escalated_in_progress_date = date.today()
+        workflow_id = self.env['ebs_mod.service.request.workflow'].search(
+            [('service_request_id', '=', self.id), ('is_application_submission', '=', True)], limit=1)
+        if workflow_id:
+            complete_date = workflow_id.complete_data
+            if self.escalated_in_progress_date and complete_date:
+                self.sla_days = self.get_date_difference(self.escalated_in_progress_date, complete_date, 1)
+        self.status = 'escalated_progress'
+
+    def request_escalated_in_complete(self):
+        self.escalated_incomplete_date = date.today()
+        workflow_id = self.env['ebs_mod.service.request.workflow'].search(
+            [('service_request_id', '=', self.id), ('is_application_submission', '=', True)], limit=1)
+        if workflow_id:
+            complete_date = workflow_id.complete_data
+            if self.escalated_incomplete_date and complete_date:
+                self.sla_days = self.get_date_difference(self.escalated_incomplete_date, complete_date, 1)
+        self.status = 'escalated_incomplete'
+
+    def request_escalated_complete(self):
+        self.escalated_complete_date = date.today()
+        workflow_id = self.env['ebs_mod.service.request.workflow'].search(
+            [('service_request_id', '=', self.id), ('is_application_submission', '=', True)], limit=1)
+        if workflow_id:
+            complete_date = workflow_id.complete_data
+            if self.escalated_complete_date and complete_date:
+                self.sla_days = self.get_date_difference(self.escalated_complete_date, complete_date, 1)
+        self.status = 'escalated_complete'
+
+    def request_incomplete(self):
+        self.incomplete_date = date.today()
+        workflow_id = self.env['ebs_mod.service.request.workflow'].search(
+            [('service_request_id', '=', self.id), ('is_application_submission', '=', True)], limit=1)
+        if workflow_id:
+            complete_date = workflow_id.complete_data
+            if self.incomplete_date and complete_date:
+                self.sla_days = self.get_date_difference(self.incomplete_date, complete_date, 1)
+        self.status = 'incomplete'
+
+    def request_pending_payment(self):
+        self.pending_payment_date = date.today()
+        self.status = 'pending_payment'
 
     def request_progress(self):
         if self.env.user.has_group('ebs_qsheild_mod.qshield_account_manager'):
             raise UserError('Account manager groups are not allowed to set in progress status')
         else:
+            self.in_progress_date = date.today()
             self.status = 'progress'
 
     def request_draft(self):
         if len(self.service_flow_ids) == 0 and len(self.service_document_ids) == 0 and len(self.expenses_ids) == 0:
             self.start_date = None
             self.end_date = None
+            self.draft_date = date.today()
             self.status = 'draft'
         else:
             raise ValidationError(_("Delete all Related Items."))
