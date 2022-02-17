@@ -259,6 +259,13 @@ class ServiceRequest(models.Model):
         string='Documents',
         required=False)
 
+    def update_document_from_cron(self):
+        'Author : bhavesh parmar (update res_id and res_model in document)'
+        documents = self.env['documents.document'].search([('service_id', '!=', False)])
+        for document in documents:
+            document.write({'res_id': document.service_id.id,
+                            'res_model': document.service_id._name})
+
     def action_update_end_date(self):
         for rec in self:
             messages = self.env['mail.message'].search([('res_id', '=', rec.id)])
