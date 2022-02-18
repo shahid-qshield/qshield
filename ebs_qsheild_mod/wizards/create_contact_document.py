@@ -67,17 +67,18 @@ class CreateContactDocument(models.TransientModel):
             'folder_id': folder.id
         }
         if self.env.context.get('upload_contact', False):
-            vals['partner_id'] = self.contact_id.id
+            vals.update({'partner_id': self.contact_id.id})
         if self.env.context.get('upload_service', False):
-            vals['service_id'] = self.service_request_id.id
-            vals['res_id'] = self.service_request_id.id,
-            vals['res_model'] = self.service_request_id._name
+            vals.update({'service_id': self.service_request_id.id})
+            vals.update({'res_id': self.service_request_id.id})
+            vals.update({'res_model': self.service_request_id._name})
         if self.env.context.get('upload_service_contact', False):
-            vals['service_id'] = self.service_request_id.id
-            vals['partner_id'] = self.contact_id.id
-            # self.service_request_id.partner_document_count = self.service_request_id.partner_document_count + 1
+            vals.update({'service_id': self.service_request_id.id})
+            vals.update({'res_id': self.service_request_id.id})
+            vals.update({'res_model': self.service_request_id._name})
+            vals.update({'partner_id': self.contact_id.id})
 
         if self.expiry_date:
-            vals['expiry_date'] = self.expiry_date.strftime("%Y-%m-%d")
+            vals.update({'expiry_date': self.expiry_date.strftime("%Y-%m-%d")})
         self.env['documents.document'].create(vals)
         self.env.cr.commit()
