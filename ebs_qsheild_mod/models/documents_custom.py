@@ -383,7 +383,10 @@ class DocumentsCustom(models.Model):
     @api.model
     def create(self, vals):
         if vals.get('expiry_date', False):
-            expiry_date = datetime.strptime(vals['expiry_date'], "%Y-%m-%d").date()
+            if type(vals['expiry_date']) == str:
+                expiry_date = datetime.strptime(vals['expiry_date'], "%Y-%m-%d").date()
+            else:
+                expiry_date = vals['expiry_date']
             if expiry_date > datetime.today().date():
                 vals['status'] = 'active'
             else:

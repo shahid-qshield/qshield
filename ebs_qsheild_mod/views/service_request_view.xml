@@ -15,7 +15,22 @@
                     <field name="account_manager"/>
                     <field name="end_date"/>
                     <field name="contract_id" optional="hide"/>
+                    <field name="completed_date" optional="hide"/>
+                    <field name="draft_date" optional="hide"/>
+                    <field name="new_date" optional="hide"/>
+                    <field name="onhold_date" optional="hide"/>
+                    <field name="pending_from_gov_date" optional="hide"/>
+                    <field name="in_progress_date" optional="hide"/>
+                    <field name="pending_payment_date" optional="hide"/>
+                    <field name="escalated_date" optional="hide"/>
+                    <field name="rejected_date" optional="hide"/>
+                    <field name="incomplete_date" optional="hide"/>
+                    <field name="escalated_in_progress_date" optional="hide"/>
+                    <field name="escalated_incomplete_date" optional="hide"/>
+                    <field name="escalated_complete_date" optional="hide"/>
+                    <field name="cancel_date" optional="hide"/>
                     <field name="flow_type"/>
+                    <field name="task_count"/>
                     <field name="status"/>
                     <field name="sla_min_max"/>
                     <field name="status_sla"/>
@@ -50,7 +65,7 @@
                         <!--                        <button name="request_new" string="New" type="object"-->
                         <!--                                attrs="{'invisible':[('status','!=','draft')]}"/>-->
 
-                        <button name="request_hold" string="On Hold" type="object"
+                        <button name="request_hold" string="On Hold(Missing Docs)" type="object"
                                 attrs="{'invisible':[('status','!=','new')]}"
                                 groups="ebs_qsheild_mod.qshield_operational_manager"/>
 
@@ -65,7 +80,7 @@
                                 attrs="{'invisible': [('status', 'not in', ['new', 'hold', 'pending'])]}"
                                 groups="ebs_qsheild_mod.qshield_operational_manager"/>
 
-                        <button name="request_cancel" string="Cancel" type="object"
+                        <button name="request_cancel" string="Cancelled by Client" type="object"
                                 attrs="{'invisible':[('status','not in',['pending_payment','pending','hold','progress'])]}"
                                 groups="ebs_qsheild_mod.qshield_operational_manager"/>
 
@@ -88,7 +103,7 @@
                                 attrs="{'invisible':[('status','not in',['progress','pending_payment'])]}"
                                 groups="ebs_qsheild_mod.qshield_operational_manager"/>
 
-                        <button name="request_reject" string="Reject" type="object"
+                        <button name="request_reject" string="Reject by OPs" type="object"
                                 attrs="{'invisible':[('status','!=','new')]}"
                                 groups="ebs_qsheild_mod.qshield_operational_manager"/>
 
@@ -103,7 +118,7 @@
                         <button name="request_escalated_complete" string="Escalated Completed" type="object"
                                 attrs="{'invisible':[('status','!=','escalated')]}"
                                 groups="ebs_qsheild_mod.qshield_operational_manager"/>
-                        <field name="status" widget="statusbar"/>
+                        <field name="status" widget="statusbar" statusbar_visible=" "/>
 
 
                     </header>
@@ -483,7 +498,7 @@
                                 attrs="{'invisible':[('status','!=','draft')]}"
                                 groups="ebs_qsheild_mod.qshield_account_manager"/>
 
-                        <button name="request_hold" string="On Hold" type="object"
+                        <button name="request_hold" string="On Hold(Missing Docs)" type="object"
                                 attrs="{'invisible':[('status','!=','new')]}"
                                 groups="ebs_qsheild_mod.qshield_operational_manager"/>
 
@@ -496,7 +511,7 @@
                         <button name="request_progress" string="In Progress" type="object"
                                 attrs="{'invisible': [('status', 'not in', ['new', 'hold', 'pending'])]}"
                                 groups="ebs_qsheild_mod.qshield_operational_manager"/>
-                        <button name="request_cancel" string="Cancel" type="object"
+                        <button name="request_cancel" string="Cancelled by Client" type="object"
                                 attrs="{'invisible':[('status','not in',['pending_payment','pending','hold','progress'])]}"
                                 groups="ebs_qsheild_mod.qshield_operational_manager"/>
 
@@ -535,8 +550,7 @@
                                 attrs="{'invisible':[('status','!=','escalated')]}"
                                 groups="ebs_qsheild_mod.qshield_operational_manager"/>
 
-                        <field name="status" widget="statusbar"/>
-
+                        <field name="status" widget="statusbar" statusbar_visible=" "/>
 
                     </header>
                     <sheet>

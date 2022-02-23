@@ -112,6 +112,19 @@ class ServiceRequestWorkFlow(models.Model):
         default=lambda self: self.env.user,
     )
 
+    def send_notification(self):
+        template = self.env.ref('ebs_qsheild_mod.mail_template_of_notify_application_submission_complete',
+                                raise_if_not_found=False)
+        user_sudo = self.env.user
+        if template:
+            if self.assign_to and self.service_request_id:
+                template.sudo().with_context(username=user_sudo.name, email=self.assign_to.work_email).send_mail(
+                    self._origin.id, force_send=True)
+            if self.service_request_id:
+                template.sudo().with_context(username=user_sudo.name,
+                                             email=self.service_request_id.account_manager.work_email).send_mail(
+                    self._origin.id, force_send=True)
+
     @api.onchange('due_date')
     def _due_date_on_change(self):
         if self.due_date:
@@ -156,6 +169,8 @@ class ServiceRequestWorkFlow(models.Model):
                         self.status] + " to " + self.status_dict[
                              vals['status']] + ".")
         res = super(ServiceRequestWorkFlow, self).write(vals)
+        if vals.get('status') == 'complete' and self.status == 'complete':
+            self.send_notification()
         if res:
             if vals.get('status', False):
                 self.date = datetime.today()

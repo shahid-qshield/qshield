@@ -201,6 +201,8 @@ class ServiceRequest(models.Model):
         selection=[('o', 'Online'),
                    ('m', 'Manual'), ],
         required=True)
+    task_count = fields.Integer(string="Task count", compute="compute_task_count")
+
 
     service_flow_ids = fields.One2many(
         comodel_name='ebs_mod.service.request.workflow',
@@ -258,6 +260,14 @@ class ServiceRequest(models.Model):
         comodel_name='documents.document',
         string='Documents',
         required=False)
+
+    @api.depends('service_flow_ids')
+    def compute_task_count(self):
+        for record in self:
+            if record.service_flow_ids:
+                record.task_count = len(record.service_flow_ids)
+            else:
+                record.task_count = 0
 
     def update_document_from_cron(self):
         'Author : bhavesh parmar (update res_id and res_model in document)'
@@ -816,3 +826,4 @@ class ServiceRequestExpenses(models.Model):
     payment_by = fields.Char(
         string='Payment By',
         required=True)
+
