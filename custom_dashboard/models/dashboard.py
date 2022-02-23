@@ -7,8 +7,7 @@ class ServiceRequest(models.Model):
     _inherit = 'ebs_mod.service.request'
 
     is_exceptional = fields.Boolean()
-    is_escalated = fields.Boolean()
-    is_pending = fields.Boolean()
+    is_one_time_transaction = fields.Boolean()
     is_overdue = fields.Boolean()
     is_governmental_fees = fields.Boolean('Governmental Fees')
     governmental_fees = fields.Integer('Governmental Fees Amount')
@@ -21,6 +20,13 @@ class ServiceRequest(models.Model):
             'new': 'New',
             'progress': 'In Progress',
             'hold': 'On Hold',
+            'pending': 'Pending from Gov',
+            'pending_payment': 'Pending Payment',
+            'escalated': 'Escalated',
+            'incomplete': 'Incomplete',
+            'escalated_incomplete': 'Escalated Incomplete',
+            'escalated_progress': 'Escalated In Progress',
+            'escalated_complete': 'Escalated Completed',
             'complete': 'Completed',
             'reject': 'Rejected',
             'cancel': 'Canceled'
@@ -28,9 +34,9 @@ class ServiceRequest(models.Model):
         for key in status_dict:
             if args:
                 domain = [('status', '=', key), ('date', '>=', args.get('date_from')),
-                          ('date', '<=', args.get('date_to')), ('is_escalated', '=', False)]
+                          ('date', '<=', args.get('date_to'))]
             else:
-                domain = [('status', '=', key), ('is_escalated', '=', False)]
+                domain = [('status', '=', key)]
 
             no_of_requests = self.env['ebs_mod.service.request'].search_count(domain)
             request_dict[key] = no_of_requests
@@ -43,27 +49,17 @@ class ServiceRequest(models.Model):
                 if each.progress_date + timedelta(days=each.exceeded_days) < today:
                     each.is_overdue = True
         overdue = self.env['ebs_mod.service.request'].search_count([('is_overdue', '=', True),
-                                                                    ('is_escalated', '=', False),
-                                                                    ('is_pending', '=', False),
                                                                     ('date', '>=', args.get('date_from')),
                                                                     ('date', '<=', args.get('date_to'))])
         progress_normal = self.env['ebs_mod.service.request'].search_count([('status', '=', 'progress'),
-                                                                            ('is_exceptional', '=', False),
-                                                                            ('is_escalated', '=', False),
-                                                                            ('is_pending', '=', False)])
+                                                                            ('is_exceptional', '=', False)])
         progress_exceptional = self.env['ebs_mod.service.request'].search_count([('status', '=', 'progress'),
-                                                                                 ('is_exceptional', '=', True),
-                                                                                 ('is_escalated', '=', False),
-                                                                                 ('is_pending', '=', False)])
-        escalated = self.env['ebs_mod.service.request'].search_count([('is_escalated', '=', True),
-                                                                      ('is_pending', '=', False)])
-        pending = self.env['ebs_mod.service.request'].search_count([('is_pending', '=', True)])
+                                                                                 ('is_exceptional', '=', True)])
+
         request_dict['overdue'] = overdue
         request_dict['progress_normal'] = progress_normal
         request_dict['progress_out_of_scope'] = 0
         request_dict['progress_exceptional'] = progress_exceptional
-        request_dict['escalated'] = escalated
-        request_dict['pending'] = pending
         print(request_dict)
         return request_dict
 
