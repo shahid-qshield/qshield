@@ -19,7 +19,7 @@
             <field name="inherit_id" ref="base.view_partner_form"/>
             <field name="arch" type="xml">
                 <xpath expr="//field[@name='parent_id']" position="after">
-                    <field name="employee_id"/>
+                    <field name="employee_ids" context="{'get_partner_id' : active_id}"/>
                 </xpath>
             </field>
         </record>
@@ -31,7 +31,7 @@
             <field name="state">code</field>
             <field name="code">
                 if records:
-                    action = records.create_employee()
+                action = records.create_employee()
             </field>
         </record>
     </data>
