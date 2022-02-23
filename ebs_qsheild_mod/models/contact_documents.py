@@ -53,7 +53,10 @@ class ContactDocument(models.Model):
         expiry_date = None
         state = ""
         if 'expiry_date' in vals:
-            expiry_date = datetime.strptime(vals['expiry_date'], "%Y-%m-%d").date()
+            if type(vals['expiry_date']) == str:
+                expiry_date = datetime.strptime(vals['expiry_date'], "%Y-%m-%d").date()
+            else:
+                expiry_date = vals['expiry_date']
         else:
             expiry_date = self.expiry_date
 
@@ -79,6 +82,3 @@ class ContactDocument(models.Model):
                 raise ValidationError(_("Must not have expiry date"))
 
         return super(ContactDocument, self).write(vals)
-
-
-

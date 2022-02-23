@@ -1,9 +1,5 @@
 <odoo>
     <data>
-       
-
-
-
           <record id="disable_future_days_setting_view" model="ir.ui.view">
             <field name="name">disable_future_days_setting_view</field>
             <field name="model">res.config.settings</field>
