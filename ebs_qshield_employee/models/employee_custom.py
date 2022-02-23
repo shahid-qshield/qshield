@@ -1,5 +1,6 @@
 # -*- coding: utf-8 -*-
 from odoo import models, fields, api, _
+from odoo.exceptions import ValidationError, UserError
 
 
 class EmployeeCustom(models.Model):
@@ -55,6 +56,32 @@ class EmployeeCustom(models.Model):
     joining_date = fields.Date(string="Joining Date", default=lambda self: fields.Datetime.now(), required=True)
     visa = fields.Many2one(comodel_name="visa.status", string="Visa Status", required=False, )
     custom_document_count = fields.Integer(compute="_compute_document_count", store=False)
+
+    @api.onchange('partner_id')
+    def onchange_partner_id(self):
+        if self.partner_id:
+            employee = self.search([('partner_id', '=', self.partner_id.id)])
+            if employee:
+                raise ValidationError(_('Partner is already linked with another employee'))
+
+    @api.model
+    def create(self, values):
+        res = super(EmployeeCustom, self).create(values)
+        if not res.partner_id:
+            if res.dependant_id:
+                dependants = []
+                for dependant in res.dependant_id:
+                    vals = {'name': dependant.name, 'gender': dependant.gender, 'date': dependant.dob,
+                            'person_type': 'child'}
+                    dependant = self.env['res.partner'].with_context(from_employee=True).create(vals)
+                    dependants.append(dependant)
+            partner = self.env['res.partner'].with_context(from_employee=True).create(
+                {'name': res.name, 'person_type': 'emp'})
+            if partner:
+                res.partner_id = partner.id
+                for dependant in dependants:
+                    dependant.write({'parent_id': partner.id})
+        return res
 
     def _compute_document_count(self):
         for record in self:

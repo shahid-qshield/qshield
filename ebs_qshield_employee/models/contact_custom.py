@@ -1,6 +1,7 @@
 # -*- coding: utf-8 -*-
 
 from odoo import models, fields, api, _
+from odoo.exceptions import ValidationError, UserError
 
 
 class ContactCustom(models.Model):
@@ -8,11 +9,30 @@ class ContactCustom(models.Model):
 
     nearest_land_mark = fields.Char()
     fax_number = fields.Char('Fax No.')
-    employee_id = fields.Many2one('hr.employee', string='Related Employee', index=True)
+    # employee_id = fields.Many2one('hr.employee', string='Related Employee', index=True)
+    employee_ids = fields.One2many('hr.employee', 'partner_id', string="Related Employee", auto_join=True)
+
+    @api.constrains('employee_ids')
+    def _check_employee_length(self):
+        for contact in self:
+            if len(contact.employee_ids) > 1:
+                raise ValidationError(
+                    _('Only one employee link with contact'))
+
+    @api.model
+    def create(self, values):
+        # Add code here
+        res = super(ContactCustom, self).create(values)
+        if self._context.get('from_employee'):
+            return res
+        else:
+            if res.person_type == 'emp':
+                res.create_employee()
+            return res
 
     def create_employee(self):
         for rec in self:
-            if not rec.employee_id:
+            if not rec.employee_ids:
                 dependants = []
                 for each_dependant in rec.employee_dependants:
                     dependants.append((0, 0, {
@@ -33,4 +53,4 @@ class ContactCustom(models.Model):
                     'partner_id': rec.id,
                     'work_in': rec.sponsor.id,
                 })
-                rec.employee_id = employee
+                # rec.employee_id = employee
