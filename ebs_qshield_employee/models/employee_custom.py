@@ -68,8 +68,8 @@ class EmployeeCustom(models.Model):
     def create(self, values):
         res = super(EmployeeCustom, self).create(values)
         if not res.partner_id:
+            dependants = []
             if res.dependant_id:
-                dependants = []
                 for dependant in res.dependant_id:
                     vals = {'name': dependant.name, 'gender': dependant.gender, 'date': dependant.dob,
                             'person_type': 'child'}
