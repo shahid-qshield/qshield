@@ -1,0 +1,312 @@
+<odoo>
+    <data>
+        <record id="qshield_payslip_form_view" model="ir.ui.view">
+            <field name="name">qshield.payslip.form</field>
+            <field name="model">qshield.payslip</field>
+            <field name="arch" type="xml">
+                <form string="PAY SLIP">
+                    <sheet>
+                        <group colspan="1">
+                            <group>
+                                <field name="employee_id"/>
+                                <field name="qid"/>
+                                <field name="designation_id"/>
+                                <field name="contract_id" invisible="1"/>
+                                <field name="currency_id" invisible="1"/>
+                                <field name="date_of_joining"/>
+                            </group>
+
+
+                        </group>
+
+                        <group>
+                            <div>
+                                <label for="month" string="Payroll Month"
+                                       style="font-weight: bold !important;margin-right:107px;margin-left: 0px;"/>
+                                <field name="month" style="width:110px"/>
+                                <field name="year" style="width:110px;margin-left: 34px;"/>
+                            </div>
+                        </group>
+                        <notebook>
+                            <page string="Monthly Emoluments">
+                                <table class="table">
+                                    <thead>
+                                        <tr class="table-active">
+                                            <th scope="col"></th>
+                                            <th scope="col">Amount</th>
+                                            <th scope="col">Payable</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+
+                                        <tr>
+                                            <td>
+                                                <h4>Basic Salary</h4>
+                                            </td>
+                                            <td>
+                                                <field name="basic_salary_amount" widget="monetary"
+                                                       options="{'currency_field': 'currency_id'}"/>
+                                            </td>
+                                            <td>
+                                                <field name="basic_salary_payable" widget="monetary"
+                                                       options="{'currency_field': 'currency_id'}"/>
+                                            </td>
+                                        </tr>
+
+
+                                        <tr>
+                                            <td>
+                                                <h4>Housing Allowance</h4>
+                                            </td>
+                                            <td>
+                                                <field name="housing_allowance_amount" widget="monetary"
+                                                       options="{'currency_field': 'currency_id'}"/>
+                                            </td>
+                                            <td>
+                                                <field name="housing_allowance_payable" widget="monetary"
+                                                       options="{'currency_field': 'currency_id'}"/>
+                                            </td>
+                                        </tr>
+
+
+                                        <tr>
+                                            <td>
+                                                <h4>Transport Allowance</h4>
+                                            </td>
+                                            <td>
+                                                <field name="transport_allowance_amount" widget="monetary"
+                                                       options="{'currency_field': 'currency_id'}"/>
+                                            </td>
+                                            <td>
+                                                <field name="transport_allowance_payable" widget="monetary"
+                                                       options="{'currency_field': 'currency_id'}"/>
+                                            </td>
+                                        </tr>
+
+
+                                        <tr>
+                                            <td>
+                                                <h4>Telephone Allowance</h4>
+                                            </td>
+                                            <td>
+                                                <field name="telephone_allowance_amount" widget="monetary"
+                                                       options="{'currency_field': 'currency_id'}"/>
+                                            </td>
+                                            <td>
+                                                <field name="telephone_allowance_payable" widget="monetary"
+                                                       options="{'currency_field': 'currency_id'}"/>
+                                            </td>
+                                        </tr>
+
+
+                                        <tr>
+                                            <td>
+                                                <h4>Petrol Allowance</h4>
+                                            </td>
+                                            <td>
+                                                <field name="petrol_allowance_amount" widget="monetary"
+                                                       options="{'currency_field': 'currency_id'}"/>
+                                            </td>
+                                            <td>
+                                                <field name="petrol_allowance_payable" widget="monetary"
+                                                       options="{'currency_field': 'currency_id'}"/>
+                                            </td>
+                                        </tr>
+
+
+                                        <tr>
+                                            <td>
+                                                <h4>Other Allowance</h4>
+                                            </td>
+                                            <td>
+                                                <field name="other_allowance_amount" widget="monetary"
+                                                       options="{'currency_field': 'currency_id'}"/>
+                                            </td>
+                                            <td>
+                                                <field name="other_allowance_payable" widget="monetary"
+                                                       options="{'currency_field': 'currency_id'}"/>
+                                            </td>
+                                        </tr>
+
+
+<!--                                        <tr>-->
+<!--                                            <td></td>-->
+<!--                                            <td>-->
+<!--                                                <h4>Gross Salary</h4>-->
+<!--                                            </td>-->
+<!--                                            <td>-->
+<!--                                                <field name="gross_salary" widget="monetary"-->
+<!--                                                       options="{'currency_field': 'currency_id'}"/>-->
+<!--                                            </td>-->
+<!--                                        </tr>-->
+                                    </tbody>
+                                </table>
+
+                                 <group colspan="1">
+                                    <table style="margin-left: 80%;">
+                                        <thead>
+                                            <tr>
+                                                <th scope="col"></th>
+                                                <th scope="col"></th>
+                                                <th scope="col"></th>
+                                            </tr>
+                                        </thead>
+                                        <tbody>
+                                            <tr>
+                                                <td>
+                                                    <h4>Gross Salary</h4>
+                                                </td>
+
+                                                <td>
+                                                    <field name="gross_salary" style="margin-left: 120%;"
+                                                           widget="monetary"
+                                                           options="{'currency_field': 'currency_id'}"/>
+                                                </td>
+                                            </tr>
+
+                                        </tbody>
+                                    </table>
+                                </group>
+                            </page>
+                        </notebook>
+
+                        <notebook>
+                            <page string="Earnings">
+                                <group>
+                                    <field name="earning_ids" nolabel="1">
+                                        <tree editable="bottom">
+                                            <field name="name"/>
+                                            <field name="amount"/>
+                                            <field name="payable"/>
+                                        </tree>
+                                    </field>
+
+                                </group>
+                                <group colspan="1">
+                                    <table style="margin-left: 80%;">
+                                        <thead>
+                                            <tr>
+                                                <th scope="col"></th>
+                                                <th scope="col"></th>
+                                                <th scope="col"></th>
+                                            </tr>
+                                        </thead>
+                                        <tbody>
+                                            <tr>
+                                                <td>
+                                                    <h4>Total Earning</h4>
+                                                </td>
+
+                                                <td>
+                                                    <field name="total_earning" style="margin-left: 120%;"
+                                                           widget="monetary"
+                                                           options="{'currency_field': 'currency_id'}"/>
+                                                </td>
+                                            </tr>
+
+                                        </tbody>
+                                    </table>
+                                </group>
+
+                            </page>
+                        </notebook>
+
+
+                        <notebook>
+                            <page string="Deduction">
+                                <group>
+                                    <field name="deduction_ids" nolabel="1">
+                                        <tree editable="bottom">
+                                            <field name="name"/>
+                                            <field name="amount"/>
+                                            <field name="payable"/>
+                                        </tree>
+                                    </field>
+                                </group>
+
+                                <group colspan="1">
+                                    <table style="margin-left: 80%;">
+                                        <thead>
+                                            <tr>
+                                                <th scope="col"></th>
+                                                <th scope="col"></th>
+                                                <th scope="col"></th>
+                                            </tr>
+                                        </thead>
+                                        <tbody>
+                                            <tr>
+                                                <td>
+                                                    <h4>Total Deduction</h4>
+                                                </td>
+
+                                                <td>
+                                                    <field name="total_deduction" style="margin-left: 120%;"
+                                                           widget="monetary"
+                                                           options="{'currency_field': 'currency_id'}"/>
+                                                </td>
+                                            </tr>
+
+                                        </tbody>
+                                    </table>
+                                </group>
+                            </page>
+                        </notebook>
+
+                        <group>
+                            <field name="net_pay"/>
+                            <field name="net_pay_in_words"/>
+
+                        </group>
+
+                        <notebook>
+                            <page string="Payment Details">
+
+                                <group colspan="1">
+                                    <group>
+                                        <field name="payment_mode"/>
+                                        <field name="bank_id"/>
+                                        <field name="account_number"/>
+                                    </group>
+                                </group>
+
+                            </page>
+                        </notebook>
+
+                    </sheet>
+                    <!--                <div class="oe_chatter">-->
+                    <!--                    <field name="message_follower_ids" widget="mail_followers"/>-->
+                    <!--                    <field name="message_ids" widget="mail_thread"/>-->
+                    <!--                </div>-->
+                </form>
+            </field>
+        </record>
+
+
+        <record id="qshield_payslip_tree_view" model="ir.ui.view">
+            <field name="name">qshield.payslip.tree</field>
+            <field name="model">qshield.payslip</field>
+            <field name="arch" type="xml">
+                <tree string="PAY SLIP">
+                    <field name="employee_id"/>
+                    <field name="qid"/>
+                    <field name="designation_id"/>
+                    <field name="date_of_joining"/>
+                </tree>
+            </field>
+        </record>
+
+        <record id="qshield_payslip_action" model="ir.actions.act_window">
+            <field name="name">PAY SLIP</field>
+            <field name="type">ir.actions.act_window</field>
+            <field name="res_model">qshield.payslip</field>
+            <field name="view_mode">tree,form</field>
+            <field name="context">{}</field>
+            <field name="view_id" eval="qshield_payslip_tree_view"/>
+        </record>
+
+        <menuitem name="Qshield Payslip"
+                  parent="hr.menu_hr_employee_payroll"
+                  id="qshield_payslip_menue_action"
+                  action="qshield_payslip_action"/>
+    </data>
+</odoo>
