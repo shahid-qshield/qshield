@@ -425,12 +425,16 @@ class ServiceRequest(models.Model):
             template = self.env.ref('ebs_qsheild_mod.mail_template_of_notify_complete_service',
                                     raise_if_not_found=False)
             user_sudo = self.env.user
-            if template:
-                account_manager_email = self.account_manager.work_email
-                complete_date = datetime.now().strftime('%Y-%m-%d %H:%M')
-                template.sudo().with_context(username=user_sudo.name, complete_date=complete_date,
-                                             email=account_manager_email).send_mail(self.id,
-                                                                                    force_send=True)
+            account_manager_group = self.env.ref('ebs_qsheild_mod.qshield_account_manager')
+            account_managers = self.env['res.users'].search([('groups_id','=',account_manager_group.id)])
+            if template and account_managers:
+                for account_manager in account_managers:
+                    account_manager_email = account_manager.partner_id.email
+                    account_manager_name = account_manager.partner_id.name
+                    complete_date = datetime.now().strftime('%Y-%m-%d %H:%M')
+                    template.sudo().with_context(username=user_sudo.name, complete_date=complete_date,
+                                                 email=account_manager_email,account_manager_name=account_manager_name).send_mail(self.id,
+                                                                                        force_send=True)
         return res
 
     def copy(self, default={}):

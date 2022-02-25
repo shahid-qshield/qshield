@@ -113,17 +113,18 @@ class ServiceRequestWorkFlow(models.Model):
     )
 
     def send_notification(self):
-        template = self.env.ref('ebs_qsheild_mod.mail_template_of_notify_application_submission_complete',
-                                raise_if_not_found=False)
-        user_sudo = self.env.user
-        if template:
-            if self.assign_to and self.service_request_id:
-                template.sudo().with_context(username=user_sudo.name, email=self.assign_to.work_email).send_mail(
-                    self._origin.id, force_send=True)
-            if self.service_request_id:
-                template.sudo().with_context(username=user_sudo.name,
-                                             email=self.service_request_id.account_manager.work_email).send_mail(
-                    self._origin.id, force_send=True)
+        if self.workflow_id.is_application_submission:
+            template = self.env.ref('ebs_qsheild_mod.mail_template_of_notify_application_submission_complete',
+                                    raise_if_not_found=False)
+            user_sudo = self.env.user
+            if template:
+                if self.assign_to and self.service_request_id:
+                    template.sudo().with_context(username=user_sudo.name, email=self.assign_to.work_email).send_mail(
+                        self._origin.id, force_send=True)
+                if self.service_request_id:
+                    template.sudo().with_context(username=user_sudo.name,
+                                                 email=self.service_request_id.account_manager.work_email).send_mail(
+                        self._origin.id, force_send=True)
 
     @api.onchange('due_date')
     def _due_date_on_change(self):
@@ -170,6 +171,10 @@ class ServiceRequestWorkFlow(models.Model):
                              vals['status']] + ".")
         res = super(ServiceRequestWorkFlow, self).write(vals)
         if vals.get('status') == 'complete' and self.status == 'complete':
+            self.send_notification()
+        if vals.get('status') == 'cancel' and self.status == 'cancel':
+            self.send_notification()
+        if vals.get('status') == 'reject' and self.status == 'reject':
             self.send_notification()
         if res:
             if vals.get('status', False):
