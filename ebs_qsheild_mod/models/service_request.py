@@ -216,7 +216,7 @@ class ServiceRequest(models.Model):
         inverse_name='service_id',
         string='Documents',
         required=False,
-        copy=True)
+        copy=False)
 
     expenses_ids = fields.One2many(
         comodel_name='ebs_mod.service.request.expenses',
