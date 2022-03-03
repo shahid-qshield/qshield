@@ -203,7 +203,6 @@ class ServiceRequest(models.Model):
         required=True)
     task_count = fields.Integer(string="Task count", compute="compute_task_count")
 
-
     service_flow_ids = fields.One2many(
         comodel_name='ebs_mod.service.request.workflow',
         inverse_name='service_request_id',
@@ -426,19 +425,21 @@ class ServiceRequest(models.Model):
                                     raise_if_not_found=False)
             user_sudo = self.env.user
             account_manager_group = self.env.ref('ebs_qsheild_mod.qshield_account_manager')
-            account_managers = self.env['res.users'].search([('groups_id','=',account_manager_group.id)])
+            account_managers = self.env['res.users'].search([('groups_id', '=', account_manager_group.id)])
             if template and account_managers:
                 for account_manager in account_managers:
                     account_manager_email = account_manager.partner_id.email
                     account_manager_name = account_manager.partner_id.name
                     complete_date = datetime.now().strftime('%Y-%m-%d %H:%M')
                     template.sudo().with_context(username=user_sudo.name, complete_date=complete_date,
-                                                 email=account_manager_email,account_manager_name=account_manager_name).send_mail(self.id,
-                                                                                        force_send=True)
+                                                 email=account_manager_email,
+                                                 account_manager_name=account_manager_name).send_mail(self.id,
+                                                                                                      force_send=True)
         return res
 
     def copy(self, default={}):
-        default['status'] = 'draft'
+        default.update({'status': 'draft'})
+        default.update({'date': date.today()})
         res = super(ServiceRequest, self).copy(default=default)
         return res
 
@@ -830,4 +831,3 @@ class ServiceRequestExpenses(models.Model):
     payment_by = fields.Char(
         string='Payment By',
         required=True)
-
