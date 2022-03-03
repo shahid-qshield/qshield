@@ -2,367 +2,403 @@
 <templates id="template" xml:space="preserve">
     <t t-name="service_request">
         <div class="oh_dashboards">
-            <div class="container-fluid o_hr_dashboard">
+        <div class="container-fluid o_hr_dashboard">
                 <h3>OPERATIONS DASHBOARD</h3>
-                      <!-- DatePicker -->
-                    <label for="daydate">From</label>
-                    <input type="date"  id="daydate" name="daydate_from" value="2021-01-01"/>
-                    <label for="daydate2">To</label>
-                    <input type="date" id="daydate2" name="daydate2_to" t-att-value="widget.end_date_field"/>
-                    <input type="submit" id="btn" class="get_date" />
+            <!-- DatePicker -->
+            <label for="daydate">From</label>
+            <input type="date" id="daydate" name="daydate_from" value="2021-01-01"/>
+            <label for="daydate2">To</label>
+            <input type="date" id="daydate2" name="daydate2_to" t-att-value="widget.end_date_field"/>
+            <input type="submit" id="btn" class="get_date"/>
 
-
-                    <div class="row1 main-section">
-
-                        <div class="col-md-2 col-sm-6 request_progress service-state" >
-                            <div class="oh-card">
-                                <div class="oh-card-body" style="background-color: #efefef;">
-                                        <div class="stat-icon inprogress"><p><t t-esc="widget.progress['progress']"/></p></div>
-                                        <div class="stat-content">
-                                            <div class="stat-text">IN PROGRESS</div>
-                                            <div class="stat-digit"></div>
-                                        </div>
-                                </div>
+            <div class="row1 main-section">
+                <div class="col-md-2 col-sm-6 request_draft service-state">
+                    <div class="oh-card">
+                        <div class="oh-card-body" style="background-color: #efefef;">
+                            <div class="stat-icon new"><p><t t-esc="widget.progress['draft']"/></p></div>
+                            <div class="stat-content">
+                                <div class="stat-text">Draft</div>
+                                <div class="stat-digit"></div>
                             </div>
                         </div>
-
-                        <div class="col-md-2 col-sm-6 request_pending service-state" >
-                            <div class="oh-card">
-                                <div class="oh-card-body">
-                                    <div class="stat-widget-one" style="background-color: #efefef;">
-                                        <div class="stat-icon pending "><p><t t-esc="widget.progress['pending']"/></p></div>
-                                        <div class="stat-content">
-                                            <div class="stat-text">PENDING</div>
-            <!--                                <div class="stat-digit"><t t-esc="widget.login_employee['payslip_count']"/></div>-->
-                                            <div class="stat-digit"></div>
-                                        </div>
-                                    </div>
-                                </div>
+                    </div>
+                </div>
+                <div class="col-md-2 col-sm-6 request_new service-state">
+                    <div class="oh-card">
+                        <div class="oh-card-body" style="background-color: #efefef;">
+                            <div class="stat-icon new"><p><t t-esc="widget.progress['new']"/></p></div>
+                            <div class="stat-content">
+                                <div class="stat-text">New</div>
+                                <div class="stat-digit"></div>
                             </div>
                         </div>
-
-                        <div class="col-md-2 col-sm-6 request_overdue service-state" >
-                            <div class="oh-card">
-                                <div class="oh-card-body">
-                                    <div class="stat-widget-one overdue-colored">
-                                        <div class="stat-icon overdue"><p><t t-esc="widget.progress['overdue']"/></p></div>
-                                        <div class="stat-content ">
-                                            <div class="stat-text">OVERDUE</div>
-            <!--                                <div class="stat-digit"><t t-esc="widget.login_employee['payslip_count']"/></div>-->
-                                            <div class="stat-digit overdue-colored"></div>
-                                        </div>
-                                    </div>
+                    </div>
+                </div>
+                <div class="col-md-2 col-sm-6 request_cancel service-state">
+                    <div class="oh-card">
+                        <div class="oh-card-body" style="background-color: #efefef;">
+                            <div class="stat-icon cancel"><p><t t-esc="widget.progress['cancel']"/></p></div>
+                            <div class="stat-content">
+                                    <div class="stat-text">Cancelled (By Client)</div>
+                                <div class="stat-digit"></div>
                                 </div>
-                            </div>
                         </div>
-
-                        <div class="col-md-2 col-sm-6 request_complete service-state" >
-                            <div class="oh-card">
-                                <div class="oh-card-body">
-                                    <div class="stat-widget-one complete-colored">
-                                        <div class="stat-icon complete"><p><t t-esc="widget.progress['complete']"/></p></div>
-                                        <div class="stat-content ">
-                                            <div class="stat-text">COMPLETED</div>
-            <!--                                <div class="stat-digit"><t t-esc="widget.login_employee['payslip_count']"/></div>-->
-                                            <div class="stat-digit complete-colored"></div>
-                                        </div>
-                                    </div>
+                    </div>
+                </div>
+                <div class="col-md-2 col-sm-6 request_overdue service-state">
+                    <div class="oh-card">
+                        <div class="oh-card-body">
+                            <div class="stat-widget-one overdue-colored">
+                                <div class="stat-icon overdue"><p><t t-esc="widget.progress['overdue']"/></p></div>
+                                <div class="stat-content ">
+                                    <div class="stat-text">Overdue</div>
+                                    <div class="stat-digit overdue-colored"></div>
                                 </div>
                             </div>
                         </div>
                     </div>
-
-                    <div class="row1 main-section">
-                        <div class="col-md-2 col-sm-6 request_out_of_scope service-state" >
-                            <div class="oh-card">
-                                <div class="oh-card-body" style="background-color: #efefef;">
-        <!--                            <div class="stat-widget-one">-->
-                                        <div class="stat-icon progress_out_of_scope"><p><t t-esc="widget.progress['progress_out_of_scope']"/></p></div>
-                                        <div class="stat-content">
-                                            <div class="stat-text">IN PROGRESS OUT OF SCOPE</div>
-            <!--                                <div class="stat-digit"><t t-esc="widget.login_employee['payslip_count']"/></div>-->
-                                            <div class="stat-digit"></div>
-                                        </div>
-        <!--                            </div>-->
+                </div>
+            </div>
+            <div class="row1 main-section">
+                <div class="col-md-2 col-sm-6 request_reject service-state">
+                    <div class="oh-card">
+                        <div class="oh-card-body" style="background-color: #efefef;">
+                            <div class="stat-icon reject"><p><t t-esc="widget.progress['reject']"/></p></div>
+                            <div class="stat-content">
+                                    <div class="stat-text">Rejected (By Ops)</div>
+                                <div class="stat-digit"></div>
                                 </div>
-                            </div>
                         </div>
-                        <div class="col-md-2 col-sm-6 request_cancel service-state" >
-                            <div class="oh-card">
-                                <div class="oh-card-body" style="background-color: #efefef;">
-        <!--                            <div class="stat-widget-one">-->
-                                        <div class="stat-icon cancel"><p><t t-esc="widget.progress['cancel']"/></p></div>
-                                        <div class="stat-content">
-                                            <div class="stat-text">CANCELLED</div>
-            <!--                                <div class="stat-digit"><t t-esc="widget.login_employee['payslip_count']"/></div>-->
-                                            <div class="stat-digit"></div>
-                                        </div>
-        <!--                            </div>-->
-                                </div>
-                            </div>
-                        </div>
-
-                        <div class="col-md-2 col-sm-6 request_hold service-state" >
-                            <div class="oh-card">
-                                <div class="oh-card-body" style="background-color: #efefef;">
-        <!--                            <div class="stat-widget-one">-->
-                                        <div class="stat-icon hold"><p><t t-esc="widget.progress['hold']"/></p></div>
-                                        <div class="stat-content">
-                                            <div class="stat-text" >ON HOLD</div>
-            <!--                                <div class="stat-digit"><t t-esc="widget.login_employee['payslip_count']"/></div>-->
-                                            <div class="stat-digit"></div>
-                                        </div>
-        <!--                            </div>-->
-                                </div>
-                            </div>
-                        </div>
-
-                         <div class="col-md-2 col-sm-6 request_escalated service-state" >
-                            <div class="oh-card">
-                                <div class="oh-card-body" style="background-color: #efefef;">
-        <!--                            <div class="stat-widget-one">-->
-                                        <div class="stat-icon escalated"><p><t t-esc="widget.progress['escalated']"/></p></div>
-                                        <div class="stat-content">
-                                            <div class="stat-text">ESCALATED</div>
-            <!--                                <div class="stat-digit"><t t-esc="widget.login_employee['payslip_count']"/></div>-->
-                                            <div class="stat-digit"></div>
-                                        </div>
-        <!--                            </div>-->
-                                </div>
-                            </div>
-                        </div>
-
                     </div>
-
-                    <div class="row1 main-section">
-                        <div class="col-md-2 col-sm-6 request_progress_exceptional service-state" >
-                            <div class="oh-card">
-                                <div class="oh-card-body" style="background-color: #efefef;">
-        <!--                            <div class="stat-widget-one">-->
-                                        <div class="stat-icon progress_exceptional"><p><t t-esc="widget.progress['progress_exceptional']"/></p></div>
-                                        <div class="stat-content">
-                                            <div class="stat-text">IN PROGRESS - EXCEPTIONAL</div>
-            <!--                                <div class="stat-digit"><t t-esc="widget.login_employee['payslip_count']"/></div>-->
-                                            <div class="stat-digit"></div>
-                                        </div>
-        <!--                            </div>-->
+                </div>
+                <div class="col-md-2 col-sm-6 request_pending service-state">
+                    <div class="oh-card">
+                        <div class="oh-card-body">
+                            <div class="stat-widget-one" style="background-color: #efefef;">
+                                <div class="stat-icon pending "><p><t t-esc="widget.progress['pending']"/></p></div>
+                                <div class="stat-content">
+                                    <div class="stat-text">Pending From Gov.</div>
+                                    <div class="stat-digit"></div>
                                 </div>
                             </div>
                         </div>
-
-                        <div class="col-md-2 col-sm-6 request_reject service-state" >
-                            <div class="oh-card">
-                                <div class="oh-card-body" style="background-color: #efefef;">
-        <!--                            <div class="stat-widget-one">-->
-                                        <div class="stat-icon reject"><p><t t-esc="widget.progress['reject']"/></p></div>
-                                        <div class="stat-content">
-                                            <div class="stat-text">REJECTED</div>
-            <!--                                <div class="stat-digit"><t t-esc="widget.login_employee['payslip_count']"/></div>-->
-                                            <div class="stat-digit"></div>
-                                        </div>
-        <!--                            </div>-->
-                                </div>
-                            </div>
-                        </div>
-
-                        <div class="col-md-2 col-sm-6 request_new service-state" >
-                            <div class="oh-card">
-                                <div class="oh-card-body" style="background-color: #efefef;">
-        <!--                            <div class="stat-widget-one">-->
-                                        <div class="stat-icon new"><p><t t-esc="widget.progress['new']"/></p></div>
-                                        <div class="stat-content">
-                                            <div class="stat-text">NEW</div>
-            <!--                                <div class="stat-digit"><t t-esc="widget.login_employee['payslip_count']"/></div>-->
-                                            <div class="stat-digit"></div>
-                                        </div>
-        <!--                            </div>-->
-                                </div>
-                            </div>
-                        </div>
-
                     </div>
-                <br/>
-
-                <!--ASSIGNED TASKS-->
-                <h3>ASSIGNED TASKS</h3>
-                <div class="row main-section" id="tasks" style="width:70%;">
+                </div>
+                <div class="col-md-2 col-sm-6 request_hold service-state">
+                    <div class="oh-card">
+                        <div class="oh-card-body" style="background-color: #efefef;">
+                            <div class="stat-icon hold"><p><t t-esc="widget.progress['hold']"/></p></div>
+                            <div class="stat-content">
+                                    <div class="stat-text">On Hold(Docs)</div>
+                                <div class="stat-digit"></div>
+                                </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-2 col-sm-6 request_pending_payment service-state">
+                    <div class="oh-card">
+                        <div class="oh-card-body">
+                            <div class="stat-widget-one" style="background-color: #efefef;">
+                                <div class="stat-icon pending_payment "><p><t t-esc="widget.progress['pending_payment']"/></p></div>
+                                <div class="stat-content">
+                                    <div class="stat-text">Pending Payment</div>
+                                    <div class="stat-digit"></div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="row1 main-section">
+                <div class="col-md-2 col-sm-6 request_progress service-state">
+                    <div class="oh-card">
+                        <div class="oh-card-body" style="background-color: #efefef;">
+                                <div class="stat-icon inprogress"><p><t t-esc="widget.progress['progress']"/></p></div>
+                            <div class="stat-content">
+                                    <div class="stat-text">In progress</div>
+                                <div class="stat-digit"></div>
+                                </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-2 col-sm-6 request_progress_exceptional service-state">
+                    <div class="oh-card">
+                        <div class="oh-card-body" style="background-color: #efefef;">
+                            <div class="stat-icon progress_exceptional"><p><t t-esc="widget.progress['progress_exceptional']"/></p></div>
+                            <div class="stat-content">
+                                    <div class="stat-text">In Progress Exceptional</div>
+                                <div class="stat-digit"></div>
+                                </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-2 col-sm-6 request_out_of_scope service-state">
+                    <div class="oh-card">
+                        <div class="oh-card-body" style="background-color: #efefef;">
+                            <div class="stat-icon progress_out_of_scope"><p><t t-esc="widget.progress['progress_out_of_scope']"/></p></div>
+                            <div class="stat-content">
+                                    <div class="stat-text">In Progress(Out of Scope)</div>
+                                <div class="stat-digit"></div>
+                                </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-2 col-sm-6 request_incomplete service-state">
+                    <div class="oh-card">
+                        <div class="oh-card-body" style="background-color: #efefef;">
+                            <div class="stat-icon request_incomplete"><p><t t-esc="widget.progress['incomplete']"/></p></div>
+                            <div class="stat-content">
+                                    <div class="stat-text">Incomplete</div>
+                                <div class="stat-digit"></div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="row1 main-section">
+                <div class="col-md-2 col-sm-6 request_escalated service-state">
+                    <div class="oh-card">
+                        <div class="oh-card-body" style="background-color: #efefef;">
+                            <div class="stat-icon escalated"><p><t t-esc="widget.progress['escalated']"/></p></div>
+                            <div class="stat-content">
+                                    <div class="stat-text">Escalated</div>
+                                <div class="stat-digit"></div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-2 col-sm-6 request_escalated_completed service-state">
+                    <div class="oh-card">
+                        <div class="oh-card-body" style="background-color: #efefef;">
+                            <div class="stat-icon new"><p><t t-esc="widget.progress['escalated_complete']"/></p></div>
+                            <div class="stat-content">
+                                <div class="stat-text">Escalated Completed</div>
+                                <div class="stat-digit"></div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-2 col-sm-6 request_escalated_incompleted service-state">
+                    <div class="oh-card">
+                        <div class="oh-card-body" style="background-color: #efefef;">
+                            <div class="stat-icon new"><p><t t-esc="widget.progress['escalated_incomplete']"/></p></div>
+                            <div class="stat-content">
+                                <div class="stat-text">Escalated Incomplete</div>
+                                <div class="stat-digit"></div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-2 col-sm-6 request_escalated_progress service-state">
+                    <div class="oh-card">
+                        <div class="oh-card-body" style="background-color: #efefef;">
+                            <div class="stat-icon new"><p><t t-esc="widget.progress['escalated_progress']"/></p></div>
+                            <div class="stat-content">
+                                <div class="stat-text">Escalated Progress</div>
+                                <div class="stat-digit"></div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-2 col-sm-6 request_complete service-state">
+                    <div class="oh-card">
+                        <div class="oh-card-body">
+                            <div class="stat-widget-one complete-colored">
+                                <div class="stat-icon complete"><p><t t-esc="widget.progress['complete']"/></p></div>
+                                <div class="stat-content ">
+                                    <div class="stat-text">COMPLETED</div>
+                                    <div class="stat-digit complete-colored"></div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <br/>
+            <!--ASSIGNED TASKS-->
+            <h3>ASSIGNED TASKS</h3>
+            <div class="row main-section" id="tasks" style="width:70%;">
 <!--                     <div style="width:37%;" >-->
-                        <t t-foreach="widget.employee_progress" t-as="obj" >
-                            <div t-attf-class="card get_employee_name title{{obj_index}} card_width_height" t-attf-id="{{obj.employee_id}}"
-                                 style="display:inline-block; margin:7px; padding: 5px; cursor: pointer; border-radius: 15px;" t-attf-emp_name="{{obj.employee_name}}">
+                <t t-foreach="widget.employee_progress" t-as="obj">
+                            <div t-attf-class="card get_employee_name title{{obj_index}} card_width_height"
+                                 t-attf-id="{{obj.employee_id}}"
+                                 style="display:inline-block; margin:7px; padding: 5px; cursor: pointer; border-radius: 15px;"
+                                 t-attf-emp_name="{{obj.employee_name}}">
                                 <div class="sub_card" style="display:inline-block;">
                                     <div class="user_image" style="display:inline-block;">
-                                        <img class="img o_we_preview_image rounded-circle o_image_40_cover " t-att-src="widget.get_emp_image_url(obj.employee_id)"
+                                        <img class="img o_we_preview_image rounded-circle o_image_40_cover "
+                                             t-att-src="widget.get_emp_image_url(obj.employee_id)"
                                              style="height: 60px; width: 60px;"/>
                                     </div>
                                     <div class="user_progress" style="display:inline-block; margin-left:30px;">
-                                        <p class="card-text assigned_inprogress" style="color:black !important;; font-weight:bold;"><t t-esc="obj.progress"/></p>
+                                        <p class="card-text assigned_inprogress"
+                                           style="color:black !important;; font-weight:bold;"><t t-esc="obj.progress"/></p>
                                     </div>
 
                                 </div>
-                              <div t-attf-class="title{{obj_index}}" style="text-transform: capitalize;">
+                                <div t-attf-class="title{{obj_index}}" style="text-transform: capitalize;">
                                 <p class="card-text" style="color:black !important;; font-weight:bold';"><t t-esc="obj.employee_name"/></p>
                               </div>
                             </div>
                         </t>
                     </div>
 
-                <br />
-                <br />
+            <br/>
+            <br/>
 
-                <!--TRANSPORT DAILY SCHEDULE-->
-                <label for="date_day">Select</label>
-                <input type="date" id="date_day" name="date_day" value="2021-01-01"/>
-                <input type="submit" id="btn_for_driver" class="get_date_for_drivers" />
+            <!--TRANSPORT DAILY SCHEDULE-->
+            <label for="date_day">Select</label>
+            <input type="date" id="date_day" name="date_day" value="2021-01-01"/>
+            <input type="submit" id="btn_for_driver" class="get_date_for_drivers"/>
 
-                <h3>TRANSPORT DAILY SCHEDULE</h3>
-                <div class="row main-section" style="width:70%;">
+            <h3>TRANSPORT DAILY SCHEDULE</h3>
+            <div class="row main-section" style="width:70%;">
 <!--                     <div style="width:63%;">-->
-                      <table class="table" id="myTable">
+                <table class="table" id="myTable">
                           <thead>
-                            <tr >
+                            <tr>
                               <th scope="col">Driver</th>
-                              <th scope="col">7:00</th>
-                              <th scope="col">8:00</th>
-                              <th scope="col">9:00</th>
-                              <th scope="col">10:00</th>
-                              <th scope="col">11:00</th>
-                              <th scope="col">12:00</th>
-                              <th scope="col">1:00</th>
-                              <th scope="col">2:00</th>
-                              <th scope="col">3:00</th>
-                              <th scope="col">4:00</th>
-                              <th scope="col">5:00</th>
-                              <th scope="col">6:00</th>
+                                <th scope="col">7:00</th>
+                                <th scope="col">8:00</th>
+                                <th scope="col">9:00</th>
+                                <th scope="col">10:00</th>
+                                <th scope="col">11:00</th>
+                                <th scope="col">12:00</th>
+                                <th scope="col">1:00</th>
+                                <th scope="col">2:00</th>
+                                <th scope="col">3:00</th>
+                                <th scope="col">4:00</th>
+                                <th scope="col">5:00</th>
+                                <th scope="col">6:00</th>
                             </tr>
                           </thead>
-                          <tbody id="data">
+                    <tbody id="data">
 <!--                               <t t-foreach="widget.drivers" t-as="obj" >-->
-<!--                                   <tr>-->
-<!--                                      <td><t t-esc="obj.driver_name"/></td>-->
-<!--                                       <td>-->
-<!--                                            <t t-foreach="obj.destination" t-as="des" >-->
-<!--                                                 <t t-if="des.slot == '7'">-->
-<!--                                                   <span  t-esc="des.destination + des.slot"/>-->
-<!--                                                 </t>-->
+                        <!--                                   <tr>-->
+                        <!--                                      <td><t t-esc="obj.driver_name"/></td>-->
+                        <!--                                       <td>-->
+                        <!--                                            <t t-foreach="obj.destination" t-as="des" >-->
+                        <!--                                                 <t t-if="des.slot == '7'">-->
+                        <!--                                                   <span  t-esc="des.destination + des.slot"/>-->
+                        <!--                                                 </t>-->
 
-<!--                                            </t>-->
-<!--                                       </td>-->
+                        <!--                                            </t>-->
+                        <!--                                       </td>-->
 
-<!--                                       <td>-->
-<!--                                           <t t-foreach="obj.destination" t-as="des" >-->
-<!--                                                 <t t-if="des.slot == '8'">-->
-<!--                                                   <span  t-esc="des.destination"/>-->
-<!--                                                 </t>-->
+                        <!--                                       <td>-->
+                        <!--                                           <t t-foreach="obj.destination" t-as="des" >-->
+                        <!--                                                 <t t-if="des.slot == '8'">-->
+                        <!--                                                   <span  t-esc="des.destination"/>-->
+                        <!--                                                 </t>-->
 
-<!--                                            </t>-->
-<!--                                       </td>-->
+                        <!--                                            </t>-->
+                        <!--                                       </td>-->
 
-<!--                                       <td>-->
-<!--                                           <t t-foreach="obj.destination" t-as="des" >-->
-<!--                                                 <t t-if="des.slot == '9'">-->
-<!--                                                   <span  t-esc="des.destination"/>-->
-<!--                                                 </t>-->
+                        <!--                                       <td>-->
+                        <!--                                           <t t-foreach="obj.destination" t-as="des" >-->
+                        <!--                                                 <t t-if="des.slot == '9'">-->
+                        <!--                                                   <span  t-esc="des.destination"/>-->
+                        <!--                                                 </t>-->
 
-<!--                                            </t>-->
-<!--                                       </td>-->
-<!--                                       <td>-->
-<!--                                           <t t-foreach="obj.destination" t-as="des" >-->
-<!--                                                 <t t-if="des.slot == '10'">-->
-<!--                                                   <span  t-esc="des.destination"/>-->
-<!--                                                 </t>-->
+                        <!--                                            </t>-->
+                        <!--                                       </td>-->
+                        <!--                                       <td>-->
+                        <!--                                           <t t-foreach="obj.destination" t-as="des" >-->
+                        <!--                                                 <t t-if="des.slot == '10'">-->
+                        <!--                                                   <span  t-esc="des.destination"/>-->
+                        <!--                                                 </t>-->
 
-<!--                                            </t>-->
-<!--                                       </td>-->
-<!--                                       <td>-->
-<!--                                           <t t-foreach="obj.destination" t-as="des" >-->
-<!--                                                 <t t-if="des.slot == '11'">-->
-<!--                                                   <span  t-esc="des.destination"/>-->
-<!--                                                 </t>-->
+                        <!--                                            </t>-->
+                        <!--                                       </td>-->
+                        <!--                                       <td>-->
+                        <!--                                           <t t-foreach="obj.destination" t-as="des" >-->
+                        <!--                                                 <t t-if="des.slot == '11'">-->
+                        <!--                                                   <span  t-esc="des.destination"/>-->
+                        <!--                                                 </t>-->
 
-<!--                                            </t>-->
-<!--                                       </td>-->
-<!--                                       <td>-->
-<!--                                           <t t-foreach="obj.destination" t-as="des" >-->
-<!--                                                 <t t-if="des.slot == '12'">-->
-<!--                                                   <span  t-esc="des.destination"/>-->
-<!--                                                 </t>-->
+                        <!--                                            </t>-->
+                        <!--                                       </td>-->
+                        <!--                                       <td>-->
+                        <!--                                           <t t-foreach="obj.destination" t-as="des" >-->
+                        <!--                                                 <t t-if="des.slot == '12'">-->
+                        <!--                                                   <span  t-esc="des.destination"/>-->
+                        <!--                                                 </t>-->
 
-<!--                                            </t>-->
-<!--                                       </td>-->
-<!--                                       <td>-->
-<!--                                           <t t-foreach="obj.destination" t-as="des" >-->
-<!--                                                 <t t-if="des.slot == '1'">-->
-<!--                                                   <span  t-esc="des.destination"/>-->
-<!--                                                 </t>-->
+                        <!--                                            </t>-->
+                        <!--                                       </td>-->
+                        <!--                                       <td>-->
+                        <!--                                           <t t-foreach="obj.destination" t-as="des" >-->
+                        <!--                                                 <t t-if="des.slot == '1'">-->
+                        <!--                                                   <span  t-esc="des.destination"/>-->
+                        <!--                                                 </t>-->
 
-<!--                                            </t>-->
-<!--                                       </td>-->
-<!--                                       <td>-->
-<!--                                           <t t-foreach="obj.destination" t-as="des" >-->
-<!--                                                 <t t-if="des.slot == '2'">-->
-<!--                                                   <span  t-esc="des.destination"/>-->
-<!--                                                 </t>-->
+                        <!--                                            </t>-->
+                        <!--                                       </td>-->
+                        <!--                                       <td>-->
+                        <!--                                           <t t-foreach="obj.destination" t-as="des" >-->
+                        <!--                                                 <t t-if="des.slot == '2'">-->
+                        <!--                                                   <span  t-esc="des.destination"/>-->
+                        <!--                                                 </t>-->
 
-<!--                                            </t>-->
-<!--                                       </td>-->
-<!--                                       <td>-->
-<!--                                           <t t-foreach="obj.destination" t-as="des" >-->
-<!--                                                 <t t-if="des.slot == '3'">-->
-<!--                                                   <span  t-esc="des.destination "/>-->
-<!--                                                 </t>-->
+                        <!--                                            </t>-->
+                        <!--                                       </td>-->
+                        <!--                                       <td>-->
+                        <!--                                           <t t-foreach="obj.destination" t-as="des" >-->
+                        <!--                                                 <t t-if="des.slot == '3'">-->
+                        <!--                                                   <span  t-esc="des.destination "/>-->
+                        <!--                                                 </t>-->
 
-<!--                                            </t>-->
-<!--                                       </td>-->
-<!--                                       <td>-->
-<!--                                           <t t-foreach="obj.destination" t-as="des" >-->
-<!--                                                 <t t-if="des.slot == '4'">-->
-<!--                                                   <span  t-esc="des.destination"/>-->
-<!--                                                 </t>-->
+                        <!--                                            </t>-->
+                        <!--                                       </td>-->
+                        <!--                                       <td>-->
+                        <!--                                           <t t-foreach="obj.destination" t-as="des" >-->
+                        <!--                                                 <t t-if="des.slot == '4'">-->
+                        <!--                                                   <span  t-esc="des.destination"/>-->
+                        <!--                                                 </t>-->
 
-<!--                                            </t>-->
-<!--                                       </td>-->
-<!--                                       <td>-->
-<!--                                           <t t-foreach="obj.destination" t-as="des" >-->
-<!--                                                 <t t-if="des.slot == '5'">-->
-<!--                                                   <span  t-esc="des.destination"/>-->
-<!--                                                 </t>-->
+                        <!--                                            </t>-->
+                        <!--                                       </td>-->
+                        <!--                                       <td>-->
+                        <!--                                           <t t-foreach="obj.destination" t-as="des" >-->
+                        <!--                                                 <t t-if="des.slot == '5'">-->
+                        <!--                                                   <span  t-esc="des.destination"/>-->
+                        <!--                                                 </t>-->
 
-<!--                                            </t>-->
-<!--                                       </td>-->
-<!--                                       <td>-->
-<!--                                           <t t-foreach="obj.destination" t-as="des" >-->
-<!--                                                 <t t-if="des.slot == '6'">-->
-<!--                                                   <span  t-esc="des.destination"/>-->
-<!--                                                 </t>-->
+                        <!--                                            </t>-->
+                        <!--                                       </td>-->
+                        <!--                                       <td>-->
+                        <!--                                           <t t-foreach="obj.destination" t-as="des" >-->
+                        <!--                                                 <t t-if="des.slot == '6'">-->
+                        <!--                                                   <span  t-esc="des.destination"/>-->
+                        <!--                                                 </t>-->
 
-<!--                                            </t>-->
-<!--                                       </td>-->
-<!--                                   </tr>-->
-<!--                               </t>-->
+                        <!--                                            </t>-->
+                        <!--                                       </td>-->
+                        <!--                                   </tr>-->
+                        <!--                               </t>-->
                           </tbody>
                         </table>
                 </div>
-<!--                </div>-->
-                <br/>
-                <br/>
+            <!--                </div>-->
+            <br/>
+            <br/>
 
-                <!--Service BreakDown-->
-                <h3>Service Breakdown</h3>
-                <div class="row main-section">
+            <!--Service BreakDown-->
+            <h3>Service Breakdown</h3>
+            <div class="row main-section">
                      <div>
                           <table class="table" style="margin:10px;">
                               <thead>
                                 <tr>
                                   <th scope="col">Service Name</th>
-                                  <th scope="col">Count</th>
+                                    <th scope="col">Count</th>
                                 </tr>
                               </thead>
                               <tbody>
-                                  <t t-foreach="widget.consolidation" t-as="obj" >
+                                  <t t-foreach="widget.consolidation" t-as="obj">
                                        <tr t-attf-id="{{obj.consolidated_service_id}}">
                                           <td><t t-esc="obj.consolidated_service_name"/></td>
-                                          <td><t t-esc="obj.count"/></td>
+                                           <td><t t-esc="obj.count"/></td>
                                        </tr>
                                   </t>
                               </tbody>
