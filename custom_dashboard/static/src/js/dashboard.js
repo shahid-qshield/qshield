@@ -93,7 +93,7 @@ var ServiceDashboard = AbstractAction.extend({
             on_reverse_breadcrumb: this.on_reverse_breadcrumb,
         };
         this.do_action({
-            name: _t("New"),
+            name: _t("Escalated completed"),
             type: 'ir.actions.act_window',
             res_model: 'ebs_mod.service.request',
             view_mode: 'tree,form',
@@ -117,7 +117,7 @@ var ServiceDashboard = AbstractAction.extend({
             on_reverse_breadcrumb: this.on_reverse_breadcrumb,
         };
         this.do_action({
-            name: _t("New"),
+            name: _t("Escalated progress"),
             type: 'ir.actions.act_window',
             res_model: 'ebs_mod.service.request',
             view_mode: 'tree,form',
@@ -141,7 +141,7 @@ var ServiceDashboard = AbstractAction.extend({
             on_reverse_breadcrumb: this.on_reverse_breadcrumb,
         };
         this.do_action({
-            name: _t("New"),
+            name: _t("Escalated incomplete"),
             type: 'ir.actions.act_window',
             res_model: 'ebs_mod.service.request',
             view_mode: 'tree,form',
@@ -189,7 +189,7 @@ var ServiceDashboard = AbstractAction.extend({
             on_reverse_breadcrumb: this.on_reverse_breadcrumb,
         };
         this.do_action({
-            name: _t("Escalated"),
+            name: _t("Incomplete"),
             type: 'ir.actions.act_window',
             res_model: 'ebs_mod.service.request',
             view_mode: 'tree,form',
@@ -260,7 +260,7 @@ var ServiceDashboard = AbstractAction.extend({
             on_reverse_breadcrumb: this.on_reverse_breadcrumb,
         };
         this.do_action({
-            name: _t("Pending"),
+            name: _t("Pending payment"),
             type: 'ir.actions.act_window',
             res_model: 'ebs_mod.service.request',
             view_mode: 'tree,form',
