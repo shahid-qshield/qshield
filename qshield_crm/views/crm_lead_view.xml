@@ -74,6 +74,7 @@
                                 <field name="title" placeholder="Title" domain="[]"
                                        options="{&quot;no_open&quot;: True}" invisible="1"/>
                             </div>
+                            <field name="company_name"/>
                             <field name="website" string="Company Website"/>
                             <field name="tag_ids" widget="many2many_tags"
                                    options="{'color_field': 'color', 'no_create_edit': True}" string="Tag"/>
