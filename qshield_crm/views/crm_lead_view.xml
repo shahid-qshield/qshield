@@ -79,6 +79,7 @@
                             <field name="tag_ids" widget="many2many_tags"
                                    options="{'color_field': 'color', 'no_create_edit': True}" string="Tag"/>
                             <field name="source_id" string="Source"/>
+                            <field name="planned_revenue"/>
                         </group>
                         <group>
                             <field name="email_from" string="Point of contact Email"/>
