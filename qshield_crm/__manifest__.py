@@ -25,6 +25,7 @@
         'security/qshiled_security_groups.xml',
         'security/ir.model.access.csv',
         'report/qshied_proposal_report.xml',
+        'report/quotation_report_template_inherit.xml',
         'data/ir_mail_activity.xml',
         'data/ir_cron_create_invoice.xml',
         'wizards/refuse_quotation_view.xml',

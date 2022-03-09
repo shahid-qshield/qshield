@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <template id="quotations_report_inherit_custom" inherit_id="sale.report_saleorder_document">
+        <!--        <xpath expr="//div[@name='total']//div//table//tr[@class='o_subtotal']" position="replace">-->
+        <!--        </xpath>-->
+        <xpath expr="//td[@name='td_amount_untaxed_label']" position="replace">
+        </xpath>
+        <xpath expr="//td[@name='td_amount_untaxed']" position="replace">
+        </xpath>
+        <xpath expr="//td[@name='td_section_subtotal']" position="replace">
+        </xpath>
+    </template>
+</odoo>
