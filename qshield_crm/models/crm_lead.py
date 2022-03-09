@@ -66,6 +66,32 @@ class CrmLead(models.Model):
                                        ('draft', 'sent', 'cancel', 'quotation_submit', 'quotation_approved'))]})
         return action
 
+    # over ride method of create partner base on company name
+
+    def _create_lead_partner(self):
+        """ Create a partner from lead data
+            :returns res.partner record
+        """
+        Partner = self.env['res.partner']
+        contact_name = self.company_name
+        if not contact_name:
+            contact_name = Partner._parse_partner_name(self.email_from)[0] if self.email_from else False
+
+        if self.partner_name:
+            partner_company = Partner.create(self._create_lead_partner_data(self.partner_name, True))
+        elif self.partner_id:
+            partner_company = self.partner_id
+        else:
+            partner_company = None
+
+        if contact_name:
+            return Partner.create(
+                self._create_lead_partner_data(contact_name, False, partner_company.id if partner_company else False))
+
+        if partner_company:
+            return partner_company
+        return Partner.create(self._create_lead_partner_data(self.name, False))
+
 
 class Lead2OpportunityPartner(models.TransientModel):
     _inherit = 'crm.lead2opportunity.partner'
