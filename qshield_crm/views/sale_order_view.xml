@@ -96,6 +96,9 @@
                                 attrs="{'invisible':['|','|',('invoice_status', '!=', 'to invoice'),('state', '!=', 'submit_client_operation'),'|',('invoice_term_ids','=',False),('opportunity_id','=',False)]}"/>
                     </header>
                 </xpath>
+                <field name="amount_tax" position="attributes">
+                    <attribute name="invisible">1</attribute>
+                </field>
 
                 <field name="payment_term_id" position="after">
                     <field name="is_agreement" string="Is Agreement" widget="radio"
