@@ -192,11 +192,10 @@ class SaleOrder(models.Model):
         current_users = self.approver_ids.mapped('user_id')
         new_users = self.approver_setting_id.approver_ids
         for user in new_users - current_users:
-            if user != self.env.user:
-                record = self.env['sale.order.approver'].new({
-                    'user_id': user.id,
-                    'status': 'draft'})
-                self.approver_ids += record
+            record = self.env['sale.order.approver'].new({
+                'user_id': user.id,
+                'status': 'draft'})
+            self.approver_ids += record
 
     def submit_quotation(self):
         for record in self:
