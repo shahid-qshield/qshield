@@ -2,7 +2,7 @@
     <data noupdate="0">
         <record id="mail_template_of_notify_complete_service" model="mail.template">
             <field name="name">Notification of service complete to account manager</field>
-            <field name="subject">${object.name} service completed</field>
+            <field name="subject">${object.name} service ${ctx['service_status']|safe}</field>
             <field name="email_from">${user.email}</field>
             <field name="email_to">${ctx['email']|safe}</field>
             <field name="model_id" ref="ebs_qsheild_mod.model_ebs_mod_service_request"/>
@@ -10,10 +10,8 @@
             <field name="body_html" type="html">
                 <div style="margin: 0px; padding: 0px;">
                     <p style="margin: 0px; padding: 0px; font-size: 12px;">
-                        Hello ${ctx['account_manager_name']|safe},
-                        <br/>
-                        ${object.name} Service is completed by ${ctx['username']|safe} on
-                        ${ctx['complete_date']|safe}
+                        ${object.partner_id.name}, ${object.related_company_ro.name}, ${object.service_type_id.name},
+                        ${object.name},${ctx['service_status']|safe}
                     </p>
                 </div>
             </field>
