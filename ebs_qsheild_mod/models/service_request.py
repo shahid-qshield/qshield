@@ -400,8 +400,12 @@ class ServiceRequest(models.Model):
         return res
 
     def write(self, vals):
-        if self.status not in ['draft', 'new'] and self.env.user.has_group(
-                'ebs_qsheild_mod.qshield_account_manager') and not vals.get('message_main_attachment_id'):
+        is_account_manager_only = False
+        if self.env.user.has_group('ebs_qsheild_mod.qshield_account_manager') and not self.env.user.has_group(
+                'ebs_qsheild_mod.qshield_operational_manager') and not self._context.get('call_from_dashboard'):
+            is_account_manager_only = True
+        if self.status not in ['draft', 'new'] and is_account_manager_only and not vals.get(
+                'message_main_attachment_id'):
             raise UserError('Account manager group user not allowed write this service')
         if vals.get('related_company', False):
             vals['related_company_ro'] = vals['related_company']
@@ -421,21 +425,30 @@ class ServiceRequest(models.Model):
                     rec.service_document_id.renewed = True
         res = super(ServiceRequest, self).write(vals)
         if vals.get('status') == 'complete' and self.status == 'complete':
-            template = self.env.ref('ebs_qsheild_mod.mail_template_of_notify_complete_service',
-                                    raise_if_not_found=False)
-            user_sudo = self.env.user
-            account_manager_group = self.env.ref('ebs_qsheild_mod.qshield_account_manager')
-            account_managers = self.env['res.users'].search([('groups_id', '=', account_manager_group.id)])
-            if template and account_managers:
-                for account_manager in account_managers:
-                    account_manager_email = account_manager.partner_id.email
-                    account_manager_name = account_manager.partner_id.name
-                    complete_date = datetime.now().strftime('%Y-%m-%d %H:%M')
-                    template.sudo().with_context(username=user_sudo.name, complete_date=complete_date,
-                                                 email=account_manager_email,
-                                                 account_manager_name=account_manager_name).send_mail(self.id,
-                                                                                                      force_send=True)
+            self.send_notification_all_account_manager()
+        elif vals.get('status') == 'reject' and self.status == 'reject':
+            self.send_notification_all_account_manager()
+        elif vals.get('status') == 'cancel' and self.status == 'cancel':
+            self.send_notification_all_account_manager()
         return res
+
+    def send_notification_all_account_manager(self):
+        template = self.env.ref('ebs_qsheild_mod.mail_template_of_notify_complete_service',
+                                raise_if_not_found=False)
+        user_sudo = self.env.user
+        account_manager_group = self.env.ref('ebs_qsheild_mod.qshield_account_manager')
+        account_managers = self.env['res.users'].search([('groups_id', '=', account_manager_group.id)])
+        service_status = dict(self._fields['status'].selection).get(self.status)
+        if template and account_managers:
+            for account_manager in account_managers:
+                account_manager_email = account_manager.partner_id.email
+                account_manager_name = account_manager.partner_id.name
+                complete_date = datetime.now().strftime('%Y-%m-%d %H:%M')
+                template.sudo().with_context(username=user_sudo.name, complete_date=complete_date,
+                                             email=account_manager_email,
+                                             account_manager_name=account_manager_name,
+                                             service_status=service_status).send_mail(self.id,
+                                                                                      force_send=True)
 
     def copy(self, default={}):
         default.update({'status': 'draft'})
@@ -631,7 +644,8 @@ class ServiceRequest(models.Model):
         self.status = 'cancel'
 
     def request_reject(self):
-        if self.env.user.has_group('ebs_qsheild_mod.qshield_account_manager'):
+        if self.env.user.has_group('ebs_qsheild_mod.qshield_account_manager') and not self.env.user.has_group(
+                'ebs_qsheild_mod.qshield_operational_manager'):
             raise UserError('Account manager groups are not allowed to reject service')
         else:
             for flow in self.service_flow_ids:
@@ -731,7 +745,8 @@ class ServiceRequest(models.Model):
         self.status = 'pending_payment'
 
     def request_progress(self):
-        if self.env.user.has_group('ebs_qsheild_mod.qshield_account_manager'):
+        if self.env.user.has_group('ebs_qsheild_mod.qshield_account_manager') and not self.env.user.has_group(
+                'ebs_qsheild_mod.qshield_operational_manager'):
             raise UserError('Account manager groups are not allowed to set in progress status')
         else:
             self.in_progress_date = date.today()
