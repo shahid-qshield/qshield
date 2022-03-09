@@ -47,7 +47,7 @@ class ServiceRequest(models.Model):
             if each.progress_date:
                 today = date.today()
                 if each.progress_date + timedelta(days=each.exceeded_days) < today:
-                    each.is_overdue = True
+                    each.with_context(call_from_dashboard=True).write({'is_overdue': True})
         overdue = self.env['ebs_mod.service.request'].search_count([('is_overdue', '=', True),
                                                                     ('date', '>=', args.get('date_from')),
                                                                     ('date', '<=', args.get('date_to'))])

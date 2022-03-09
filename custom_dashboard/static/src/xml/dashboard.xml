@@ -167,10 +167,21 @@
                         </div>
                     </div>
                 </div>
+                <div class="col-md-2 col-sm-6 request_escalated_progress service-state">
+                    <div class="oh-card">
+                        <div class="oh-card-body" style="background-color: #efefef;">
+                            <div class="stat-icon escalated_in_progress"><p><t t-esc="widget.progress['escalated_progress']"/></p></div>
+                            <div class="stat-content">
+                                <div class="stat-text">Escalated In Progress</div>
+                                <div class="stat-digit"></div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
                 <div class="col-md-2 col-sm-6 request_escalated_completed service-state">
                     <div class="oh-card">
                         <div class="oh-card-body" style="background-color: #efefef;">
-                            <div class="stat-icon new"><p><t t-esc="widget.progress['escalated_complete']"/></p></div>
+                            <div class="stat-icon escalated_completed"><p><t t-esc="widget.progress['escalated_complete']"/></p></div>
                             <div class="stat-content">
                                 <div class="stat-text">Escalated Completed</div>
                                 <div class="stat-digit"></div>
@@ -181,20 +192,9 @@
                 <div class="col-md-2 col-sm-6 request_escalated_incompleted service-state">
                     <div class="oh-card">
                         <div class="oh-card-body" style="background-color: #efefef;">
-                            <div class="stat-icon new"><p><t t-esc="widget.progress['escalated_incomplete']"/></p></div>
+                            <div class="stat-icon escalated_incomplete"><p><t t-esc="widget.progress['escalated_incomplete']"/></p></div>
                             <div class="stat-content">
                                 <div class="stat-text">Escalated Incomplete</div>
-                                <div class="stat-digit"></div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-                <div class="col-md-2 col-sm-6 request_escalated_progress service-state">
-                    <div class="oh-card">
-                        <div class="oh-card-body" style="background-color: #efefef;">
-                            <div class="stat-icon new"><p><t t-esc="widget.progress['escalated_progress']"/></p></div>
-                            <div class="stat-content">
-                                <div class="stat-text">Escalated Progress</div>
                                 <div class="stat-digit"></div>
                             </div>
                         </div>

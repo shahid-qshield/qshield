@@ -589,6 +589,9 @@ var ServiceDashboard = AbstractAction.extend({
                 $(".progress_out_of_scope").text(self.progress['progress_out_of_scope']);
                 $(".progress_exceptional").text(self.progress['progress_exceptional']);
                 $(".escalated").text(self.progress['escalated']);
+                $(".escalated_completed").text(self.progress['escalated_complete']);
+                $(".escalated_incomplete").text(self.progress['escalated_incomplete']);
+                $(".escalated_in_progress").text(self.progress['escalated_progress']);
             });
 
         var def1 =  self._rpc({
