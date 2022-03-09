@@ -21,10 +21,13 @@ class QshieldProposalReport(models.AbstractModel):
                     service_type_list = []
                     for service_type in service_types.filtered(lambda s: s.consolidation_id == consolidation):
                         line = doc.order_line.filtered(lambda m: m.product_id == service_type.product_id)
-                        service_type_list.append({'service_type_name': service_type.name,
-                                                  'quantity': line.product_uom_qty,
-                                                  'price': line.price_subtotal
-                                                  })
+                        if line:
+                            quantity = sum(line.mapped('product_uom_qty'))
+                            price = sum(line.mapped('price_subtotal'))
+                            service_type_list.append({'service_type_name': service_type.name,
+                                                      'quantity': quantity,
+                                                      'price': price
+                                                      })
 
                     consolidation_list.append(
                         {'doc_id': doc.id,

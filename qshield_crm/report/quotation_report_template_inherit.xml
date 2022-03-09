@@ -1,13 +1,19 @@
 <?xml version="1.0" encoding="utf-8"?>
 <odoo>
     <template id="quotations_report_inherit_custom" inherit_id="sale.report_saleorder_document">
-        <!--        <xpath expr="//div[@name='total']//div//table//tr[@class='o_subtotal']" position="replace">-->
-        <!--        </xpath>-->
         <xpath expr="//td[@name='td_amount_untaxed_label']" position="replace">
         </xpath>
         <xpath expr="//td[@name='td_amount_untaxed']" position="replace">
         </xpath>
         <xpath expr="//td[@name='td_section_subtotal']" position="replace">
+        </xpath>
+        <xpath expr="//span[@t-field='doc.payment_term_id.note']" position="replace">
+        </xpath>
+        <xpath expr="//p[@t-field='doc.note']" position="replace">
+            <p t-if="doc.payment_term_id.note">
+                <span t-field="doc.payment_term_id.note"/>
+            </p>
+             <p t-field="doc.note" />
         </xpath>
     </template>
 </odoo>
