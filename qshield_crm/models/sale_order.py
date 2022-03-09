@@ -234,18 +234,6 @@ class SaleOrder(models.Model):
             approvers[0]._create_activity()
             approvers[0].write({'status': 'pending'})
         else:
-            product_ids = self.order_line.mapped('product_id').ids
-            service_types = self.env['ebs_mod.service.types'].search([('product_id', 'in', product_ids)])
-            start_date = datetime.strftime(self.start_date, '%Y-%m-%d')
-            end_date = datetime.strftime(self.end_date, '%Y-%m-%d')
-            contract = self.env['ebs_mod.contracts'].create({
-                'name': 'Contract for sale order of ' + self.name,
-                'start_date': start_date,
-                'end_date': end_date,
-                'contract_type': 'retainer_agreement',
-                'service_ids': service_types.ids,
-                'contact_id': self.partner_id.id
-            })
             self.write({'state': 'quotation_approved'})
 
     def approve_agreement(self, approver=None):
@@ -281,6 +269,22 @@ class SaleOrder(models.Model):
         activity = self.env.ref('qshield_crm.mail_activity_data_sale_order').id
         self.sudo()._get_user_approval_activities(user=self.env.user, activity_type_id=activity).action_feedback()
         self.write({'state': 'agreement_submit'})
+        if self.state == 'agreement_submit':
+            product_ids = self.order_line.mapped('product_id').ids
+            service_types = self.env['ebs_mod.service.types'].search([('product_id', 'in', product_ids)])
+            start_date = datetime.strftime(self.start_date, '%Y-%m-%d')
+            end_date = datetime.strftime(self.end_date, '%Y-%m-%d')
+            contract = self.env['ebs_mod.contracts'].search(
+                [('start_date', '=', start_date), ('end_date', '=', end_date), ('contact_id', '=', self.partner_id.id)])
+            if not contract:
+                contract = self.env['ebs_mod.contracts'].create({
+                    'name': 'Contract for sale order of ' + self.name,
+                    'start_date': start_date,
+                    'end_date': end_date,
+                    'contract_type': 'retainer_agreement',
+                    'service_ids': service_types.ids,
+                    'contact_id': self.partner_id.id
+                })
 
     def action_cancel(self):
         res = super(SaleOrder, self).action_cancel()

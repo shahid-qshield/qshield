@@ -112,9 +112,11 @@
                 </field>
                 <field name="partner_id" position="after">
                     <field name="start_date"
-                           attrs="{'invisible': [('opportunity_id','=',False)],'readonly':[('state','!=','draft')],'required' : [('opportunity_id','!=',False),('state','=','draft')]}"/>
+                           attrs="{'invisible': ['|',('opportunity_id','=',False),('state','not in',['sale','agreement_submit','submit_client_operation','done','cancel'])],'readonly':[('state','!=','sale')],'required' : [('opportunity_id','!=',False),('state','=','sale')]}"/>
                     <field name="end_date"
-                           attrs="{'invisible': [('opportunity_id','=',False)],'readonly':[('state','!=','draft')],'required' : [('opportunity_id','!=',False),('state','=','draft')]}"/>
+                           attrs="{'invisible': ['|',('opportunity_id','=',False),('state','not in',['sale','agreement_submit','submit_client_operation','done','cancel'])],'readonly':[('state','!=','sale')],'required' : [('opportunity_id','!=',False),('state','=','sale')]}"/>
+<!--                    <field name="start_date" invisible="1"/>-->
+<!--                    <field name="end_date" invisible="1"/>-->
                 </field>
                 <field name="invoice_status" position="attributes">
                     <attribute name="states">sale,done,submit_client_operation</attribute>
