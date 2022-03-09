@@ -115,8 +115,8 @@
                            attrs="{'invisible': ['|',('opportunity_id','=',False),('state','not in',['sale','agreement_submit','submit_client_operation','done','cancel'])],'readonly':[('state','!=','sale')],'required' : [('opportunity_id','!=',False),('state','=','sale')]}"/>
                     <field name="end_date"
                            attrs="{'invisible': ['|',('opportunity_id','=',False),('state','not in',['sale','agreement_submit','submit_client_operation','done','cancel'])],'readonly':[('state','!=','sale')],'required' : [('opportunity_id','!=',False),('state','=','sale')]}"/>
-<!--                    <field name="start_date" invisible="1"/>-->
-<!--                    <field name="end_date" invisible="1"/>-->
+                    <!--                    <field name="start_date" invisible="1"/>-->
+                    <!--                    <field name="end_date" invisible="1"/>-->
                 </field>
                 <field name="invoice_status" position="attributes">
                     <attribute name="states">sale,done,submit_client_operation</attribute>
@@ -153,6 +153,25 @@
             </field>
         </record>
 
+        <!--        inherit search view for customize in base filter-->
+        <record model="ir.ui.view" id="sale_order_view_search_inherit_quotation_custom">
+            <field name="name">sale.order.view.search.inherit.quotation.custom</field>
+            <field name="model">sale.order</field>
+            <field name="inherit_id" ref="sale.sale_order_view_search_inherit_quotation"/>
+            <field name="type">search</field>
+            <field name="arch" type="xml">
+                <xpath expr="//search//filter[@name='draft']" position="attributes">
+                    <attribute name="domain">[('state','in',('draft', 'quotation_submit', 'quotation_approved',
+                        'sent'))]
+                    </attribute>
+                </xpath>
+                <xpath expr="//search//filter[@name='sales']" position="attributes">
+                    <attribute name="domain">[('state','not in',('draft', 'sent', 'cancel', 'quotation_submit',
+                        'quotation_approved'))]
+                    </attribute>
+                </xpath>
+            </field>
+        </record>
         <!--  Server Action of Create Invoice from sale order-->
         <record id="create_invoice_server_action_sale_order" model="ir.actions.server">
             <field name="name">Create Invoice Individual</field>
