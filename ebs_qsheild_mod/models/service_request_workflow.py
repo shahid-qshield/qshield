@@ -1,5 +1,5 @@
 from odoo import models, fields, api, _
-from odoo.exceptions import ValidationError
+from odoo.exceptions import ValidationError, UserError
 from datetime import datetime, timedelta, date
 
 
@@ -116,14 +116,20 @@ class ServiceRequestWorkFlow(models.Model):
         if self.workflow_id.is_application_submission:
             template = self.env.ref('ebs_qsheild_mod.mail_template_of_notify_application_submission_complete',
                                     raise_if_not_found=False)
+            email_from = self.env['ir.config_parameter'].sudo().get_param(
+                'ebs_qsheild_mod.send_notification_email')
+            if not email_from:
+                raise UserError('Please configure email in service settings')
             user_sudo = self.env.user
             if template:
                 if self.assign_to and self.service_request_id:
-                    template.sudo().with_context(username=user_sudo.name, email=self.assign_to.work_email).send_mail(
+                    template.sudo().with_context(username=user_sudo.name, email=self.assign_to.work_email,
+                                                 email_from=email_from).send_mail(
                         self._origin.id, force_send=True)
                 if self.service_request_id:
                     template.sudo().with_context(username=user_sudo.name,
-                                                 email=self.service_request_id.account_manager.work_email).send_mail(
+                                                 email=self.service_request_id.account_manager.work_email,
+                                                 email_from=email_from).send_mail(
                         self._origin.id, force_send=True)
 
     @api.onchange('due_date')
@@ -170,11 +176,13 @@ class ServiceRequestWorkFlow(models.Model):
                         self.status] + " to " + self.status_dict[
                              vals['status']] + ".")
         res = super(ServiceRequestWorkFlow, self).write(vals)
-        if vals.get('status') == 'complete' and self.status == 'complete':
+        is_send_service_notification = self.env['ir.config_parameter'].sudo().get_param(
+            'ebs_qsheild_mod.is_send_service_notification')
+        if vals.get('status') == 'complete' and self.status == 'complete' and is_send_service_notification:
             self.send_notification()
-        if vals.get('status') == 'cancel' and self.status == 'cancel':
+        if vals.get('status') == 'cancel' and self.status == 'cancel' and is_send_service_notification:
             self.send_notification()
-        if vals.get('status') == 'reject' and self.status == 'reject':
+        if vals.get('status') == 'reject' and self.status == 'reject' and is_send_service_notification:
             self.send_notification()
         if res:
             if vals.get('status', False):
