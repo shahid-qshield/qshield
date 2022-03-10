@@ -424,11 +424,13 @@ class ServiceRequest(models.Model):
                 if rec.service_document_id:
                     rec.service_document_id.renewed = True
         res = super(ServiceRequest, self).write(vals)
-        if vals.get('status') == 'complete' and self.status == 'complete':
+        is_send_service_notification = self.env['ir.config_parameter'].sudo().get_param(
+            'ebs_qsheild_mod.is_send_service_notification')
+        if vals.get('status') == 'complete' and self.status == 'complete' and is_send_service_notification:
             self.send_notification_all_account_manager()
-        elif vals.get('status') == 'reject' and self.status == 'reject':
+        elif vals.get('status') == 'reject' and self.status == 'reject' and is_send_service_notification:
             self.send_notification_all_account_manager()
-        elif vals.get('status') == 'cancel' and self.status == 'cancel':
+        elif vals.get('status') == 'cancel' and self.status == 'cancel' and is_send_service_notification:
             self.send_notification_all_account_manager()
         return res
 
@@ -440,6 +442,10 @@ class ServiceRequest(models.Model):
         account_managers = self.env['res.users'].search([('groups_id', '=', account_manager_group.id)])
         service_status = dict(self._fields['status'].selection).get(self.status)
         if template and account_managers:
+            email_from = self.env['ir.config_parameter'].sudo().get_param(
+                'ebs_qsheild_mod.send_notification_email')
+            if not email_from:
+                raise UserError('Please configure email in service settings')
             for account_manager in account_managers:
                 account_manager_email = account_manager.partner_id.email
                 account_manager_name = account_manager.partner_id.name
@@ -447,8 +453,9 @@ class ServiceRequest(models.Model):
                 template.sudo().with_context(username=user_sudo.name, complete_date=complete_date,
                                              email=account_manager_email,
                                              account_manager_name=account_manager_name,
-                                             service_status=service_status).send_mail(self.id,
-                                                                                      force_send=True)
+                                             service_status=service_status,
+                                             email_from=email_from).send_mail(self.id,
+                                                                              force_send=True)
 
     def copy(self, default={}):
         default.update({'status': 'draft'})

@@ -3,7 +3,7 @@
         <record id="mail_template_of_notify_complete_service" model="mail.template">
             <field name="name">Notification of service complete to account manager</field>
             <field name="subject">${object.name} service ${ctx['service_status']|safe}</field>
-            <field name="email_from">${user.email}</field>
+            <field name="email_from">${ctx['email_from']|safe}</field>
             <field name="email_to">${ctx['email']|safe}</field>
             <field name="model_id" ref="ebs_qsheild_mod.model_ebs_mod_service_request"/>
             <field name="auto_delete" eval="False"/>
@@ -21,7 +21,7 @@
             <field name="subject">Application submission Workflow for ${object.service_request_id.name} is
                 ${object.status}
             </field>
-            <field name="email_from">${user.email}</field>
+            <field name="email_from">${ctx['email_from']|safe}</field>
             <field name="email_to">${ctx['email']|safe}</field>
             <field name="model_id" ref="ebs_qsheild_mod.model_ebs_mod_service_request_workflow"/>
             <field name="auto_delete" eval="False"/>
