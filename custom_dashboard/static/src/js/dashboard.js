@@ -551,10 +551,13 @@ var ServiceDashboard = AbstractAction.extend({
 //        var month = today.getMonth();
 //        var day = today.getDate();
 //        var date_after_year = today.getFullYear()+1 +'-'+(today.getMonth()+1)+'-'+today.getDate();
-        console.log('3333333333333333',start_date,end_date);
-        console.log('11111111111111111111111111',self.end_date,self.start_date);
         var today = new Date(new Date().getFullYear(), 11, 31);
         var date_today = today.getFullYear()+'-'+(today.getMonth()+1)+'-'+today.getDate();
+        var now = new Date();
+        var day = ("0" + now.getDate()).slice(-2);
+        var month = ("0" + (now.getMonth() + 1)).slice(-2);
+        self.current_date = now.getFullYear()+"-"+(month)+"-"+(day) ;
+//        $('#date_day').value(self.current_date)
         if(typeof(self.end_date) != 'undefined')
         {
         console.log('----in ifff-----------------------',self.end_date);
@@ -566,6 +569,7 @@ var ServiceDashboard = AbstractAction.extend({
         self.end_date_field = date_today
 
         }
+        console.log('33333333333',self.current_date,self.end_date_field);
         var def0 =  self._rpc({
                     model: 'ebs_mod.service.request',
                     method: 'get_request',
@@ -645,68 +649,68 @@ var ServiceDashboard = AbstractAction.extend({
             }).then(function(result) {
                 self.drivers =  result
 //                console.log(result)
-                jQuery(document).ready(function(){
-                for (var i = 0; i < result.length; i++) {
-//                    console.log(result[i]['driver_name'])
-                    var tbl = document.getElementById('data')
-                    var row = tbl.insertRow();
-                    var cell1 = row.insertCell()
-                    var cell2 = row.insertCell()
-                    var cell3 = row.insertCell()
-                    var cell4 = row.insertCell()
-                    var cell5 = row.insertCell()
-                    var cell6 = row.insertCell()
-                    var cell7 = row.insertCell()
-                    var cell8 = row.insertCell()
-                    var cell9 = row.insertCell()
-                    var cell10 = row.insertCell()
-                    var cell11 = row.insertCell()
-                    var cell12 = row.insertCell()
-                    var cell13 = row.insertCell()
-                    cell1.innerHTML = result[i]['driver_name'];
-
-                    for (var j = 0; j < result[i]['destination'].length; j++){
-//                        console.log(result[i]['destination'][j].slot)
-                        if (result[i]['destination'][j].slot == '7')
-                            cell2.innerHTML = result[i]['destination'][j].destination
-                        else if (result[i]['destination'][j].slot == '8')
-                            cell3.innerHTML = result[i]['destination'][j].destination
-                        else if (result[i]['destination'][j].slot == '9')
-                            cell4.innerHTML = result[i]['destination'][j].destination
-                        else if (result[i]['destination'][j].slot == '10')
-                            cell5.innerHTML = result[i]['destination'][j].destination
-                        else if (result[i]['destination'][j].slot == '11')
-                            cell6.innerHTML = result[i]['destination'][j].destination
-                        else if (result[i]['destination'][j].slot == '12')
-                            cell7.innerHTML = result[i]['destination'][j].destination
-                        else if (result[i]['destination'][j].slot == '1')
-                            cell8.innerHTML = result[i]['destination'][j].destination
-                        else if (result[i]['destination'][j].slot == '2')
-                            cell9.innerHTML = result[i]['destination'][j].destination
-                        else if (result[i]['destination'][j].slot == '3')
-                            cell10.innerHTML = result[i]['destination'][j].destination
-                        else if (result[i]['destination'][j].slot == '4')
-                            cell11.innerHTML = result[i]['destination'][j].destination
-                        else if (result[i]['destination'][j].slot == '5')
-                            cell12.innerHTML = result[i]['destination'][j].destination
-                        else
-                            cell13.innerHTML = result[i]['destination'][j].destination
-
-//                        cell2.innerHTML = result[i]['destination'][j].slot == '7' ? result[i]['destination'][j].destination
-//                        cell3.innerHTML = result[i]['destination'][j].slot == '8' ?  result[i]['destination'][j].destination
-//                        cell4.innerHTML = result[i]['destination'][j].slot  == '9' ?  result[i]['destination'][j].destination
-//                        cell5.innerHTML = result[i]['destination'][j].slot  == '10' ?  result[i]['destination'][j].destination
-//                        cell6.innerHTML = result[i]['destination'][j].slot  == '11' ?  result[i]['destination'][j].destination
-//                        cell7.innerHTML = result[i]['destination'][j].slot  == '12' ?  result[i]['destination'][j].destination
-//                        cell8.innerHTML = result[i]['destination'][j].slot  == '1' ?  result[i]['destination'][j].destination
-//                        cell9.innerHTML = result[i]['destination'][j].slot  == '2' ?  result[i]['destination'][j].destination
-//                        cell10.innerHTML = result[i]['destination'][j].slot  == '3' ?  result[i]['destination'][j].destination
-//                        cell11.innerHTML = result[i]['destination'][j].slot  == '4' ?  result[i]['destination'][j].destination
-//                        cell12.innerHTML = result[i]['destination'][j].slot  == '5' ?  result[i]['destination'][j].destination
-//                        cell13.innerHTML = result[i]['destination'][j].slot  == '6' ?  result[i]['destination'][j].destination
-                            }
-                        }
-            });
+//                jQuery(document).ready(function(){
+//                for (var i = 0; i < result.length; i++) {
+////                    console.log(result[i]['driver_name'])
+//                    var tbl = document.getElementById('data')
+//                    var row = tbl.insertRow();
+//                    var cell1 = row.insertCell()
+//                    var cell2 = row.insertCell()
+//                    var cell3 = row.insertCell()
+//                    var cell4 = row.insertCell()
+//                    var cell5 = row.insertCell()
+//                    var cell6 = row.insertCell()
+//                    var cell7 = row.insertCell()
+//                    var cell8 = row.insertCell()
+//                    var cell9 = row.insertCell()
+//                    var cell10 = row.insertCell()
+//                    var cell11 = row.insertCell()
+//                    var cell12 = row.insertCell()
+//                    var cell13 = row.insertCell()
+//                    cell1.innerHTML = result[i]['driver_name'];
+//
+//                    for (var j = 0; j < result[i]['destination'].length; j++){
+////                        console.log(result[i]['destination'][j].slot)
+//                        if (result[i]['destination'][j].slot == '7')
+//                            cell2.innerHTML = result[i]['destination'][j].destination
+//                        else if (result[i]['destination'][j].slot == '8')
+//                            cell3.innerHTML = result[i]['destination'][j].destination
+//                        else if (result[i]['destination'][j].slot == '9')
+//                            cell4.innerHTML = result[i]['destination'][j].destination
+//                        else if (result[i]['destination'][j].slot == '10')
+//                            cell5.innerHTML = result[i]['destination'][j].destination
+//                        else if (result[i]['destination'][j].slot == '11')
+//                            cell6.innerHTML = result[i]['destination'][j].destination
+//                        else if (result[i]['destination'][j].slot == '12')
+//                            cell7.innerHTML = result[i]['destination'][j].destination
+//                        else if (result[i]['destination'][j].slot == '1')
+//                            cell8.innerHTML = result[i]['destination'][j].destination
+//                        else if (result[i]['destination'][j].slot == '2')
+//                            cell9.innerHTML = result[i]['destination'][j].destination
+//                        else if (result[i]['destination'][j].slot == '3')
+//                            cell10.innerHTML = result[i]['destination'][j].destination
+//                        else if (result[i]['destination'][j].slot == '4')
+//                            cell11.innerHTML = result[i]['destination'][j].destination
+//                        else if (result[i]['destination'][j].slot == '5')
+//                            cell12.innerHTML = result[i]['destination'][j].destination
+//                        else
+//                            cell13.innerHTML = result[i]['destination'][j].destination
+//
+////                        cell2.innerHTML = result[i]['destination'][j].slot == '7' ? result[i]['destination'][j].destination
+////                        cell3.innerHTML = result[i]['destination'][j].slot == '8' ?  result[i]['destination'][j].destination
+////                        cell4.innerHTML = result[i]['destination'][j].slot  == '9' ?  result[i]['destination'][j].destination
+////                        cell5.innerHTML = result[i]['destination'][j].slot  == '10' ?  result[i]['destination'][j].destination
+////                        cell6.innerHTML = result[i]['destination'][j].slot  == '11' ?  result[i]['destination'][j].destination
+////                        cell7.innerHTML = result[i]['destination'][j].slot  == '12' ?  result[i]['destination'][j].destination
+////                        cell8.innerHTML = result[i]['destination'][j].slot  == '1' ?  result[i]['destination'][j].destination
+////                        cell9.innerHTML = result[i]['destination'][j].slot  == '2' ?  result[i]['destination'][j].destination
+////                        cell10.innerHTML = result[i]['destination'][j].slot  == '3' ?  result[i]['destination'][j].destination
+////                        cell11.innerHTML = result[i]['destination'][j].slot  == '4' ?  result[i]['destination'][j].destination
+////                        cell12.innerHTML = result[i]['destination'][j].slot  == '5' ?  result[i]['destination'][j].destination
+////                        cell13.innerHTML = result[i]['destination'][j].slot  == '6' ?  result[i]['destination'][j].destination
+//                            }
+//                        }
+//            });
 
         });
 //                    var node = document.createElement("tr");                 // Create a <tr> node
