@@ -77,7 +77,7 @@
                         <!--                        <button name="request_progress" string="In Progress" type="object"-->
                         <!--                                attrs="{'invisible':['|',('status','!=','hold')]}"/>-->
                         <button name="request_progress" string="In Progress" type="object"
-                                attrs="{'invisible': [('status', 'not in', ['new', 'hold', 'pending'])]}"
+                                attrs="{'invisible': [('status', 'not in', ['new', 'hold', 'pending','pending_payment'])]}"
                                 groups="ebs_qsheild_mod.qshield_operational_manager"/>
 
                         <button name="request_cancel" string="Cancelled by Client" type="object"
@@ -509,7 +509,7 @@
                         <!--&lt;!&ndash;                        <button name="request_progress" string="In Progress" type="object"&ndash;&gt;-->
                         <!--                                attrs="{'invisible':['|',('status','!=','hold')]}"/>-->
                         <button name="request_progress" string="In Progress" type="object"
-                                attrs="{'invisible': [('status', 'not in', ['new', 'hold', 'pending'])]}"
+                                attrs="{'invisible': [('status', 'not in', ['new', 'hold', 'pending','pending_payment'])]}"
                                 groups="ebs_qsheild_mod.qshield_operational_manager"/>
                         <button name="request_cancel" string="Cancelled by Client" type="object"
                                 attrs="{'invisible':[('status','not in',['pending_payment','pending','hold','progress'])]}"
