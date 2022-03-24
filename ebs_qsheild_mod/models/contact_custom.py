@@ -327,33 +327,37 @@ class ContactCustom(models.Model):
         return res
 
     def write(self, vals):
-        active_before = self.active
-        if 'active' in vals:
-            if not vals['active']:
-                for user in self.user_ids:
-                    user.toggle_active()
-            elif vals['active']:
-                super(ContactCustom, self).write(vals)
-                user_ids = self.env['res.users'].search([('partner_id', '=', self.id), ('active', '=', False)])
-                for user in user_ids:
-                    user.toggle_active()
-        if 'person_type' in vals:
-            if self.person_type == "visitor" and vals['person_type'] == "emp":
-                self.message_post(body="Type Changed From Visitor to Employee")
+        counter = 0
+        for record in self:
+            active_before = record.active
+            if 'active' in vals:
+                if not vals['active']:
+                    for user in record.user_ids:
+                        user.toggle_active()
+                elif vals['active']:
+                    super(ContactCustom, record).write(vals)
+                    user_ids = self.env['res.users'].search([('partner_id', '=', record.id), ('active', '=', False)])
+                    for user in user_ids:
+                        user.toggle_active()
+            if 'person_type' in vals:
+                if record.person_type == "visitor" and vals['person_type'] == "emp":
+                    record.message_post(body="Type Changed From Visitor to Employee")
 
-        if vals.get('parent_id', False):
-            new_res = self.env['res.partner'].browse(vals['parent_id'])
-            for rec in self.employee_dependants:
-                rec.related_company = new_res.id
-                rec.sponsor = new_res.sponsor.id
-            self.message_post(
-                body="Related contact changed from '" + 'fefes' + "' to '" + new_res.name + "'")
+            if vals.get('parent_id', False):
+                new_res = self.env['res.partner'].browse(vals['parent_id'])
+                for rec in record.employee_dependants:
+                    rec.related_company = new_res.id
+                    rec.sponsor = new_res.sponsor.id
+                self.message_post(
+                    body="Related contact changed from '" + 'fefes' + "' to '" + new_res.name + "'")
 
-        res = super(ContactCustom, self).write(vals)
-        active_after = self.active
-        if active_after != active_before:
-            self.contact_archive_onchange(active_after)
-        return res
+            res = super(ContactCustom, self).write(vals)
+            active_after = record.active
+            if active_after != active_before:
+                record.contact_archive_onchange(active_after)
+            counter += 1
+            if counter == len(self):
+                return res
 
     def contact_archive_onchange(self, active):
         self.contact_document_archive(active)
