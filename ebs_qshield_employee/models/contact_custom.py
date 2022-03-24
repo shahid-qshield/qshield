@@ -11,6 +11,16 @@ class ContactCustom(models.Model):
     fax_number = fields.Char('Fax No.')
     # employee_id = fields.Many2one('hr.employee', string='Related Employee', index=True)
     employee_ids = fields.One2many('hr.employee', 'partner_id', string="Related Employee", auto_join=True)
+    is_qshield_sponsor = fields.Boolean(string='Is Qshield Sponsor')
+    check_qshield_sponsor = fields.Boolean(compute="compute_check_qshield_sponsor")
+
+    @api.depends('sponsor','person_type')
+    def compute_check_qshield_sponsor(self):
+        for rec in self:
+            if rec.sponsor and rec.sponsor.is_qshield_sponsor and rec.person_type == 'emp':
+                rec.check_qshield_sponsor = True
+            else:
+                rec.check_qshield_sponsor = False
 
     @api.constrains('employee_ids')
     def _check_employee_length(self):
