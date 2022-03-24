@@ -87,9 +87,9 @@ class SaleOrder(models.Model):
         for order in self:
             orders = self.search([('state', '!=', 'cancel'), ('opportunity_id', '=', order.opportunity_id.id)])
             total_amount = sum(orders.mapped('amount_total'))
-            self.opportunity_id.sudo().write({'planned_revenue' : total_amount})
+            self.opportunity_id.sudo().write({'planned_revenue': total_amount})
 
-    @api.depends('order_line.price_total', 'is_agreement')
+    @api.depends('order_line.price_total')
     def _amount_all(self):
         """
         Compute the total amounts of the SO.
@@ -99,18 +99,11 @@ class SaleOrder(models.Model):
             for line in order.order_line:
                 amount_untaxed += line.price_subtotal
                 amount_tax += line.price_tax
-            if order.opportunity_id and order.is_agreement == 'is_retainer':
-                order.update({
-                    'amount_untaxed': amount_untaxed,
-                    'amount_tax': amount_tax,
-                    'amount_total': (amount_untaxed + amount_tax) * 12,
-                })
-            else:
-                order.update({
-                    'amount_untaxed': amount_untaxed,
-                    'amount_tax': amount_tax,
-                    'amount_total': amount_untaxed + amount_tax,
-                })
+            order.update({
+                'amount_untaxed': amount_untaxed,
+                'amount_tax': amount_tax,
+                'amount_total': amount_untaxed + amount_tax,
+            })
 
     @api.returns('mail.message', lambda value: value.id)
     def message_post(self, **kwargs):
