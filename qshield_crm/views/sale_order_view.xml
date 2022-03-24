@@ -99,6 +99,9 @@
                 <field name="amount_tax" position="attributes">
                     <attribute name="invisible">1</attribute>
                 </field>
+                <field name="amount_untaxed" position="attributes">
+                    <attribute name="invisible">1</attribute>
+                </field>
 
                 <field name="payment_term_id" position="after">
                     <field name="is_agreement" string="Is Agreement" widget="radio"

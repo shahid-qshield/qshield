@@ -19,6 +19,15 @@ class CrmLead(models.Model):
             res.responsible_user = res.user_id.id
         return res
 
+    def write(self, vals):
+        order = self.env['sale.order'].search([('opportunity_id', '=', self.id)], order='id desc', limit=1)
+        if order and order.is_agreement == 'is_retainer':
+            vals.update({'planned_revenue': order.amount_total * 12})
+        else:
+            vals.update({'planned_revenue': order.amount_total})
+        res = super(CrmLead, self).write(vals)
+        return res
+
     def redirect_lead_opportunity_view(self):
         self.ensure_one()
         if self.user_id:
