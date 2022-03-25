@@ -260,6 +260,40 @@ class ServiceRequest(models.Model):
         string='Documents',
         required=False)
 
+    is_show_status = fields.Boolean('Is Show status', compute='change_status_by_group')
+    is_show_new_status = fields.Boolean('Is Show status', compute='change_status_by_group')
+    is_edit_status = fields.Boolean('Is Show status', compute='change_status_by_group')
+    is_edit_status_new = fields.Boolean('Is Show status', compute='change_status_by_group')
+
+    @api.depends('status')
+    def change_status_by_group(self):
+        for rec in self:
+            is_show_status = False
+            is_show_new_status = False
+            is_edit_status = False
+            is_edit_status_new = False
+            if self.env.user.has_group(
+                    'ebs_qsheild_mod.qshield_operational_manager'):
+                is_show_status = True
+                is_show_new_status = False
+                is_edit_status = True
+                is_edit_status_new = False
+            elif self.env.user.has_group('ebs_qsheild_mod.qshield_account_manager'):
+                if rec.status in ['draft', 'new']:
+                    is_show_status = False
+                    is_show_new_status = True
+                    is_edit_status = False
+                    is_edit_status_new = True
+                else:
+                    is_show_status = True
+                    is_show_new_status = False
+                    is_edit_status = False
+                    is_edit_status_new = False
+            rec.is_show_status = is_show_status
+            rec.is_show_new_status = is_show_new_status
+            rec.is_edit_status = is_edit_status
+            rec.is_edit_status_new = is_edit_status_new
+
     @api.depends('service_flow_ids')
     def compute_task_count(self):
         for record in self:
