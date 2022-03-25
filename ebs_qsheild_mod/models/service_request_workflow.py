@@ -119,20 +119,24 @@ class ServiceRequestWorkFlow(models.Model):
         if self.workflow_id.is_application_submission:
             template = self.env.ref('ebs_qsheild_mod.mail_template_of_notify_application_submission_complete',
                                     raise_if_not_found=False)
-            email_from = self.env['ir.config_parameter'].sudo().get_param(
+            outgoing_server = self.env['ir.mail_server'].sudo().search([('smtp_user', '!=', False)], limit=1)
+            if not outgoing_server:
+                raise UserError('Please configure out going mail server')
+            email_to_list = self.env['ir.config_parameter'].sudo().get_param(
                 'ebs_qsheild_mod.send_notification_email')
-            if not email_from:
-                raise UserError('Please configure email in service settings')
+            if not email_to_list:
+                raise UserError('Please configure recipient email in service settings')
+            email_list = email_to_list.split(',')
             user_sudo = self.env.user
             if template:
-                if self.assign_to and self.service_request_id:
-                    template.sudo().with_context(username=user_sudo.name, email=self.assign_to.work_email,
-                                                 email_from=email_from).send_mail(
-                        self._origin.id, force_send=True)
-                if self.service_request_id:
-                    template.sudo().with_context(username=user_sudo.name,
-                                                 email=self.service_request_id.account_manager.work_email,
-                                                 email_from=email_from).send_mail(
+                service_status = dict(self.env['ebs_mod.service.request']._fields['status'].selection).get(
+                    self.service_request_id.status)
+                workflow_status = dict(self._fields['status'].selection).get(self.status)
+                for email_to in email_list:
+                    template.sudo().with_context(username=user_sudo.name, email=email_to,
+                                                 email_from=outgoing_server.smtp_user,
+                                                 service_status=service_status,
+                                                 workflow_status=workflow_status).send_mail(
                         self._origin.id, force_send=True)
 
     @api.onchange('status_new')

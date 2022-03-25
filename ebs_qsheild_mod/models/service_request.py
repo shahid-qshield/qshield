@@ -472,24 +472,25 @@ class ServiceRequest(models.Model):
         template = self.env.ref('ebs_qsheild_mod.mail_template_of_notify_complete_service',
                                 raise_if_not_found=False)
         user_sudo = self.env.user
-        account_manager_group = self.env.ref('ebs_qsheild_mod.qshield_account_manager')
-        account_managers = self.env['res.users'].search([('groups_id', '=', account_manager_group.id)])
+        # account_manager_group = self.env.ref('ebs_qsheild_mod.qshield_account_manager')
+        # account_managers = self.env['res.users'].search([('groups_id', '=', account_manager_group.id)])
         service_status = dict(self._fields['status'].selection).get(self.status)
-        if template and account_managers:
-            email_from = self.env['ir.config_parameter'].sudo().get_param(
+        if template:
+            outgoing_server = self.env['ir.mail_server'].sudo().search([('smtp_user', '!=', False)], limit=1)
+            if not outgoing_server:
+                raise UserError('Please configure out going mail server')
+            email_to_list = self.env['ir.config_parameter'].sudo().get_param(
                 'ebs_qsheild_mod.send_notification_email')
-            if not email_from:
-                raise UserError('Please configure email in service settings')
-            for account_manager in account_managers:
-                account_manager_email = account_manager.partner_id.email
-                account_manager_name = account_manager.partner_id.name
+            if not email_to_list:
+                raise UserError('Please configure recipient email in service settings')
+            email_list = email_to_list.split(',')
+            for email_to in email_list:
                 complete_date = datetime.now().strftime('%Y-%m-%d %H:%M')
                 template.sudo().with_context(username=user_sudo.name, complete_date=complete_date,
-                                             email=account_manager_email,
-                                             account_manager_name=account_manager_name,
+                                             email=email_to,
                                              service_status=service_status,
-                                             email_from=email_from).send_mail(self.id,
-                                                                              force_send=True)
+                                             email_from=outgoing_server.smtp_user).send_mail(self.id,
+                                                                                             force_send=True)
 
     def copy(self, default={}):
         default.update({'status': 'draft'})
@@ -666,8 +667,6 @@ class ServiceRequest(models.Model):
     #     self.status = 'new'
 
     def request_cancel(self):
-        for flow in self.service_flow_ids:
-            flow.status = 'cancel'
         workflow_id = self.env['ebs_mod.service.request.workflow'].search(
             [('service_request_id', '=', self.id), ('is_application_submission', '=', True)], limit=1)
         if workflow_id:
@@ -683,15 +682,14 @@ class ServiceRequest(models.Model):
         #     self.sla_days = 0
         self.cancel_date = date.today()
         self.status = 'cancel'
+        for flow in self.service_flow_ids:
+            flow.status = 'cancel'
 
     def request_reject(self):
         if self.env.user.has_group('ebs_qsheild_mod.qshield_account_manager') and not self.env.user.has_group(
                 'ebs_qsheild_mod.qshield_operational_manager'):
             raise UserError('Account manager groups are not allowed to reject service')
         else:
-            for flow in self.service_flow_ids:
-                flow.status = 'reject'
-
             workflow_id = self.env['ebs_mod.service.request.workflow'].search(
                 [('service_request_id', '=', self.id), ('is_application_submission', '=', True)], limit=1)
             if workflow_id:
@@ -707,6 +705,8 @@ class ServiceRequest(models.Model):
         #     self.sla_days = 0
         self.rejected_date = date.today()
         self.status = 'reject'
+        for flow in self.service_flow_ids:
+            flow.status = 'reject'
 
     def request_complete(self):
         self.completed_date = fields.Date.today()

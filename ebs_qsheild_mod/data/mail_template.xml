@@ -2,36 +2,111 @@
     <data noupdate="0">
         <record id="mail_template_of_notify_complete_service" model="mail.template">
             <field name="name">Notification of service complete to account manager</field>
-            <field name="subject">${object.name} service ${ctx['service_status']|safe}</field>
+            <field name="subject">${object.name} service status notification</field>
             <field name="email_from">${ctx['email_from']|safe}</field>
             <field name="email_to">${ctx['email']|safe}</field>
             <field name="model_id" ref="ebs_qsheild_mod.model_ebs_mod_service_request"/>
             <field name="auto_delete" eval="False"/>
             <field name="body_html" type="html">
-                <div style="margin: 0px; padding: 0px;">
-                    <p style="margin: 0px; padding: 0px; font-size: 12px;">
-                        ${object.partner_id.name}, ${object.related_company_ro.name}, ${object.service_type_id.name},
-                        ${object.name},${ctx['service_status']|safe}
-                    </p>
+                <style>
+                    .table_1 {
+                    table-layout: fixed;
+                    }
+                    .table_1 td,.table_1 th {
+                    border: 2px solid #454141;
+                    text-align: left;
+                    padding: 4px;
+                    }
+                    .table_1 th{
+                    width: 250px;
+                    }
+                    .table_1 td p{
+                    width: 99%;
+                    }
+                </style>
+                <div style="padding-top: 5px;">
+                    <p>Service status notification:</p>
+                    <table class="table_1">
+                        <tr>
+                            <th>Contact</th>
+                            <td>${object.partner_id.name}</td>
+                        </tr>
+                        <tr>
+                            <th>Related Company</th>
+                            <td>${object.related_company_ro.name}</td>
+                        </tr>
+                        <tr>
+                            <th>Service type</th>
+                            <td>${object.service_type_id.name}</td>
+                        </tr>
+                        <tr>
+                            <th>Service request number</th>
+                            <td>${object.name}</td>
+                        </tr>
+                        <tr>
+                            <th>Status</th>
+                            <td>${ctx['service_status']|safe}</td>
+                        </tr>
+                    </table>
                 </div>
             </field>
         </record>
         <record id="mail_template_of_notify_application_submission_complete" model="mail.template">
             <field name="name">Notification for application submission complete</field>
-            <field name="subject">Application submission Workflow for ${object.service_request_id.name} is
-                ${object.status}
-            </field>
+            <field name="subject">${object.workflow_id.name} service workflow status notification</field>
             <field name="email_from">${ctx['email_from']|safe}</field>
             <field name="email_to">${ctx['email']|safe}</field>
             <field name="model_id" ref="ebs_qsheild_mod.model_ebs_mod_service_request_workflow"/>
             <field name="auto_delete" eval="False"/>
             <field name="body_html" type="html">
-                <div style="margin: 0px; padding: 0px;">
-                    <p style="margin: 0px; padding: 0px; font-size: 12px;">
-                        ${object.service_request_id.related_company_ro.name} - ${object.service_request_id.name} -
-                        ${object.service_request_id.service_type_id.name} -
-                        ${object.status}
-                    </p>
+                <style>
+                    .table_1 {
+                    table-layout: fixed;
+                    }
+                    .table_1 td,.table_1 th {
+                    border: 2px solid #454141;
+                    text-align: left;
+                    padding: 4px;
+                    }
+                    .table_1 th{
+                    width: 250px;
+                    }
+                    .table_1 td p{
+                    width: 99%;
+                    }
+                </style>
+                <div style="padding-top: 5px;">
+                    <p>Service workflow status notification:</p>
+                    <table class="table_1">
+                        <tr>
+                            <th>Contact</th>
+                            <td>${object.service_request_id.partner_id.name}</td>
+                        </tr>
+                        <tr>
+                            <th>Related Company</th>
+                            <td>${object.service_request_id.related_company_ro.name}</td>
+                        </tr>
+                        <tr>
+                            <th>Service type</th>
+                            <td>${object.service_request_id.service_type_id.name}</td>
+                        </tr>
+                        <tr>
+                            <th>Service request number</th>
+                            <td>${object.service_request_id.name}</td>
+                        </tr>
+                        <tr>
+                            <th>Service status</th>
+                            <td>${ctx['service_status']|safe}</td>
+                        </tr>
+                        <tr>
+                            <th>Workflow Name</th>
+                            <td>${object.workflow_id.name}</td>
+                        </tr>
+                        <tr>
+                            <th>Workflow status</th>
+                            <td>${ctx['workflow_status']|safe}</td>
+                        </tr>
+                    </table>
                 </div>
             </field>
         </record>
