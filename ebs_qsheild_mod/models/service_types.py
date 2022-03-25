@@ -31,8 +31,6 @@ class ServiceTypes(models.Model):
         string='SLA - Maximum Days',
         required=False)
 
-
-
     for_company = fields.Boolean(
         string='For Company',
         required=False,
@@ -99,9 +97,11 @@ class ServiceTypeWorkflow(models.Model):
     _name = "ebs_mod.service.type.workflow"
     _description = "Service Type Workflow"
     _order = "sequence"
-    name = fields.Char(
-        string='Name',
-        required=True)
+
+    name = fields.Char(string='Name')
+
+    workflow_id = fields.Many2one('ebs_mod.service.workflow.config', 'Workflow Name')
+
     sequence = fields.Integer(
         string='Sequence',
         required=True, default=0)
@@ -129,3 +129,11 @@ class ServiceTypeWorkflow(models.Model):
          'Name and type combination must be unique !')
     ]
 
+    def service_type_name_issue(self):
+        records = self.search([])
+        print("Called Service type Name", records)
+        for rec in records:
+            print("Service type name is ", rec.name)
+            configuration = self.env['ebs_mod.service.workflow.config'].search(
+                [('name', '=', rec.name), ('flow_type', '=', rec.flow_type)])
+            rec.workflow_id = configuration.id

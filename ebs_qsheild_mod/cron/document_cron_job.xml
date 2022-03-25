@@ -93,5 +93,17 @@
             <field name="numbercall">-1</field>
             <field name="doall">True</field>
         </record>
+        <record id="ir_cron_fix_service_type_name_issue" model="ir.cron">
+            <field name="name">Service type name  Issue Fix Schedule Action</field>
+            <field name="model_id" ref="model_ebs_mod_service_type_workflow"/>
+            <field name="state">code</field>
+            <field name="code">model.service_type_name_issue()</field>
+            <field name="active">False</field>
+            <field name="user_id" ref="base.user_root"/>
+            <field name="interval_number">1</field>
+            <field name="interval_type">days</field>
+            <field name="numbercall">-1</field>
+            <field name="doall">True</field>
+        </record>
     </data>
 </odoo>
