@@ -151,6 +151,10 @@
                         <group name="group_top">
                             <group name="group_left">
                                 <field name="date" attrs="{'readonly':[('status','!=','draft')]}"/>
+                                <field name="is_show_status" invisible="True"/>
+                                <field name="is_edit_status" invisible="True"/>
+                                <field name="is_show_new_status" invisible="True"/>
+                                <field name="is_edit_status_new" invisible="True"/>
                                 <field name="partner_id"
                                        invisible="context.get('invisible_contact',False)"
                                        options="{'no_create': True, 'no_create_edit':True}"
@@ -222,7 +226,12 @@
                                         <field name="sequence"/>
                                         <field name="start_count_flow"/>
                                         <field name="due_date"/>
-                                        <field name="status"/>
+                                        <field name="status"
+                                               attrs="{'column_invisible':[('parent.is_show_status','=',False)],'readonly':[('parent.is_edit_status','=',False)]}"
+                                               force_save="1"/>
+                                        <!--                                                    <field name="req_status" invisible="1"/>-->
+                                        <field name="status_new"
+                                               attrs="{'column_invisible':[('parent.is_show_new_status','=',False)],'readonly':[('parent.is_edit_status_new','=',False)]}"/>
                                         <field name="date"/>
                                         <field name="assign_to"/>
                                         <button name="create_service_activity" icon="fa-calendar" type="object"/>
@@ -236,7 +245,6 @@
                                                     <field name="service_type_id" invisible="True"/>
                                                     <field name="related_company" invisible="True"/>
                                                     <field name="partner_id" invisible="True"/>
-
                                                     <field name="workflow_id"
                                                            options="{'no_create': True, 'no_create_edit':True}"
                                                            domain="[
@@ -251,7 +259,12 @@
                                                 <group>
                                                     <field name="assign_to" domain="[('share', '=', False)]"
                                                            options="{'no_create': True, 'no_create_edit':True}"/>
-                                                    <field name="status"/>
+                                                    <field name="status"
+                                                           attrs="{'invisible':[('parent.is_show_status','=',False)],'readonly':[('parent.is_edit_status','=',False)]}"
+                                                           force_save="1"/>
+                                                    <!--                                                    <field name="req_status" invisible="1"/>-->
+                                                    <field name="status_new"
+                                                           attrs="{'invisible':[('parent.is_show_new_status','=',False)],'readonly':[('parent.is_edit_status_new','=',False)]}"/>
                                                     <field name="date" readonly="True"/>
                                                     <button name="create_service_activity" string="Create Activity"
                                                             class="btn btn-primary"

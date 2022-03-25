@@ -10,6 +10,7 @@ class ServiceRequestWorkFlow(models.Model):
     _order = 'workflow_id '
 
     status_dict = {
+        'new': 'New',
         'pending': 'Pending',
         'progress': 'In Progress',
         'hold': 'On Hold',
@@ -17,6 +18,7 @@ class ServiceRequestWorkFlow(models.Model):
         'reject': 'Rejected',
         'cancel': 'Canceled'
     }
+
     service_request_id = fields.Many2one(
         comodel_name='ebs_mod.service.request',
         string='Service',
@@ -85,17 +87,18 @@ class ServiceRequestWorkFlow(models.Model):
         related="workflow_id.start_count_flow",
         store=True, readonly=False
     )
-
     status = fields.Selection(
         string='Status',
-        selection=[('pending', 'Pending'),
+        selection=[('new', 'New'),
+                   ('pending', 'Pending'),
                    ('progress', 'in Progress'),
                    ('hold', 'On Hold'),
                    ('complete', 'Completed'),
                    ('cancel', 'Cancelled'),
                    ('reject', 'Rejected'),
                    ],
-        required=True, default='pending')
+        required=True)
+    status_new = fields.Selection(selection=[('new', 'New')], string="Status")
 
     desc = fields.Text(
         string="Description",
@@ -131,6 +134,11 @@ class ServiceRequestWorkFlow(models.Model):
                                                  email=self.service_request_id.account_manager.work_email,
                                                  email_from=email_from).send_mail(
                         self._origin.id, force_send=True)
+
+    @api.onchange('status_new')
+    def get_status_new(self):
+        for rec in self:
+            rec.status = rec.status_new
 
     @api.onchange('due_date')
     def _due_date_on_change(self):
