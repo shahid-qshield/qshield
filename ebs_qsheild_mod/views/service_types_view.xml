@@ -105,7 +105,7 @@
             <field name="arch" type="xml">
                 <tree>
                     <field name="sequence"/>
-                    <field name="name"/>
+                    <field name="workflow_id"/>
                     <field name="start_count_flow"/>
                 </tree>
             </field>
@@ -122,7 +122,8 @@
                             <group name="group_left">
 
                                 <field name="sequence"/>
-                                <field name="name"/>
+
+                                <field name="workflow_id"/>
                                 <field name="start_count_flow"/>
                                 <field name="is_application_submission"/>
                                 <field name="flow_type" invisible="True"/>
