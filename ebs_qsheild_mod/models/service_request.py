@@ -268,27 +268,32 @@ class ServiceRequest(models.Model):
     @api.depends('status')
     def change_status_by_group(self):
         for rec in self:
-            is_show_status = False
-            is_show_new_status = False
-            is_edit_status = False
-            is_edit_status_new = False
-            if self.env.user.has_group(
-                    'ebs_qsheild_mod.qshield_operational_manager'):
+            # is_show_status = False
+            # is_show_new_status = False
+            # is_edit_status = False
+            # is_edit_status_new = False
+            # if self.env.user.has_group(
+            #         'ebs_qsheild_mod.qshield_operational_manager'):
+            #     is_show_status = True
+            #     is_show_new_status = False
+            #     is_edit_status = True
+            #     is_edit_status_new = False
+            # elif self.env.user.has_group('ebs_qsheild_mod.qshield_account_manager'):
+            if rec.status in ['draft', 'new']:
+                is_show_status = False
+                is_show_new_status = True
+                is_edit_status = False
+                is_edit_status_new = True
+            elif self.env.user.has_group('ebs_qsheild_mod.qshield_operational_manager'):
                 is_show_status = True
                 is_show_new_status = False
                 is_edit_status = True
                 is_edit_status_new = False
-            elif self.env.user.has_group('ebs_qsheild_mod.qshield_account_manager'):
-                if rec.status in ['draft', 'new']:
-                    is_show_status = False
-                    is_show_new_status = True
-                    is_edit_status = False
-                    is_edit_status_new = True
-                else:
-                    is_show_status = True
-                    is_show_new_status = False
-                    is_edit_status = False
-                    is_edit_status_new = False
+            else:
+                is_show_status = True
+                is_show_new_status = False
+                is_edit_status = False
+                is_edit_status_new = False
             rec.is_show_status = is_show_status
             rec.is_show_new_status = is_show_new_status
             rec.is_edit_status = is_edit_status
