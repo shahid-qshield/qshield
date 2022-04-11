@@ -15,7 +15,7 @@
                 <div class="col-md-2 col-sm-6 request_draft service-state">
                     <div class="oh-card">
                         <div class="oh-card-body" style="background-color: #efefef;">
-                            <div class="stat-icon new"><p><t t-esc="widget.progress['draft']"/></p></div>
+                            <div class="stat-icon draft"><p><t t-esc="widget.progress['draft']"/></p></div>
                             <div class="stat-content">
                                 <div class="stat-text">Draft</div>
                                 <div class="stat-digit"></div>
