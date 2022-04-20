@@ -11,6 +11,7 @@ class ServiceRequest(models.Model):
     is_overdue = fields.Boolean()
     is_governmental_fees = fields.Boolean('Governmental Fees')
     governmental_fees = fields.Integer('Governmental Fees Amount')
+    is_out_of_scope = fields.Boolean("Is Out of Scope")
 
     @api.model
     def get_request(self, args=""):
@@ -55,10 +56,11 @@ class ServiceRequest(models.Model):
                                                                             ('is_exceptional', '=', False)])
         progress_exceptional = self.env['ebs_mod.service.request'].search_count([('status', '=', 'progress'),
                                                                                  ('is_exceptional', '=', True)])
+        progress_out_of_scope = self.env['ebs_mod.service.request'].search_count([('is_out_of_scope', '=', True)])
 
         request_dict['overdue'] = overdue
         request_dict['progress_normal'] = progress_normal
-        request_dict['progress_out_of_scope'] = 0
+        request_dict['progress_out_of_scope'] = progress_out_of_scope
         request_dict['progress_exceptional'] = progress_exceptional
         print(request_dict)
         return request_dict
