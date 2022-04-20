@@ -227,6 +227,10 @@ var ServiceDashboard = AbstractAction.extend({
         var self = this;
         e.stopPropagation();
         e.preventDefault();
+        var elem = document.getElementById('daydate');
+        var elem2 = document.getElementById('daydate2');
+        var date_form = elem.value;
+        var date_to = elem2.value;
 //        var elem = document.getElementById('daydate');
 //        var elem2 = document.getElementById('daydate2');
 //        var date_form = elem.value;
@@ -240,7 +244,7 @@ var ServiceDashboard = AbstractAction.extend({
             res_model: 'ebs_mod.service.request',
             view_mode: 'tree,form',
             views: [[false, 'list'],[false, 'form']],
-            domain: [['date', '>=', '2060-01-01'], ['date', '<=', '2070-01-01']],
+            domain: [['date', '>=', date_form], ['date', '<=', date_to],['is_out_of_scope','=',true]],
             target: 'current'
         }, options)
     },

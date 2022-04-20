@@ -19,15 +19,16 @@
             <field name="priority">16</field>
             <field name="type">form</field>
             <field name="arch" type="xml">
-<!--                <xpath expr="/form/header/button[@name='request_progress']" position="attributes">-->
-<!--                    <attribute name="attrs">{'invisible': [('status', 'in', ['hold', 'draft', 'progress', 'complete'])]}</attribute>-->
-<!--                </xpath>-->
+                <!--                <xpath expr="/form/header/button[@name='request_progress']" position="attributes">-->
+                <!--                    <attribute name="attrs">{'invisible': [('status', 'in', ['hold', 'draft', 'progress', 'complete'])]}</attribute>-->
+                <!--                </xpath>-->
                 <xpath expr="//field[@name='is_miscellaneous']" position="after">
                     <field name="is_exceptional" string="Is Exceptional"/>
                     <field name="is_one_time_transaction" string="Is One Time Transaction"/>
                     <field name="is_overdue" invisible="1"/>
                     <field name="is_governmental_fees"/>
                     <field name="governmental_fees" attrs="{'invisible':[('is_governmental_fees','!=', True)]}"/>
+                    <field name="is_out_of_scope"/>
                 </xpath>
                 <xpath expr="/form/sheet/notebook/page/field/tree//field[@name='assign_to']" position="after">
                     <field name="requires_driver"/>
