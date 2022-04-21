@@ -1,5 +1,18 @@
 <odoo>
     <data noupdate="0">
+
+        <record id="notification_of_service_workflow_status" model="mail.activity.type">
+            <field name="name">Notification of service workflow status</field>
+            <field name="icon">fa fa-bell</field>
+            <field name="res_model_id" ref="ebs_qsheild_mod.model_ebs_mod_service_request_workflow"/>
+        </record>
+
+        <record id="notification_of_service_status" model="mail.activity.type">
+            <field name="name">Notification of service status</field>
+            <field name="icon">fa fa-bell</field>
+            <field name="res_model_id" ref="ebs_qsheild_mod.model_ebs_mod_service_request"/>
+        </record>
+
         <record id="mail_template_of_notify_complete_service" model="mail.template">
             <field name="name">Notification of service complete to account manager</field>
             <field name="subject">${object.name} service status notification</field>
