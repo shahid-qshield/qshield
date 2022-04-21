@@ -64,7 +64,7 @@
                                     </div>
                                     <br/>
                                     <img src="/qshield_crm/static/src/img/image3.jpg"
-                                         style="height:727px;width: 1010px;margin-left: -20px;"/>
+                                         style="height:785px;width: 1010px;margin-left: -20px;"/>
                                     <div style="margin-right: 70px!important;margin-left: 70px!important;">
                                         <h1 style="font-family: 'aakar', sans-serif;">ABOUT QSHIELD</h1>
                                         <p class="custom_font">
@@ -128,7 +128,7 @@
                                     <br/>
                                     <br/>
                                     <img src="/qshield_crm/static/src/img/image4.png"
-                                         style="height:735px;width:1010px;margin-left:-20px;"/>
+                                         style="height:795px;width:1010px;margin-left:-20px;"/>
 
                                     <div style="width:100%;float: left;padding-left:70px;">
                                         <div style="width:90%;float: left;">
@@ -328,7 +328,7 @@
                                             </p>
                                         </div>
                                     </div>
-                                    <div style="width:100%;float: left;padding-left:70px;padding-top:250px;">
+                                    <div style="width:100%;float: left;padding-left:70px;padding-top:275px;">
                                         <div style="width:90%;float: left;">
                                             <h1 style="font-family: 'aakar', sans-serif;">SOME OF OUR TOP CLIENTS</h1>
                                             <img style="width:100%" src="/qshield_crm/static/src/img/d12.png"/>
@@ -339,7 +339,7 @@
                                                  style="height:170px;width:55px;"/>
                                         </div>
                                     </div>
-                                    <div style="width:100%;float: left;padding-left:70px;margin-top:40%;">
+                                    <div style="width:100%;float: left;padding-left:70px;padding-top:40%;">
                                         <h1>SCOPE OF WORK</h1>
                                         <h2>
                                             <t t-if="not (env.context.get('proforma', False) or is_pro_forma)">
@@ -539,7 +539,9 @@
                                             <span t-field="o.fiscal_position_id.sudo().note"/>
                                         </p>
                                     </div>
-                                    <div style="width:100%;float: left;padding-left:70px;margin-top:40%;">
+                                    <p style="page-break-after: always;">&amp;nbsp;</p>
+                                    <p style="page-break-before: always;">&amp;nbsp;</p>
+                                    <div style="width:100%;float:left;padding-left:70px;">
                                         <div style="text-align:right;padding-right:70px;">
                                             <img src="/qshield_crm/static/src/img/image2.png"/>
                                         </div>
@@ -565,7 +567,7 @@
                                         </div>
                                     </div>
                                     <img src="/qshield_crm/static/src/img/image3.jpg"
-                                         style="height:572px;width: 1010px;margin-left: -20px;"/>
+                                         style="height:598px;width: 1010px;margin-left: -20px;"/>
                                 </body>
                             </html>
                         </div>
