@@ -115,6 +115,11 @@ class ServiceRequestWorkFlow(models.Model):
         default=lambda self: self.env.user,
     )
 
+    is_show_status = fields.Boolean('Is Show status', related='service_request_id.is_show_status')
+    is_show_new_status = fields.Boolean('Is Show status', related='service_request_id.is_show_new_status')
+    is_edit_status = fields.Boolean('Is Show status', related='service_request_id.is_edit_status')
+    is_edit_status_new = fields.Boolean('Is Show status', related='service_request_id.is_edit_status_new')
+
     def send_notification(self):
         if self.workflow_id.is_application_submission:
             template = self.env.ref('ebs_qsheild_mod.mail_template_of_notify_application_submission_complete',
@@ -128,16 +133,21 @@ class ServiceRequestWorkFlow(models.Model):
                 raise UserError('Please configure recipient email in service settings')
             email_list = email_to_list.split(',')
             user_sudo = self.env.user
+            service_status = dict(self.env['ebs_mod.service.request']._fields['status'].selection).get(
+                self.service_request_id.status)
+            workflow_status = dict(self._fields['status'].selection).get(self.status)
             if template:
-                service_status = dict(self.env['ebs_mod.service.request']._fields['status'].selection).get(
-                    self.service_request_id.status)
-                workflow_status = dict(self._fields['status'].selection).get(self.status)
                 for email_to in email_list:
                     template.sudo().with_context(username=user_sudo.name, email=email_to,
                                                  email_from=outgoing_server.smtp_user,
                                                  service_status=service_status,
                                                  workflow_status=workflow_status).send_mail(
                         self._origin.id, force_send=True)
+            notification_users = self.env['res.users'].sudo().search([('email', 'in', email_list)])
+            mail_activity_type = self.env.ref('ebs_qsheild_mod.notification_of_service_workflow_status').id
+            self.service_request_id.with_context(status=workflow_status, workflow=self.ids).create_schedule_activity(
+                mail_activity_type,
+                notification_users)
 
     @api.onchange('status_new')
     def get_status_new(self):

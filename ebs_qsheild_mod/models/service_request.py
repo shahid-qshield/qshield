@@ -477,8 +477,6 @@ class ServiceRequest(models.Model):
         template = self.env.ref('ebs_qsheild_mod.mail_template_of_notify_complete_service',
                                 raise_if_not_found=False)
         user_sudo = self.env.user
-        # account_manager_group = self.env.ref('ebs_qsheild_mod.qshield_account_manager')
-        # account_managers = self.env['res.users'].search([('groups_id', '=', account_manager_group.id)])
         service_status = dict(self._fields['status'].selection).get(self.status)
         if template:
             outgoing_server = self.env['ir.mail_server'].sudo().search([('smtp_user', '!=', False)], limit=1)
@@ -496,6 +494,40 @@ class ServiceRequest(models.Model):
                                              service_status=service_status,
                                              email_from=outgoing_server.smtp_user).send_mail(self.id,
                                                                                              force_send=True)
+        notification_users = self.env['res.users'].sudo().search([('email', 'in', email_list)])
+        mail_activity_type = self.env.ref('ebs_qsheild_mod.notification_of_service_status').id
+        self.with_context(status=service_status).create_schedule_activity(mail_activity_type, notification_users)
+
+    def create_schedule_activity(self, mail_activity_type=False, notification_users=False):
+        if mail_activity_type and notification_users:
+            domain = [
+                ('activity_type_id', '=', mail_activity_type),
+                ('user_id', 'in', notification_users.ids)
+            ]
+            if self.env.context.get('workflow'):
+                domain.append(('res_model', '=', 'ebs_mod.service.request.workflow'))
+                domain.append(('res_id', 'in', self.env.context.get('workflow')))
+            else:
+                domain.append(('res_model', '=', 'ebs_mod.service.request'))
+                domain.append(('res_id', 'in', self.ids))
+            activities = self.env['mail.activity'].sudo().search(domain)
+            if activities:
+                activities.sudo().action_feedback()
+            status = self.env.context.get('status') if self.env.context.get('status') else ""
+            for user in notification_users:
+                if self.env.context.get('workflow'):
+                    note = _('Service request workflow status is %s') % status
+                    workflow = self.env['ebs_mod.service.request.workflow'].browse(self.env.context.get('workflow'))
+                    workflow.activity_schedule(
+                        'ebs_qsheild_mod.notification_of_service_workflow_status',
+                        note=note,
+                        user_id=user.id)
+                else:
+                    note = _('Service request status is %s') % status
+                    self.activity_schedule(
+                        'ebs_qsheild_mod.notification_of_service_status',
+                        note=note,
+                        user_id=user.id)
 
     def copy(self, default={}):
         default.update({'status': 'draft'})
