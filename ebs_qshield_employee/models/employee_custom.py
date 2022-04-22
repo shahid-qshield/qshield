@@ -5,6 +5,7 @@ import os
 import xlrd
 import datetime
 
+
 class EmployeeCustom(models.Model):
     _inherit = 'hr.employee'
 
@@ -199,6 +200,14 @@ class EmployeeCustom(models.Model):
                                     '%Y-%m-%d')
                             else:
                                 elm[first_row[col]] = False
+                        elif first_row[col] in ['Work Mobile', 'Work Phone', 'Private Phone', 'Identification No',
+                                                'Passport No', 'Visa No', 'Work Permit No', 'Emergency/Telephone No.',
+                                                'Emergency/Mobile No.', 'Emergency/Fax',
+                                                'School/College/University/Year']:
+                            if isinstance(worksheet.cell_value(row, col), float):
+                                elm[first_row[col]] = str(int(worksheet.cell_value(row, col)))
+                            else:
+                                elm[first_row[col]] = worksheet.cell_value(row, col)
                         else:
                             elm[first_row[col]] = worksheet.cell_value(row, col)
                     data.append(elm)
@@ -249,7 +258,6 @@ class EmployeeCustom(models.Model):
                             'permit_no': record.get('Work Permit No'),
                             'visa_expire': record.get('Visa Expire Date'),
                             'certificate': record.get('Certificate Level')
-
                         }
                         if record.get('Work In') != '':
                             work_in = self.env['res.partner'].search([('name', '=', record.get('Work In'))], limit=1)
