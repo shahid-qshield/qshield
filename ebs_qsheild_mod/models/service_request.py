@@ -2,6 +2,9 @@ from odoo import models, fields, api, _
 from odoo.exceptions import ValidationError, UserError
 from datetime import datetime, timedelta, date
 import re
+import logging
+
+logger = logging.getLogger(__name__)
 
 
 class ServiceRequest(models.Model):
@@ -477,16 +480,24 @@ class ServiceRequest(models.Model):
         template = self.env.ref('ebs_qsheild_mod.mail_template_of_notify_complete_service',
                                 raise_if_not_found=False)
         user_sudo = self.env.user
+        email_to_list = []
+        email_list = []
         service_status = dict(self._fields['status'].selection).get(self.status)
+        is_send_service_notification = self.env['ir.config_parameter'].sudo().get_param(
+            'ebs_qsheild_mod.is_send_service_notification')
+        if is_send_service_notification:
+            email_to_list = self.env['ir.config_parameter'].sudo().get_param(
+                'ebs_qsheild_mod.send_notification_email')
+            email_list = email_to_list.split(',')
+            notification_users = self.env['res.users'].sudo().search([('email', 'in', email_list)])
+            mail_activity_type = self.env.ref('ebs_qsheild_mod.notification_of_service_status').id
+            self.with_context(status=service_status).create_schedule_activity(mail_activity_type, notification_users)
         if template:
             outgoing_server = self.env['ir.mail_server'].sudo().search([('smtp_user', '!=', False)], limit=1)
             if not outgoing_server:
-                raise UserError('Please configure out going mail server')
-            email_to_list = self.env['ir.config_parameter'].sudo().get_param(
-                'ebs_qsheild_mod.send_notification_email')
+                logger.info("Please configure out going mail server")
             if not email_to_list:
-                raise UserError('Please configure recipient email in service settings')
-            email_list = email_to_list.split(',')
+                logger.info("Please configure recipient email in service settings")
             for email_to in email_list:
                 complete_date = datetime.now().strftime('%Y-%m-%d %H:%M')
                 template.sudo().with_context(username=user_sudo.name, complete_date=complete_date,
@@ -494,9 +505,6 @@ class ServiceRequest(models.Model):
                                              service_status=service_status,
                                              email_from=outgoing_server.smtp_user).send_mail(self.id,
                                                                                              force_send=True)
-        notification_users = self.env['res.users'].sudo().search([('email', 'in', email_list)])
-        mail_activity_type = self.env.ref('ebs_qsheild_mod.notification_of_service_status').id
-        self.with_context(status=service_status).create_schedule_activity(mail_activity_type, notification_users)
 
     def create_schedule_activity(self, mail_activity_type=False, notification_users=False):
         if mail_activity_type and notification_users:
