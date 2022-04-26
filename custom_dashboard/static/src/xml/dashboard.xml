@@ -126,7 +126,7 @@
                         <div class="oh-card-body" style="background-color: #efefef;">
                             <div class="stat-icon progress_exceptional"><p><t t-esc="widget.progress['progress_exceptional']"/></p></div>
                             <div class="stat-content">
-                                    <div class="stat-text">In Progress Exceptional</div>
+                                    <div class="stat-text">Is Exceptional</div>
                                 <div class="stat-digit"></div>
                                 </div>
                         </div>
@@ -137,7 +137,7 @@
                         <div class="oh-card-body" style="background-color: #efefef;">
                             <div class="stat-icon progress_out_of_scope"><p><t t-esc="widget.progress['progress_out_of_scope']"/></p></div>
                             <div class="stat-content">
-                                    <div class="stat-text">In Progress(Out of Scope)</div>
+                                    <div class="stat-text">Out of Scope</div>
                                 <div class="stat-digit"></div>
                                 </div>
                         </div>
@@ -200,7 +200,9 @@
                         </div>
                     </div>
                 </div>
-                <div class="col-md-2 col-sm-6 request_complete service-state">
+            </div>
+            <div class="row1 main-section">
+                 <div class="col-md-2 col-sm-6 request_complete service-state">
                     <div class="oh-card">
                         <div class="oh-card-body">
                             <div class="stat-widget-one complete-colored">
@@ -210,6 +212,28 @@
                                     <div class="stat-digit complete-colored"></div>
                                 </div>
                             </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-2 col-sm-6 request_miscellaneous service-state">
+                    <div class="oh-card">
+                        <div class="oh-card-body" style="background-color: #efefef;">
+                            <div class="stat-icon request_miscellaneous"><p><t t-esc="widget.progress['request_miscellaneous']"/></p></div>
+                            <div class="stat-content">
+                                    <div class="stat-text">Is Miscellaneous</div>
+                                <div class="stat-digit"></div>
+                                </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-2 col-sm-6 request_one_time_transaction service-state">
+                    <div class="oh-card">
+                        <div class="oh-card-body" style="background-color: #efefef;">
+                            <div class="stat-icon request_one_time_transaction"><p><t t-esc="widget.progress['request_one_time_transaction']"/></p></div>
+                            <div class="stat-content">
+                                    <div class="stat-text">Is One Time Transaction</div>
+                                <div class="stat-digit"></div>
+                                </div>
                         </div>
                     </div>
                 </div>
@@ -273,105 +297,105 @@
                             </tr>
                           </thead>
                     <tbody id="data">
-                       <t t-foreach="widget.drivers" t-as="obj" >
+                       <t t-foreach="widget.drivers" t-as="obj">
                            <tr>
                                <td>
                                   <t t-esc="obj.driver_name"/>
                               </td>
                                <td>
-                                    <t t-foreach="obj.destination" t-as="des" >
+                                    <t t-foreach="obj.destination" t-as="des">
                                          <t t-if="des.slot == '7'">
-                                           <span  t-esc="des.destination + des.slot"/>
+                                           <span t-esc="des.destination + des.slot"/>
                                          </t>
 
                                     </t>
                                </td>
 
                                <td>
-                                   <t t-foreach="obj.destination" t-as="des" >
+                                   <t t-foreach="obj.destination" t-as="des">
                                          <t t-if="des.slot == '8'">
-                                           <span  t-esc="des.destination"/>
+                                           <span t-esc="des.destination"/>
                                          </t>
 
                                     </t>
                                </td>
 
                                <td>
-                                   <t t-foreach="obj.destination" t-as="des" >
+                                   <t t-foreach="obj.destination" t-as="des">
                                          <t t-if="des.slot == '9'">
-                                           <span  t-esc="des.destination"/>
+                                           <span t-esc="des.destination"/>
                                          </t>
 
                                     </t>
                                </td>
                                <td>
-                                   <t t-foreach="obj.destination" t-as="des" >
+                                   <t t-foreach="obj.destination" t-as="des">
                                          <t t-if="des.slot == '10'">
-                                           <span  t-esc="des.destination"/>
+                                           <span t-esc="des.destination"/>
                                          </t>
 
                                     </t>
                                </td>
                                <td>
-                                   <t t-foreach="obj.destination" t-as="des" >
+                                   <t t-foreach="obj.destination" t-as="des">
                                          <t t-if="des.slot == '11'">
-                                           <span  t-esc="des.destination"/>
+                                           <span t-esc="des.destination"/>
                                          </t>
 
                                     </t>
                                </td>
                                <td>
-                                   <t t-foreach="obj.destination" t-as="des" >
+                                   <t t-foreach="obj.destination" t-as="des">
                                          <t t-if="des.slot == '12'">
-                                           <span  t-esc="des.destination"/>
+                                           <span t-esc="des.destination"/>
                                          </t>
 
                                     </t>
                                </td>
                                <td>
-                                   <t t-foreach="obj.destination" t-as="des" >
+                                   <t t-foreach="obj.destination" t-as="des">
                                          <t t-if="des.slot == '1'">
-                                           <span  t-esc="des.destination"/>
+                                           <span t-esc="des.destination"/>
                                          </t>
 
                                     </t>
                                </td>
                                <td>
-                                   <t t-foreach="obj.destination" t-as="des" >
+                                   <t t-foreach="obj.destination" t-as="des">
                                          <t t-if="des.slot == '2'">
-                                           <span  t-esc="des.destination"/>
+                                           <span t-esc="des.destination"/>
                                          </t>
 
                                     </t>
                                </td>
                                <td>
-                                   <t t-foreach="obj.destination" t-as="des" >
+                                   <t t-foreach="obj.destination" t-as="des">
                                          <t t-if="des.slot == '3'">
-                                           <span  t-esc="des.destination "/>
+                                           <span t-esc="des.destination "/>
                                          </t>
 
                                     </t>
                                </td>
                                <td>
-                                   <t t-foreach="obj.destination" t-as="des" >
+                                   <t t-foreach="obj.destination" t-as="des">
                                          <t t-if="des.slot == '4'">
-                                           <span  t-esc="des.destination"/>
+                                           <span t-esc="des.destination"/>
                                          </t>
 
                                     </t>
                                </td>
                                <td>
-                                   <t t-foreach="obj.destination" t-as="des" >
+                                   <t t-foreach="obj.destination" t-as="des">
                                          <t t-if="des.slot == '5'">
-                                           <span  t-esc="des.destination"/>
+                                           <span t-esc="des.destination"/>
                                          </t>
 
                                     </t>
                                </td>
                                <td>
-                                   <t t-foreach="obj.destination" t-as="des" >
+                                   <t t-foreach="obj.destination" t-as="des">
                                          <t t-if="des.slot == '6'">
-                                           <span  t-esc="des.destination"/>
+                                           <span t-esc="des.destination"/>
                                          </t>
 
                                     </t>

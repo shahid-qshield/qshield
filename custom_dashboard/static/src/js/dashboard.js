@@ -35,6 +35,9 @@ var ServiceDashboard = AbstractAction.extend({
         'click .request_escalated_completed' :'request_escalated_completed',
         'click .request_escalated_progress' :'request_escalated_progress',
         'click .request_escalated_incompleted' :'request_escalated_incompleted',
+        'click .request_miscellaneous':'request_miscellaneous',
+        'click .request_one_time_transaction':'request_one_time_transaction',
+
     },
     get_date:function(e){
         var self = this;
@@ -223,6 +226,51 @@ var ServiceDashboard = AbstractAction.extend({
         }, options)
     },
 
+     request_one_time_transaction: function(e){
+        var self = this;
+        e.stopPropagation();
+        e.preventDefault();
+        var elem = document.getElementById('daydate');
+        var elem2 = document.getElementById('daydate2');
+        var date_form = elem.value;
+        var date_to = elem2.value;
+        var options = {
+            on_reverse_breadcrumb: this.on_reverse_breadcrumb,
+        };
+        this.do_action({
+            name: _t("Is One Time Transaction"),
+            type: 'ir.actions.act_window',
+            res_model: 'ebs_mod.service.request',
+            view_mode: 'tree,form',
+            views: [[false, 'list'],[false, 'form']],
+            domain: [['date', '>=', date_form], ['date', '<=', date_to],['is_one_time_transaction','=',true]],
+            target: 'current'
+        }, options)
+    },
+
+     request_miscellaneous: function(e){
+        var self = this;
+        e.stopPropagation();
+        e.preventDefault();
+        var elem = document.getElementById('daydate');
+        var elem2 = document.getElementById('daydate2');
+        var date_form = elem.value;
+        var date_to = elem2.value;
+        var options = {
+            on_reverse_breadcrumb: this.on_reverse_breadcrumb,
+        };
+        this.do_action({
+            name: _t("Is Miscellaneous"),
+            type: 'ir.actions.act_window',
+            res_model: 'ebs_mod.service.request',
+            view_mode: 'tree,form',
+            views: [[false, 'list'],[false, 'form']],
+            domain: [['date', '>=', date_form], ['date', '<=', date_to],['is_miscellaneous','=',true]],
+            target: 'current'
+        }, options)
+    },
+
+
     request_out_of_scope: function(e){
         var self = this;
         e.stopPropagation();
@@ -239,7 +287,7 @@ var ServiceDashboard = AbstractAction.extend({
             on_reverse_breadcrumb: this.on_reverse_breadcrumb,
         };
         this.do_action({
-            name: _t("In Progress Out Of Scope"),
+            name: _t("Out Of Scope"),
             type: 'ir.actions.act_window',
             res_model: 'ebs_mod.service.request',
             view_mode: 'tree,form',
@@ -338,12 +386,12 @@ var ServiceDashboard = AbstractAction.extend({
             on_reverse_breadcrumb: this.on_reverse_breadcrumb,
         };
         this.do_action({
-            name: _t("In Progress Exceptional"),
+            name: _t("Is Exceptional"),
             type: 'ir.actions.act_window',
             res_model: 'ebs_mod.service.request',
             view_mode: 'tree,form',
             views: [[false, 'list'],[false, 'form']],
-            domain: [['is_exceptional','=',true],['status','=', 'progress'], ['date', '>=', date_form], ['date', '<=', date_to]],
+            domain: [['is_exceptional','=',true], ['date', '>=', date_form], ['date', '<=', date_to]],
             target: 'current'
         }, options)
     },
@@ -600,6 +648,8 @@ var ServiceDashboard = AbstractAction.extend({
                 $(".escalated_completed").text(self.progress['escalated_complete']);
                 $(".escalated_incomplete").text(self.progress['escalated_incomplete']);
                 $(".escalated_in_progress").text(self.progress['escalated_progress']);
+                $(".request_one_time_transaction").text(self.progress['request_one_time_transaction']);
+                $(".request_miscellaneous").text(self.progress['request_miscellaneous']);
             });
 
         var def1 =  self._rpc({

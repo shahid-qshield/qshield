@@ -53,15 +53,29 @@ class ServiceRequest(models.Model):
                                                                     ('date', '>=', args.get('date_from')),
                                                                     ('date', '<=', args.get('date_to'))])
         progress_normal = self.env['ebs_mod.service.request'].search_count([('status', '=', 'progress'),
-                                                                            ('is_exceptional', '=', False)])
-        progress_exceptional = self.env['ebs_mod.service.request'].search_count([('status', '=', 'progress'),
-                                                                                 ('is_exceptional', '=', True)])
-        progress_out_of_scope = self.env['ebs_mod.service.request'].search_count([('is_out_of_scope', '=', True)])
+                                                                            ('is_exceptional', '=', False),
+                                                                            ('date', '>=', args.get('date_from')),
+                                                                            ('date', '<=', args.get('date_to'))])
+        progress_exceptional = self.env['ebs_mod.service.request'].search_count([('is_exceptional', '=', True),
+                                                                                 ('date', '>=', args.get('date_from')),
+                                                                                 ('date', '<=', args.get('date_to'))
+                                                                                 ])
+        progress_out_of_scope = self.env['ebs_mod.service.request'].search_count([('is_out_of_scope', '=', True),
+                                                                                  ('date', '>=', args.get('date_from')),
+                                                                                  ('date', '<=', args.get('date_to'))])
+        request_miscellaneous = self.env['ebs_mod.service.request'].search_count([('is_miscellaneous', '=', True),
+                                                                                  ('date', '>=', args.get('date_from')),
+                                                                                  ('date', '<=', args.get('date_to'))
+                                                                                  ])
+        request_one_time_transaction = self.env['ebs_mod.service.request'].search_count(
+            [('is_one_time_transaction', '=', True)])
 
         request_dict['overdue'] = overdue
         request_dict['progress_normal'] = progress_normal
         request_dict['progress_out_of_scope'] = progress_out_of_scope
         request_dict['progress_exceptional'] = progress_exceptional
+        request_dict['request_miscellaneous'] = request_miscellaneous
+        request_dict['request_one_time_transaction'] = request_one_time_transaction
         print(request_dict)
         return request_dict
 
