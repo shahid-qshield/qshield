@@ -112,11 +112,11 @@
                                 groups="ebs_qsheild_mod.qshield_operational_manager"/>
 
                         <button name="request_escalated_in_complete" string="Escalated Incomplete" type="object"
-                                attrs="{'invisible':[('status','!=','escalated')]}"
+                                attrs="{'invisible':[('status','not in',['escalated','escalated_progress'])]}"
                                 groups="ebs_qsheild_mod.qshield_operational_manager"/>
 
                         <button name="request_escalated_complete" string="Escalated Completed" type="object"
-                                attrs="{'invisible':[('status','!=','escalated')]}"
+                                attrs="{'invisible':[('status','not in',['escalated','escalated_progress'])]}"
                                 groups="ebs_qsheild_mod.qshield_operational_manager"/>
                         <field name="status" widget="statusbar" statusbar_visible=" "/>
 
@@ -554,11 +554,11 @@
                                 groups="ebs_qsheild_mod.qshield_operational_manager"/>
 
                         <button name="request_escalated_in_complete" string="Escalated Incomplete" type="object"
-                                attrs="{'invisible':[('status','!=','escalated')]}"
+                                attrs="{'invisible':[('status','not in',['escalated','escalated_progress'])]}"
                                 groups="ebs_qsheild_mod.qshield_operational_manager"/>
 
                         <button name="request_escalated_complete" string="Escalated Completed" type="object"
-                                attrs="{'invisible':[('status','!=','escalated')]}"
+                                attrs="{'invisible':[('status','not in',['escalated','escalated_progress'])]}"
                                 groups="ebs_qsheild_mod.qshield_operational_manager"/>
 
                         <field name="status" widget="statusbar" statusbar_visible=" "/>
