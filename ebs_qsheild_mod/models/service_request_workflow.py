@@ -1,6 +1,9 @@
 from odoo import models, fields, api, _
 from odoo.exceptions import ValidationError, UserError
 from datetime import datetime, timedelta, date
+import logging
+
+logger = logging.getLogger(__name__)
 
 
 class ServiceRequestWorkFlow(models.Model):
@@ -122,20 +125,31 @@ class ServiceRequestWorkFlow(models.Model):
 
     def send_notification(self):
         if self.workflow_id.is_application_submission:
+            email_to_list = []
+            email_list = []
+            is_send_service_notification = self.env['ir.config_parameter'].sudo().get_param(
+                'ebs_qsheild_mod.is_send_service_notification')
+            workflow_status = dict(self._fields['status'].selection).get(self.status)
+            if is_send_service_notification:
+                email_to_list = self.env['ir.config_parameter'].sudo().get_param(
+                    'ebs_qsheild_mod.send_notification_email')
+                email_list = email_to_list.split(',')
+                notification_users = self.env['res.users'].sudo().search([('email', 'in', email_list)])
+                mail_activity_type = self.env.ref('ebs_qsheild_mod.notification_of_service_workflow_status').id
+                self.service_request_id.with_context(status=workflow_status,
+                                                     workflow=self.ids).create_schedule_activity(
+                    mail_activity_type,
+                    notification_users)
             template = self.env.ref('ebs_qsheild_mod.mail_template_of_notify_application_submission_complete',
                                     raise_if_not_found=False)
             outgoing_server = self.env['ir.mail_server'].sudo().search([('smtp_user', '!=', False)], limit=1)
             if not outgoing_server:
-                raise UserError('Please configure out going mail server')
-            email_to_list = self.env['ir.config_parameter'].sudo().get_param(
-                'ebs_qsheild_mod.send_notification_email')
+                logger.info("Please configure out going mail server")
             if not email_to_list:
-                raise UserError('Please configure recipient email in service settings')
-            email_list = email_to_list.split(',')
+                logger.info("Please configure recipient email in service settings")
             user_sudo = self.env.user
             service_status = dict(self.env['ebs_mod.service.request']._fields['status'].selection).get(
                 self.service_request_id.status)
-            workflow_status = dict(self._fields['status'].selection).get(self.status)
             if template:
                 for email_to in email_list:
                     template.sudo().with_context(username=user_sudo.name, email=email_to,
@@ -143,11 +157,6 @@ class ServiceRequestWorkFlow(models.Model):
                                                  service_status=service_status,
                                                  workflow_status=workflow_status).send_mail(
                         self._origin.id, force_send=True)
-            notification_users = self.env['res.users'].sudo().search([('email', 'in', email_list)])
-            mail_activity_type = self.env.ref('ebs_qsheild_mod.notification_of_service_workflow_status').id
-            self.service_request_id.with_context(status=workflow_status, workflow=self.ids).create_schedule_activity(
-                mail_activity_type,
-                notification_users)
 
     @api.onchange('status_new')
     def get_status_new(self):
