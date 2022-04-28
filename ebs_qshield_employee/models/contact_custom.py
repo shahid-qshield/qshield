@@ -13,8 +13,9 @@ class ContactCustom(models.Model):
     employee_ids = fields.One2many('hr.employee', 'partner_id', string="Related Employee", auto_join=True)
     is_qshield_sponsor = fields.Boolean(string='Is Qshield Sponsor')
     check_qshield_sponsor = fields.Boolean(compute="compute_check_qshield_sponsor")
+    is_address = fields.Boolean(string="Is Address", default=False)
 
-    @api.depends('sponsor','person_type')
+    @api.depends('sponsor', 'person_type')
     def compute_check_qshield_sponsor(self):
         for rec in self:
             if rec.sponsor and rec.sponsor.is_qshield_sponsor and rec.person_type == 'emp':

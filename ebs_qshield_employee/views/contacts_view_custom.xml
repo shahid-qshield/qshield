@@ -1,6 +1,12 @@
 <?xml version='1.0' encoding='UTF-8' ?>
 <odoo>
     <data>
+        <record id="base.action_partner_form" model="ir.actions.act_window">
+            <field name="domain">[('is_address', '=', False)]</field>
+        </record>
+        <record id="contacts.action_contacts" model="ir.actions.act_window">
+            <field name="domain">[('is_address', '=', False)]</field>
+        </record>
         <record id="res_partner_view_form_private_custom" model="ir.ui.view">
             <field name="name">res.partner.view.form.private.custom</field>
             <field name="model">res.partner</field>
@@ -21,6 +27,7 @@
                 <xpath expr="//field[@name='parent_id']" position="after">
                     <field name="check_qshield_sponsor" invisible="1"/>
                     <field name="is_qshield_sponsor"/>
+                    <field name="is_address" invisible="1"/>
                     <field name="employee_ids" context="{'get_partner_id' : active_id}"
                            attrs="{'invisible':[('check_qshield_sponsor','=',False)]}"/>
                 </xpath>
