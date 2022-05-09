@@ -245,6 +245,7 @@ class EmployeeCustom(models.Model):
                             'private_email': record.get('Private Email'),
                             'phone': record.get('Private Phone'),
                             'identification_id': record.get('Identification No'),
+                            'qid_number': record.get('Identification No'),
                             'passport_id': record.get('Passport No'),
                             'gender': gender,
                             'marital': marital_status,
