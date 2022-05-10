@@ -31,18 +31,21 @@
                                 <link href='https://fonts.googleapis.com/css?family=Playfair Display' rel='stylesheet'/>
                                 <link href="http://fonts.cdnfonts.com/css/aakar" rel="stylesheet"/>
                                 <link href="http://fonts.cdnfonts.com/css/times-new-roman" rel="stylesheet"/>
+                                <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Verdana"/>
+                                <link rel="stylesheet"
+                                      href="https://fonts.googleapis.com/css?family=Georgia"/>
                                 <style type="text/css">
                                     body{
                                     text-align:justify;
                                     font-size:12px;
                                     }
                                     .custom_font{
-                                    font-family: Arial, Helvetica, Verdana, sans-serif;
+                                    font-family: Verdana,serif!important;
                                     font-size: 18px;
                                     }
                                 </style>
                                 <body>
-                                    <div style="text-align:center;font-family: 'Times New Roman', Georgia, serif;">
+                                    <div style="text-align:center;font-family:Georgia sans-serif !important;">
                                         <img src="/qshield_crm/static/src/img/image2.png"/>
                                         <br/>
                                         <br/>
@@ -66,7 +69,7 @@
                                     <img src="/qshield_crm/static/src/img/image3.jpg"
                                          style="height:785px;width: 1010px;margin-left: -20px;"/>
                                     <div style="margin-right: 70px!important;margin-left: 70px!important;">
-                                        <h1 style="font-family: 'aakar', sans-serif;">ABOUT QSHIELD</h1>
+                                        <h1 style="font-family: Georgia sans-serif !important;">ABOUT QSHIELD</h1>
                                         <p class="custom_font">
                                             Having an evolving and comprehensive catalog of services, QShield helps
                                             overcome
@@ -127,12 +130,15 @@
                                     </div>
                                     <br/>
                                     <br/>
-                                    <img src="/qshield_crm/static/src/img/image4.png"
+                                    <img src="/qshield_crm/static/src/img/test.jpg"
                                          style="height:795px;width:1010px;margin-left:-20px;"/>
+                                    <!--                                    <img src="/qshield_crm/static/src/img/image4.png"-->
+                                    <!--                                         style="height:795px;width:1010px;margin-left:-20px;"/>-->
 
                                     <div style="width:100%;float: left;padding-left:70px;">
                                         <div style="width:90%;float: left;">
-                                            <h1 style="font-family: 'aakar', sans-serif;">WHY CHOOSE QSHIELD?</h1>
+                                            <h1 style="font-family:Georgia sans-serif !important;">WHY CHOOSE QSHIELD?
+                                            </h1>
                                             <p class="custom_font">As Qatar's first immigration service provider, we are
                                                 proud of our long track
                                                 of success stories and exceptional knowledge regarding the rules and
@@ -161,7 +167,7 @@
                                     <br/>
                                     <div style="width:100%;float: left;padding-left:70px;">
                                         <div style="width:34%;float: left;">
-                                            <h3 style="font-family: 'Times New Roman', Georgia, serif;">MEMBER AT:</h3>
+                                            <h3 style="font-family: Georgia sans-serif !important;">MEMBER AT:</h3>
                                             <ul>
                                                 <li>American Chamber of Commerce</li>
                                                 <li>French Chamber of Commerce</li>
@@ -170,7 +176,7 @@
                                             </ul>
                                         </div>
                                         <div style="width:33%;float: left;">
-                                            <h3 style="font-family: 'Times New Roman', Georgia, serif;">AWARDS FROM:
+                                            <h3 style="font-family: Georgia sans-serif !important;">AWARDS FROM:
                                             </h3>
                                             <ul>
                                                 <li>Ministry of Interior</li>
@@ -178,7 +184,7 @@
                                             </ul>
                                         </div>
                                         <div style="width:33%;float: left;">
-                                            <h3 style="font-family: 'Times New Roman', Georgia, serif;">ACCREDITED BY:
+                                            <h3 style="font-family: Georgia sans-serif !important;">ACCREDITED BY:
                                             </h3>
                                             <ul>
                                                 <li>Ministry of Interior</li>
@@ -256,7 +262,7 @@
                                     </div>
                                     <div style="width:100%;float: left;padding-left:70px;padding-top:150px;">
                                         <div style="width:90%;float: left;">
-                                            <h1 style="font-family: 'aakar', sans-serif;">OUR SERVICES</h1>
+                                            <h1 style="font-family:Georgia sans-serif !important;">OUR SERVICES</h1>
                                             <p class="custom_font">Our professional consultants assist clients with
                                                 every step of the immigration procedure, including advising on company
                                                 structure, name registration, scheduling visa appointments, attestation
@@ -330,7 +336,7 @@
                                     </div>
                                     <div style="width:100%;float: left;padding-left:70px;padding-top:275px;">
                                         <div style="width:90%;float: left;">
-                                            <h1 style="font-family: 'aakar', sans-serif;">SOME OF OUR TOP CLIENTS</h1>
+                                            <h1 style="font-family:Georgia sans-serif !important;">SOME OF OUR TOP CLIENTS</h1>
                                             <img style="width:100%" src="/qshield_crm/static/src/img/d12.png"/>
                                             <img style="width:100%" src="/qshield_crm/static/src/img/d13.png"/>
                                         </div>
@@ -340,7 +346,7 @@
                                         </div>
                                     </div>
                                     <div style="width:100%;float: left;padding-left:70px;padding-top:40%;">
-                                        <h1>SCOPE OF WORK</h1>
+                                        <h1 style="font-family:Georgia sans-serif !important;">SCOPE OF WORK</h1>
                                         <h2>
                                             <t t-if="not (env.context.get('proforma', False) or is_pro_forma)">
                                                 <span t-if="o.state not in ['draft','sent']">Order #</span>
@@ -546,8 +552,8 @@
                                             <img src="/qshield_crm/static/src/img/image2.png"/>
                                         </div>
                                         <div>
-                                            <h1 style="font-family: 'Times New Roman', Georgia, serif;">FOR</h1>
-                                            <h1 style="font-family: 'Times New Roman', Georgia, serif;">FURTHER</h1>
+                                            <h1 style="font-family: Georgia sans-serif !important;">FOR</h1>
+                                            <h1 style="font-family: Georgia sans-serif !important;">FURTHER</h1>
                                             <h1 style="font-family: 'Times New Roman', Georgia, serif;">INQUIRIES</h1>
                                             <p style="font-size: 24pt;">
                                                 Phone
