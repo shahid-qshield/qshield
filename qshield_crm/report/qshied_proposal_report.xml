@@ -343,7 +343,9 @@
                                                  style="height:170px;width:55px;"/>
                                         </div>
                                     </div>
-                                    <div style="width:100%;float: left;padding-left:70px;padding-top:40%;">
+                                    <div style="width:100%;float: left;padding-left:70px;padding-top:43%;">
+                                        <br/>
+                                        <br/>
                                         <h1 style="font-family:Georgia sans-serif !important;">SCOPE OF WORK</h1>
                                         <h2>
                                             <t t-if="not (env.context.get('proforma', False) or is_pro_forma)">
