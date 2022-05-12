@@ -21,7 +21,7 @@
                                             <br/>
                                             Date:
                                             <span style="padding-right:5px;"
-                                                  t-esc="o.print_date"/>
+                                                  t-esc="o['print_date'].strftime('%d-%b-%Y')"/>
                                         </strong>
                                     </p>
                                 </div>
@@ -40,33 +40,33 @@
                                 <div align="center">
                                     <p style="line-height: 2;">
                                         <strong>SUBJECT: SALARY CERTIFICATE Of
-                                            MR.
+                                            <t t-if="o.employee_id.gender == 'male'"> MR. </t> <t t-if="o.employee_id.gender == 'female' and o.employee_id.marital == 'single'"> MISS. </t> <t t-if="o.employee_id.gender == 'female' and o.employee_id.marital == 'married'"> MRS. </t>
                                             <span style="padding-right:5px;" t-field="o.employee_id.name"/>
                                         </strong>
                                     </p>
                                 </div>
                                 <div>
-                                    <p>Dear Sir/Mam,</p>
+                                    <p>Dear <t t-if="o.employee_id.gender == 'male'">Sir</t><t t-if="o.employee_id.gender == 'female'">Mam</t>,</p>
                                 </div>
 
                                 <p style="line-height: 2;">
-                                    This is to certify that Mr.<span style="padding-right:5px;"
+                                    This is to certify that <t t-if="o.employee_id.gender == 'male'"> Mr. </t> <t t-if="o.employee_id.gender == 'female' and o.employee_id.marital == 'single'"> Miss. </t> <t t-if="o.employee_id.gender == 'female' and o.employee_id.marital == 'married'"> Mrs. </t><span style="padding-right:5px;"
                                                                      t-field="o.employee_id.name"/>,
                                     holding QID No.
                                     <span style="padding-right:5px;" t-field="o.employee_id.qid_number"/>
                                     is confirmed employee of QShield LLC., Commercial Registration No.
                                     <span style="padding-right:5px;"
                                           t-field="o.employee_id.company_id.company_registry"/>.
-                                    He joined the company on
-                                    <span style="padding-right:5px;" t-field="o.employee_id.joining_date"/>
-                                    and he is currently working as
+                                    <t t-if="o.employee_id.gender == 'male'"> He </t><t t-if="o.employee_id.gender == 'female'">She</t> joined the company
+                                    <span style="padding-right:5px;" t-esc="o.employee_id['joining_date'].strftime('%d-%b-%Y')"/>
+                                    and is currently working as
                                     <span style="padding-right:5px;" t-field="o.employee_id.job_id.name"/>.
-                                    His present salary is
+                                    <t t-if="o.employee_id.gender == 'male'"> His </t><t t-if="o.employee_id.gender == 'female'">Her</t> present salary is
                                     <span style="padding-right:5px;" t-field="o.gross_salary"/>
                                     (
                                     <span style="padding-right:5px;" t-field="o.num_word"/>) per month.
-                                    He is also entitled to company accommodation, air ticket and leave salary.
-                                    He is residing in
+                                    <t t-if="o.employee_id.gender == 'male'"> he </t><t t-if="o.employee_id.gender == 'female'">she</t> is also entitled to company accommodation, air ticket and leave salary.
+                                    <t t-if="o.employee_id.gender == 'male'"> he </t><t t-if="o.employee_id.gender == 'female'">she</t> is residing in
                                     <t t-if="o.employee_id.address_home_id">
                                         <span style="padding-right:5px;"
                                               t-field="o.employee_id.address_home_id.street">
@@ -89,7 +89,7 @@
                                     </t>
                                 </p>
                                 <p>
-                                    To assist Mr.
+                                    To assist  <t t-if="o.employee_id.gender == 'male'"> Mr. </t> <t t-if="o.employee_id.gender == 'female' and o.employee_id.marital == 'single'"> Miss. </t> <t t-if="o.employee_id.gender == 'female' and o.employee_id.marital == 'married'"> Mrs. </t>
                                     <span style="padding-right:5px;" t-field="o.employee_id.name"/>
                                     in
                                     <span style="padding-right:5px;" t-field="o.subject_from"/>
@@ -98,8 +98,8 @@
                                     Account once the account number is availed.
                                 </p>
                                 <p>
-                                    We confirm that his monthly salary less any authorized deduction will continue to be
-                                    transferred to his account with your bank. The above will not cancel this
+                                    We confirm that <t t-if="o.employee_id.gender == 'male'"> his </t><t t-if="o.employee_id.gender == 'female'">her</t> monthly salary less any authorized deduction will continue to be
+                                    transferred to <t t-if="o.employee_id.gender == 'male'"> his </t><t t-if="o.employee_id.gender == 'female'">her</t> account with your bank. The above will not cancel this
                                     instruction
                                     unless a clearance letter is produced from
                                     <span style="padding-right:5px;" t-field="o.addressed_to"/>
@@ -107,13 +107,13 @@
                                     that the liabilities have been repaid in full.
                                 </p>
                                 <p>
-                                    If Mr.
+                                    If <t t-if="o.employee_id.gender == 'male'"> Mr. </t> <t t-if="o.employee_id.gender == 'female' and o.employee_id.marital == 'single'"> Miss. </t> <t t-if="o.employee_id.gender == 'female' and o.employee_id.marital == 'married'"> Mrs. </t>
                                     <span style="padding-right:5px;" t-field="o.employee_id.name"/>
-                                    resigns or terminates his employment,
-                                    we will inform you accordingly and pay all amounts due to him inclusive of end of
-                                    service benefits to his account with<span style="padding-right:5px;"
+                                    resigns or terminates <t t-if="o.employee_id.gender == 'male'"> his </t><t t-if="o.employee_id.gender == 'female'">her</t> employment,
+                                    we will inform you accordingly and pay all amounts due to <t t-if="o.employee_id.gender == 'male'"> him </t><t t-if="o.employee_id.gender == 'female'">her</t> inclusive of end of
+                                    service benefits to <t t-if="o.employee_id.gender == 'male'"> his </t><t t-if="o.employee_id.gender == 'female'">her</t> account with<span style="padding-right:5px;"
                                                                               t-field="o.addressed_to"/>.
-                                    Currently employee End of service amounts is QAR
+                                    Currently employee End of service amount is QAR
                                     <span style="padding-right:5px;"
                                           t-field="o.end_of_service_benefit"/>
                                     <t t-if="o.end_of_service_benefit > 0">/-</t>
