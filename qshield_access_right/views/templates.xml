@@ -19,6 +19,9 @@
             <field name="arch" type="xml">
 
                 <!--                old group for letter request groups="hr.group_hr_manager"-->
+                <button name="%(qshield_letter_request.act_hr_letter_request_list)d" position="attributes">
+                    <attribute name="groups">ebs_qshield_employee.group_hr_services</attribute>
+                </button>
                 <button name="%(qshield_letter_request.open_view_ebs_hr_letter_request)d" position="attributes">
                     <attribute name="groups">ebs_qshield_employee.group_hr_services</attribute>
                 </button>

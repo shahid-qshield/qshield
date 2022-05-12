@@ -51,7 +51,11 @@
                     </button>
                 </div>
                 <header position="inside">
-                    <button name="%(open_view_ebs_hr_letter_request)d" string="Request Letter" type="action"
+                    <button name="%(qshield_letter_request.open_view_ebs_hr_letter_request)d" string="Request Letter"
+                            type="action"
+                            invisible="1"/>
+                    <button name="%(qshield_letter_request.act_hr_letter_request_list)d" string="Request Letter"
+                            type="action"
                             groups="hr.group_hr_manager"/>
                 </header>
 
@@ -59,49 +63,49 @@
                     <field name="signatory"/>
                 </xpath>
 
-<!--                <xpath expr="//sheet/div[@name='button_box']" position="inside">-->
-<!--                    <button name="custom_open_document" class="oe_stat_button"-->
-<!--                            icon="fa-file" type="object">-->
-<!--                        <field name="document_count" string="Documents" widget="statinfo"/>-->
-<!--                    </button>-->
-<!--                </xpath>-->
+                <!--                <xpath expr="//sheet/div[@name='button_box']" position="inside">-->
+                <!--                    <button name="custom_open_document" class="oe_stat_button"-->
+                <!--                            icon="fa-file" type="object">-->
+                <!--                        <field name="document_count" string="Documents" widget="statinfo"/>-->
+                <!--                    </button>-->
+                <!--                </xpath>-->
             </field>
         </record>
 
 
-<!--        <record id="hr_employee_view_search" model="ir.ui.view">-->
-<!--            <field name="name">hr.employee.search.view.inherit</field>-->
-<!--            <field name="model">hr.employee</field>-->
-<!--            <field name="inherit_id" ref="hr.view_employee_filter"/>-->
-<!--            <field name="arch" type="xml">-->
-<!--                <xpath expr="//field[@name='job_id']" position="after">-->
-<!--                    <filter string="Birth Month" name="month" context="{'group_by':'birth_month'}"/>-->
-<!--                </xpath>-->
-<!--            </field>-->
-<!--        </record>-->
+        <!--        <record id="hr_employee_view_search" model="ir.ui.view">-->
+        <!--            <field name="name">hr.employee.search.view.inherit</field>-->
+        <!--            <field name="model">hr.employee</field>-->
+        <!--            <field name="inherit_id" ref="hr.view_employee_filter"/>-->
+        <!--            <field name="arch" type="xml">-->
+        <!--                <xpath expr="//field[@name='job_id']" position="after">-->
+        <!--                    <filter string="Birth Month" name="month" context="{'group_by':'birth_month'}"/>-->
+        <!--                </xpath>-->
+        <!--            </field>-->
+        <!--        </record>-->
 
-<!--        <record model="ir.ui.view" id="ebs_hr_employee_public_custom_form">-->
-<!--            <field name="name">ebs.hr.employee.public.custom.form</field>-->
-<!--            <field name="model">hr.employee.public</field>-->
-<!--            <field name="inherit_id" ref="hr.hr_employee_public_view_form"/>-->
-<!--            <field name="arch" type="xml">-->
-<!--                <xpath expr="//field[@name='parent_id']" position="after">-->
-<!--                    <field name="signatory"/>-->
-<!--                </xpath>-->
-<!--            </field>-->
-<!--        </record>-->
+        <!--        <record model="ir.ui.view" id="ebs_hr_employee_public_custom_form">-->
+        <!--            <field name="name">ebs.hr.employee.public.custom.form</field>-->
+        <!--            <field name="model">hr.employee.public</field>-->
+        <!--            <field name="inherit_id" ref="hr.hr_employee_public_view_form"/>-->
+        <!--            <field name="arch" type="xml">-->
+        <!--                <xpath expr="//field[@name='parent_id']" position="after">-->
+        <!--                    <field name="signatory"/>-->
+        <!--                </xpath>-->
+        <!--            </field>-->
+        <!--        </record>-->
 
-<!--        <record model="ir.ui.view" id="hr_employee_tree_inherit_add_columns">-->
-<!--            <field name="name">ebs.hr.employee.tree</field>-->
-<!--            <field name="model">hr.employee</field>-->
-<!--            <field name="inherit_id" ref="hr.view_employee_tree"/>-->
-<!--            <field name="arch" type="xml">-->
-<!--                <field name="name" position="before">-->
-<!--                    <field name="registration_number" string="Employee Number"/>-->
-<!--                </field>-->
+        <!--        <record model="ir.ui.view" id="hr_employee_tree_inherit_add_columns">-->
+        <!--            <field name="name">ebs.hr.employee.tree</field>-->
+        <!--            <field name="model">hr.employee</field>-->
+        <!--            <field name="inherit_id" ref="hr.view_employee_tree"/>-->
+        <!--            <field name="arch" type="xml">-->
+        <!--                <field name="name" position="before">-->
+        <!--                    <field name="registration_number" string="Employee Number"/>-->
+        <!--                </field>-->
 
-<!--            </field>-->
-<!--        </record>-->
+        <!--            </field>-->
+        <!--        </record>-->
 
         <record id="hr_contract.hr_employee_view_kanban" model="ir.ui.view">
             <field name="groups_id" eval="[(4,ref('hr.group_hr_user'))]"/>
