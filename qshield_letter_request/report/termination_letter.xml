@@ -18,7 +18,7 @@
                                     <p style="  line-height: 2; text-align: justify;"><strong>Ref. No.
                                         <span style="padding-right:5px;" t-field="o.name"/><br/>
                                             Date: <span style="padding-right:5px;"
-                                                        t-esc="o.print_date"/></strong></p>
+                                                        t-esc="o['print_date'].strftime('%d-%b-%Y')"/></strong></p>
                                 </div>
 
                                 <div>
@@ -39,7 +39,7 @@
                                 </div>
                                 <p style="line-height: 2;">
                                     We regret to inform you that your employment with QShield LLC is being terminated,
-                                    effective on <span style="padding-right:5px;" t-field="o.termination_date"/>
+                                    effective on <span style="padding-right:5px;" t-esc="o['termination_date'].strftime('%d-%b-%Y')"/>
                                      and this (<span style="padding-right:5px;" t-field="o.notice_period"/>) notice period.
 
                                 </p>

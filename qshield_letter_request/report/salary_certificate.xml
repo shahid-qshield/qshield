@@ -18,7 +18,7 @@
                                     <p style="  line-height: 2; text-align: justify;"><strong>Ref. No.
                                         <span style="padding-right:5px;" t-field="o.name"/><br/>
                                             Date: <span style="padding-right:5px;"
-                                                        t-esc="o.print_date"/></strong></p>
+                                                       t-esc="o['print_date'].strftime('%d-%b-%Y')" /></strong></p>
                                 </div>
 
                                 <div>
@@ -31,28 +31,28 @@
                                 <div align="center" >
                                     <p style="line-height: 2;">
                                         <strong>SUBJECT: SALARY CERTIFICATE Of
-                                        MR. <span style="padding-right:5px;" t-field="o.employee_id.name"/></strong>
+                                       <t t-if="o.employee_id.gender == 'male'"> MR. </t> <t t-if="o.employee_id.gender == 'female' and o.employee_id.marital == 'single'"> MISS. </t> <t t-if="o.employee_id.gender == 'female' and o.employee_id.marital == 'married'"> MRS. </t><span style="padding-right:5px;" t-field="o.employee_id.name"/></strong>
                                     </p>
                                 </div>
                                 <div>
-                                    <p>Dear Sir/Mam,</p>
+                                    <p>Dear <t t-if="o.employee_id.gender == 'male'">Sir</t><t t-if="o.employee_id.gender == 'female'">Mam</t>,</p>
                                 </div>
 
                                 <p style="line-height: 2;">
-                                    This to confirm that Mr.  <span style="padding-right:5px;" t-field="o.employee_id.name"/>,
+                                    This to confirm that <t t-if="o.employee_id.gender == 'male'"> Mr. </t> <t t-if="o.employee_id.gender == 'female' and o.employee_id.marital == 'single'"> Miss. </t> <t t-if="o.employee_id.gender == 'female' and o.employee_id.marital == 'married'"> Mrs. </t> <span style="padding-right:5px;" t-field="o.employee_id.name"/>,
                                     <span style="padding-right:5px;" t-field="o.employee_id.country_id.name"/>Nationality,
                                     holding a Passport No. <span style="padding-right:5px;" t-field="o.employee_id.passport_id"/> and QID No.
-                                    <span style="padding-right:5px;" t-field="o.employee_id.qid_number"/> is a confirmed employee of SAP
-                                     <span style="padding-right:5px;" t-field="o.employee_id.company_id.partner_id.name"/>.
-                                     He joined the company on
-                                    <span style="padding-right:5px;" t-field="o.employee_id.joining_date"/>
-                                    and he is currently working as
+                                    <span style="padding-right:5px;" t-field="o.employee_id.qid_number"/> is a confirmed employee of
+                                     <span style="padding-right:5px;" t-field="o.employee_id.company_id.partner_id.name"/>, LLC.
+                                    <t t-if="o.employee_id.gender == 'male'"> He </t><t t-if="o.employee_id.gender == 'female'">She</t> joined the company
+                                    <span style="padding-right:5px;" t-esc="o.employee_id['joining_date'].strftime('%d-%b-%Y')"/>
+                                    and is currently working as
                                     <span style="padding-right:5px;" t-field="o.employee_id.job_id.name"/>.
-                                    His monthly salary amounts to <span style="padding-right:5px;" t-field="o.gross_salary"/>  (
-                                   <span style="padding-right:5px;" t-field="o.num_word"/>Only) per monthly.
+                                    <t t-if="o.employee_id.gender == 'male'"> His </t><t t-if="o.employee_id.gender == 'female'">Her</t> salary is <span style="padding-right:5px;" t-field="o.gross_salary"/>  (
+                                   <span style="padding-right:5px;" t-field="o.num_word"/>Only) per month.
                                 </p><br/>
                                 <p>This certificate is being issued upon request of the above employee for whatever
-                                    purpose it may serve him best with no liabilities on the company.</p>
+                                    purpose it may serve <t t-if="o.employee_id.gender == 'male'"> him </t><t t-if="o.employee_id.gender == 'female'">her</t> best with no liabilities to the company.</p>
                                 <br/><br/><br/>
                                 <div>
                                     Yours faithfully,<br/>
