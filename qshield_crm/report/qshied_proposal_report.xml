@@ -27,553 +27,265 @@
                     <t t-call="web.basic_layout">
                         <div class="page">
                             <html>
-                                <link href="http://fonts.cdnfonts.com/css/georgia" rel="stylesheet"/>
-                                <link href='https://fonts.googleapis.com/css?family=Playfair Display' rel='stylesheet'/>
-                                <link href="http://fonts.cdnfonts.com/css/aakar" rel="stylesheet"/>
-                                <link href="http://fonts.cdnfonts.com/css/times-new-roman" rel="stylesheet"/>
-                                <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Verdana"/>
-                                <link rel="stylesheet"
-                                      href="https://fonts.googleapis.com/css?family=Georgia"/>
+                                <link href="https://fonts.googleapis.com/css2?family=Prata&amp;display=swap"
+                                      rel="stylesheet"/>
+                                <link href="https://fonts.googleapis.com/css2?family=Bentham&amp;family=Prata&amp;display=swap"
+                                      rel="stylesheet"/>
                                 <style type="text/css">
                                     body{
                                     text-align:justify;
                                     font-size:12px;
                                     }
-                                    .custom_font{
-                                    font-family: Verdana,serif!important;
-                                    font-size: 18px;
-                                    }
                                 </style>
                                 <body>
-                                    <div style="text-align:center;font-family:Georgia sans-serif !important;">
-                                        <img src="/qshield_crm/static/src/img/image2.png"/>
-                                        <br/>
-                                        <br/>
-                                        <h1>
-                                            PROFESSIONAL
+                                    <div style="text-align:center;">
+                                        <img src="/qshield_crm/static/src/img/1.png"
+                                             style="margin-bottom:20px;height:130px;width: 150px;"/>
+                                        <h1 style="font-family: 'Prata', serif; padding-top:90px;">
+                                            PROFESSIONAL SERVICES
                                             <br/>
-                                            SERVICES PROPOSAL
+                                            PROPOSAL
                                         </h1>
                                         <br/>
                                         <br/>
-                                        <h3>presented for
+                                        <h3 style="font-family: 'Prata', serif;">presented for
                                         </h3>
                                         <br/>
                                         <br/>
-                                        <h1>
+                                        <h1 style="font-family: 'Bentham', serif;">
                                             <span t-field="o.company_id.name"/>
                                         </h1>
-                                        <h3 t-esc="datetime.datetime.now().date()"></h3>
+                                        <h3 t-esc="datetime.datetime.now().date()"
+                                            style="font-family: 'Prata', serif;"></h3>
                                     </div>
-                                    <br/>
                                     <img src="/qshield_crm/static/src/img/image3.jpg"
-                                         style="height:785px;width: 1010px;margin-left: -20px;"/>
-                                    <div style="margin-right: 70px!important;margin-left: 70px!important;">
-                                        <h1 style="font-family: Georgia sans-serif !important;">ABOUT QSHIELD</h1>
-                                        <p class="custom_font">
-                                            Having an evolving and comprehensive catalog of services, QShield helps
-                                            overcome
-                                            the challenges of starting your business in Qatar and run it successfully.
-                                        </p>
-                                        <br/>
-                                        <p class="custom_font">
-                                            Our team consists of highly professional specialists and Government
-                                            Relations
-                                            Officers. They will work alongside you for the much required assistance.
-                                            With
-                                            our deep knowledge of the complex requirements and processes involved in
-                                            establishing or maintaining a healthy, viable business.
-                                        </p>
-                                    </div>
-                                    <div class="row"
-                                         style="margin-right: 50px!important;margin-left: 50px!important;">
-                                        <div class="col-3">
-                                            <div style="display: -webkit-inline-box;">
-                                                <h4>13</h4>
-                                                &amp;nbsp;
-                                                <p class="custom_font">Years of Service</p>
-                                            </div>
-                                            <br/>
-                                            <br/>
-                                            <div style="display: -webkit-inline-box;">
-                                                <h4>21</h4>
-                                                &amp;nbsp;
-                                                <p class="custom_font">Industries</p>
-                                            </div>
-                                            <br/>
-                                            <br/>
-                                            <div style="display: -webkit-inline-box;">
-                                                <h4>127+</h4>
-                                                &amp;nbsp;
-                                                <p class="custom_font">Trusted Clients</p>
-                                            </div>
-                                            <br/>
-                                            <div style="display: -webkit-inline-box;">
-                                                <h4>182+</h4>
-                                                &amp;nbsp;
-                                                <p class="custom_font">Combined Years of</p>
-                                                &amp;nbsp;
-                                                <p class="custom_font">Experience</p>
-                                            </div>
+                                         style="height:666px;width: 1010px;margin-left: -20px;"/>
+                                    <img src="/qshield_crm/static/src/img/2.jpg"
+                                         style="height:1220px;width: 1010px;margin-left: -20px;"/>
+                                    <img src="/qshield_crm/static/src/img/3.jpg"
+                                         style="height:1220px;width: 1010px;margin-left: -20px;"/>
 
-                                        </div>
-                                        <div class="col-9">
-                                            <p style="font-family: Arial, Helvetica, Verdana, sans-serif;font-size: 19px;">
-                                                The services we offer have expanded from immigration, document and PRO
-                                                assistance to corporate partnership, Business Process Outsourcing (BPO),
-                                                and
-                                                settling-in services for employees abroad. Yet, we remain devoted to
-                                                being
-                                                your shield and protector for your business needs.
-                                            </p>
-                                        </div>
-                                    </div>
-                                    <img src="/qshield_crm/static/src/img/test.jpg"
-                                         style="height:750px;width:1010px;margin-left:-20px;"/>
-                                    <!--                                    <img src="/qshield_crm/static/src/img/image4.png"-->
-                                    <!--                                         style="height:795px;width:1010px;margin-left:-20px;"/>-->
+                                    <img src="/qshield_crm/static/src/img/4.jpg"
+                                         style="height:1220px;width: 1010px;margin-left: -20px;"/>
 
-                                    <div style="width:100%;float: left;padding-left:70px;">
+                                    <img src="/qshield_crm/static/src/img/5.jpg"
+                                         style="height:1220px;width: 1010px;margin-left: -20px;"/>
+                                    <div style="width:100%;float: left;padding-left:40px;padding-right:40px;">
                                         <div style="width:90%;float: left;">
-                                            <h1 style="font-family:Georgia sans-serif !important;">WHY CHOOSE QSHIELD?
-                                            </h1>
-                                            <p class="custom_font">As Qatar's first immigration service provider, we are
-                                                proud of our long track
-                                                of success stories and exceptional knowledge regarding the rules and
-                                                regulations in Qatar. We are proud of our long track of success stories
-                                                and
-                                                exceptional knowledge regarding the rules and regulations in Qatar.
-                                            </p>
-                                        </div>
-                                        <div style="width:10%;float: left;">
-                                            <img src="/qshield_crm/static/src/img/image5.png"
-                                                 style="height:170px;width:55px;"/>
-                                        </div>
-                                    </div>
-                                    <div style="width:100%;float: left;padding-left:70px;">
-                                        <ul class="custom_font">
-                                            <li>A dedicated account manager</li>
-                                            <li>Full access to a team of consultants to legal experts</li>
-                                            <li>Highest standards of compliance with international standards and local
-                                                laws.
-                                            </li>
-                                            <li>Every request is handled with utmost respect to our customers' needs,
-                                                time and privacy
-                                            </li>
-                                        </ul>
-                                    </div>
-                                    <br/>
-                                    <div style="width:100%;float: left;padding-left:70px;">
-                                        <div style="width:34%;float: left;">
-                                            <h3 style="font-family: Georgia sans-serif !important;">MEMBER AT:</h3>
-                                            <ul>
-                                                <li>American Chamber of Commerce</li>
-                                                <li>French Chamber of Commerce</li>
-                                                <li>Spanish Chamber of Commerce</li>
-                                                <li>Italian Chamber of Commerce</li>
-                                            </ul>
-                                        </div>
-                                        <div style="width:33%;float: left;">
-                                            <h3 style="font-family: Georgia sans-serif !important;">AWARDS FROM:
-                                            </h3>
-                                            <ul>
-                                                <li>Ministry of Interior</li>
-                                                <li>The Embassy of the United States</li>
-                                            </ul>
-                                        </div>
-                                        <div style="width:33%;float: left;">
-                                            <h3 style="font-family: Georgia sans-serif !important;">ACCREDITED BY:
-                                            </h3>
-                                            <ul>
-                                                <li>Ministry of Interior</li>
-                                                <li>ISO 9001</li>
-                                                <li>ISO 27001</li>
-                                                <li>ISO 27701</li>
-                                            </ul>
-                                        </div>
-                                    </div>
-                                    <div style="width:100%;float: left;padding-left:90px;">
-                                        <img src="/qshield_crm/static/src/img/image6.png"
-                                             style="height:50px;width:45px;"/>
-                                    </div>
-                                    <div style="width:100%;float: left;padding-left:120px;">
-                                        <div style="width:34%;float: left;">
-                                            <p class="custom_font">Our organization has been using QShield for around 9
-                                                years now. They are
-                                                proactive and knowledgeable about the legal and employment landscape in
-                                                Qatar. Their ability to rapidly resolve situations ensures our business
-                                                continuity. QShield offers an excellent seamless service and it would be
-                                                difficult to imagine conducting business without them.
-                                            </p>
+                                            <h1 style="font-family: 'Prata', serif;">SCOPE OF WORK</h1>
                                             <br/>
-                                            <p class="custom_font">
-                                                ANDREW ATHERTON
-                                                Director of Operations, Ara Darzi Limited
-                                            </p>
-                                        </div>
-                                        <div style="width:33%;float: left;padding-left:10px;">
-                                            <p>Professional, transparent, seamless and quality without a doubt.</p>
-                                            <p class="custom_font">We have been working with QShield since 2018, and I
-                                                have to say I am
-                                                absolutely impressed with the level of their professionalism and their
-                                                outstanding knowledge of employee immigration services.
-                                            </p>
-                                            <br/>
-                                            <br/>
-                                            <br/>
-                                            <br/>
-                                            <p class="custom_font">FADI WARD
-                                                Chief Executive Officer, Sirti-MENA
-                                            </p>
-                                        </div>
-                                        <div style="width:33%;float: left;padding-left:10px;padding-right:70px;">
-                                            <p>It’s like your in-house PRO Department!</p>
-                                            <p class="custom_font">We have developed a great partnership with QShield
-                                                over the past 2 years. Their dedication to our PRO and immigration
-                                                services is evident of their proactivity, efficiency and expertise.
-                                            </p>
-                                            <br/>
-                                            <br/>
-                                            <p class="custom_font">
-                                                OMAR Al-YASIN
-                                                Managing Partner, Creative Union
-                                            </p>
-                                        </div>
-                                    </div>
-                                    <div style="width:100%;float: left;padding-left:120px;">
-                                        <div style="width:25%;float: left;">
-                                            <img src="/qshield_crm/static/src/img/image7.png"
-                                                 style="height:130px;width:160px"/>
-                                        </div>
-                                        <div style="width:25%;float: left;padding-top:35px;padding-left:85px;">
-                                            <img src="/qshield_crm/static/src/img/image8.jpg"
-                                                 style="height:60px;width:100px;"/>
-                                        </div>
-                                        <div style="width:25%;float: left;padding-top:35px;padding-left:150px;">
-                                            <img src="/qshield_crm/static/src/img/image9.jpg"
-                                                 style="height:60px;width:80px;"/>
-                                        </div>
-                                        <div style="width:25%;float: left;padding-top:35px;padding-left:130px;">
-                                            <img src="/qshield_crm/static/src/img/image10.png"
-                                                 style="height:50px;width:45px;"/>
-                                        </div>
-                                    </div>
-                                    <div style="width:100%;float: left;padding-left:70px;padding-top:150px;">
-                                        <div style="width:90%;float: left;">
-                                            <h1 style="font-family:Georgia sans-serif !important;">OUR SERVICES</h1>
-                                            <p class="custom_font">Our professional consultants assist clients with
-                                                every step of the immigration procedure, including advising on company
-                                                structure, name registration, scheduling visa appointments, attestation
-                                                and translation of papers, and visa collection and delivery.
-                                            </p>
-                                            <p class="custom_font">From small businesses up to multinational
-                                                enterprises, we handle a wide
-                                                range of services, including commercial registration, trade license,
-                                                labor quote, resident permits, work visas, dependent visas, and business
-                                                visas.
-                                            </p>
-                                        </div>
-                                        <div style="width:10%;float: left;">
-                                            <img src="/qshield_crm/static/src/img/image5.png"
-                                                 style="height:170px;width:55px;"/>
-                                        </div>
-                                    </div>
-                                    <div style="width:100%;float: left;padding-left:70px;">
-                                        <div style="width:50%;float: left;">
-                                            <h5 style="font-weight: bold;">GOVERNMENT RELATIONS</h5>
-                                            <p class="custom_font">QShield is the preferred Business Process Outsourcing
-                                                company for more than 130 businesses.
-                                            </p>
-                                            <p class="custom_font">With 180+ immigration services, QShield offers all
-                                                the needed services
-                                                for your corporate document, employee immigration services and their
-                                                dependents.While you keep full control of your day-to-day operations, we
-                                                will provide you with local knowledge and insight.
-                                            </p>
-                                            <br/>
-                                            <h5 style="font-weight: bold;">CORPORATE SPONSORSHIP</h5>
-                                            <p class="custom_font">QShield is your partner to start your business in
-                                                Qatar. In fact, we are
-                                                the preferred local business associates for more than 90 businesses.
-                                                While you keep full control of your day-to-day operations, we will
-                                                provide you with local knowledge and insight.
-                                            </p>
-                                            <p class="custom_font">In addition to supporting you in ensuring that your
-                                                firm complies with
-                                                Qatari regulations and procedures.
-                                            </p>
-                                        </div>
-                                        <div style="width:50%;float: left;padding-left:20px;padding-right:70px;">
-                                            <h5 style="font-weight: bold;">PROFESSIONAL EMPLOYER</h5>
-                                            <p class="custom_font">QShield helps you maximize operational productivity
-                                                by offering you the
-                                                complete Employee Sponsorship Solution to outsource your workforce.
-                                            </p>
-                                            <p class="custom_font">We can sponsor your candidates and manage their
-                                                payroll, HR paperwork
-                                                &amp;
-                                                immigration services.
-                                                Our services can also include Employees End of Service Gratuity, Annual
-                                                Leaves and ticket.
-                                            </p>
-                                            <h5 style="font-weight: bold;">GATE PASSES</h5>
-                                            <p class="custom_font" style="font-weight: bold;">We work with Oil &amp; Gas
-                                                companies and refineries to ease your
-                                                operations.
-                                                QShield works with you around the clock to secure your gate passes. We
-                                                create your company profile, your users’ files and apply for your
-                                                regular gate pass, or a fast track gate pass, so that you focus on what
-                                                matters.
-                                            </p>
-                                            <p class="custom_font" style="font-weight: bold;">Our services cover the
-                                                North Gas Field, the
-                                                Offshore Oil Fields and Rigs,
-                                                and Onshore Oil Fields &amp; Rigs.
-                                            </p>
-                                        </div>
-                                    </div>
-                                    <div style="width:100%;float: left;padding-left:70px;padding-top:275px;">
-                                        <div style="width:90%;float: left;">
-                                            <h1 style="font-family:Georgia sans-serif !important;">SOME OF OUR TOP CLIENTS</h1>
-                                            <img style="width:100%" src="/qshield_crm/static/src/img/d12.png"/>
-                                            <img style="width:100%" src="/qshield_crm/static/src/img/d13.png"/>
-                                        </div>
-                                        <div style="width:10%;float: left;">
-                                            <img src="/qshield_crm/static/src/img/image5.png"
-                                                 style="height:170px;width:55px;"/>
-                                        </div>
-                                    </div>
-                                    <div style="width:100%;float: left;padding-left:70px;padding-top:43%;">
-                                        <br/>
-                                        <br/>
-                                        <h1 style="font-family:Georgia sans-serif !important;">SCOPE OF WORK</h1>
-                                        <h2>
-                                            <t t-if="not (env.context.get('proforma', False) or is_pro_forma)">
-                                                <span t-if="o.state not in ['draft','sent']">Order #</span>
-                                                <span t-if="o.state in ['draft','sent']">Quotation #</span>
-                                            </t>
-                                            <t t-if="env.context.get('proforma', False) or is_pro_forma">
-                                                <span>Pro-Forma Invoice #</span>
-                                            </t>
-                                            <span t-field="o.name"/>
-                                        </h2>
-                                        <div class="row mt32 mb32" id="informations">
-                                            <div t-if="o.client_order_ref" class="col-auto mw-100 mb-2">
-                                                <strong>Your Reference:</strong>
-                                                <p class="m-0" t-field="o.client_order_ref"/>
-                                            </div>
-                                            <div t-if="o.date_order and o.state not in ['draft','sent']"
-                                                 class="col-auto mw-100 mb-2">
-                                                <strong>Order Date:</strong>
-                                                <p class="m-0" t-field="o.date_order"/>
-                                            </div>
-                                            <div t-if="o.date_order and o.state in ['draft','sent']"
-                                                 class="col-auto mw-100 mb-2">
-                                                <strong>Quotation Date:</strong>
-                                                <p class="m-0" t-field="o.date_order"
-                                                   t-options='{"widget": "date"}'/>
-                                            </div>
-                                            <div t-if="o.validity_date and o.state in ['draft', 'sent']"
-                                                 class="col-auto mw-100 mb-2"
-                                                 name="expiration_date">
-                                                <strong>Expiration:</strong>
-                                                <p class="m-0" t-field="o.validity_date"/>
-                                            </div>
-                                            <div t-if="o.user_id.name" class="col-auto mw-100 mb-2">
-                                                <strong>Salesperson:</strong>
-                                                <p class="m-0" t-field="o.user_id"/>
-                                            </div>
-                                        </div>
-                                        <t t-set="display_discount" t-value="any([l.discount for l in o.order_line])"/>
-                                        <table class="table table-sm o_main_table">
-                                            <thead>
-                                                <tr>
-                                                    <th name="th_description" class="text-left">Description</th>
-                                                    <th name="th_quantity" class="text-right">Quantity</th>
-                                                    <th name="th_priceunit" class="text-right">Unit Price</th>
-                                                    <th name="th_discount" t-if="display_discount" class="text-right"
-                                                        groups="product.group_discount_per_so_line">
-                                                        <span>Disc.%</span>
-                                                    </th>
-                                                    <th name="th_taxes" class="text-right">Taxes</th>
-                                                    <th name="th_subtotal" class="text-right">
-                                                        <t groups="account.group_show_line_subtotals_tax_excluded">
-                                                            Amount
-                                                        </t>
-                                                        <t groups="account.group_show_line_subtotals_tax_included">Total
-                                                            Price
-                                                        </t>
-                                                    </th>
-                                                </tr>
-                                            </thead>
-                                            <tbody class="sale_tbody">
-                                                <t t-set="current_subtotal" t-value="0"/>
-                                                <t t-foreach="o.order_line" t-as="line">
-                                                    <t t-set="current_subtotal"
-                                                       t-value="current_subtotal + line.price_subtotal"
-                                                       groups="account.group_show_line_subtotals_tax_excluded"/>
-                                                    <t t-set="current_subtotal"
-                                                       t-value="current_subtotal + line.price_total"
-                                                       groups="account.group_show_line_subtotals_tax_included"/>
-
-                                                    <tr t-att-class="'bg-200 font-weight-bold o_line_section' if line.display_type == 'line_section' else 'font-italic o_line_note' if line.display_type == 'line_note' else ''">
-                                                        <t t-if="not line.display_type">
-                                                            <td name="td_name">
-                                                                <span t-field="line.name"/>
-                                                            </td>
-                                                            <td name="td_quantity" class="text-right">
-                                                                <span t-field="line.product_uom_qty"/>
-                                                                <span t-field="line.product_uom"
-                                                                      groups="uom.group_uom"/>
-                                                            </td>
-                                                            <td name="td_priceunit" class="text-right">
-                                                                <span t-field="line.price_unit"/>
-                                                            </td>
-                                                            <td t-if="display_discount" class="text-right"
-                                                                groups="product.group_discount_per_so_line">
-                                                                <span t-field="line.discount"/>
-                                                            </td>
-                                                            <td name="td_taxes" class="text-right">
-                                                                <span t-esc="', '.join(map(lambda x: (x.description or x.name), line.tax_id))"/>
-                                                            </td>
-                                                            <td name="td_subtotal" class="text-right o_price_total">
-                                                                <span t-field="line.price_subtotal"
-                                                                      groups="account.group_show_line_subtotals_tax_excluded"/>
-                                                                <span t-field="line.price_total"
-                                                                      groups="account.group_show_line_subtotals_tax_included"/>
-                                                            </td>
-                                                        </t>
-                                                        <t t-if="line.display_type == 'line_section'">
-                                                            <td name="td_section_line" colspan="99">
-                                                                <span t-field="line.name"/>
-                                                            </td>
-                                                            <t t-set="current_section" t-value="line"/>
-                                                            <t t-set="current_subtotal" t-value="0"/>
-                                                        </t>
-                                                        <t t-if="line.display_type == 'line_note'">
-                                                            <td name="td_note_line" colspan="99">
-                                                                <span t-field="line.name"/>
-                                                            </td>
-                                                        </t>
-                                                    </tr>
-                                                    <t t-if="current_section and (line_last or o.order_line[line_index+1].display_type == 'line_section')">
-                                                        <tr class="is-subtotal text-right">
-                                                            <td name="td_section_subtotal" colspan="99">
-                                                                <strong class="mr16">Subtotal</strong>
-                                                                <span
-                                                                        t-esc="current_subtotal"
-                                                                        t-options='{"widget": "monetary", "display_currency": o.pricelist_id.currency_id}'
-                                                                />
-                                                            </td>
-                                                        </tr>
-                                                    </t>
+                                            <h2>
+                                                <t t-if="not (env.context.get('proforma', False) or is_pro_forma)">
+                                                    <span t-if="o.state not in ['draft','sent']">Order #</span>
+                                                    <span t-if="o.state in ['draft','sent']">Quotation #</span>
                                                 </t>
-                                            </tbody>
-                                        </table>
-                                        <div class="clearfix" name="so_total_summary">
-                                            <div id="total" class="row" name="total">
-                                                <div t-attf-class="#{'col-4' if report_type != 'html' else 'col-sm-7 col-md-5'} ml-auto">
-                                                    <table class="table table-sm">
-                                                        <tr class="border-black o_subtotal" style="">
-                                                            <td name="td_amount_untaxed_label">
-                                                                <strong>Subtotal</strong>
-                                                            </td>
-                                                            <td name="td_amount_untaxed" class="text-right">
-                                                                <span t-field="o.amount_untaxed"/>
-                                                            </td>
-                                                        </tr>
-                                                        <t t-foreach="o.amount_by_group" t-as="amount_by_group">
-                                                            <tr style="">
-                                                                <t t-if="amount_by_group[5] == 1 and o.amount_untaxed == amount_by_group[2]">
-                                                                    <td name="td_amount_by_group_label_3">
-                                                                        <span t-esc="amount_by_group[0]"/>
-                                                                        <span>&amp;nbsp;<span>on</span>&amp;nbsp;
-                                                                            <t t-esc="amount_by_group[2]"
-                                                                               t-options='{"widget": "monetary", "display_currency": o.pricelist_id.currency_id}'/>
-                                                                        </span>
-                                                                    </td>
-                                                                    <td name="td_amount_by_group_3"
-                                                                        class="text-right o_price_total">
-                                                                        <span t-esc="amount_by_group[1]"
-                                                                              t-options='{"widget": "monetary", "display_currency": o.pricelist_id.currency_id}'/>
-                                                                    </td>
-                                                                </t>
-                                                                <t t-else="">
-                                                                    <td name="td_amount_by_group_label">
-                                                                        <span t-esc="amount_by_group[0]"/>
-                                                                    </td>
-                                                                    <td name="td_amount_by_group"
-                                                                        class="text-right o_price_total">
-                                                                        <span t-esc="amount_by_group[1]"
-                                                                              t-options='{"widget": "monetary", "display_currency": o.pricelist_id.currency_id}'/>
-                                                                    </td>
-                                                                </t>
-                                                            </tr>
-                                                        </t>
-                                                        <tr class="border-black o_total">
-                                                            <td name="td_amount_total_label">
-                                                                <strong>Total</strong>
-                                                            </td>
-                                                            <td name="td_amount_total" class="text-right">
-                                                                <span t-field="o.amount_total"/>
-                                                            </td>
-                                                        </tr>
-                                                    </table>
+                                                <t t-if="env.context.get('proforma', False) or is_pro_forma">
+                                                    <span>Pro-Forma Invoice #</span>
+                                                </t>
+                                                <span t-field="o.name"/>
+                                            </h2>
+                                            <div class="row mt32 mb32" id="informations">
+                                                <div t-if="o.client_order_ref" class="col-auto mw-100 mb-2">
+                                                    <strong>Your Reference:</strong>
+                                                    <p class="m-0" t-field="o.client_order_ref"/>
+                                                </div>
+                                                <div t-if="o.date_order and o.state not in ['draft','sent']"
+                                                     class="col-auto mw-100 mb-2">
+                                                    <strong>Order Date:</strong>
+                                                    <p class="m-0" t-field="o.date_order"/>
+                                                </div>
+                                                <div t-if="o.date_order and o.state in ['draft','sent']"
+                                                     class="col-auto mw-100 mb-2">
+                                                    <strong>Quotation Date:</strong>
+                                                    <p class="m-0" t-field="o.date_order"
+                                                       t-options='{"widget": "date"}'/>
+                                                </div>
+                                                <div t-if="o.validity_date and o.state in ['draft', 'sent']"
+                                                     class="col-auto mw-100 mb-2"
+                                                     name="expiration_date">
+                                                    <strong>Expiration:</strong>
+                                                    <p class="m-0" t-field="o.validity_date"/>
+                                                </div>
+                                                <div t-if="o.user_id.name" class="col-auto mw-100 mb-2">
+                                                    <strong>Salesperson:</strong>
+                                                    <p class="m-0" t-field="o.user_id"/>
                                                 </div>
                                             </div>
-                                        </div>
+                                            <t t-set="display_discount"
+                                               t-value="any([l.discount for l in o.order_line])"/>
+                                            <table class="table table-sm o_main_table">
+                                                <thead>
+                                                    <tr>
+                                                        <th name="th_description" class="text-left">Description</th>
+                                                        <th name="th_quantity" class="text-right">Quantity</th>
+                                                        <th name="th_priceunit" class="text-right">Unit Price</th>
+                                                        <th name="th_discount" t-if="display_discount"
+                                                            class="text-right"
+                                                            groups="product.group_discount_per_so_line">
+                                                            <span>Disc.%</span>
+                                                        </th>
+                                                        <th name="th_taxes" class="text-right">Taxes</th>
+                                                        <th name="th_subtotal" class="text-right">
+                                                            <t groups="account.group_show_line_subtotals_tax_excluded">
+                                                                Amount
+                                                            </t>
+                                                            <t groups="account.group_show_line_subtotals_tax_included">
+                                                                Total
+                                                                Price
+                                                            </t>
+                                                        </th>
+                                                    </tr>
+                                                </thead>
+                                                <tbody class="sale_tbody">
+                                                    <t t-set="current_subtotal" t-value="0"/>
+                                                    <t t-foreach="o.order_line" t-as="line">
+                                                        <t t-set="current_subtotal"
+                                                           t-value="current_subtotal + line.price_subtotal"
+                                                           groups="account.group_show_line_subtotals_tax_excluded"/>
+                                                        <t t-set="current_subtotal"
+                                                           t-value="current_subtotal + line.price_total"
+                                                           groups="account.group_show_line_subtotals_tax_included"/>
 
-                                        <div t-if="o.signature" class="mt32 ml64 mr4" name="signature">
-                                            <div class="offset-8">
-                                                <strong>Signature</strong>
+                                                        <tr t-att-class="'bg-200 font-weight-bold o_line_section' if line.display_type == 'line_section' else 'font-italic o_line_note' if line.display_type == 'line_note' else ''">
+                                                            <t t-if="not line.display_type">
+                                                                <td name="td_name">
+                                                                    <span t-field="line.name"/>
+                                                                </td>
+                                                                <td name="td_quantity" class="text-right">
+                                                                    <span t-field="line.product_uom_qty"/>
+                                                                    <span t-field="line.product_uom"
+                                                                          groups="uom.group_uom"/>
+                                                                </td>
+                                                                <td name="td_priceunit" class="text-right">
+                                                                    <span t-field="line.price_unit"/>
+                                                                </td>
+                                                                <td t-if="display_discount" class="text-right"
+                                                                    groups="product.group_discount_per_so_line">
+                                                                    <span t-field="line.discount"/>
+                                                                </td>
+                                                                <td name="td_taxes" class="text-right">
+                                                                    <span t-esc="', '.join(map(lambda x: (x.description or x.name), line.tax_id))"/>
+                                                                </td>
+                                                                <td name="td_subtotal" class="text-right o_price_total">
+                                                                    <span t-field="line.price_subtotal"
+                                                                          groups="account.group_show_line_subtotals_tax_excluded"/>
+                                                                    <span t-field="line.price_total"
+                                                                          groups="account.group_show_line_subtotals_tax_included"/>
+                                                                </td>
+                                                            </t>
+                                                            <t t-if="line.display_type == 'line_section'">
+                                                                <td name="td_section_line" colspan="99">
+                                                                    <span t-field="line.name"/>
+                                                                </td>
+                                                                <t t-set="current_section" t-value="line"/>
+                                                                <t t-set="current_subtotal" t-value="0"/>
+                                                            </t>
+                                                            <t t-if="line.display_type == 'line_note'">
+                                                                <td name="td_note_line" colspan="99">
+                                                                    <span t-field="line.name"/>
+                                                                </td>
+                                                            </t>
+                                                        </tr>
+                                                        <t t-if="current_section and (line_last or o.order_line[line_index+1].display_type == 'line_section')">
+                                                            <tr class="is-subtotal text-right">
+                                                                <td name="td_section_subtotal" colspan="99">
+                                                                    <strong class="mr16">Subtotal</strong>
+                                                                    <span
+                                                                            t-esc="current_subtotal"
+                                                                            t-options='{"widget": "monetary", "display_currency": o.pricelist_id.currency_id}'
+                                                                    />
+                                                                </td>
+                                                            </tr>
+                                                        </t>
+                                                    </t>
+                                                </tbody>
+                                            </table>
+                                            <div class="clearfix" name="so_total_summary">
+                                                <div id="total" class="row" name="total">
+                                                    <div t-attf-class="#{'col-4' if report_type != 'html' else 'col-sm-7 col-md-5'} ml-auto">
+                                                        <table class="table table-sm">
+                                                            <tr class="border-black o_subtotal" style="">
+                                                                <td name="td_amount_untaxed_label">
+                                                                    <strong>Subtotal</strong>
+                                                                </td>
+                                                                <td name="td_amount_untaxed" class="text-right">
+                                                                    <span t-field="o.amount_untaxed"/>
+                                                                </td>
+                                                            </tr>
+                                                            <t t-foreach="o.amount_by_group" t-as="amount_by_group">
+                                                                <tr style="">
+                                                                    <t t-if="amount_by_group[5] == 1 and o.amount_untaxed == amount_by_group[2]">
+                                                                        <td name="td_amount_by_group_label_3">
+                                                                            <span t-esc="amount_by_group[0]"/>
+                                                                            <span>&amp;nbsp;<span>on</span>&amp;nbsp;
+                                                                                <t t-esc="amount_by_group[2]"
+                                                                                   t-options='{"widget": "monetary", "display_currency": o.pricelist_id.currency_id}'/>
+                                                                            </span>
+                                                                        </td>
+                                                                        <td name="td_amount_by_group_3"
+                                                                            class="text-right o_price_total">
+                                                                            <span t-esc="amount_by_group[1]"
+                                                                                  t-options='{"widget": "monetary", "display_currency": o.pricelist_id.currency_id}'/>
+                                                                        </td>
+                                                                    </t>
+                                                                    <t t-else="">
+                                                                        <td name="td_amount_by_group_label">
+                                                                            <span t-esc="amount_by_group[0]"/>
+                                                                        </td>
+                                                                        <td name="td_amount_by_group"
+                                                                            class="text-right o_price_total">
+                                                                            <span t-esc="amount_by_group[1]"
+                                                                                  t-options='{"widget": "monetary", "display_currency": o.pricelist_id.currency_id}'/>
+                                                                        </td>
+                                                                    </t>
+                                                                </tr>
+                                                            </t>
+                                                            <tr class="border-black o_total">
+                                                                <td name="td_amount_total_label">
+                                                                    <strong>Total</strong>
+                                                                </td>
+                                                                <td name="td_amount_total" class="text-right">
+                                                                    <span t-field="o.amount_total"/>
+                                                                </td>
+                                                            </tr>
+                                                        </table>
+                                                    </div>
+                                                </div>
                                             </div>
-                                            <div class="offset-8">
-                                                <img t-att-src="image_data_uri(o.signature)"
-                                                     style="max-height: 4cm; max-width: 8cm;"/>
+
+                                            <div t-if="o.signature" class="mt32 ml64 mr4" name="signature">
+                                                <div class="offset-8">
+                                                    <strong>Signature</strong>
+                                                </div>
+                                                <div class="offset-8">
+                                                    <img t-att-src="image_data_uri(o.signature)"
+                                                         style="max-height: 4cm; max-width: 8cm;"/>
+                                                </div>
+                                                <div class="offset-8 text-center">
+                                                    <p t-field="o.signed_by"/>
+                                                </div>
                                             </div>
-                                            <div class="offset-8 text-center">
-                                                <p t-field="o.signed_by"/>
-                                            </div>
+                                            <p t-field="o.note"/>
+                                            <p t-if="o.payment_term_id.note">
+                                                <span t-field="o.payment_term_id.note"/>
+                                            </p>
+                                            <p id="fiscal_position_remark"
+                                               t-if="o.fiscal_position_id and o.fiscal_position_id.sudo().note">
+                                                <strong>Fiscal Position Remark:</strong>
+                                                <span t-field="o.fiscal_position_id.sudo().note"/>
+                                            </p>
                                         </div>
-                                        <p t-field="o.note"/>
-                                        <p t-if="o.payment_term_id.note">
-                                            <span t-field="o.payment_term_id.note"/>
-                                        </p>
-                                        <p id="fiscal_position_remark"
-                                           t-if="o.fiscal_position_id and o.fiscal_position_id.sudo().note">
-                                            <strong>Fiscal Position Remark:</strong>
-                                            <span t-field="o.fiscal_position_id.sudo().note"/>
-                                        </p>
+                                        <div style="width:10%;float: left;">
+                                            <img src="/qshield_crm/static/src/img/image5.png"
+                                                 style="height:170px;width:55px;"/>
+                                        </div>
                                     </div>
                                     <p style="page-break-after: always;">&amp;nbsp;</p>
                                     <p style="page-break-before: always;">&amp;nbsp;</p>
-                                    <div style="width:100%;float:left;padding-left:70px;">
-                                        <div style="text-align:right;padding-right:70px;">
-                                            <img src="/qshield_crm/static/src/img/image2.png"/>
-                                        </div>
-                                        <div>
-                                            <h1 style="font-family: Georgia sans-serif !important;">FOR</h1>
-                                            <h1 style="font-family: Georgia sans-serif !important;">FURTHER</h1>
-                                            <h1 style="font-family: 'Times New Roman', Georgia, serif;">INQUIRIES</h1>
-                                            <p style="font-size: 24pt;">
-                                                Phone
-                                                <br/>
-                                                +974 4032 0200
-                                            </p>
-                                            <p style="font-size: 24pt;">
-                                                Email
-                                                <br/>
-                                                sales@qshield.com
-                                            </p>
-                                            <p style="font-size: 24pt;">
-                                                Website
-                                                <br/>
-                                                www.QSHIELD.com
-                                            </p>
-                                        </div>
-                                    </div>
-                                    <img src="/qshield_crm/static/src/img/image3.jpg"
-                                         style="height:598px;width: 1010px;margin-left: -20px;"/>
+                                    <img src="/qshield_crm/static/src/img/6.jpg"
+                                         style="height:1100px;width: 1010px;margin-left: -20px;"/>
+                                    <img src="/qshield_crm/static/src/img/7.jpg"
+                                         style="height:1220px;width: 1010px;margin-left: -20px;"/>
                                 </body>
                             </html>
                         </div>
