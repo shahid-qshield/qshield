@@ -55,7 +55,7 @@
                                     purpose it may serve <t t-if="o.employee_id.gender == 'male'"> him </t><t t-if="o.employee_id.gender == 'female'">her</t> best with no liabilities to the company.</p>
                                 <br/><br/><br/>
                                 <div>
-                                    Yours faithfully,<br/>
+                                    Yours, QShield<br/>
                                     for <span style="padding-right:5px;" t-field="o.addressed_to"/>.,<br/><br/>
                                     <strong>NAME OF SIGNATORY:</strong> <span style="padding-right:5px;" t-field="o.signatory_id.name"/><br/>
                                     <strong>DESIGNATION: </strong> <span style="padding-right:5px;" t-field="o.signatory_id.job_id.name"/>

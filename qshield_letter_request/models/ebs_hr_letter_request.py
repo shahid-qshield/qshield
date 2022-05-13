@@ -81,13 +81,15 @@ class EBSHRLetterRequest(models.Model):
     def _compute_amount_in_word(self):
         for rec in self:
             rec.num_word = str(
-                rec.currency_id.with_context(lang='en_US').amount_to_text(rec.gross_salary)) + ' Qatari Riyals'
+                rec.currency_id.with_context(lang='en_US').amount_to_text(rec.gross_salary).strip(
+                    ' Rial')) + ' Qatari Riyals'
             rec.allowances_num_word = str(
-                rec.currency_id.with_context(lang='en_US').amount_to_text(rec.all_allowances)) + ' Qatari Riyals'
+                rec.currency_id.with_context(lang='en_US').amount_to_text(rec.all_allowances).strip(
+                    ' Rial')) + ' Qatari Riyals'
             rec.wage_num_word = str(rec.currency_id.with_context(lang='en_US').amount_to_text(
-                rec.employee_id.contract_id.wage)) + ' Qatari Riyals'
+                rec.employee_id.contract_id.wage).strip(' Rial')) + ' Qatari Riyals'
             rec.end_of_service_benefit_word = str(rec.currency_id.with_context(lang='en_US').amount_to_text(
-                rec.end_of_service_benefit)) + ' Qatari Riyals'
+                rec.end_of_service_benefit).strip(' Rial')) + ' Qatari Riyals'
 
     # @api.onchange('gross_salary', 'employee_id', 'all_allowances')
     # @api.depends('gross_salary', 'employee_id', 'all_allowances')
