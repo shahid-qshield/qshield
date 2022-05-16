@@ -1,4 +1,4 @@
-from odoo import models, fields, api, _
+from odoo import models, fields, api, _, SUPERUSER_ID
 from odoo.exceptions import ValidationError, UserError
 from datetime import datetime, timedelta, date
 import logging
@@ -199,6 +199,13 @@ class ServiceRequestWorkFlow(models.Model):
         else:
             raise ValidationError(_("Fill due date and assign to."))
 
+    @api.model
+    def create(self, values):
+        res = super(ServiceRequestWorkFlow, self).create(values)
+        if res.assign_to:
+            self.push_notification_of_assing_user(res.assign_to)
+        return res
+
     def write(self, vals):
         if vals.get('status', False):
             if vals['status'] != self.status:
@@ -215,6 +222,9 @@ class ServiceRequestWorkFlow(models.Model):
             self.send_notification()
         if vals.get('status') == 'reject' and self.status == 'reject' and is_send_service_notification:
             self.send_notification()
+        if vals.get('assign_to', False):
+            assign_user = self.env['res.users'].browse(vals.get('assign_to'))
+            self.push_notification_of_assing_user(assign_user)
         if res:
             if vals.get('status', False):
                 self.date = datetime.today()
@@ -236,3 +246,52 @@ class ServiceRequestWorkFlow(models.Model):
     #             if self.status != 'pending':
     #                 raise ValidationError(_("Cannot Delete, service in progress."))
     #      return super(ServiceRequestWorkFlow, rec).unlink()
+
+    def push_notification_of_assing_user(self, user):
+        name = '#' + self.env.user.partner_id.name + ', ' + user.partner_id.name
+        channel = self.env['mail.channel'].sudo().search(
+            [('name', '=', name)])
+        if not channel:
+            channel = self.env['mail.channel'].sudo().create({
+                'name': name,
+                'description': False,
+                'alias_contact': 'followers',
+                'channel_type': 'chat',
+                'public': 'private'
+            })
+        if channel.channel_last_seen_partner_ids:
+            partner_list = [user.partner_id, self.env.user.partner_id]
+            for partner in partner_list:
+                if len(partner_list) != channel.channel_last_seen_partner_ids:
+                    available_partner = channel.channel_last_seen_partner_ids.filtered(
+                        lambda s: s.partner_id == partner)
+                    if not available_partner:
+                        channel.write({'channel_last_seen_partner_ids': [(0, 0, {'partner_id': partner.id,
+                                                                                 'partner_email': partner.email})
+                                                                         ]})
+        else:
+            channel.write({'channel_last_seen_partner_ids': [(0, 0, {'partner_id': user.partner_id.id,
+                                                                     'partner_email': user.partner_id.email}),
+                                                             (0, 0, {'partner_id': self.env.user.partner_id.id,
+                                                                     'partner_email': self.env.user.partner_id.email})
+                                                             ]})
+        message_vals = {
+            'author_id': self.env.user.partner_id.id,
+            'email_from': self.env.user.partner_id.email or '',
+            'model': 'mail.channel',
+            'res_id': channel.id,
+            'body': 'Hello, %s service workflow assign you.' % self.name,
+            'message_type': 'comment',
+            'subtype_id': self.env.ref('mail.mt_comment').id,
+            'partner_ids': [(4, user.partner_id.id)],
+            'reply_to': user.partner_id.email,
+        }
+        message = self.env['mail.message'].sudo().create(message_vals)
+        notifications = channel._channel_message_notifications(message)
+        body = 'Dear %s,<br/> You have a new task assigned to you <br/> Task Name: %s <br/> Service Request Number: %s ' \
+               '<br/><br/> Regards,<br/>ODOO Notification Service' % (
+               user.name, self.name, self.service_request_id.name)
+        channel.message_post(
+            body=body, message_type='comment',
+            subtype='mail.mt_comment', author_id=SUPERUSER_ID,
+            notification_ids=notifications)
