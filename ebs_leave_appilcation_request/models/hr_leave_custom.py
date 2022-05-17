@@ -78,11 +78,9 @@ class HRLeaveCustom(models.Model):
                         hours = days * employee.resource_calendar_id.hours_per_day
                     return {'days': days, 'hours': hours}
             else:
-                if employee_id:
-                    return super(HRLeaveCustom, self)._get_number_of_days(date_from, date_to, employee_id)
-        else:
-            if employee_id:
                 return super(HRLeaveCustom, self)._get_number_of_days(date_from, date_to, employee_id)
+        else:
+            return super(HRLeaveCustom, self)._get_number_of_days(date_from, date_to, employee_id)
 
     @api.model
     def create(self, vals):
