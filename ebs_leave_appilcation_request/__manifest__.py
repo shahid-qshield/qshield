@@ -10,7 +10,7 @@
     'author': "My Company",
     'website': "http://www.yourcompany.com",
     'category': 'Uncategorized',
-    'version': '0.1',
+    'version': '0.2',
     'depends': ['base', 'hr', 'hr_holidays', 'hr_contract', 'matco_loan_management'],
     'data': [
         'data/ir_cron_data.xml',
