@@ -202,7 +202,7 @@ class ServiceRequestWorkFlow(models.Model):
     @api.model
     def create(self, values):
         res = super(ServiceRequestWorkFlow, self).create(values)
-        if res.assign_to:
+        if res.assign_to and res.service_request_id and res.service_request_id.status != 'draft':
             res.push_notification_of_assing_user(res.assign_to)
         return res
 
@@ -224,7 +224,8 @@ class ServiceRequestWorkFlow(models.Model):
             self.send_notification()
         if vals.get('assign_to', False):
             assign_user = self.env['res.users'].browse(vals.get('assign_to'))
-            self.push_notification_of_assing_user(assign_user)
+            if self.service_request_id and self.service_request_id.status != 'draft':
+                self.push_notification_of_assing_user(assign_user)
         if res:
             if vals.get('status', False):
                 self.date = datetime.today()
