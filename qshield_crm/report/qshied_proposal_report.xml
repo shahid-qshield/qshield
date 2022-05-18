@@ -5,7 +5,7 @@
             <field name="default" eval="True"/>
             <field name="format">custom</field>
             <field name="orientation">Portrait</field>
-            <field name="margin_top">30</field>
+            <field name="margin_top">20</field>
             <field name="margin_bottom">0</field>
             <field name="margin_left">0</field>
             <field name="margin_right">0</field>
@@ -31,6 +31,7 @@
                                       rel="stylesheet"/>
                                 <link href="https://fonts.googleapis.com/css2?family=Bentham&amp;family=Prata&amp;display=swap"
                                       rel="stylesheet"/>
+                                <link href="https://fonts.googleapis.com/css2?family=Sora:wght@145&amp;display=swap" rel="stylesheet"/>
                                 <style type="text/css">
                                     body{
                                     text-align:justify;
@@ -40,7 +41,7 @@
                                 <body>
                                     <div style="text-align:center;">
                                         <img src="/qshield_crm/static/src/img/1.png"
-                                             style="margin-bottom:20px;height:130px;width: 150px;"/>
+                                             style="margin-bottom:20px;height:147px;width: 185px;"/>
                                         <h1 style="font-family: 'Prata', serif; padding-top:90px;">
                                             PROFESSIONAL SERVICES
                                             <br/>
@@ -48,13 +49,20 @@
                                         </h1>
                                         <br/>
                                         <br/>
-                                        <h3 style="font-family: 'Prata', serif;">presented for
-                                        </h3>
+                                        <br/>
+                                        <br/>
+                                        <h2 style="font-family: 'Prata', serif;">presented for
+                                        </h2>
+                                        <br/>
                                         <br/>
                                         <br/>
                                         <h1 style="font-family: 'Bentham', serif;">
                                             <span t-field="o.company_id.name"/>
                                         </h1>
+                                        <br/>
+                                        <br/>
+                                        <br/>
+                                        <br/>
                                         <h3 t-esc="datetime.datetime.now().date()"
                                             style="font-family: 'Prata', serif;"></h3>
                                     </div>
@@ -265,7 +273,7 @@
                                                     <p t-field="o.signed_by"/>
                                                 </div>
                                             </div>
-                                            <p t-field="o.note"/>
+<!--                                            <p t-field="o.note"/>-->
                                             <p t-if="o.payment_term_id.note">
                                                 <span t-field="o.payment_term_id.note"/>
                                             </p>
@@ -282,8 +290,20 @@
                                     </div>
                                     <p style="page-break-after: always;">&amp;nbsp;</p>
                                     <p style="page-break-before: always;">&amp;nbsp;</p>
-                                    <img src="/qshield_crm/static/src/img/6.jpg"
-                                         style="height:1100px;width: 1010px;margin-left: -20px;"/>
+                                    <div style="width:100%;float: left;padding-left:40px;padding-right:40px;">
+                                        <div style="width:90%;float: left;">
+                                            <h1 style="font-family: 'Prata', serif;">TERMS &amp; CONDITIONS</h1>
+                                            <p t-field="o.note" style="font-family: 'Sora', sans-serif; font-size:140%; font-weight: 200; margin-left: 10px"/>
+                                        </div>
+                                        <div style="width:10%;float: left;">
+                                            <img src="/qshield_crm/static/src/img/image5.png"
+                                                 style="height:170px;width:55px;"/>
+                                        </div>
+                                    </div>
+                                    <p style="page-break-after: always;">&amp;nbsp;</p>
+                                    <p style="page-break-before: always;">&amp;nbsp;</p>
+<!--                                    <img src="/qshield_crm/static/src/img/6.jpg"-->
+<!--                                         style="height:1100px;width: 1010px;margin-left: -20px;"/>-->
                                     <img src="/qshield_crm/static/src/img/7.jpg"
                                          style="height:1274px;width: 1010px;margin-left: -20px;"/>
                                 </body>
