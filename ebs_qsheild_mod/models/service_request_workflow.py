@@ -203,7 +203,7 @@ class ServiceRequestWorkFlow(models.Model):
     def create(self, values):
         res = super(ServiceRequestWorkFlow, self).create(values)
         if res.assign_to:
-            self.push_notification_of_assing_user(res.assign_to)
+            res.push_notification_of_assing_user(res.assign_to)
         return res
 
     def write(self, vals):
@@ -290,7 +290,7 @@ class ServiceRequestWorkFlow(models.Model):
         notifications = channel._channel_message_notifications(message)
         body = 'Dear %s,<br/> You have a new task assigned to you <br/> Task Name: %s <br/> Service Request Number: %s ' \
                '<br/><br/> Regards,<br/>ODOO Notification Service' % (
-               user.name, self.name, self.service_request_id.name)
+                   user.name, self.name, self.service_request_id.name)
         channel.message_post(
             body=body, message_type='comment',
             subtype='mail.mt_comment', author_id=SUPERUSER_ID,
