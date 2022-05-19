@@ -202,8 +202,7 @@ class ServiceRequestWorkFlow(models.Model):
     @api.model
     def create(self, values):
         res = super(ServiceRequestWorkFlow, self).create(values)
-        if res.assign_to and res.service_request_id and res.service_request_id.status != 'draft':
-            res.push_notification_of_assing_user(res.assign_to)
+        res.push_notification_of_assing_user(res.assign_to)
         return res
 
     def write(self, vals):
@@ -224,8 +223,7 @@ class ServiceRequestWorkFlow(models.Model):
             self.send_notification()
         if vals.get('assign_to', False):
             assign_user = self.env['res.users'].browse(vals.get('assign_to'))
-            if self.service_request_id and self.service_request_id.status != 'draft':
-                self.push_notification_of_assing_user(assign_user)
+            self.push_notification_of_assing_user(assign_user)
         if res:
             if vals.get('status', False):
                 self.date = datetime.today()
@@ -289,9 +287,14 @@ class ServiceRequestWorkFlow(models.Model):
         }
         message = self.env['mail.message'].sudo().create(message_vals)
         notifications = channel._channel_message_notifications(message)
+        get_url = str(self.env['ir.config_parameter'].sudo().search(
+            [('key', '=', 'web.base.url')]).value) + '/web?#id=' + str(
+            self.id) + '&view_type=form&model=ebs_mod.service.request.workflow&action=' + str(
+            self.env.ref('ebs_qsheild_mod.service_request_workflow_window').id) + ' & menu_id = '
+        prepared_url = '<a href="' + get_url + '">' + get_url + '</a>'
         body = 'Dear %s,<br/> You have a new task assigned to you <br/> Task Name: %s <br/> Service Request Number: %s ' \
-               '<br/><br/> Regards,<br/>ODOO Notification Service' % (
-                   user.name, self.name, self.service_request_id.name)
+               '<br/><br/> Regards,<br/>ODOO Notification Service <br/>Task Url : %s' % (
+                   user.name, self.name, self.service_request_id.name, prepared_url)
         channel.message_post(
             body=body, message_type='comment',
             subtype='mail.mt_comment', author_id=SUPERUSER_ID,
