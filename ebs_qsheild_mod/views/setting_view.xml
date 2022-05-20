@@ -60,6 +60,32 @@
             </field>
         </record>
 
+        <record id="res_config_settings_view_form_custom_inherit" model="ir.ui.view">
+            <field name="name">res.config.settings.view.form.custom.inherit</field>
+            <field name="model">res.config.settings</field>
+            <field name="inherit_id" ref="documents.res_config_settings_view_form"/>
+            <field name="arch" type="xml">
+                <xpath expr="//div[hasclass('o_documents_block')]" position="inside">
+                    <div class="row mt16 o_settings_container">
+                        <div class="col-xs-12 col-md-6 o_setting_box">
+                            <div class="o_setting_left_pane">
+                                <field name="is_recipient_email_for_document_expiry"/>
+                            </div>
+                            <div class="o_setting_right_pane o_documents_right_pane">
+                                <label for="is_recipient_email_for_document_expiry"/>
+                                <div id="recipient_emails_for_document_expiry">
+                                    <div class="mt8"
+                                         attrs="{'invisible': [('is_recipient_email_for_document_expiry','=',False)]}">
+                                        <field name="recipient_emails_for_document_expiry" class="o_light_label"
+                                               attrs="{'required': [('is_recipient_email_for_document_expiry','=',True)]}"/>
+                                    </div>
+                                </div>
+                            </div>
 
+                        </div>
+                    </div>
+                </xpath>
+            </field>
+        </record>
     </data>
 </odoo>
