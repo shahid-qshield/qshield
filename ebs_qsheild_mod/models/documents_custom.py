@@ -323,17 +323,21 @@ class DocumentsCustom(models.Model):
     def notify_document_before_expired_to_partner(self):
         base_url = self.env['ir.config_parameter'].get_param('web.base.url') + '/web/content/download/xlsx_reports/'
         link = "href = " + str(base_url)
-        emails = ['helpdesk@qshield.com', 'melkhatib@qshield.com']
-        partners = self.env['res.partner'].search([('account_manager', '!=', False)])
-        for partner in partners:
-            if partner.account_manager.user_id.partner_id.email:
-                emails.append(partner.account_manager.user_id.partner_id.email)
-        emails = set(emails)
+        # emails = ['helpdesk@qshield.com', 'melkhatib@qshield.com']
+        # partners = self.env['res.partner'].search([('account_manager', '!=', False)])
+        # for partner in partners:
+        #     if partner.account_manager.user_id.partner_id.email:
+        #         emails.append(partner.account_manager.user_id.partner_id.email)
+        # emails = set(emails)
+        recipient_emails = self.env['ir.config_parameter'].get_param(
+            'ebs_qsheild_mod.recipient_emails_for_document_expiry')
+        # emails = set(recipient_emails.split(','))
         mail = self.env['mail.mail'].sudo().create({
             'subject': _('Documents Expiry.'),
             'email_from': self.env.user.partner_id.email,
             'author_id': self.env.user.partner_id.id,
-            'email_to': ','.join(emails),
+            'email_to': recipient_emails,
+            # 'email_to': ','.join(emails),
             # 'email_to': 'helpdesk@qshield.com',
             'body_html':
                 " Dear(s), <br/><br/> "
