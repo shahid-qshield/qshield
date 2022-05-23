@@ -64,7 +64,7 @@
                                         <br/>
                                         <br/>
                                         <br/>
-                                        <h3 t-esc="datetime.datetime.now().date().strftime('%d-%m-%Y')"
+                                        <h3 t-esc="o.date_order.strftime('%d-%m-%Y')"
                                             style="font-family: 'Prata', serif;"></h3>
                                     </div>
                                     <img src="/qshield_crm/static/src/img/image3.jpg"
