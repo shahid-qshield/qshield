@@ -80,6 +80,12 @@
                                                attrs="{'required': [('is_recipient_email_for_document_expiry','=',True)]}"/>
                                     </div>
                                 </div>
+                                <div class="row">
+                                    <div class="text-muted col-md-12">
+                                        ADD configuration for Document Notification For Clients Before Expired
+                                        and add email with comma separated
+                                    </div>
+                                </div>
                             </div>
 
                         </div>
