@@ -58,7 +58,7 @@
                                         <br/>
                                         <br/>
                                         <h1 style="font-family: 'Bentham', serif;">
-                                            <span t-field="o.company_id.name"/>
+                                            <span t-field="o.partner_id.name"/>
                                         </h1>
                                         <br/>
                                         <br/>
