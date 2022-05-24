@@ -33,7 +33,8 @@
                                     </p>
                                 </div>
                                 <div>
-                                    <p>Dear <t t-if="o.employee_id.gender == 'male'">Sir</t><t t-if="o.employee_id.gender == 'female'">Mam</t>,</p>
+<!--                                    <p>Dear <t t-if="o.employee_id.gender == 'male'">Sir</t><t t-if="o.employee_id.gender == 'female'">Mam</t>,</p>-->
+                                    <p>Sir/Ma'am,</p>
                                 </div>
 
                                 <p style="line-height: 2;">
@@ -54,12 +55,18 @@
                                     ( <span style="padding-right:5px;" t-field="o.allowances_num_word"/> )
                                 </p><br/>
                                 <p>This certificate has been issued as per <t t-if="o.employee_id.gender == 'male'"> his </t><t t-if="o.employee_id.gender == 'female'">her</t> request with no Liabilities on the company.</p>
-                                <div><br/><br/><br/>
-                                    Kind regards,<br/>
-                                    for QSHIELD LLC.,<br/><br/>
+                                 <div><br/><br/><br/>
+                                    For  <span style="padding-right:5px;" t-field="o.addressed_to"/>, <br/>
+                                    Yours QSHIELD.,<br/><br/>
                                     <strong>NAME OF SIGNATORY:</strong> <span style="padding-right:5px;" t-field="o.signatory_id.name"/><br/>
                                     <strong>DESIGNATION: </strong> <span style="padding-right:5px;" t-field="o.signatory_id.job_id.name"/>
                                 </div>
+<!--                                <div><br/><br/><br/>-->
+<!--                                    Kind regards,<br/>-->
+<!--                                    for QSHIELD LLC.,<br/><br/>-->
+<!--                                    <strong>NAME OF SIGNATORY:</strong> <span style="padding-right:5px;" t-field="o.signatory_id.name"/><br/>-->
+<!--                                    <strong>DESIGNATION: </strong> <span style="padding-right:5px;" t-field="o.signatory_id.job_id.name"/>-->
+<!--                                </div>-->
                            </body>
                         </html>
 
