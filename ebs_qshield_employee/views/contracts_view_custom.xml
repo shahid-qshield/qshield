@@ -19,6 +19,11 @@
                         </div>
                     </group>
                 </xpath>
+
+                <xpath expr="//label[@for='wage']" position="attributes">
+                     <attribute name="string">Basic Salary</attribute>
+                </xpath>
+
                 <xpath expr="//page[@name='information']//group" position="after">
                     <group name="salary_information">
                         <group name="salary_info" string="Salary Information">
@@ -28,6 +33,8 @@
                             <field name="petrol_allowance"/>
                             <field name="other_allowance"/>
                             <field name="other_benefits"/>
+                            <field name="gross_salary"/>
+
                         </group>
                     </group>
                 </xpath>

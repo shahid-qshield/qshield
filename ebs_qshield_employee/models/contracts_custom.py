@@ -24,3 +24,10 @@ class ContractsCustom(models.Model):
     petrol_allowance = fields.Monetary('Petrol Allowance', default=0)
     other_allowance = fields.Monetary('Other Allowance', default=0)
     other_benefits = fields.Monetary('Other Benefits', default=0)
+    gross_salary = fields.Monetary('Gross Salary', compute="_compute_gross_salary")
+
+    def _compute_gross_salary(self):
+        for record in self:
+            record.gross_salary = record.wage + record.housing_allowance + record.transport_allowance + \
+                                  record.telephone_allowance + record.petrol_allowance + record.other_allowance + \
+                                  record.other_benefits

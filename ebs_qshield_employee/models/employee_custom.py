@@ -91,8 +91,45 @@ class EmployeeCustom(models.Model):
     #             if loan:
     #                 loan.compute_installment()
 
+    def update_contract_of_employee_from_xlsx(self):
+        file_path = os.path.dirname(os.path.dirname(__file__)) + '/data/Employment contracts.xls'
+        with open(file_path, 'rb') as f:
+            try:
+                file_data = f.read()
+                workbook = xlrd.open_workbook(file_contents=file_data)
+                worksheet = workbook.sheet_by_index(0)
+                first_row = []
+                for col in range(worksheet.ncols):
+                    first_row.append(worksheet.cell_value(0, col))
+                data = []
+                for row in range(1, worksheet.nrows):
+                    elm = {}
+                    for col in range(worksheet.ncols):
+                        if first_row[col] in ['Employee Name', 'Net Salary', 'BASIC SALARY',
+                                              'ALLOWANCE', 'Other', 'Entitled Leaves (CALENDAR DAYS)']:
+                            if worksheet.cell_value(row, col) != '':
+                                elm[first_row[col]] = worksheet.cell_value(row, col)
+                            else:
+                                elm[first_row[col]] = False
+                    data.append(elm)
+                for record in data:
+                    if record.get('Employee Name'):
+                        employee_id = self.search([('name', 'ilike', record.get('Employee Name'))], limit=1)
+                        if employee_id:
+                            contract = self.env['hr.contract'].search(
+                                [('employee_id', '=', employee_id.id)], limit=1)
+                            if contract:
+                                contract_val = {
+                                    'wage': record.get('BASIC SALARY'),
+                                    'housing_allowance': record.get('ALLOWANCE'),
+                                    'other_allowance': record.get('Other'),
+                                    'leave_entitlement': record.get('Entitled Leaves (CALENDAR DAYS)')}
+                                contract.sudo().write(contract_val)
+            except Exception as e:
+                print('Something Wrong', e)
+
     def create_contract_of_qshield_employee(self):
-        file_path = os.path.dirname(os.path.dirname(__file__)) + '/data/Salaries.xlsx'
+        file_path = os.path.dirname(os.path.dirname(__file__)) + '/data/Salaries.xls'
         with open(file_path, 'rb') as f:
             try:
                 file_data = f.read()
@@ -155,7 +192,7 @@ class EmployeeCustom(models.Model):
                                 'employee_id': employee_id.id if employee_id else False,
                                 'date_start': start_date,
                                 'contract_type': record.get('Contract Type'),
-                                'wage': record.get('Wage'),
+                                'wage': record.get('Wage') if type(record.get('Wage')) != str else 0,
                                 'date_end': end_date,
                                 'department_id': department_id.id if department_id else False,
                                 'job_id': job_id.id if job_id else False,
@@ -177,7 +214,8 @@ class EmployeeCustom(models.Model):
                 print('Something Wrong', e)
 
     def create_employees(self):
-        file_path = os.path.dirname(os.path.dirname(__file__)) + '/data/Employees Record.xlsx'
+        file_path = os.path.dirname(os.path.dirname(__file__)) + '/data/Employment contracts.xls'
+        # file_path = os.path.dirname(os.path.dirname(__file__)) + '/data/Employees Record.xlsx'
         with open(file_path, 'rb') as f:
             try:
                 file_data = f.read()
@@ -208,8 +246,10 @@ class EmployeeCustom(models.Model):
                                 elm[first_row[col]] = str(int(worksheet.cell_value(row, col)))
                             else:
                                 elm[first_row[col]] = worksheet.cell_value(row, col)
-                        else:
+                        elif worksheet.cell_value(row, col) != '':
                             elm[first_row[col]] = worksheet.cell_value(row, col)
+                        else:
+                            elm[first_row[col]] = False
                     data.append(elm)
                 for record in data:
                     if record.get('Employee Name') != '':
@@ -260,81 +300,90 @@ class EmployeeCustom(models.Model):
                             'visa_expire': record.get('Visa Expire Date'),
                             'certificate': record.get('Certificate Level')
                         }
-                        if record.get('Work In') != '':
+                        if record.get('Work In') != '' and record.get('Work In'):
                             work_in = self.env['res.partner'].search([('name', '=', record.get('Work In'))], limit=1)
                             if not work_in:
                                 work_in = self.env['res.partner'].create({'name': record.get('Work In')})
                             employee_vals.update({'work_in': work_in.id})
-                        if record.get('Visa Status') != '':
+                        if record.get('Visa Status') != '' and record.get('Visa Status'):
                             visa_status = self.env['visa.status'].search(
                                 [('visa_status', '=', record.get('Visa Status'))],
                                 limit=1)
                             if not visa_status:
                                 visa_status = self.env['visa.status'].create({'visa_status': record.get('Visa Status')})
                             employee_vals.update({'visa': visa_status.id})
-                        if record.get('Department') != '':
+                        if record.get('Department') != '' and record.get('Department'):
                             department_id = self.env['hr.department'].search([('name', '=', record.get('Department'))],
                                                                              limit=1)
                             if not department_id:
                                 department_id = self.env['hr.department'].create({'name': record.get('Department')})
                             employee_vals.update({'department_id': department_id.id})
-                        if record.get('Job Position') != '':
+                        if record.get('Job Position') != '' and record.get('Job Position'):
                             job_id = self.env['hr.job'].search([('name', '=', record.get('Job Position'))], limit=1)
                             if not job_id:
                                 job_id = self.env['hr.job'].create({'name': record.get('Job Position')})
                             employee_vals.update({'job_id': job_id.id})
-                        if record.get('Manager') != '':
+                        if record.get('Manager') != '' and record.get('Manager'):
                             parent_id = self.env['hr.employee'].search([('name', 'ilike', record.get('Manager'))],
                                                                        limit=1)
                             if not parent_id:
                                 parent_id = self.env['hr.employee'].create({'name': record.get('Manager')})
                             employee_vals.update({'parent_id': parent_id.id})
-                        if record.get('Home Leave Destination') != '':
-                            home_leave_destination = self.env['res.country'].search(
-                                [('name', '=', record.get('Home Leave Destination').split(', ')[1])], limit=1)
-                            if not home_leave_destination:
-                                home_leave_destination = self.env['res.country'].create(
-                                    {'name': record.get('Home Leave Destination').split(', ')[1]})
+                        if record.get('Home Leave Destination') != '' and record.get('Home Leave Destination'):
+                            # home_leave_destination = self.env['res.country'].search(
+                            #     [('name', '=', record.get('Home Leave Destination').split(', ')[1])], limit=1)
+                            if len(record.get('Home Leave Destination').split(', ')) > 1:
+                                home_leave_destination = self.env['res.country'].search(
+                                    [('name', '=', record.get('Home Leave Destination').split(', ')[1])], limit=1)
+                                if not home_leave_destination:
+                                    home_leave_destination = self.env['res.country'].create(
+                                        {'name': record.get('Home Leave Destination').split(', ')[1]})
+                            else:
+                                home_leave_destination = self.env['res.country'].search(
+                                    [('name', '=', record.get('Home Leave Destination'))], limit=1)
+                                if not home_leave_destination:
+                                    home_leave_destination = self.env['res.country'].create(
+                                        {'name': record.get('Home Leave Destination')})
                             employee_vals.update({'home_leave_destination': home_leave_destination.id})
-                        if record.get('Country of Issue') != '':
+                        if record.get('Country of Issue') != '' and record.get('Country of Issue'):
                             country_issue = self.env['res.country'].search(
                                 [('name', '=', record.get('Country of Issue'))], limit=1)
                             if not country_issue:
                                 country_issue = self.env['res.country'].create(
                                     {'name': record.get('Country of Issue')})
                             employee_vals.update({'country_issue': country_issue.id})
-                        if record.get('Work Address') != '':
+                        if record.get('Work Address') != '' and record.get('Work Address'):
                             address_id = self.env['res.partner'].search([('name', '=', record.get('Work Address'))],
                                                                         limit=1)
                             if not address_id:
                                 address_id = self.env['res.partner'].create({'name': record.get('Work Address')})
                             employee_vals.update({'address_id': address_id.id})
-                        if record.get('Coach') != '':
+                        if record.get('Coach') != '' and record.get('Coach'):
                             coach_id = self.env['hr.employee'].search([('name', 'ilike', record.get('Coach'))], limit=1)
                             if not coach_id:
                                 coach_id = self.env['hr.employee'].create({'name': record.get('Coach')})
                             employee_vals.update({'parent_id': coach_id.id})
-                        if record.get('Address') != '':
+                        if record.get('Address') != '' and record.get('Address'):
                             address_home_id = self.env['res.partner'].search([('name', '=', record.get('Address'))],
                                                                              limit=1)
                             if not address_home_id:
                                 address_home_id = self.env['res.partner'].create({'name': record.get('Address')})
                             employee_vals.update({'address_home_id': address_home_id.id})
-                        if record.get('Address (Home Country)') != '':
+                        if record.get('Address (Home Country)') != '' and record.get('Address (Home Country)'):
                             address_home_country = self.env['res.partner'].search(
                                 [('name', '=', record.get('Address (Home Country)'))], limit=1)
                             if not address_home_country:
                                 address_home_country = self.env['res.partner'].create(
                                     {'name': record.get('Address (Home Country)')})
                             employee_vals.update({'address_home_country': address_home_country.id})
-                        if record.get('Nationality (Country)') != '':
+                        if record.get('Nationality (Country)') != '' and record.get('Nationality (Country)'):
                             country_id = self.env['res.country'].search(
                                 [('name', '=', record.get('Nationality (Country)'))], limit=1)
                             if not country_id:
                                 country_id = self.env['res.country'].create(
                                     {'name': record.get('Nationality (Country)')})
                             employee_vals.update({'country_id': country_id.id})
-                        if record.get('Country of Birth') != '':
+                        if record.get('Country of Birth') != '' and record.get('Country of Birth'):
                             country_of_birth = self.env['res.country'].search(
                                 [('name', '=', record.get('Country of Birth'))], limit=1)
                             if not country_of_birth:
@@ -348,7 +397,7 @@ class EmployeeCustom(models.Model):
                         elif record.get('Certificate Level') == 'Other':
                             employee_vals.update({'certificate': 'other'})
 
-                        if record.get('Dependants/Name') != '':
+                        if record.get('Dependants/Name') != '' and record.get('Dependants/Name'):
                             dependant_line = False
                             dob = False
                             if record.get('Dependants/Date of Birth') != '':
@@ -378,7 +427,7 @@ class EmployeeCustom(models.Model):
                                 })]
                             employee_vals.update({'dependant_id': dependant_vals})
 
-                        if record.get('Emergency/Name') != '':
+                        if record.get('Emergency/Name') != '' and record.get('Emergency/Name'):
                             emergency_line = False
                             if employee:
                                 emergency_line = self.env['hr.emergency'].search(
@@ -406,7 +455,8 @@ class EmployeeCustom(models.Model):
                                 })]
                             employee_vals.update({'emergency_id': emergenecy_vals})
 
-                        if record.get('School/College/University/Year') != '':
+                        if record.get('School/College/University/Year') != '' and record.get(
+                                'School/College/University/Year'):
                             education_line = False
                             if employee:
                                 education_line = self.env['hr.education'].search(
@@ -427,7 +477,7 @@ class EmployeeCustom(models.Model):
                                     'university': record.get('School/College/University/University'),
                                 })]
                             employee_vals.update({'education_id': education_vals})
-                        if record.get('Courses/Course Title') != '':
+                        if record.get('Courses/Course Title') != '' and record.get('Courses/Course Title'):
                             courses_id = False
                             if employee:
                                 courses_id = self.env['hr.courses'].search(
@@ -459,7 +509,7 @@ class EmployeeCustom(models.Model):
                                 })]
                             employee_vals.update({'courses_id': courses_vals})
 
-                        if record.get('Language/Name') != '':
+                        if record.get('Language/Name') != '' and record.get('Language/Name'):
                             language_id = False
                             if employee:
                                 language_id = self.env['hr.language'].search(
@@ -481,7 +531,8 @@ class EmployeeCustom(models.Model):
                                 })]
                             employee_vals.update({'language_id': language_vals})
 
-                        if record.get('Employment History/Position') != '':
+                        if record.get('Employment History/Position') != '' and record.get(
+                                'Employment History/Position'):
                             history_id = False
                             if employee:
                                 history_id = self.env['hr.history'].search(
