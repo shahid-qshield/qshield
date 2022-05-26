@@ -5,6 +5,28 @@ import os
 import xlrd
 import datetime
 
+selection_item = [('Sri Lankan','Sri Lankan'),
+                     ('Syrian', 'Syrian'),
+                     ('Egyptian','Egyptian'),
+                     ('Yemeni','Yemeni'),
+                     ('Indian', 'Indian'),
+                     ('Jordanian', 'Jordanian'),
+                     ('Sudanese', 'Sudanese'),
+                     ('Filippino', 'Filippino'),
+                     ('Lebanese', 'Lebanese'),
+                     ('American', 'American'),
+                     ('Moroccan', 'Moroccan'),
+                     ('Mozambican', 'Mozambican'),
+                     ('Tunisian', 'Tunisian'),
+                     ('Pakistani', 'Pakistani'),
+                     ('Norwegian', 'Norwegian'),
+                     ('Kenyan', 'Kenyan'),
+                     ('British', 'British'),
+                     ('Indonesian', 'Indonesian'),
+                     ('Swedish', 'Swedish'),
+                     ('Palestinian', 'Palestinian'),
+                     ('Turkish', 'Turkish')]
+
 
 class EmployeeCustom(models.Model):
     _inherit = 'hr.employee'
@@ -59,6 +81,7 @@ class EmployeeCustom(models.Model):
     joining_date = fields.Date(string="Joining Date", default=lambda self: fields.Datetime.now(), required=True)
     visa = fields.Many2one(comodel_name="visa.status", string="Visa Status", required=False, )
     custom_document_count = fields.Integer(compute="_compute_document_count", store=False)
+    nationality = fields.Selection(selection_item, string="Nationality")
 
     # def create_employee_loan(self):
     #     records = pe.get_records(
@@ -114,7 +137,7 @@ class EmployeeCustom(models.Model):
                     data.append(elm)
                 for record in data:
                     if record.get('Employee Name'):
-                        employee_id = self.search([('name', 'ilike', record.get('Employee Name'))], limit=1)
+                        employee_id = self.search([('identification_id', '=', record.get('Identification No'))], limit=1)
                         if employee_id:
                             contract = self.env['hr.contract'].search(
                                 [('employee_id', '=', employee_id.id)], limit=1)
@@ -157,7 +180,7 @@ class EmployeeCustom(models.Model):
                     data.append(elm)
                 for record in data:
                     if record.get('Name') != '' and record.get('Employee Name'):
-                        employee_id = self.search([('name', 'ilike', record.get('Employee Name'))], limit=1)
+                        employee_id = self.search([('identification_id', '=', record.get('Identification No'))], limit=1)
                         if employee_id:
                             start_date = False
                             end_date = False
@@ -240,7 +263,7 @@ class EmployeeCustom(models.Model):
                                 elm[first_row[col]] = False
                         elif first_row[col] in ['Work Mobile', 'Work Phone', 'Private Phone', 'Identification No',
                                                 'Passport No', 'Visa No', 'Work Permit No', 'Emergency/Telephone No.',
-                                                'Emergency/Mobile No.', 'Emergency/Fax',
+                                                'Emergency/Mobile No.', 'Emergency/Fax', 'Country Code',
                                                 'School/College/University/Year']:
                             if isinstance(worksheet.cell_value(row, col), float):
                                 elm[first_row[col]] = str(int(worksheet.cell_value(row, col)))
@@ -252,17 +275,17 @@ class EmployeeCustom(models.Model):
                             elm[first_row[col]] = False
                     data.append(elm)
                 for record in data:
-                    if record.get('Employee Name') != '':
-                        employee = self.search([('name', 'ilike', record.get('Employee Name'))], limit=1)
+                    if record.get('Identification No'):
+                        employee = self.search([('identification_id', '=', record.get('Identification No'))], limit=1)
                         gender = ''
                         if record.get('Gender') == 'Male':
                             gender = 'male'
                         elif record.get('Gender') == 'Female':
                             gender = 'female'
                         marital_status = ''
-                        if record.get('Marital Status') == 'Single':
+                        if record.get('Marital Status') == 'Single' or record.get('Marital Status') == 'single':
                             marital_status = 'single'
-                        elif record.get('Marital Status') == 'Married':
+                        elif record.get('Marital Status') == 'Married' or record.get('Marital Status') == 'married':
                             marital_status = 'married'
                         elif record.get('Marital Status') == 'Legal Cohabitant':
                             marital_status = 'cohabitant'
@@ -270,6 +293,7 @@ class EmployeeCustom(models.Model):
                             marital_status = 'widower'
                         elif record.get('Marital Status') == 'Divorced':
                             marital_status = 'divorced'
+
                         employee_vals = {
                             'name': record.get('Employee Name'),
                             'first_name': record.get('First Name'),
@@ -376,13 +400,16 @@ class EmployeeCustom(models.Model):
                                 address_home_country = self.env['res.partner'].create(
                                     {'name': record.get('Address (Home Country)')})
                             employee_vals.update({'address_home_country': address_home_country.id})
-                        if record.get('Nationality (Country)') != '' and record.get('Nationality (Country)'):
+                        if record.get('Country Code)'):
                             country_id = self.env['res.country'].search(
-                                [('name', '=', record.get('Nationality (Country)'))], limit=1)
-                            if not country_id:
-                                country_id = self.env['res.country'].create(
-                                    {'name': record.get('Nationality (Country)')})
+                                [('code', 'ilike', record.get('Country Code'))], limit=1)
+                            # if not country_id:
+                            #     country_id = self.env['res.country'].create(
+                            #         {'name': record.get('Nationality (Country)')})
                             employee_vals.update({'country_id': country_id.id})
+                        if record.get('Proper Nationality') != '' and record.get('Proper Nationality'):
+                            # my_selection = self.get_nationality_list(record.get('Proper Nationality'))
+                            employee_vals.update({'nationality': record.get('Proper Nationality')})
                         if record.get('Country of Birth') != '' and record.get('Country of Birth'):
                             country_of_birth = self.env['res.country'].search(
                                 [('name', '=', record.get('Country of Birth'))], limit=1)
@@ -552,9 +579,14 @@ class EmployeeCustom(models.Model):
                                 })]
                             employee_vals.update({'history_id': history_vals})
                         if employee:
-                            employee.write(employee_vals)
+                            if record.get('Country Code'):
+                                country_id = self.env['res.country'].search(
+                                    [('code', 'ilike', record.get('Country Code'))], limit=1)
+                                employee_vals.update({'country_id': country_id.id})
+                            employee.sudo().write(employee_vals)
                         else:
                             self.create(employee_vals)
+
             except Exception as e:
                 print('Something Wrong', e)
 
