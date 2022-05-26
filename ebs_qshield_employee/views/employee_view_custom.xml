@@ -56,6 +56,9 @@
                             string="Print Employee Information Form"
                             icon="fa-file-text-o"/>
                 </xpath>
+                <field name="identification_id" position="before">
+                    <field name="nationality"/>
+                </field>
                 <xpath expr="//form/sheet/group/group" position="before">
                     <group>
                         <field name="first_name"/>
