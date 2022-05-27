@@ -67,7 +67,7 @@
                                         Mrs.
                                     </t>
                                     <span style="padding-right:5px;" t-field="o.employee_id.name"/>,
-                                    <span style="padding-right:5px;" t-field="o.employee_id.country_id.name"/>
+                                    <span style="padding-right:5px;" t-field="o.employee_id.nationality"/>
                                     Nationality,
                                     holding a Passport No.
                                     <span style="padding-right:5px;" t-field="o.employee_id.passport_id"/>
