@@ -39,7 +39,7 @@
                                 <br/>
                                 <p style="line-height: 2;">
                                     This is to certify that <t t-if="o.employee_id.gender == 'male'"> Mr. </t> <t t-if="o.employee_id.gender == 'female' and o.employee_id.marital == 'single'"> Miss. </t> <t t-if="o.employee_id.gender == 'female' and o.employee_id.marital == 'married'"> Mrs. </t> <span style="padding-right:5px;" t-field="o.employee_id.name"/>,
-                                    <span style="padding-right:5px;" t-field="o.employee_id.country_id.name"/>Nationality,
+                                    <span style="padding-right:5px;" t-field="o.employee_id.nationality"/>Nationality,
                                      holding a Passport No. <span style="padding-right:5px;" t-field="o.employee_id.passport_id"/> and QID No.
                                     <span style="padding-right:5px;" t-field="o.employee_id.qid_number"/>
                                     is working with QShield LLC. As
