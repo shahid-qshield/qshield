@@ -5,27 +5,27 @@ import os
 import xlrd
 import datetime
 
-selection_item = [('Sri Lankan','Sri Lankan'),
-                     ('Syrian', 'Syrian'),
-                     ('Egyptian','Egyptian'),
-                     ('Yemeni','Yemeni'),
-                     ('Indian', 'Indian'),
-                     ('Jordanian', 'Jordanian'),
-                     ('Sudanese', 'Sudanese'),
-                     ('Filippino', 'Filippino'),
-                     ('Lebanese', 'Lebanese'),
-                     ('American', 'American'),
-                     ('Moroccan', 'Moroccan'),
-                     ('Mozambican', 'Mozambican'),
-                     ('Tunisian', 'Tunisian'),
-                     ('Pakistani', 'Pakistani'),
-                     ('Norwegian', 'Norwegian'),
-                     ('Kenyan', 'Kenyan'),
-                     ('British', 'British'),
-                     ('Indonesian', 'Indonesian'),
-                     ('Swedish', 'Swedish'),
-                     ('Palestinian', 'Palestinian'),
-                     ('Turkish', 'Turkish')]
+selection_item = [('Sri Lankan', 'Sri Lankan'),
+                  ('Syrian', 'Syrian'),
+                  ('Egyptian', 'Egyptian'),
+                  ('Yemeni', 'Yemeni'),
+                  ('Indian', 'Indian'),
+                  ('Jordanian', 'Jordanian'),
+                  ('Sudanese', 'Sudanese'),
+                  ('Filippino', 'Filippino'),
+                  ('Lebanese', 'Lebanese'),
+                  ('American', 'American'),
+                  ('Moroccan', 'Moroccan'),
+                  ('Mozambican', 'Mozambican'),
+                  ('Tunisian', 'Tunisian'),
+                  ('Pakistani', 'Pakistani'),
+                  ('Norwegian', 'Norwegian'),
+                  ('Kenyan', 'Kenyan'),
+                  ('British', 'British'),
+                  ('Indonesian', 'Indonesian'),
+                  ('Swedish', 'Swedish'),
+                  ('Palestinian', 'Palestinian'),
+                  ('Turkish', 'Turkish')]
 
 
 class EmployeeCustom(models.Model):
@@ -128,8 +128,8 @@ class EmployeeCustom(models.Model):
                 for row in range(1, worksheet.nrows):
                     elm = {}
                     for col in range(worksheet.ncols):
-                        if first_row[col] in ['Employee Name', 'Net Salary', 'BASIC SALARY',
-                                              'ALLOWANCE', 'Other', 'Entitled Leaves (CALENDAR DAYS)']:
+                        if first_row[col] in ['Employee Name', 'Identification No', 'Start Date', 'Net Salary',
+                                              'BASIC SALARY', 'ALLOWANCE', 'Other', 'Entitled Leaves (CALENDAR DAYS)']:
                             if worksheet.cell_value(row, col) != '':
                                 elm[first_row[col]] = worksheet.cell_value(row, col)
                             else:
@@ -137,17 +137,38 @@ class EmployeeCustom(models.Model):
                     data.append(elm)
                 for record in data:
                     if record.get('Employee Name'):
-                        employee_id = self.search([('identification_id', '=', record.get('Identification No'))], limit=1)
+                        employee_id = self.search([('identification_id', '=', int(record.get('Identification No')))],
+                                                  limit=1)
                         if employee_id:
                             contract = self.env['hr.contract'].search(
                                 [('employee_id', '=', employee_id.id)], limit=1)
+                            start_date = False
+                            if record.get('Start Date'):
+                                datetime_date = xlrd.xldate_as_datetime(record.get('Start Date'), 0)
+                                date_object = datetime_date.date()
+                                start_date = date_object.isoformat()
                             if contract:
                                 contract_val = {
-                                    'wage': record.get('BASIC SALARY'),
-                                    'housing_allowance': record.get('ALLOWANCE'),
-                                    'other_allowance': record.get('Other'),
-                                    'leave_entitlement': record.get('Entitled Leaves (CALENDAR DAYS)')}
+                                    'date_start': start_date,
+                                    'wage': float(record.get('BASIC SALARY')),
+                                    'housing_allowance': float(record.get('ALLOWANCE')),
+                                    'other_allowance': float(record.get('Other')),
+                                    'leave_entitlement': record.get('Entitled Leaves (CALENDAR DAYS)'),
+                                    'leave_selection': 'calendar_days',
+                                }
                                 contract.sudo().write(contract_val)
+                            else:
+                                contract_val = {
+                                    'name': record.get('Employee Name') + '-Contract',
+                                    'employee_id': employee_id.id,
+                                    'date_start': start_date,
+                                    'wage': float(record.get('BASIC SALARY')),
+                                    'housing_allowance': float(record.get('ALLOWANCE')),
+                                    'other_allowance': float(record.get('Other')),
+                                    'leave_entitlement': record.get('Entitled Leaves (CALENDAR DAYS)'),
+                                    'leave_selection': 'calendar_days',
+                                }
+                                contract_id = contract.sudo().create(contract_val)
             except Exception as e:
                 print('Something Wrong', e)
 
@@ -180,7 +201,8 @@ class EmployeeCustom(models.Model):
                     data.append(elm)
                 for record in data:
                     if record.get('Name') != '' and record.get('Employee Name'):
-                        employee_id = self.search([('identification_id', '=', record.get('Identification No'))], limit=1)
+                        employee_id = self.search([('identification_id', '=', record.get('Identification No'))],
+                                                  limit=1)
                         if employee_id:
                             start_date = False
                             end_date = False
