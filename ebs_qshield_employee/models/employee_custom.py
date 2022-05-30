@@ -128,8 +128,14 @@ class EmployeeCustom(models.Model):
                 for row in range(1, worksheet.nrows):
                     elm = {}
                     for col in range(worksheet.ncols):
-                        if first_row[col] in ['Employee Name', 'Identification No', 'Start Date', 'Net Salary',
-                                              'BASIC SALARY', 'ALLOWANCE', 'Other', 'Entitled Leaves (CALENDAR DAYS)']:
+                        if first_row[col] in ['Joining Date', 'Date of Birth']:
+                            if worksheet.cell_value(row, col) != '':
+                                elm[first_row[col]] = xlrd.xldate_as_datetime(worksheet.cell_value(row, col),
+                                                                              0).strftime(
+                                    '%Y-%m-%d')
+                            else:
+                                elm[first_row[col]] = False
+                        else:
                             if worksheet.cell_value(row, col) != '':
                                 elm[first_row[col]] = worksheet.cell_value(row, col)
                             else:
@@ -169,6 +175,102 @@ class EmployeeCustom(models.Model):
                                     'leave_selection': 'calendar_days',
                                 }
                                 contract_id = contract.sudo().create(contract_val)
+                        else:
+                            if record.get('Work In') != '' and record.get('Work In'):
+                                work_in = self.env['res.partner'].sudo().search([('name', '=', record.get('Work In'))],
+                                                                                limit=1)
+                                if not work_in:
+                                    work_in = self.env['res.partner'].sudo().create({'name': record.get('Work In')})
+                            if record.get('Job Position') != '' and record.get('Job Position'):
+                                job_position = self.env['hr.job'].sudo().search(
+                                    [('name', '=', record.get('Job Position'))],
+                                    limit=1)
+                                if not job_position:
+                                    job_position = self.env['hr.job'].sudo().create(
+                                        {'name': record.get('Job Position')})
+                            employee_vals = {
+                                'name': record.get('Employee Name'),
+                                'is_out_sourced': True if record.get('Out source ?') == 'Yes' else False,
+                                'work_in': work_in.id if work_in else False,
+                                'mobile_phone': str(int(record.get('Work Mobile'))),
+                                'work_email': record.get('Work Email'),
+                                'job_id': job_position.id if job_position else False,
+                                'joining_date': record.get('Joining Date'),
+                                'private_email': record.get('Private Email'),
+                                'phone': str(int(record.get('Private Phone'))),
+                                'passport_id': record.get('Passport No'),
+                                'identification_id': str(int(record.get('Identification No'))),
+                                'birthday': record.get('Date of Birth')
+                            }
+                            if record.get('Home Leave Destination') != '' and record.get('Home Leave Destination'):
+                                if len(record.get('Home Leave Destination').split(', ')) > 1:
+                                    home_leave_destination = self.env['res.country'].search(
+                                        [('name', '=', record.get('Home Leave Destination').split(', ')[1])], limit=1)
+                                    # if not home_leave_destination:
+                                    #     home_leave_destination = self.env['res.country'].create(
+                                    #         {'name': record.get('Home Leave Destination').split(', ')[1]})
+                                else:
+                                    home_leave_destination = self.env['res.country'].search(
+                                        [('name', '=', record.get('Home Leave Destination'))], limit=1)
+                                    # if not home_leave_destination:
+                                    #     home_leave_destination = self.env['res.country'].create(
+                                    #         {'name': record.get('Home Leave Destination')})
+                                employee_vals.update({'home_leave_destination': home_leave_destination.id})
+                            if record.get('Nationality (Country)') != '' and record.get('Nationality (Country)'):
+                                nationality = self.env['res.country'].search(
+                                    [('name', '=', record.get('Nationality (Country)'))], limit=1)
+                                employee_vals.update({'country_id': nationality.id if nationality else False})
+                            if record.get('Gender') == 'Male' and record.get('Gender'):
+                                employee_vals.update({'gender': 'male'})
+                            elif record.get('Gender') == 'Other' and record.get('Gender'):
+                                employee_vals.update({'gender': 'other'})
+                            elif record.get('Gender') == 'Female' and record.get('Gender'):
+                                employee_vals.update({'gender': 'female'})
+                            if record.get('Marital Status') in ['Single', 'single'] and record.get('Marital Status'):
+                                employee_vals.update({'marital': 'single'})
+                            elif record.get('Marital Status') in ['Married', 'married'] and record.get(
+                                    'Marital Status'):
+                                employee_vals.update({'marital': 'married'})
+                            employee_id = self.env['hr.employee'].sudo().create(employee_vals)
+                            if employee_id:
+                                contract = self.env['hr.contract'].search(
+                                    [('employee_id', '=', employee_id.id)], limit=1)
+                                start_date = False
+                                if record.get('Start Date'):
+                                    datetime_date = xlrd.xldate_as_datetime(record.get('Start Date'), 0)
+                                    date_object = datetime_date.date()
+                                    start_date = date_object.isoformat()
+                                if contract:
+                                    contract_val = {
+                                        'date_start': start_date,
+                                        'wage': float(record.get('BASIC SALARY')),
+                                        'housing_allowance': float(record.get('ALLOWANCE')),
+                                        'other_allowance': float(record.get('Other')),
+                                        'leave_entitlement': record.get('Entitled Leaves (CALENDAR DAYS)'),
+                                        'leave_selection': 'calendar_days',
+                                    }
+                                    contract.sudo().write(contract_val)
+                                else:
+                                    contract_val = {
+                                        'name': record.get('Employee Name') + '-Contract',
+                                        'employee_id': employee_id.id,
+                                        'date_start': start_date,
+                                        'wage': float(record.get('BASIC SALARY')),
+                                        'housing_allowance': float(record.get('ALLOWANCE')),
+                                        'other_allowance': float(record.get('Other')),
+                                        'leave_entitlement': record.get('Entitled Leaves (CALENDAR DAYS)'),
+                                        'leave_selection': 'calendar_days',
+                                    }
+                                    contract_id = contract.sudo().create(contract_val)
+                            # if record.get('Address (Home Country)') != '' and record.get('Address (Home Country)'):
+                            #     address_home_country = self.env['res.partner'].search(
+                            #         [('name', '=', record.get('Address (Home Country)'))], limit=1)
+                            #     if not address_home_country:
+                            #         address_home_country = self.env['res.partner'].create(
+                            #             {'name': record.get('Address (Home Country)')})
+                            #     employee_vals.update({'address_home_country': address_home_country.id})
+
+
             except Exception as e:
                 print('Something Wrong', e)
 
