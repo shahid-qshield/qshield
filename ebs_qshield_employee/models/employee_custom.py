@@ -82,6 +82,41 @@ class EmployeeCustom(models.Model):
     visa = fields.Many2one(comodel_name="visa.status", string="Visa Status", required=False, )
     custom_document_count = fields.Integer(compute="_compute_document_count", store=False)
     nationality = fields.Selection(selection_item, string="Nationality")
+    employee_address = fields.Text(string="Address")
+
+    def update_employee_info(self):
+        file_path = os.path.dirname(os.path.dirname(__file__)) + '/data/Employment contracts.xls'
+        with open(file_path, 'rb') as f:
+            try:
+                file_data = f.read()
+                workbook = xlrd.open_workbook(file_contents=file_data)
+                worksheet = workbook.sheet_by_index(0)
+                first_row = []
+                for col in range(worksheet.ncols):
+                    first_row.append(worksheet.cell_value(0, col))
+                data = []
+                for row in range(1, worksheet.nrows):
+                    elm = {}
+                    for col in range(worksheet.ncols):
+                        if first_row[col] in ['Address (Home Country)', 'Identification No', 'Proper Nationality']:
+                            if worksheet.cell_value(row, col) != '':
+                                elm[first_row[col]] = worksheet.cell_value(row, col)
+                            else:
+                                elm[first_row[col]] = False
+                    data.append(elm)
+                for record in data:
+                    if record.get('Identification No'):
+                        employee = self.env['hr.employee'].search(
+                            [('identification_id', '=', str(int(record.get('Identification No'))))], limit=1)
+                        if employee:
+                            employee_vals = {
+                                'qid_number': str(int(record.get('Identification No'))),
+                                'nationality': record.get('Proper Nationality'),
+                                'employee_address': record.get('Address (Home Country)')
+                            }
+                            employee.sudo().write(employee_vals)
+            except Exception as e:
+                print('Something Wrong', e)
 
     # def create_employee_loan(self):
     #     records = pe.get_records(
