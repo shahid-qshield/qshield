@@ -99,7 +99,8 @@
             <field name="arch" type="xml">
                 <tree>
                     <field name="name"/>
-                    <field name="service_type"/>
+<!--                    <field name="service_type"/>-->
+                    <field name="service_type_variant_ids"/>
                 </tree>
             </field>
         </record>
@@ -112,7 +113,8 @@
                     <sheet>
                         <group>
                             <field name="name"/>
-                            <field name="service_type"/>
+<!--                            <field name="service_type"/>-->
+                            <field name="service_type_variant_ids"/>
                         </group>
                     </sheet>
                 </form>
@@ -149,11 +151,52 @@
             </field>
         </record>
 
+        <record id="service_type_variants_tree" model="ir.ui.view">
+            <field name="name">Service Type Variants Tree</field>
+            <field name="model">ebs_mod.service.type.variants</field>
+            <field name="arch" type="xml">
+                <tree>
+                    <field name="name"/>
+                    <field name="service_type"/>
+                </tree>
+            </field>
+        </record>
+
+        <record id="service_type_variants_form" model="ir.ui.view">
+            <field name="name">Service Type Variants Form</field>
+            <field name="model">ebs_mod.service.type.variants</field>
+            <field name="arch" type="xml">
+                <form>
+                    <sheet>
+                        <group>
+                            <field name="name"/>
+                            <field name="service_type"/>
+                        </group>
+                    </sheet>
+                </form>
+            </field>
+        </record>
+
+
         <record id="service_destination_window" model="ir.actions.act_window">
             <field name="name">Service Destination</field>
             <field name="res_model">ebs_mod.service.destination</field>
             <field name="view_mode">tree,form</field>
         </record>
+
+        <record id="action_service_type_variants" model="ir.actions.act_window">
+            <field name="name">Service Type Variant</field>
+            <field name="res_model">ebs_mod.service.type.variants</field>
+            <field name="view_mode">tree,form</field>
+        </record>
+
+        <menuitem
+                id="service_type_variant_menu"
+                name="Service Type Variants"
+                action="action_service_type_variants"
+                parent="ebs_qsheild_mod.services_config"
+                sequence="21"
+        />
 
 
         <menuitem
