@@ -1,6 +1,8 @@
 # -*- coding: utf-8 -*-
 from odoo import models, fields, api, _
 from datetime import datetime, timedelta, date
+import os
+import xlrd
 
 
 class ServiceRequest(models.Model):
@@ -227,6 +229,7 @@ class ServiceTypes(models.Model):
     _inherit = 'ebs_mod.service.types'
 
     consolidation_id = fields.Many2one('ebs_mod.service.type.consolidation', 'Consolidation Name', store=True)
+    variant_id = fields.Many2one('ebs_mod.service.type.variants', 'Variant Name', store=True)
 
 
 class ServiceDestination(models.Model):
@@ -240,6 +243,72 @@ class ServiceTypeConsolidation(models.Model):
 
     name = fields.Char('Consolidation Name')
     service_type = fields.One2many('ebs_mod.service.types', 'consolidation_id')
+    service_type_variant_ids = fields.One2many('ebs_mod.service.type.variants', 'consolidation_id')
+
+    def import_service_type_consolidation(self):
+        print('----------------------------')
+        file_path = os.path.dirname(os.path.dirname(__file__)) + '/demo/service_type_consolidation.xls'
+        with open(file_path, 'rb') as f:
+            try:
+                file_data = f.read()
+                workbook = xlrd.open_workbook(file_contents=file_data)
+                worksheet = workbook.sheet_by_index(1)
+                first_row = []
+                for col in range(worksheet.ncols):
+                    first_row.append(worksheet.cell_value(0, col))
+                data = []
+                for row in range(1, worksheet.nrows):
+                    elm = {}
+                    for col in range(worksheet.ncols):
+                        if worksheet.cell_value(row, col) != '' and worksheet.cell_value(row, col) != 'NA':
+                            elm[first_row[col]] = worksheet.cell_value(row, col)
+                        else:
+                            elm[first_row[col]] = False
+                    data.append(elm)
+                for record in data:
+                    if record.get('Code') == 'WV':
+                        print('---------------------------')
+                    if record.get('Code'):
+                        service_type = self.env['ebs_mod.service.types'].sudo().search(
+                            [('code', '=', record.get('Code'))], limit=1)
+                        if service_type and record.get('Original Products'):
+                            self.env['ebs_mod.service.types'].sudo().write({'name': record.get('Original Products')})
+                        if not service_type:
+                            service_type = self.env['ebs_mod.service.types'].sudo().create({
+                                'name': record.get('Original Products') if record.get(
+                                    'Original Products') else record.get('Variants'),
+                                'code': record.get('Code')
+                            })
+                    if record.get('Variants'):
+                        service_type_variant = self.env['ebs_mod.service.type.variants'].sudo().search(
+                            [('name', '=', record.get('Variants'))])
+                        if service_type_variant:
+                            self.env['ebs_mod.service.type.variants'].sudo().write({'name': record.get('Variants')})
+                        else:
+                            service_type_variant = self.env['ebs_mod.service.type.variants'].sudo().create({
+                                'name': record.get('Variants')
+                            })
+                        if service_type and service_type.id not in service_type_variant.service_type.ids:
+                            service_type_variant.sudo().write({
+                                'service_type': [(4, service_type.id)]
+                            })
+                    if record.get('Grouped Services'):
+                        service_type_consolidation = self.env['ebs_mod.service.type.consolidation'].sudo().search(
+                            [('name', '=', record.get('Grouped Services'))])
+                        if service_type_consolidation:
+                            self.env['ebs_mod.service.type.consolidation'].sudo().write(
+                                {'name': record.get('Grouped Services')})
+                        else:
+                            service_type_consolidation = self.env['ebs_mod.service.type.consolidation'].sudo().create({
+                                'name': record.get('Grouped Services')
+                            })
+                        if service_type_variant and service_type_variant.id not in \
+                                service_type_consolidation.service_type_variant_ids.ids:
+                            service_type_consolidation.sudo().write(
+                                {'service_type_variant_ids': [(4, service_type_variant.id)]})
+
+            except Exception as e:
+                print('Something Wrong', e)
 
     @api.model
     def get_request(self):
@@ -262,3 +331,11 @@ class ServiceTypeConsolidation(models.Model):
                 }
                 request_list.append(request_dict.copy())
         return request_list
+
+
+class ServiceTypeVariants(models.Model):
+    _name = 'ebs_mod.service.type.variants'
+
+    consolidation_id = fields.Many2one('ebs_mod.service.type.consolidation')
+    name = fields.Char(string="Variant Name")
+    service_type = fields.One2many('ebs_mod.service.types', 'variant_id')
