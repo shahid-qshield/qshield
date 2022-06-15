@@ -13,6 +13,7 @@
                         <group col="2">
                             <field name="partner_id" widget="res_partner_many2one"
                                    context="{'res_partner_search_mode': 'customer', 'show_vat': True}"
+                                   domain="[('person_type','=','company')]"
                                    attrs="{'required': [('custom_action', '=', 'exist')], 'invisible':[('custom_action','!=','exist')]}"/>
                         </group>
                     </group>
