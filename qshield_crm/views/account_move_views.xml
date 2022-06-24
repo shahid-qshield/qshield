@@ -1,5 +1,91 @@
 <odoo>
     <data>
+        <!--  Server Action of Confirm invoice-->
+        <record id="server_action_of_confirm_invoice" model="ir.actions.server">
+            <field name="name">Confirm Invoice</field>
+            <field name="type">ir.actions.server</field>
+            <field name="state">code</field>
+            <field name="model_id" ref="qshield_crm.model_account_move"/>
+            <field name="binding_model_id" ref="account.model_account_move"/>
+            <field name="binding_view_types">list</field>
+            <field name="code">records.confirm_invoice()</field>
+        </record>
+
+        <!--  Server Action of Approve invoice-->
+        <record id="server_action_of_approve_invoice" model="ir.actions.server">
+            <field name="name">Approve Invoice</field>
+            <field name="type">ir.actions.server</field>
+            <field name="state">code</field>
+            <field name="model_id" ref="qshield_crm.model_account_move"/>
+            <field name="binding_model_id" ref="account.model_account_move"/>
+            <field name="binding_view_types">list</field>
+            <field name="code">records.approve_invoice()</field>
+            <field name="groups_id" eval="[(4, ref('ebs_leave_appilcation_request.group_finance_department_user'))]"/>
+        </record>
+
+        <record id="account.view_account_invoice_filter" model="ir.ui.view">
+            <field name="name">account.invoice.select</field>
+            <field name="model">account.move</field>
+            <field name="arch" type="xml">
+                <search string="Search Invoice">
+                    <field name="name" string="Invoice"
+                           filter_domain="['|', '|' , '|', '|',('name', 'ilike', self), ('invoice_origin', 'ilike', self),('ref', 'ilike', self), ('invoice_payment_ref', 'ilike', self),('partner_id', 'child_of', self)]"/>
+                    <field name="journal_id"/>
+                    <field name="partner_id" operator="child_of"/>
+                    <field name="invoice_user_id" string="Salesperson" domain="[('share', '=', False)]"/>
+                    <field name="date" string="Period"/>
+                    <field name="qshield_invoice_type" string="Qshield Invoice Type"/>
+                    <field name="sale_id" string="Sale order"/>
+                    <filter domain="[('invoice_user_id', '=', uid)]" name="myinvoices" help="My Invoices"/>
+                    <separator/>
+                    <filter name="draft" string="Draft" domain="[('state','=','draft')]"/>
+                    <filter name="posted" string="Posted" domain="[('state', '=', 'posted')]"/>
+                    <filter name="cancel" string="Cancelled" domain="[('state', '=', 'cancel')]"/>
+                    <separator/>
+                    <filter name="in_payment" string="In Payment"
+                            domain="[('invoice_payment_state', '=', 'in_payment'), ('state', '=', 'posted')]"/>
+                    <filter name="paid" string="Paid"
+                            domain="[('invoice_payment_state', '=', 'paid'), ('state', '=', 'posted')]"/>
+                    <filter name="unpaid" string="Not Paid"
+                            domain="[('invoice_payment_state', '=', 'not_paid'), ('state', '=', 'posted')]"/>
+                    <filter name="late" string="Overdue"
+                            domain="['&amp;', ('invoice_date_due', '&lt;', time.strftime('%Y-%m-%d')), ('state', '=', 'posted'), ('invoice_payment_state', '=', 'not_paid')]"
+                            help="Overdue invoices, maturity date passed"/>
+                    <separator/>
+                    <filter name="invoice_date" string="Invoice Date" date="invoice_date"/>
+                    <filter name="due_date" string="Due Date" date="invoice_date_due"/>
+
+                    <separator/>
+                    <filter invisible="1" string="Late Activities" name="activities_overdue"
+                            domain="[('activity_ids.date_deadline', '&lt;', context_today().strftime('%Y-%m-%d'))]"
+                            help="Show all records which has next action date is before today"/>
+                    <filter invisible="1" string="Today Activities" name="activities_today"
+                            domain="[('activity_ids.date_deadline', '=', context_today().strftime('%Y-%m-%d'))]"/>
+                    <filter invisible="1" string="Future Activities" name="activities_upcoming_all"
+                            domain="[('activity_ids.date_deadline', '&gt;', context_today().strftime('%Y-%m-%d'))]"/>
+                    <group expand="0" string="Group By">
+                        <filter string="Salesperson" name="salesperson" context="{'group_by':'invoice_user_id'}"/>
+                        <filter name="status" string="Status" context="{'group_by':'state'}"/>
+                        <separator/>
+                        <filter string="Invoice Date" name="invoicedate" context="{'group_by': 'invoice_date'}"/>
+                        <filter string="Due Date" name="duedate" context="{'group_by': 'invoice_date_due'}"/>
+                        <separator/>
+                        <filter string="Customer" name="partner"
+                                context="{'group_by':'partner_id'}"/>
+                    </group>
+                </search>
+            </field>
+        </record>
+
+        <record id="action_move_out_invoice_type_custom_action" model="ir.actions.act_window">
+            <field name="name">Invoices</field>
+            <field name="res_model">account.move</field>
+            <field name="view_mode">tree,form</field>
+            <field name="view_id" ref="account.view_invoice_tree"/>
+            <field name="search_view_id" ref="account.view_account_invoice_filter"/>
+            <!--            <field name="domain">[('type', '=', 'out_invoice')]</field>-->
+            <field name="context">{'default_type': 'out_invoice'}</field>
+        </record>
 
         <record id="view_move_form_custom_inherit" model="ir.ui.view">
             <field name="name">view.move.form.custom.inherit</field>
@@ -7,9 +93,67 @@
             <field name="inherit_id" ref="account.view_move_form"/>
             <field name="arch" type="xml">
                 <field name="ref" position="after">
-                    <field name="sale_id" options="{'no_create' : 1}"/>
+                    <field name="sale_id" options="{'no_create' : 1}" attrs="{'readonly': [('state','=','posted')]}"/>
                     <field name="payment_term_id" domain="[('sale_id','=',sale_id)]" options="{'no_create' : 1}"
-                           attrs="{'invisible': [('sale_id','=',False)]}" string="Invoice term"/>
+                           attrs="{'invisible': [('sale_id','=',False)],'readonly': [('state','=','posted')]}"
+                           string="Invoice term"/>
+                </field>
+                <xpath expr="//header/field[@name='state']" position="attributes">
+                    <attribute name="statusbar_visible">draft,new,approve,posted,cancel</attribute>
+                </xpath>
+                <xpath expr="//header/button[@name='action_post']" position="attributes">
+                    <attribute name="attrs">{'invisible' : [('state','!=','approve')]}</attribute>
+                    <attribute name="string">Lock</attribute>
+                </xpath>
+                <field name="ref" position="attributes">
+                    <attribute name="attrs">{'readonly' : [('state','=','posted')]}</attribute>
+                </field>
+                <field name="invoice_user_id" position="attributes">
+                    <attribute name="attrs">{'readonly' : [('state','=','posted')]}</attribute>
+                </field>
+                <field name="invoice_incoterm_id" position="attributes">
+                    <attribute name="attrs">{'readonly' : [('state','=','posted')]}</attribute>
+                </field>
+                <xpath expr="//header" position="inside">
+                    <button name="action_invoice_submit" type="object"
+                            class="oe_highlight"
+                            attrs="{'invisible': [('state', '!=', 'draft')]}"
+                            string="Submit"/>
+                    <button name="action_invoice_approve" type="object"
+                            class="oe_highlight"
+                            attrs="{'invisible': [('state', '!=', 'new')]}"
+                            string="Approve"
+                            groups="ebs_leave_appilcation_request.group_finance_department_user"/>
+                </xpath>
+                <xpath expr="//page[@id='invoice_tab']/field[@name='invoice_line_ids']/tree/field[@name='product_id']"
+                       position="after">
+                    <field name="service_request_id"
+                           attrs="{'column_invisible' : [('parent.qshield_invoice_type','!=','expense_invoice')]}"/>
+                    <field name="service_type_id"
+                           attrs="{'column_invisible' : [('parent.qshield_invoice_type','!=','expense_invoice')]}"/>
+                    <field name="service_status"
+                           attrs="{'column_invisible' : [('parent.qshield_invoice_type','!=','expense_invoice')]}"/>
+                </xpath>
+            </field>
+        </record>
+
+
+        <record id="account_invoice_form_custom_inherit" model="ir.ui.view">
+            <field name="name">account.invoice.form.form.custom.inherit</field>
+            <field name="model">account.move</field>
+            <field name="inherit_id" ref="sale.account_invoice_form"/>
+            <field name="arch" type="xml">
+                <field name="campaign_id" position="attributes">
+                    <attribute name="attrs">{'readonly' : [('state','=','posted')]}</attribute>
+                </field>
+                <field name="medium_id" position="attributes">
+                    <attribute name="attrs">{'readonly' : [('state','=','posted')]}</attribute>
+                </field>
+                <field name="source_id" position="attributes">
+                    <attribute name="attrs">{'readonly' : [('state','=','posted')]}</attribute>
+                </field>
+                <field name="team_id" position="attributes">
+                    <attribute name="attrs">{'readonly' : [('state','=','posted')]}</attribute>
                 </field>
             </field>
         </record>

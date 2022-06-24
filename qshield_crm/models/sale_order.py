@@ -5,6 +5,7 @@ from datetime import datetime, date
 from odoo.tools import float_is_zero, float_compare
 from odoo.exceptions import UserError
 from dateutil.relativedelta import relativedelta
+import calendar
 
 
 class SaleOrder(models.Model):
@@ -23,6 +24,7 @@ class SaleOrder(models.Model):
     ], string='Status', readonly=True, copy=False, index=True, tracking=3, default='draft')
 
     qshield_crm_state = fields.Selection(related="state")
+    qshield_service_state = fields.Selection(related="state")
     approver_setting_id = fields.Many2one("sale.order.approver.settings", compute="compute_approver_settings_id")
     approver_ids = fields.One2many('sale.order.approver', 'sale_order_id', string="Approvers")
     account_manager = fields.Many2one('hr.employee', string="Account Manager")
@@ -42,8 +44,23 @@ class SaleOrder(models.Model):
                                     default='is_retainer')
     start_date = fields.Date(string="Start Date")
     end_date = fields.Date(string="End Date")
+    generate_order_line = fields.Selection([('from_consolidation', 'From Consolidation'), ('manual', 'Manual')],
+                                           default='manual')
+    is_out_of_scope = fields.Boolean(string="Is out of scope")
+    no_of_employees = fields.Integer(string="Number of Employees")
 
     # is_notification_sent_to_account_manager = fields.Boolean(string="Is Notification Sent To Account Manager")
+
+    def action_generate_sale_order_line(self):
+        if self.id:
+            generate_sale_order_line = self.env['generate.sale.order.line'].sudo().search(
+                [('sale_order_id', '=', self.id)], limit=1)
+            if not generate_sale_order_line:
+                generate_sale_order_line = self.env['generate.sale.order.line'].sudo().create(
+                    {'sale_order_id': self.id})
+            action = self.env.ref('qshield_crm.action_generate_sale_order_line').read()[0]
+            action.update({'res_id': generate_sale_order_line.id})
+            return action
 
     def get_contract_duration(self):
         diff = relativedelta(self.end_date, self.start_date)
@@ -62,9 +79,82 @@ class SaleOrder(models.Model):
             template_id = self.env['ir.model.data'].xmlid_to_res_id(
                 'qshield_crm.email_template_qshield_proposal_quotation',
                 raise_if_not_found=False)
+
             context.update({'default_template_id': template_id})
             action.update({'context': context})
+        if self.is_out_of_scope:
+            context = action.get('context')
+            # template_id = self.env['ir.model.data'].xmlid_to_res_id(
+            #     'qshield_crm.email_template_of_send_notification_to_client',
+            #     raise_if_not_found=False)
+            template_id = self.env.ref('qshield_crm.email_template_of_send_notification_to_client')
+            context.update({'default_template_id': template_id.id})
+            action.update({'context': context})
+            if template_id:
+                db_manager_url = self.env['ir.config_parameter'].get_param('web.base.url') + '/web/database/manager'
+                url = self.env['ir.config_parameter'].get_param('web.base.url') + self.get_portal_url()
+                prepared_url = '<a href="' + url + '">' + 'View Quotation' + '</a>'
+                db_manager_link = '<a href="' + db_manager_url + '">' + 'Select Database' + '</a>'
+                template_id.sudo().with_context(
+                    email_to=self.partner_id.email, email_from=self.env.user.email, link=prepared_url,
+                    db_manager_link=db_manager_link).send_mail(
+                    self.id,
+                    force_send=True)
+                self.write({'state': 'sent'})
+                return True
+                # return True
         return action
+
+    def action_done(self):
+        res = super(SaleOrder, self).action_done()
+        if self.is_agreement == 'is_retainer':
+            # num_months = (self.end_date.year - self.start_date.year) * 12 + (
+            #         self.end_date.month - self.start_date.month) + 1
+            # if num_months == 0:
+            #     num_months = 1
+            for first_day_date in self.months_between(self.end_date, self.start_date):
+                if first_day_date:
+                    last_day_of_month = calendar.monthrange(first_day_date.year, first_day_date.month)[1]
+                    last_day_date = first_day_date.replace(day=last_day_of_month)
+                    self.env['invoice.term.line'].sudo().create({
+                        'name': first_day_date.strftime('%b') + ' ' + first_day_date.strftime('%Y') + ' - invoice term',
+                        'start_term_date': first_day_date,
+                        'end_term_date': last_day_date,
+                        'due_date': last_day_date,
+                        'type': 'down',
+                        'invoice_amount_type': 'amount',
+                        'amount': self.amount_total,
+                        'sale_id': self.id
+                    })
+            if self.is_out_of_scope:
+                self.create_agreement_of_customer()
+        elif self.is_agreement == 'one_time_payment':
+            self.env['invoice.term.line'].sudo().create({
+                'name': self.start_date.strftime('%b') + ' ' + self.start_date.strftime('%Y') + ' - invoice term',
+                'start_term_date': self.start_date,
+                'end_term_date': self.end_date,
+                'due_date': self.end_date,
+                'type': 'regular_invoice',
+                'invoice_amount_type': 'amount',
+                'amount': self.amount_total,
+                'sale_id': self.id
+            })
+        return res
+
+    def months_between(self, end_date, start_date):
+        if start_date > end_date:
+            month = False
+            yield month
+        else:
+            year = start_date.year
+            month = start_date.month
+            while (year, month) <= (end_date.year, end_date.month):
+                yield date(year, month, 1)
+                if month == 12:
+                    month = 1
+                    year += 1
+                else:
+                    month += 1
 
     @api.model
     def create(self, values):
@@ -194,7 +284,7 @@ class SaleOrder(models.Model):
     def compute_is_approver_user(self):
         for record in self:
             if record.approver_ids:
-                if record.approver_ids.filtered(lambda x: x.user_id == self.env.user) and record.opportunity_id:
+                if record.approver_ids.filtered(lambda x: x.user_id == self.env.user):
                     record.is_approver_user = True
                 else:
                     record.is_approver_user = False
@@ -212,10 +302,14 @@ class SaleOrder(models.Model):
             else:
                 order.user_status = False
 
-    @api.depends('user_id')
+    @api.depends('user_id', 'is_out_of_scope')
     def compute_approver_settings_id(self):
         for rec in self:
-            rec.approver_setting_id = self.env['sale.order.approver.settings'].search([], limit=1).id
+            if rec.is_out_of_scope:
+                rec.approver_setting_id = self.env['sale.order.approver.settings'].search(
+                    [('type', '=', 'service_approver')], limit=1).id
+            else:
+                rec.approver_setting_id = self.env['sale.order.approver.settings'].search([], limit=1).id
 
     @api.onchange('approver_setting_id')
     def compute_approvers(self):
@@ -300,27 +394,47 @@ class SaleOrder(models.Model):
         self.sudo()._get_user_approval_activities(user=self.env.user, activity_type_id=activity).action_feedback()
         self.write({'state': 'agreement_submit'})
         if self.state == 'agreement_submit':
-            product_ids = self.order_line.mapped('product_id').ids
-            service_types = self.env['ebs_mod.service.types'].search([('product_id', 'in', product_ids)])
-            start_date = datetime.strftime(self.start_date, '%Y-%m-%d')
-            end_date = datetime.strftime(self.end_date, '%Y-%m-%d')
-            contract = self.env['ebs_mod.contracts'].search(
-                [('start_date', '=', start_date), ('end_date', '=', end_date), ('contact_id', '=', self.partner_id.id)])
-            if not contract:
-                contract = self.env['ebs_mod.contracts'].create({
-                    'name': 'Contract for sale order of ' + self.name,
-                    'start_date': start_date,
-                    'end_date': end_date,
-                    'contract_type': 'retainer_agreement',
-                    'service_ids': service_types.ids,
-                    'contact_id': self.partner_id.id
-                })
+            self.create_agreement_of_customer()
+
+    def create_agreement_of_customer(self):
+        product_ids = self.order_line.mapped('product_id').ids
+        service_variants = self.env['ebs_mod.service.type.variants'].sudo().search(
+            [('product_id', 'in', product_ids)])
+        service_types = service_variants.mapped('service_type')
+        start_date = datetime.strftime(self.start_date, '%Y-%m-%d')
+        end_date = datetime.strftime(self.end_date, '%Y-%m-%d')
+        contract = self.env['ebs_mod.contracts'].search(
+            [('start_date', '=', start_date), ('end_date', '=', end_date), ('contact_id', '=', self.partner_id.id),
+             ('sale_order_id', '=', self.id)])
+        if not contract:
+            contract = self.env['ebs_mod.contracts'].create({
+                'name': 'Contract for sale order of ' + self.name,
+                'start_date': start_date,
+                'end_date': end_date,
+                'contract_type': 'retainer_agreement',
+                'service_ids': service_types.ids,
+                'contact_id': self.partner_id.id
+            })
+        else:
+            contract.write({
+                'name': 'Contract for sale order of ' + self.name,
+                'start_date': start_date,
+                'end_date': end_date,
+                'contract_type': 'retainer_agreement',
+                'service_ids': service_types.ids,
+                'contact_id': self.partner_id.id
+            })
 
     def action_cancel(self):
         res = super(SaleOrder, self).action_cancel()
         if self.approver_ids:
             for approver in self.approver_ids:
                 approver.write({'status': 'cancel'})
+        if self.is_out_of_scope:
+            template = self.env.ref(
+                'qshield_crm.email_template_service_quotation_reject',
+                raise_if_not_found=False)
+            self.send_notification(template)
         return res
 
     def action_draft(self):
@@ -338,12 +452,40 @@ class SaleOrder(models.Model):
                     rec.opportunity_id.action_set_won_rainbowman()
                     msg = (_('Opportunity Won {}'.format(rec.opportunity_id.name)))
                     self.message_post(body=msg)
+                if rec.is_out_of_scope:
+                    template = self.env.ref(
+                        'qshield_crm.email_template_service_quotation_approve',
+                        raise_if_not_found=False)
+                    service = rec.send_notification(template)
+                    if service and service.status == 'draft':
+                        service.sudo().request_submit()
         return res
+
+    def send_notification(self, template):
+        partner_to = self.approver_setting_id.service_approver_notification_email
+        service = self.env['ebs_mod.service.request'].sudo().search([('sale_order_id', '=', self.id)], limit=1)
+        if service and service.partner_id and service.partner_id.email:
+            partner_to = partner_to + ',' + service.partner_id.email
+        if partner_to and template:
+            email_list = partner_to.split(',')
+            email_from = self.env['ir.mail_server'].sudo().search([('smtp_user', '!=', False)], limit=1).smtp_user
+            if not email_from:
+                email_from = self.env.company.partner_id.email
+            for email in email_list:
+                template.sudo().with_context(
+                    email_to=email, email_from=email_from).send_mail(self.id,
+                                                                     force_send=True)
+        return service or False
 
     def action_unlock(self):
         for rec in self:
+            if rec.invoice_term_ids.filtered(lambda s: s.invoice_id):
+                raise UserError('Please delete the related invoice first')
+            else:
+                rec.invoice_term_ids.sudo().unlink()
             if rec.opportunity_id:
                 rec.write({'state': 'submit_client_operation'})
+                # rec.write({'invoice_term_ids': False})
             else:
                 super(SaleOrder, rec).action_unlock()
 
