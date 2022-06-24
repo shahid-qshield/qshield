@@ -82,8 +82,6 @@ class Contracts(models.Model):
         column2="service_type_id",
         string='Services')
 
-    related_company_ids = fields.Many2many(comodel_name="res.partner",string="Related Companies")
-
     @api.depends('contact_id')
     def _compute_hide_notebook(self):
         for rec in self:

@@ -11,20 +11,9 @@ class ServiceRequest(models.Model):
     is_exceptional = fields.Boolean()
     is_one_time_transaction = fields.Boolean()
     is_overdue = fields.Boolean()
-    # is_governmental_fees = fields.Boolean('Governmental Fees')
-    # governmental_fees = fields.Integer('Governmental Fees Amount')
-    is_out_of_scope = fields.Boolean("Is Out of Scope", compute="compute_is_out_scope", store=True)
-
-    @api.depends('service_type_id')
-    def compute_is_out_scope(self):
-        for record in self:
-            is_out_of_scope = False
-            if record.service_type_id and record.contract_id:
-                in_scope_service = record.contract_id.sudo().service_ids.filtered(
-                    lambda s: s in record.service_type_id)
-                if not in_scope_service:
-                    is_out_of_scope = True
-            record.is_out_of_scope = is_out_of_scope
+    is_governmental_fees = fields.Boolean('Governmental Fees')
+    governmental_fees = fields.Integer('Governmental Fees Amount')
+    is_out_of_scope = fields.Boolean("Is Out of Scope")
 
     @api.model
     def get_request(self, args=""):
@@ -352,110 +341,3 @@ class ServiceTypeVariants(models.Model):
     consolidation_id = fields.Many2one('ebs_mod.service.type.consolidation')
     name = fields.Char(string="Variant Name")
     service_type = fields.One2many('ebs_mod.service.types', 'variant_id')
-    product_id = fields.Many2one('product.product', string='Product')
-
-
-class EbsModContract(models.Model):
-    _inherit = 'ebs_mod.contracts'
-
-    def import_or_update_contracts_of_contact(self):
-        file_path = os.path.dirname(os.path.dirname(__file__)) + '/demo/service_type_consolidation.xls'
-        with open(file_path, 'rb') as f:
-            try:
-                file_data = f.read()
-                workbook = xlrd.open_workbook(file_contents=file_data)
-                worksheet = workbook.sheet_by_index(2)
-                first_row = []
-                for col in range(worksheet.ncols):
-                    first_row.append(worksheet.cell_value(0, col))
-                data = []
-                for row in range(1, worksheet.nrows):
-                    elm = {}
-                    for col in range(worksheet.ncols):
-                        if worksheet.cell_value(row, col) == 'Eaton- Service Agreement':
-                            print('-------------------------------------')
-                        if worksheet.cell_value(row, col) != '' and first_row[col] != 'end_date':
-                            elm[first_row[col]] = worksheet.cell_value(row, col)
-                        elif first_row[col] == 'end_date' and type(worksheet.cell_value(row, col)) == float:
-                            elm[first_row[col]] = xlrd.xldate_as_datetime(worksheet.cell_value(row, col),
-                                                                          0).strftime(
-                                '%m/%d/%Y')
-                        elif first_row[col] == 'end_date' and type(worksheet.cell_value(row, col)) != '':
-                            elm[first_row[col]] = worksheet.cell_value(row, col)
-                        else:
-                            elm[first_row[col]] = False
-                    data.append(elm)
-                print('------------------------------------', data)
-                # service_types = []
-                # related_company = []
-                # contract_vals = {}
-                for record in data:
-                    contact_id = False
-                    contract_type = False
-                    payment_term = False
-                    if record.get('contact_id'):
-                        contact_id = self.env['res.partner'].sudo().search(
-                            [('name', 'ilike', record.get('contact_id'))], limit=1)
-                    if record.get('contract_type') == 'Service Agreement Retainer':
-                        contract_type = 'retainer_agreement'
-                    elif record.get('contract_type') == 'Service Agreement per Transaction':
-                        contract_type = 'transaction_agreement'
-                    elif record.get('contract_type') == 'Technical Agreement':
-                        contract_type = 'tech_agreement'
-                    if record.get('payment_term') == 'Monthly':
-                        payment_term = 'monthly'
-                    elif record.get('payment_term') == 'Yearly':
-                        payment_term = 'yearly'
-                    if record.get('name'):
-                        contract_vals = {}
-                        if type(record.get('start_date')) == float:
-                            test = xlrd.xldate_as_datetime(record.get('start_date'), 0).strftime('%m/%d/%Y')
-                            record.update({'start_date': test})
-                        start_date = datetime.strptime(record.get('start_date'), "%m/%d/%Y")
-                        end_date = datetime.strptime(record.get('end_date'), "%m/%d/%Y")
-                        contract_vals.update({
-                            'name': record.get('name'),
-                            'contact_id': contact_id.id if contact_id else False,
-                            'contract_type': contract_type,
-                            'payment_term': payment_term,
-                            'start_date': start_date.strftime('%Y-%m-%d') if start_date else False,
-                            'end_date': end_date.strftime('%Y-%m-%d') if end_date else False,
-                        })
-                        if contact_id.name == 'Eaton' and record.get('name') == 'Eaton- Service Agreement':
-                            contract_vals.update({'desc': 'without end date'})
-                        if contact_id.name == 'ATOS':
-                            contract = self.env['ebs_mod.contracts'].sudo().search(
-                                [('contact_id', '=', contact_id.id), ('name', '=', record.get('name'))], limit=1)
-                        elif contact_id.name == 'MASIMO GULF LLC':
-                            contract = self.env['ebs_mod.contracts'].sudo().search(
-                                [('contact_id', '=', contact_id.id), ('name', '=', contact_id.name)], limit=1)
-                        else:
-                            contract = self.env['ebs_mod.contracts'].sudo().search(
-                                [('contact_id', '=', contact_id.id)], limit=1)
-                        if contract:
-                            contract_vals.pop('contact_id')
-                            contract.sudo().write(contract_vals)
-                            if contract.service_ids:
-                                contract.sudo().write({'service_ids': False})
-                        else:
-                            contract = self.env['ebs_mod.contracts'].sudo().create(contract_vals)
-                    if record.get('Sub Service'):
-                        variant_id = self.env['ebs_mod.service.type.variants'].sudo().search(
-                            [('name', 'ilike', record.get('Sub Service'))], limit=1)
-                        if variant_id:
-                            for service_type in variant_id.service_type:
-                                # service_types.append(service_type.id)
-                                if contract:
-                                    contract.sudo().write({'service_ids': [(4, service_type.id)]})
-                            # contract_vals.update({'service_ids' : [(6,0,service_types)]})
-                    if record.get('contact_id') and not record.get('name'):
-                        related_company_id = self.env['res.partner'].sudo().search(
-                            [('name', 'ilike', record.get('contact_id'))], limit=1)
-                        if related_company_id and contract:
-                            contract.sudo().write({'related_company_ids': [(4, related_company_id.id)]})
-                # contract_without_end_date = self.env['ebs_mod.contracts'].sudo().search(
-                #     [('name', '=', 'Eaton- Service Agreement'), ('desc', '=', 'without end date')])
-                # if contract_without_end_date:
-                #     contract_without_end_date.sudo().unlink()
-            except Exception as e:
-                print('Something Wrong', e)
