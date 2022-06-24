@@ -23,6 +23,13 @@
             <field name="res_model_id" ref="sale.model_sale_order"/>
         </record>
 
+        <record id="mail_activity_generated_invoice" model="mail.activity.type">
+            <field name="name">Generated Invoice Automatically</field>
+            <field name="icon">fa-check-circle</field>
+            <field name="sequence">5</field>
+            <field name="res_model_id" ref="account.model_account_move"/>
+        </record>
+
         <record id="email_template_qshield_proposal_quotation" model="mail.template">
             <field name="name">Qshield Proposal: Send by email</field>
             <field name="model_id" ref="sale.model_sale_order"/>
@@ -67,6 +74,101 @@
             <field name="lang">${object.partner_id.lang}</field>
             <field name="user_signature" eval="False"/>
             <field name="auto_delete" eval="True"/>
+        </record>
+
+
+        <record id="email_template_service_quotation_approve" model="mail.template">
+            <field name="name">Qshield Quotation Approved: Send by email</field>
+            <field name="model_id" ref="sale.model_sale_order"/>
+            <field name="subject">${object.name} Quotation Approved
+            </field>
+            <field name="email_from">${ctx['email_from']|safe}</field>
+            <field name="email_to">${ctx['email_to']|safe}</field>
+            <field name="body_html" type="html">
+                <div style="margin: 0px; padding: 0px;">
+                    <p style="margin: 0px; padding: 0px; font-size: 13px;">
+                        <strong>${object.name} Quotation is Approved by Client
+                            ${datetime.datetime.now().strftime('%m/%d/%Y %H:%M:%S')}
+                        </strong>
+                    </p>
+                </div>
+            </field>
+            <field name="lang">${object.partner_id.lang}</field>
+            <field name="user_signature" eval="False"/>
+            <field name="auto_delete" eval="False"/>
+        </record>
+
+        <record id="email_template_service_quotation_reject" model="mail.template">
+            <field name="name">Qshield Quotation Rejected: Send by email</field>
+            <field name="model_id" ref="sale.model_sale_order"/>
+            <field name="subject">${object.name} Quotation Rejected
+            </field>
+            <field name="email_from">${ctx['email_from']|safe}</field>
+            <field name="email_to">${ctx['email_to']|safe}</field>
+            <field name="body_html" type="html">
+                <div style="margin: 0px; padding: 0px;">
+                    <p style="margin: 0px; padding: 0px; font-size: 13px;">
+                        <strong>${object.name} Quotation is Rejected by Client at
+                            ${datetime.datetime.now().strftime('%m/%d/%Y %H:%M:%S')}
+                        </strong>
+                    </p>
+                </div>
+            </field>
+            <field name="lang">${object.partner_id.lang}</field>
+            <field name="user_signature" eval="False"/>
+            <field name="auto_delete" eval="False"/>
+        </record>
+
+
+        <record id="email_template_of_create_retainer_invoice" model="mail.template">
+            <field name="name">Custom Template Invoice: Send by email</field>
+            <field name="model_id" ref="account.model_account_move"/>
+            <field name="subject">Invoice Generated Automatically
+            </field>
+            <field name="email_from">${ctx['email_from']|safe}</field>
+            <field name="partner_to">${ctx['partner_to']|safe}</field>
+            <!--            <field name="email_to">${ctx['email_to']|safe}</field>-->
+            <field name="body_html" type="html">
+                <div style="margin: 0px; padding: 0px;">
+                    <p style="margin: 0px; padding: 0px; font-size: 13px;">
+                        Hello,
+                        <br/>
+                        Invoice is created please check and verify
+                        <br/>
+                        ${ctx['link']|safe}
+                    </p>
+                </div>
+            </field>
+            <field name="lang">${object.partner_id.lang}</field>
+            <field name="user_signature" eval="False"/>
+            <field name="auto_delete" eval="False"/>
+        </record>
+
+        <record id="email_template_of_send_notification_to_client" model="mail.template">
+            <field name="name">Send customer preview of quotation link</field>
+            <field name="model_id" ref="sale.model_sale_order"/>
+            <field name="subject">Quotation link
+            </field>
+            <field name="email_from">${(object.user_id.email_formatted or user.email_formatted) | safe}</field>
+            <field name="partner_to">${object.partner_id.id}</field>
+            <field name="body_html" type="html">
+                <div style="margin: 0px; padding: 0px;">
+                    <p style="margin: 0px; padding: 0px; font-size: 13px;">
+                        please select first database then open quotation link
+                        because of without db select you can not open quotation link
+                        <br/>
+                        ${ctx['db_manager_link']|safe}
+                        <br/>
+                        <br/>
+                        Quotation Link
+                        <br/>
+                        ${ctx['link']|safe}
+                    </p>
+                </div>
+            </field>
+            <field name="lang">${object.partner_id.lang}</field>
+            <field name="user_signature" eval="False"/>
+            <field name="auto_delete" eval="False"/>
         </record>
     </data>
 </odoo>

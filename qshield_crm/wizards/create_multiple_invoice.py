@@ -30,12 +30,13 @@ class CreateMultipleInvoice(models.TransientModel):
 
     def create_invoices(self):
         if self.invoice_term_ids:
+            invoice_ids = self.env['account.move']
             for invoice_term in self.invoice_term_ids:
                 order = invoice_term.sale_id
                 if invoice_term.type == 'down':
                     if not self.product_id:
                         vals = self._prepare_deposit_product()
-                        self.product_id = self.env['product.product'].create(vals)
+                        self.product_id = self.env['product.product'].sudo().create(vals)
                         self.env['ir.config_parameter'].sudo().set_param('sale.default_deposit_product_id',
                                                                          self.product_id.id)
                     amount, name = self._get_advance_details(invoice_term, order)
@@ -61,17 +62,20 @@ class CreateMultipleInvoice(models.TransientModel):
                     invoice = self._create_invoice(order, so_line, amount, invoice_term, name)
                     if invoice:
                         invoice_term.sudo().write({'invoice_id': invoice})
+                    invoice_ids += invoice
                 elif invoice_term.type == 'regular_invoice':
                     invoice = order._create_invoices(final=False)
                     if invoice:
                         invoice_term.sudo().write({'invoice_id': invoice})
                         invoice.write({'sale_id': invoice_term.sale_id, 'payment_term_id': invoice_term.id})
+                    invoice_ids += invoice
                 elif invoice_term.type == 'regular_invoice_with_deduct':
                     invoice = order._create_invoices(final=True)
                     if invoice:
                         invoice_term.sudo().write({'invoice_id': invoice})
                         invoice.write({'sale_id': invoice_term.sale_id, 'payment_term_id': invoice_term.id})
-
+                    invoice_ids += invoice
+            return invoice_ids
         else:
             raise UserError('Please Select invoice terms')
 
