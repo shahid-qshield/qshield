@@ -21,11 +21,6 @@
                             <group>
                                 <field name="name"/>
                                 <field name="approver_ids" widget="many2many_tags"/>
-                                <field name="type"/>
-                                <field name="service_approver_notification_email"
-                                       attrs="{'invisible' : [('type','!=','service_approver')]}"/>
-                                <label for="finance_user_ids" string="Select user for the send notification of create invoice"/>
-                                <field name="finance_user_ids" widget="many2many_tags"/>
                             </group>
                         </group>
                     </sheet>

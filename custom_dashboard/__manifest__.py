@@ -12,7 +12,7 @@
     'author': "Ever Business Solutions",
     'website': "https://www.everbsgroup.com/",
     'category': 'Uncategorized',
-    'version': '0.3',
+    'version': '0.2',
     'depends': ['base', 'ebs_qsheild_mod'],
     'qweb': ["static/src/xml/dashboard.xml"],
     'data': [

@@ -1,51 +1,5 @@
 <odoo>
     <data>
-        <record id="view_invoice_term_line_search" model="ir.ui.view">
-            <field name="name">Invoice Term Line Search</field>
-            <field name="model">invoice.term.line</field>
-            <field name="arch" type="xml">
-                <search string="Search Invoice term">
-                    <field name="name"/>
-                    <field name="type"/>
-                    <field name="invoice_amount_type"/>
-                    <field name="sale_id"/>
-                    <field name="invoice_id"/>
-                    <field name="due_date"/>
-                    <separator/>
-                    <filter name="current_month" string="Current Month" domain="[
-                    ('due_date', '&gt;=', (context_today()).strftime('%Y-%m-01')),
-                    ('due_date', '&lt;', (context_today() + relativedelta(months=1)).strftime('%Y-%m-01'))]"/>
-                    <filter name="invoice_created" string="Invoice Created" domain="[('invoice_id','!=',False)]"/>
-                    <filter name="invoice_without_created" string="Invoice without created"
-                            domain="[('invoice_id','=',False)]"/>
-                    <separator/>
-                    <group expand="0" name="group_by" string="Group By">
-                        <filter name="sale_order_reference" string="Sale Order"
-                                context="{'group_by': 'sale_id'}"/>
-                    </group>
-                </search>
-            </field>
-        </record>
-
-        <record id="invoice_term_line_tree" model="ir.ui.view">
-            <field name="name">Invoice term line Tree</field>
-            <field name="model">invoice.term.line</field>
-            <field name="arch" type="xml">
-                <tree create="0">
-                    <field name="name"/>
-                    <field name="start_term_date"/>
-                    <field name="end_term_date"/>
-                    <field name="due_date"/>
-                    <field name="type"/>
-                    <field name="invoice_amount_type"/>
-                    <field name="percentage"/>
-                    <field name="amount"/>
-                    <field name="to_invoice"/>
-                    <field name="sale_id" string="Sale Order"/>
-                    <field name="invoice_id" readonly="1"/>
-                </tree>
-            </field>
-        </record>
         <record id="sale_order_form_view_inherit" model="ir.ui.view">
             <field name="name">sale.order.form.view.inherit</field>
             <field name="model">sale.order</field>
@@ -58,7 +12,6 @@
                         <field name="is_approver_user" invisible="1"/>
                         <field name="is_valid_for_agreement" invisible="1"/>
                         <field name="user_status" invisible="1"/>
-                        <field name="is_out_of_scope" invisible="1"/>
                         <button name="payment_action_capture" type="object"
                                 string="Capture Transaction" class="oe_highlight"
                                 attrs="{'invisible': [('authorized_transaction_ids', '=', [])]}"/>
@@ -81,7 +34,7 @@
                                 context="{'default_advance_payment_method': 'percentage'}"
                                 attrs="{'invisible': ['|','|',('state', '!=', 'sale'),('invoice_status', '!=', 'no'),('opportunity_id', '!=', False)]}"/>
                         <button name="action_quotation_send" string="Send by Email" type="object" class="btn-primary"
-                                attrs="{'invisible': ['|','&amp;','&amp;',('opportunity_id', '=', False),('is_out_of_scope', '=', False),('state', 'not in', ['draft']),'&amp;','|',('is_out_of_scope', '!=', False),('opportunity_id', '!=', False),('state', '!=',
+                                attrs="{'invisible': ['|','&amp;',('opportunity_id', '=', False),('state', 'not in', ['draft']),'&amp;',('opportunity_id', '!=', False),('state', '!=',
                                         'quotation_approved')]}"/>
                         <button name="action_quotation_send" type="object" string="Send PRO-FORMA Invoice"
                                 groups="sale.group_proforma_sales" class="btn-primary"
@@ -90,21 +43,11 @@
                                 context="{'proforma': True}"/>
                         <button name="action_confirm" id="action_confirm"
                                 string="Confirm" class="btn-primary" type="object"
-                                attrs="{'invisible': ['|','&amp;',('is_out_of_scope', '=', False),('state', 'not in', ['sent']),('is_out_of_scope', '!=', False)]}"/>
+                                attrs="{'invisible': [('state', 'not in', ['sent'])]}"/>
                         <button name="action_confirm"
                                 string="Confirm" type="object"
-                                attrs="{'invisible': ['|','&amp;',('opportunity_id', '=', False),('state', 'not in', ['draft']),'&amp;','|',('is_out_of_scope', '!=', False),('opportunity_id', '!=', False),('state', '!=',
-                                                                'quotation_approved')]}"/>
-
-                        <!--add for service flow-->
-                        <button name="action_confirm"
-                                string="Approve By Client" type="object"
-                                attrs="{'invisible': ['|',('is_out_of_scope', '=', False),'&amp;',('is_out_of_scope', '!=', False),('state', 'not in', ['sent'])]}"/>
-                        <!--add for service flow-->
-                        <button name="action_cancel"
-                                string="Reject By Client" type="object"
-                                attrs="{'invisible': ['|',('is_out_of_scope', '=', False),'&amp;',('is_out_of_scope', '!=', False),('state', 'not in', ['sent'])]}"/>
-
+                                attrs="{'invisible': ['|','&amp;',('opportunity_id', '=', False),('state', 'not in', ['draft']),'&amp;',('opportunity_id', '!=', False),('state', '!=',
+                                        'quotation_approved')]}"/>
                         <button name="action_quotation_send" type="object" string="Send PRO-FORMA Invoice"
                                 groups="sale.group_proforma_sales"
                                 attrs="{'invisible': ['|','|', ('state', '!=', 'draft'), ('invoice_count','&gt;=',1),'&amp;',('opportunity_id', '!=', False),('state', '!=',
@@ -115,9 +58,8 @@
                                         ['sent','sale']),'&amp;',('opportunity_id', '!=', False),('state', 'in',
                                         ['draft','quotation_submit','quotation_approved'])]}"/>
                         <button name="action_cancel" type="object" string="Cancel"
-                                attrs="{'invisible': ['|','&amp;','&amp;',('is_out_of_scope', '=', False),('opportunity_id', '=', False),('state','not in',['draft','sent','sale']),'|','&amp;',('opportunity_id', '!=', False),('state', 'in',
-                                        ['cancel','done']),'&amp;',('is_out_of_scope', '!=', False),('state', 'in',
-                                        ['sent','cancel','done'])]}"
+                                attrs="{'invisible': ['|','&amp;',('opportunity_id', '=', False),('state','not in',['draft','sent','sale']),'&amp;',('opportunity_id', '!=', False),('state', 'in',
+                                        ['cancel','done'])]}"
                                 groups="qshield_crm.qshield_crm_sales_person,qshield_crm.qshield_crm_management"/>
                         <button name="action_draft" states="cancel" type="object" string="Set to Quotation"
                                 groups="sales_team.group_sale_manager,qshield_crm.qshield_crm_management"/>
@@ -126,9 +68,9 @@
                                 groups="sales_team.group_sale_manager,qshield_crm.qshield_crm_management"
                                 attrs="{'invisible' :['|','&amp;',('opportunity_id','=',False),('state','!=','sale'),'&amp;',('opportunity_id','!=',False),('state','!=','submit_client_operation')]}"/>
                         <button name="action_unlock" type="object" string="Unlock" states="done"
-                                groups="ebs_leave_appilcation_request.group_finance_department_user"/>
+                                groups="sales_team.group_sale_manager,qshield_crm.qshield_crm_management"/>
                         <button name="submit_quotation" string="Submit to Approve" type="object"
-                                attrs="{'invisible': ['&amp;','|',('is_out_of_scope','=',False),('state','!=','draft'),'|',('opportunity_id','=',False),('state','!=','draft')]}"
+                                attrs="{'invisible': ['|',('state','!=','draft'),('opportunity_id','=',False)]}"
                                 groups="qshield_crm.qshield_crm_sales_person"/>
                         <button name="approve_quotation" string="Approve" type="object"
                                 attrs="{'invisible':['|',('is_approver_user','!=',True),'|',('user_status','!=','pending'),('state','!=','quotation_submit')]}"
@@ -144,12 +86,9 @@
                                 groups="qshield_crm.qshield_crm_management"/>
                         <button name="%(action_refuse_quotation)d" string="Refuse Agreement" type="action"
                                 attrs="{'invisible':['|','|',('is_valid_for_agreement','=',False),('is_approver_user','!=',True),'&amp;',('is_approver_user','=',True),'|',('state','!=','agreement_submit'),('user_status','!=','pending')]}"
-                                gno_of_employeesroups="qshield_crm.qshield_crm_management"/>
+                                groups="qshield_crm.qshield_crm_management"/>
                         <field name="state" widget="statusbar" statusbar_visible="draft,sent,sale"
-                               attrs="{'invisible': ['|',('is_out_of_scope', '!=', False),('opportunity_id', '!=', False)]}"/>
-                        <field name="qshield_service_state" widget="statusbar"
-                               statusbar_visible="draft,quotation_submit,quotation_approved,sent,sale,done,cancel"
-                               attrs="{'invisible': ['|',('is_out_of_scope', '=', False),('opportunity_id', '!=', False)]}"/>
+                               attrs="{'invisible': [('opportunity_id', '!=', False)]}"/>
                         <field name="qshield_crm_state" widget="statusbar"
                                statusbar_visible="draft,quotation_submit,quotation_approved,sent,sale,agreement_submit,submit_client_operation,done,cancel"
                                attrs="{'invisible': [('opportunity_id', '=', False)]}"/>
@@ -163,17 +102,14 @@
                 <field name="amount_untaxed" position="attributes">
                     <attribute name="invisible">1</attribute>
                 </field>
-                <field name="payment_term_id" position="attributes">
-                    <attribute name="required">1</attribute>
-                </field>
+
                 <field name="payment_term_id" position="after">
                     <field name="is_agreement" string="Is Agreement" widget="radio"
-                           attrs="{'invisible': [('is_out_of_scope','=',False),('opportunity_id','=',False)],'readonly' : [('state','=','done')]}"/>
+                           attrs="{'invisible': [('opportunity_id','=',False)]}"/>
                     <field name="account_manager" context="{'account_manager':True}"
                            attrs="{'invisible': [('state','!=','submit_client_operation')]}"/>
                     <field name="due_date" attrs="{'invisible': [('state','!=','submit_client_operation')]}"/>
-                    <field name="approver_setting_id"
-                           attrs="{'invisible': [('is_out_of_scope', '=', False),('opportunity_id','=',False)]}"
+                    <field name="approver_setting_id" attrs="{'invisible': [('opportunity_id','=',False)]}"
                            options='{"no_open": True, "no_create": True}'/>
                     <field name="refuse_quotation_reason"
                            attrs="{'invisible': ['|',('refuse_quotation_reason','=',False),('opportunity_id','=',False)]}"/>
@@ -182,67 +118,18 @@
                 </field>
                 <field name="partner_id" position="after">
                     <field name="start_date"
-                           attrs="{'invisible': ['|','&amp;',('is_out_of_scope','=',False),('opportunity_id','=',False),('state','not in',['sale','agreement_submit','submit_client_operation','done','cancel'])],'readonly':[('state','!=','sale')],'required' : ['|','&amp;',('is_out_of_scope','!=',False),('state','=','sale'),'&amp;',('opportunity_id','!=',False),('state','=','sale')]}"/>
+                           attrs="{'invisible': ['|',('opportunity_id','=',False),('state','not in',['sale','agreement_submit','submit_client_operation','done','cancel'])],'readonly':[('state','!=','sale')],'required' : [('opportunity_id','!=',False),('state','=','sale')]}"/>
                     <field name="end_date"
-                           attrs="{'invisible': ['|','&amp;',('is_out_of_scope','=',False),('opportunity_id','=',False),('state','not in',['sale','agreement_submit','submit_client_operation','done','cancel'])],'readonly':[('state','!=','sale')],'required' : ['|','&amp;',('is_out_of_scope','!=',False),('state','=','sale'),'&amp;',('opportunity_id','!=',False),('state','=','sale')]}"/>
-                    <field name="no_of_employees"
-                           attrs="{'invisible': ['|','&amp;',('is_out_of_scope','=',False),('opportunity_id','=',False),('state','not in',['sale','agreement_submit','submit_client_operation','done','cancel'])],'readonly':[('state','!=','sale')],'required' : [('opportunity_id','!=',False),('state','=','sale')]}"/>
+                           attrs="{'invisible': ['|',('opportunity_id','=',False),('state','not in',['sale','agreement_submit','submit_client_operation','done','cancel'])],'readonly':[('state','!=','sale')],'required' : [('opportunity_id','!=',False),('state','=','sale')]}"/>
                     <!--                    <field name="start_date" invisible="1"/>-->
                     <!--                    <field name="end_date" invisible="1"/>-->
                 </field>
                 <field name="invoice_status" position="attributes">
                     <attribute name="states">sale,done,submit_client_operation</attribute>
                 </field>
-                <xpath expr="//page[@name='order_lines']/field[@name='order_line']" position="before">
-                    <!--                    <button name="%(qshield_crm.action_generate_sale_order_line)d" string="Add Service Type" type="action"-->
-                    <!--                            class="btn btn-primary"/>-->
-                    <group>
-                        <group>
-                            <field name="generate_order_line"/>
-                        </group>
-                    </group>
-                    <button name="action_generate_sale_order_line" string="Add Service Type"
-                            type="object"
-                            class="btn btn-primary"
-                            attrs="{'invisible': [('generate_order_line','!=','from_consolidation')]}"/>
-                </xpath>
-                <xpath expr="//field[@name='order_line']" position="attributes">
-                    <attribute name="attrs">{'readonly': [('generate_order_line','=','from_consolidation')]}
-                    </attribute>
-                </xpath>
-                <xpath expr="//field[@name='order_line']/tree/field[@name='product_uom_qty']" position="attributes">
-                    <attribute name="attrs">{'column_invisible':
-                        [('parent.generate_order_line','=','from_consolidation')]}
-                    </attribute>
-                </xpath>
-                <xpath expr="//field[@name='order_line']/tree/field[@name='price_unit']" position="attributes">
-                    <attribute name="attrs">{'column_invisible':
-                        [('parent.generate_order_line','=','from_consolidation')]}
-                    </attribute>
-                </xpath>
-                <xpath expr="//field[@name='order_line']/tree/field[@name='price_subtotal']" position="attributes">
-                    <attribute name="attrs">{'column_invisible':
-                        [('parent.generate_order_line','=','from_consolidation')]}
-                    </attribute>
-                </xpath>
-                <xpath expr="//field[@name='order_line']/tree/field[@name='qty_delivered']" position="attributes">
-                    <attribute name="attrs">{'column_invisible':
-                        [('parent.generate_order_line','=','from_consolidation')]}
-                    </attribute>
-                </xpath>
-                <xpath expr="//field[@name='order_line']/tree/field[@name='qty_invoiced']" position="attributes">
-                    <attribute name="attrs">{'column_invisible':
-                        [('parent.generate_order_line','=','from_consolidation')]}
-                    </attribute>
-                </xpath>
-                <!--                <xpath expr="//field[@name='order_line']/tree/field[@name='name']" position="attributes">-->
-                <!--                    <attribute name="attrs">{'column_invisible':-->
-                <!--                        [('parent.generate_order_line','=','from_consolidation')]}-->
-                <!--                    </attribute>-->
-                <!--                </xpath>-->
+
                 <xpath expr="//notebook" position="inside">
-                    <page name="approvers" string="Approvers"
-                          attrs="{'invisible':[('is_out_of_scope', '=', False),('opportunity_id','=',False)]}">
+                    <page name="approvers" string="Approvers" attrs="{'invisible':[('opportunity_id','=',False)]}">
                         <field name="approver_ids" readonly="1" force_save="1"
                                style="pointer-events:None;">
                             <tree>
@@ -253,20 +140,16 @@
                         </field>
                     </page>
                     <page name="invoice_terms" string="Invoice Terms"
-                          attrs="{'invisible':['|','&amp;',('opportunity_id','=',False),('is_out_of_scope','=',False)]}">
-
+                          attrs="{'invisible':[('opportunity_id','=',False)]}">
                         <field name="invoice_term_ids">
                             <tree editable="bottom">
                                 <field name="name"/>
-                                <field name="start_term_date"/>
-                                <field name="end_term_date"/>
-                                <field name="due_date"/>
                                 <field name="type"/>
                                 <field name="invoice_amount_type"/>
                                 <field name="percentage"
-                                       attrs="{'invisible' : [('invoice_amount_type','!=','percentage')]}"/>
+                                       attrs="{'invisible' : ['|',('type','!=','down'),('invoice_amount_type','!=','percentage')]}"/>
                                 <field name="amount"
-                                       attrs="{'invisible' : [('invoice_amount_type','!=','amount')]}"/>
+                                       attrs="{'invisible' : ['|',('type','!=','down'),('invoice_amount_type','!=','amount')]}"/>
                                 <field name="to_invoice"/>
                                 <field name="invoice_id" readonly="1"/>
                             </tree>

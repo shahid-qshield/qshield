@@ -48,13 +48,13 @@
                             <page name="online_workflow_page" string="Online WorkFlow">
                                 <field name="workflow_online_ids"
                                        context="{'default_flow_type':'o'}"
-                                />
+                                       />
                             </page>
 
                             <page name="manual_workflow_page" string="Manual WorkFlow">
                                 <field name="workflow_manual_ids"
                                        context="{'default_flow_type':'m'}"
-                                />
+                                       />
                             </page>
 
                         </notebook>

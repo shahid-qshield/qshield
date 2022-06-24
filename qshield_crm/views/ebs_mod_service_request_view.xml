@@ -1,53 +1,6 @@
 <odoo>
     <data>
 
-        <record id="service_expenses_filter_inherit" model="ir.ui.view">
-            <field name="name">service.expenses.filter.inherit</field>
-            <field name="model">ebs_mod.service.request.expenses</field>
-            <field name="inherit_id" ref="ebs_qsheild_mod.service_expenses_filter"/>
-            <field name="mode">primary</field>
-            <field name="arch" type="xml">
-                <xpath expr="//search" position="inside">
-                    <field name="date"/>
-                    <filter name="current_month" string="Current Month" domain="[
-                    ('date', '&gt;=', (context_today()).strftime('%Y-%m-01')),
-                    ('date', '&lt;', (context_today() + relativedelta(months=1)).strftime('%Y-%m-01'))]"/>
-                    <filter name="invoice_created" string="Invoice Created" domain="[('invoice_id','!=',False)]"/>
-                    <filter name="invoice_without_created" string="Invoice without created"
-                            domain="[('invoice_id','=',False)]"/>
-                </xpath>
-                <xpath expr="//group[@name='group_by']" position="inside">
-                    <filter name="service_request_id_group" string="Service request"
-                            context="{'group_by': 'service_request_id'}"/>
-                </xpath>
-            </field>
-        </record>
-        <record id="service_expenses_tree_custom_inherit" model="ir.ui.view">
-            <field name="name">service.expenses.tree.custom.inherit</field>
-            <field name="model">ebs_mod.service.request.expenses</field>
-            <field name="inherit_id" ref="ebs_qsheild_mod.service_expenses_tree"/>
-            <field name="arch" type="xml">
-                <field name="desc" position="after">
-                    <field name="to_invoice"/>
-                    <field name="invoice_id"/>
-                </field>
-            </field>
-        </record>
-
-        <record id="service_expense_form_inherit" model="ir.ui.view">
-            <field name="name">Service Expense Form Inherit</field>
-            <field name="model">ebs_mod.service.request.expenses</field>
-            <field name="inherit_id" ref="ebs_qsheild_mod.service_expense_form"/>
-            <field name="arch" type="xml">
-                <field name="amount" position="after">
-                    <field name="to_invoice"/>
-                    <field name="invoice_id"/>
-                    <field name="service_request_id"/>
-                </field>
-            </field>
-        </record>
-
-
         <record id="service_request_type_form_custom_inherit" model="ir.ui.view">
             <field name="name">service.request.type.form.custom.inherit</field>
             <field name="model">ebs_mod.service.types</field>
@@ -56,46 +9,7 @@
                 <field name="consolidation_id" position="after">
                     <field name="product_id" context="{'is_service' : 1}"/>
                     <field name="currency_id" invisible="1"/>
-                    <field name="product_price" widget="monetary" options="{'currency_field': 'currency_id'}"/>
-                </field>
-            </field>
-        </record>
-
-        <record id="service_request_form_custom_inherit" model="ir.ui.view">
-            <field name="name">service.request.form.custom.inherit</field>
-            <field name="model">ebs_mod.service.request</field>
-            <field name="inherit_id" ref="ebs_qsheild_mod.service_request_form"/>
-            <field name="arch" type="xml">
-                <xpath expr="//header" position="inside">
-                    <button name="generate_sale_order" string="Generate Sale Order" class="btn btn-primary"
-                            attrs="{'invisible': ['|',('sale_order_id', '!=', False),'&amp;',('is_one_time_transaction', '=', False),('is_out_of_scope', '=', False)]}"
-                            type="object"/>
-                </xpath>
-                <xpath expr="//field[@name='service_type_id']" position="after">
-                    <field name="sale_order_id"
-                           attrs="{'invisible': ['&amp;',('is_one_time_transaction', '=', False),('is_out_of_scope', '=', False)]}"
-                           readonly="1"
-                           options='{"no_open": True}'
-                    />
-                </xpath>
-                <xpath expr="//field[@name='expenses_ids']/tree/field[@name='desc']" position="after">
-                    <field name="attachment_ids" widget="many2many_binary" string="Attach a file" class="oe_inline"/>
-                    <field name="to_invoice"/>
-                    <field name="invoice_id"/>
-                </xpath>
-                <xpath expr="//field[@name='service_type_id']" position="attributes">
-                    <attribute name="attrs">{'readonly': [('sale_order_id', '!=', False)]}</attribute>
-                </xpath>
-            </field>
-        </record>
-
-        <record id="expense_type_tree_inherit" model="ir.ui.view">
-            <field name="name">Expense Type Tree Inherit</field>
-            <field name="model">ebs_mod.expense.types</field>
-            <field name="inherit_id" ref="ebs_qsheild_mod.expense_type_tree"/>
-            <field name="arch" type="xml">
-                <field name="name" position="after">
-                    <field name="product_id"/>
+                    <field name="product_price"  widget="monetary" options="{'currency_field': 'currency_id'}"/>
                 </field>
             </field>
         </record>

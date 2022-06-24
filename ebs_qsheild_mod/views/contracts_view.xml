@@ -49,13 +49,8 @@
                                 <field name="end_date"/>
                                 <field name="contact_id" required="context.get('required_contact', True)"
                                        invisible="context.get('invisible_contact', False)"
-                                       options="{'no_create': True, 'no_create_edit':True}"
-                                />
-                                <field name="related_company_ids" widget="many2many_tags"
-                                       required="context.get('required_contact', True)"
-                                       invisible="context.get('invisible_contact', False)"
-                                       options="{'no_create': True, 'no_create_edit':True}"
-                                       domain="[('person_type','=','company'),('is_address','=',False)]"/>
+                                        options="{'no_create': True, 'no_create_edit':True}"
+                                       />
                             </group>
                             <group name="group_right">
                                 <field name="contract_type"/>
@@ -84,11 +79,11 @@
                                       ('parent_id','=',contact_id ),('person_type','=','emp')
                                       ]"
                                 >
-                                    <tree>
+                                      <tree>
                                         <field name="name"/>
                                         <field name="sponsor"/>
-                                        <field name="phone"/>
-                                        <field name="email"/>
+                                         <field name="phone"/>
+                                         <field name="email"/>
                                         <field name="person_type"/>
                                         <field name="image_1920" widget="image" height="30"/>
                                     </tree>
@@ -106,11 +101,11 @@
                                       ('parent_id','=',contact_id ),('person_type','=','visitor')
                                       ]"
                                 >
-                                    <tree>
+                                      <tree>
                                         <field name="name"/>
                                         <field name="sponsor"/>
-                                        <field name="phone"/>
-                                        <field name="email"/>
+                                         <field name="phone"/>
+                                         <field name="email"/>
                                         <field name="person_type"/>
                                         <field name="image_1920" widget="image" height="30"/>
                                     </tree>
@@ -132,8 +127,8 @@
                                     <tree>
                                         <field name="name"/>
                                         <field name="sponsor"/>
-                                        <field name="phone"/>
-                                        <field name="email"/>
+                                         <field name="phone"/>
+                                         <field name="email"/>
                                         <field name="person_type"/>
                                         <field name="image_1920" widget="image" height="30"/>
                                     </tree>
@@ -141,11 +136,11 @@
                             </page>
 
                             <page name="services_page" string="Services">
-<!--                                <button name="add_all_services" type="object" string="Add Services"-->
-<!--                                        class="btn btn-primary" style="margin-right:10px"/>-->
-<!--                                <button name="remove_all_services" type="object" string="Remove Services"-->
-<!--                                        class="btn btn-secondary"/>-->
-                                <field name="service_ids" options="{'no_create': True, 'no_create_edit':True}"/>
+                                 <button name="add_all_services" type="object" string="Add Services"
+                                        class="btn btn-primary" style="margin-right:10px"/>
+                                <button name="remove_all_services" type="object" string="Remove Services"
+                                        class="btn btn-secondary"/>
+                                <field name="service_ids"  options="{'no_create': True, 'no_create_edit':True}"/>
                             </page>
                         </notebook>
                     </sheet>
