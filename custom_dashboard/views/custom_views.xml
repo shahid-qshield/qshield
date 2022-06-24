@@ -26,8 +26,8 @@
                     <field name="is_exceptional" string="Is Exceptional"/>
                     <field name="is_one_time_transaction" string="Is One Time Transaction"/>
                     <field name="is_overdue" invisible="1"/>
-                    <field name="is_governmental_fees"/>
-                    <field name="governmental_fees" attrs="{'invisible':[('is_governmental_fees','!=', True)]}"/>
+<!--                    <field name="is_governmental_fees"/>-->
+<!--                    <field name="governmental_fees" attrs="{'invisible':[('is_governmental_fees','!=', True)]}"/>-->
                     <field name="is_out_of_scope"/>
                 </xpath>
                 <xpath expr="/form/sheet/notebook/page/field/tree//field[@name='assign_to']" position="after">
@@ -57,6 +57,21 @@
             <field name="arch" type="xml">
                 <xpath expr="//field[@name='sla_max']" position="after">
                     <field name="consolidation_id"/>
+                </xpath>
+                <xpath expr="//field[@name='code']" position="before">
+                    <field name="variant_id"/>
+                </xpath>
+            </field>
+        </record>
+
+        <record model="ir.ui.view" id="service_types_tree_custom">
+            <field name="name">Service Types tree inherit</field>
+            <field name="model">ebs_mod.service.types</field>
+            <field name="inherit_id" ref="ebs_qsheild_mod.service_type_tree"/>
+            <field name="type">tree</field>
+            <field name="arch" type="xml">
+                <xpath expr="//field[@name='code']" position="before">
+                    <field name="variant_id"/>
                 </xpath>
             </field>
         </record>
@@ -99,7 +114,7 @@
             <field name="arch" type="xml">
                 <tree>
                     <field name="name"/>
-<!--                    <field name="service_type"/>-->
+                    <!--                    <field name="service_type"/>-->
                     <field name="service_type_variant_ids"/>
                 </tree>
             </field>
@@ -113,7 +128,7 @@
                     <sheet>
                         <group>
                             <field name="name"/>
-<!--                            <field name="service_type"/>-->
+                            <!--                            <field name="service_type"/>-->
                             <field name="service_type_variant_ids"/>
                         </group>
                     </sheet>
@@ -157,6 +172,7 @@
             <field name="arch" type="xml">
                 <tree>
                     <field name="name"/>
+                    <field name="product_id"/>
                     <field name="service_type"/>
                 </tree>
             </field>
@@ -169,9 +185,18 @@
                 <form>
                     <sheet>
                         <group>
-                            <field name="name"/>
-                            <field name="service_type"/>
+                            <group>
+                                <field name="name"/>
+                                <field name="product_id"/>
+                            </group>
+                            <group>
+                            </group>
                         </group>
+                        <notebook>
+                            <page string="Service Type" name="service_type">
+                                <field name="service_type"/>
+                            </page>
+                        </notebook>
                     </sheet>
                 </form>
             </field>

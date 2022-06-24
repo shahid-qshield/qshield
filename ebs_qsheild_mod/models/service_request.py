@@ -36,8 +36,7 @@ class ServiceRequest(models.Model):
     service_type_id = fields.Many2one(
         comodel_name='ebs_mod.service.types',
         string='Service Type',
-        required=True, domain=[('id', '=', -1)]
-    )
+        required=True)
     for_renewing = fields.Boolean(
         related='service_type_id.for_renewing',
         string='Renewing',
@@ -117,9 +116,7 @@ class ServiceRequest(models.Model):
 
     contract_id = fields.Many2one(
         comodel_name='ebs_mod.contracts',
-        string='Contract',
-        required=True,
-        domain=[('id', '=', -1)]
+        string='Contract'
     )
 
     partner_type = fields.Selection(
@@ -613,23 +610,23 @@ class ServiceRequest(models.Model):
                 contact_contract_list.append(rec.id)
         return contact_contract_list
 
-    @api.onchange('contract_id')
-    def contract_id_on_change(self):
-        self.service_type_id = None
-        if self.contract_id:
-            if self.contract_id.service_ids:
-                contact_service_list = self.get_contact_related_service_types(self.contract_id.service_ids.ids,
-                                                                              self.partner_id)
-                return {
-                    'domain':
-                        {
-                            'service_type_id': [('id', 'in', contact_service_list)]
-                        }
-                }
-            else:
-                return {'warning': {'title': _('Warning'),
-                                    'message': _(
-                                        'Selected contract has no services for this contact type')}}
+    # @api.onchange('contract_id')
+    # def contract_id_on_change(self):
+    #     self.service_type_id = None
+    #     if self.contract_id:
+    #         if self.contract_id.service_ids:
+    #             contact_service_list = self.get_contact_related_service_types(self.contract_id.service_ids.ids,
+    #                                                                           self.partner_id)
+    #             return {
+    #                 'domain':
+    #                     {
+    #                         'service_type_id': [('id', 'in', contact_service_list)]
+    #                     }
+    #             }
+    #         else:
+    #             return {'warning': {'title': _('Warning'),
+    #                                 'message': _(
+    #                                     'Selected contract has no services for this contact type')}}
 
     def get_contact_related_service_types(self, service_type_ids, contact_id):
         domain = [('id', 'in', service_type_ids)]

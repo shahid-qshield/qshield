@@ -159,6 +159,7 @@
                                        invisible="context.get('invisible_contact',False)"
                                        options="{'no_create': True, 'no_create_edit':True}"
                                        attrs="{'readonly':[('status','!=','draft')]}"
+                                       domain="[('person_type','=','company')]"
                                 />
 
                                 <field name="partner_type"
@@ -180,6 +181,7 @@
                                 <field name="contract_id"
                                        options="{'no_create': True, 'no_create_edit':True}"
                                        attrs="{'readonly':[('status','!=','draft')]}"
+                                       domain="[('contact_id','=',partner_id),('start_date','&gt;=',date),('end_date','&lt;=',date)]"
                                 />
                                 <field name="service_type_id"
                                        options="{'no_create': True, 'no_create_edit':True}"
