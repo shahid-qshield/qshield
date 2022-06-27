@@ -1,0 +1,281 @@
+<odoo>
+    <data>
+
+        <record id="report_monthly_invoice_paperformat" model="report.paperformat">
+            <field name="name">Monthly Invoices</field>
+            <field name="default" eval="True"/>
+            <field name="format">custom</field>
+            <field name="page_height">297</field>
+            <field name="page_width">210</field>
+            <field name="orientation">Portrait</field>
+            <field name="margin_top">30</field>
+            <field name="margin_bottom">23</field>
+            <field name="margin_left">5</field>
+            <field name="margin_right">5</field>
+            <field name="header_line" eval="False"/>
+            <field name="header_spacing">20</field>
+            <field name="dpi">90</field>
+        </record>
+
+        <report
+                id="account_monthly_invoices"
+                model="account.move"
+                string="Monthly Invoices"
+                report_type="qweb-pdf"
+                name="qshield_crm.report_qshield_monthly_invoice"
+                file="qshield_crm.report_qshield_monthly_invoice"
+                print_report_name="(object._get_report_base_filename())"
+                paperformat="qshield_crm.report_monthly_invoice_paperformat"
+        />
+        <template id="report_qshield_monthly_invoice">
+            <t t-call="web.html_container">
+                <t t-foreach="docs" t-as="o">
+                    <t t-call="web.basic_layout">
+                        <div class="page">
+                            <html>
+                                <link href="https://fonts.googleapis.com/css2?family=Prata&amp;display=swap"
+                                      rel="stylesheet"/>
+                                <link href="https://fonts.googleapis.com/css2?family=Bentham&amp;family=Prata&amp;display=swap"
+                                      rel="stylesheet"/>
+                                <link href="https://fonts.googleapis.com/css2?family=Sora:wght@145&amp;display=swap"
+                                      rel="stylesheet"/>
+                                <style type="text/css">
+                                    body{
+                                    text-align:justify;
+                                    font-size:16px;
+                                    line-height: 1.9;
+                                    }
+                                </style>
+                                <body>
+                                    <div class="row">
+                                        <div class="float-left col-4">
+                                            <img src="/qshield_crm/static/src/img/img_logo.png"
+                                                 style="margin-bottom:20px;height:50px;width: 180px;"/>
+                                        </div>
+                                    </div>
+                                    <div class="row">
+                                        <div class="col-6">
+                                            <span>
+                                                <h1>INVOICE</h1>
+                                            </span>
+                                            <span>
+                                                <t t-esc="o.partner_id.name"/>
+                                            </span>
+                                            <t t-if="o.partner_id.street">
+                                                <br/>
+                                                <span><t t-esc="o.partner_id.street"/>,
+                                                </span>
+                                            </t>
+                                            <t t-if="o.partner_id.street2">
+                                                <br/>
+                                                <span><t t-esc="o.partner_id.street2"/>,
+                                                </span>
+                                            </t>
+                                            <t t-if="o.partner_id.city">
+                                                <br/>
+                                                <span>
+                                                    <t t-esc="o.partner_id.city"/>
+                                                    <t t-if="o.partner_id.zip">
+                                                        ,
+                                                        <t t-esc="o.partner_id.zip"/>
+                                                    </t>
+                                                </span>
+                                            </t>
+                                            <t t-if="o.partner_id.state_id">
+                                                <br/>
+                                                <span><t t-esc="o.partner_id.state_id.name"/>,
+                                                    <t t-esc="o.partner_id.country_id.name"/>
+                                                </span>
+                                            </t>
+                                        </div>
+                                        <div class="col-3">
+                                            <span>
+                                                <strong>Invoice Date</strong>
+                                            </span>
+                                            <br/>
+                                            <span>
+                                                <t t-esc="o.invoice_date"/>
+                                            </span>
+                                            <br/>
+                                            <span>
+                                                <strong>Invoice Number</strong>
+                                            </span>
+                                            <br/>
+                                            <span>
+                                                <t t-esc="o.name"/>
+                                            </span>
+                                            <br/>
+                                            <span>
+                                                <strong>Reference</strong>
+                                            </span>
+                                            <br/>
+                                            <span>
+                                                <t t-esc="o.ref"/>
+                                            </span>
+                                        </div>
+                                        <div class="col-3">
+                                            <span>
+                                                <i class="fas fa-map-marker-alt"></i>
+                                                <t t-esc="o.company_id.partner_id.name"/>
+                                                <br/>
+                                                <t t-esc="o.company_id.street"/>
+                                                <br/>
+                                                <t t-esc="o.company_id.street2"/>
+                                            </span>
+
+                                            <span><t t-esc="o.company_id.state_id.name"/>,
+                                                <t t-esc="o.company_id.country_id.name"/>
+                                            </span>
+                                            <br/>
+                                            <span>
+                                                <i class="fal fa-phone-square-alt"></i>
+                                                <t t-esc="o.company_id.phone"/>
+                                            </span>
+                                            <br/>
+                                            <span>
+                                                <i class="far fa-envelope"></i>
+                                                <t t-esc="o.company_id.email"/>
+                                            </span>
+                                            <br/>
+
+                                        </div>
+                                    </div>
+                                    <br/>
+                                    <br/>
+                                    <table class="table table-sm">
+                                        <thead>
+                                            <tr>
+                                                <th>Description</th>
+                                                <th>Quantity</th>
+                                                <th>Unit Price</th>
+                                                <th class="text-right">Amount QAR</th>
+                                            </tr>
+                                        </thead>
+                                        <tbody>
+                                            <tr t-foreach="o.invoice_line_ids" t-as="line">
+                                                <td>
+                                                    <span t-esc="line.product_id.name"/>
+                                                </td>
+                                                <td>
+                                                    <span t-esc="line.quantity"/>
+                                                </td>
+
+                                                <td>
+                                                    <span t-esc="line.price_unit"/>
+                                                </td>
+                                                <td class="text-right">
+                                                    <span t-esc="line.price_subtotal"
+                                                          t-esc-options='{"widget": "monetary", "display_currency": o.company_id.currency_id}'/>
+                                                </td>
+                                            </tr>
+                                        </tbody>
+                                    </table>
+                                    <div class="clearfix">
+                                        <div id="total" class="row">
+                                            <div t-attf-class="#{'col-6' if report_type != 'html' else 'col-sm-7 col-md-6'} ml-auto">
+                                                <table class="table table-sm" style="page-break-inside: avoid;">
+                                                    <tr class="border-black o_subtotal" style="">
+                                                        <td>
+                                                            <strong>Subtotal</strong>
+                                                        </td>
+                                                        <td class="text-right">
+                                                            <span t-field="o.amount_untaxed"/>
+                                                        </td>
+                                                    </tr>
+                                                    <t t-foreach="o.amount_by_group" t-as="amount_by_group">
+                                                        <tr style="">
+                                                            <t t-if="len(o.line_ids.filtered(lambda line: line.tax_line_id)) in [0, 1] and float_compare(o.amount_untaxed, amount_by_group[2], precision_rounding=o.currency_id.rounding) == 0">
+                                                                <td>
+                                                                    <!--                                                                    <span class="text-nowrap"-->
+                                                                    <!--                                                                          t-esc="amount_by_group[0]"/>-->
+                                                                    <span>INCLUDES TAX ON SALES</span>
+                                                                </td>
+                                                                <td class="text-right o_price_total">
+                                                                    <span class="text-nowrap"
+                                                                          t-esc="amount_by_group[3]"/>
+                                                                </td>
+                                                            </t>
+                                                            <t t-else="">
+                                                                <td>
+                                                                    <span>INCLUDES TAX ON SALES</span>
+                                                                </td>
+                                                                <td class="text-right o_price_total">
+                                                                    <span class="text-nowrap"
+                                                                          t-esc="amount_by_group[3]"/>
+                                                                </td>
+                                                            </t>
+                                                        </tr>
+                                                    </t>
+                                                    <tr class="border-black o_total">
+                                                        <td>
+                                                            <strong>Total QAR</strong>
+                                                        </td>
+                                                        <td class="text-right">
+                                                            <span class="text-nowrap" t-field="o.amount_total"/>
+                                                        </td>
+                                                    </tr>
+                                                    <t t-set="payments_vals"
+                                                       t-value="o.sudo()._get_reconciled_info_JSON_values()"/>
+                                                    <t t-foreach="payments_vals" t-as="payment_vals">
+                                                        <tr>
+                                                            <td>
+                                                                <i class="oe_form_field text-right oe_payment_label">
+                                                                    Less Amount Paid
+                                                                    <t t-esc="payment_vals['date']"
+                                                                       t-options="{&quot;widget&quot;: &quot;date&quot;}"/>
+                                                                </i>
+                                                            </td>
+                                                            <td class="text-right">
+                                                                <span t-esc="payment_vals['amount']"
+                                                                      t-options="{&quot;widget&quot;: &quot;monetary&quot;, &quot;display_currency&quot;: o.currency_id}"/>
+                                                            </td>
+                                                        </tr>
+                                                    </t>
+                                                    <t t-if="len(payments_vals) &gt; 0">
+                                                        <tr class="border-black">
+                                                            <td>
+                                                                <strong>Amount Due QAR</strong>
+                                                            </td>
+                                                            <td class="text-right">
+                                                                <span t-field="o.amount_residual"/>
+                                                            </td>
+                                                        </tr>
+                                                    </t>
+                                                </table>
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                    <div class="row">
+                                        <div class="col-6">
+                                            <strong>Due Date:
+                                                <t t-esc="o.invoice_date_due.strftime('%d %b %Y')"/>
+                                            </strong>
+                                            <t t-if="o.invoice_partner_bank_id.bank_id">
+                                                <br/>
+                                                <span>Bank Name:
+                                                    <span t-esc="o.invoice_partner_bank_id.bank_id.name"/>
+                                                </span>
+                                            </t>
+
+                                            <t t-if="o.invoice_partner_bank_id.acc_number">
+                                                <br/>
+                                                <span>Bank Account Number</span>
+                                                <span t-esc="o.invoice_partner_bank_id.acc_number"/>
+                                            </t>
+                                            <t t-if="o.invoice_partner_bank_id.bank_id.bic">
+                                                <br/>
+                                                <span>SWIFTBIC Number</span>
+                                                <span t-esc="o.invoice_partner_bank_id.bank_id.bic"/>
+                                            </t>
+                                        </div>
+                                    </div>
+                                </body>
+                            </html>
+                        </div>
+                    </t>
+                </t>
+            </t>
+        </template>
+    </data>
+</odoo>

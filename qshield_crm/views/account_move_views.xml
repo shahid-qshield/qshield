@@ -52,6 +52,10 @@
                             domain="['&amp;', ('invoice_date_due', '&lt;', time.strftime('%Y-%m-%d')), ('state', '=', 'posted'), ('invoice_payment_state', '=', 'not_paid')]"
                             help="Overdue invoices, maturity date passed"/>
                     <separator/>
+                    <filter name="current_month" string="Current Month" domain="[
+                    ('invoice_date', '&gt;=', (context_today()).strftime('%Y-%m-01')),
+                    ('invoice_date', '&lt;', (context_today() + relativedelta(months=1)).strftime('%Y-%m-01'))]"/>
+                    <separator/>
                     <filter name="invoice_date" string="Invoice Date" date="invoice_date"/>
                     <filter name="due_date" string="Due Date" date="invoice_date_due"/>
 
@@ -85,6 +89,11 @@
             <field name="search_view_id" ref="account.view_account_invoice_filter"/>
             <!--            <field name="domain">[('type', '=', 'out_invoice')]</field>-->
             <field name="context">{'default_type': 'out_invoice'}</field>
+        </record>
+
+
+        <record id="account.action_move_out_invoice_type" model="ir.actions.act_window">
+            <field name="context">{'default_type': 'out_invoice','search_default_current_month': 1}</field>
         </record>
 
         <record id="view_move_form_custom_inherit" model="ir.ui.view">
