@@ -83,6 +83,7 @@ class EmployeeCustom(models.Model):
     custom_document_count = fields.Integer(compute="_compute_document_count", store=False)
     nationality = fields.Selection(selection_item, string="Nationality")
     employee_address = fields.Text(string="Address")
+    iban_number = fields.Char(string="IBAN Number")
 
     def update_employee_info(self):
         file_path = os.path.dirname(os.path.dirname(__file__)) + '/data/Employment contracts.xls'
@@ -98,7 +99,7 @@ class EmployeeCustom(models.Model):
                 for row in range(1, worksheet.nrows):
                     elm = {}
                     for col in range(worksheet.ncols):
-                        if first_row[col] in ['Address (Home Country)', 'Identification No', 'Proper Nationality']:
+                        if first_row[col] in ['Address (Home Country)', 'Identification No', 'Proper Nationality','IBAN']:
                             if worksheet.cell_value(row, col) != '':
                                 elm[first_row[col]] = worksheet.cell_value(row, col)
                             else:
@@ -112,7 +113,8 @@ class EmployeeCustom(models.Model):
                             employee_vals = {
                                 'qid_number': str(int(record.get('Identification No'))),
                                 'nationality': record.get('Proper Nationality'),
-                                'employee_address': record.get('Address (Home Country)')
+                                'employee_address': record.get('Address (Home Country)'),
+                                'iban_number': record.get('IBAN')
                             }
                             employee.sudo().write(employee_vals)
             except Exception as e:

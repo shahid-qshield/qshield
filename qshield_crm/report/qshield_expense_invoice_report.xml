@@ -42,32 +42,53 @@
                                 <style type="text/css">
                                     body{
                                     text-align:justify;
-                                    font-size:12px;
+                                    font-size:16px;
+                                    line-height: 1.9;
                                     }
                                 </style>
                                 <body>
-                                    <div class="float-left col-4">
-                                        <!--                                        <img class="pos-receipt-logo" width="400" height="200"-->
-                                        <!--                                             t-attf-src="data:image/*;base64, #{o.company_id.sudo().logo}" alt="Logo"/>-->
-                                        <!--                                     t-attf-src='../../web/image/res.company/{{o.company_id.id}}/logo'-->
-                                        <img src="/qshield_crm/static/src/img/img_logo.png"
-                                             style="margin-bottom:20px;height:100px;width: 220px;"/>
+                                    <div class="row">
+                                        <div class="float-left col-4">
+                                            <img src="/qshield_crm/static/src/img/img_logo.png"
+                                                 style="margin-bottom:20px;height:50px;width: 180px;"/>
+                                        </div>
                                     </div>
-                                    <div class="row mt32 mb32">
-                                        <div class="col-3">
+                                    <div class="row">
+                                        <div class="col-4">
 
                                             <span>
-                                                <t t-esc="o.company_id.name"/>
+                                                <t t-esc="o.partner_id.name"/>
                                             </span>
-                                            <br/>
+                                            <t t-if="o.partner_id.street">
+                                                <br/>
+                                                <span><t t-esc="o.partner_id.street"/>,
+                                                </span>
+                                            </t>
+                                            <t t-if="o.partner_id.street2">
+                                                <br/>
+                                                <span><t t-esc="o.partner_id.street2"/>,
+                                                </span>
+                                            </t>
+                                            <t t-if="o.partner_id.city">
+                                                <br/>
+                                                <span>
+                                                    <t t-esc="o.partner_id.city"/>
+                                                    <t t-if="o.partner_id.zip">
+                                                        ,
+                                                        <t t-esc="o.partner_id.zip"/>
+                                                    </t>
+                                                </span>
+                                            </t>
+                                            <t t-if="o.partner_id.state_id">
+                                                <br/>
+                                                <span><t t-esc="o.partner_id.state_id.name"/>,
+                                                    <t t-esc="o.partner_id.country_id.name"/>
+                                                </span>
+                                            </t>
 
-                                            <span><t t-esc="o.company_id.state_id.name"/>,
-                                                <t t-esc="o.company_id.country_id.name"/>
-                                            </span>
-                                            <br/>
 
                                         </div>
-                                        <div class="col-3">
+                                        <div class="col-4">
                                             <span>
                                                 <i class="fas fa-map-marker-alt"></i>
                                                 <t t-esc="o.company_id.partner_id.name"/>
@@ -93,7 +114,7 @@
                                             <br/>
 
                                         </div>
-                                        <div class="col-3">
+                                        <div class="col-4">
                                             <span>
                                                 <t t-esc="o.invoice_date"/>
                                             </span>
@@ -108,7 +129,7 @@
                                         </div>
                                     </div>
 
-                                    <table class="table table-sm">
+                                    <table class="table table-borderless" style="border: 1px solid black;">
                                         <span>
                                             <b>
                                                 <t t-esc="o.name"/>
@@ -176,7 +197,7 @@
                                                         <span t-esc="sum(o.invoice_line_ids.service_request_id.expenses_ids.mapped('amount'))"
                                                               t-esc-options='{"widget": "monetary", "display_currency": o.company_id.currency_id}'/>
                                                     </td>
-                                                     <td class="text-right">
+                                                    <td class="text-right">
                                                         <span t-esc="sum(o.invoice_line_ids.service_request_id.expenses_ids.mapped('amount'))"
                                                               t-esc-options='{"widget": "monetary", "display_currency": o.company_id.currency_id}'/>
                                                     </td>
@@ -195,33 +216,45 @@
                                         </div>
                                     </div>
 
-                                    <div class="row mt32 mb32">
+                                    <div class="row">
                                         <div class="col-3">
-                                            <span t-esc="o.invoice_partner_bank_id.currency_id.name"/>
-                                            <br/>
-
+                                            <!--                                            <span t-esc="o.invoice_partner_bank_id.currency_id.name"/>-->
+                                            <!--                                            <br/>-->
                                             <span t-esc="o.invoice_partner_bank_id.bank_id.name"/>
-
-                                            <br/>
-
-                                            <span>
-                                                <i class="fas fa-map-marker-alt"></i>
-                                                <t t-esc="o.company_id.partner_id.name"/>
+                                            <t t-if="o.invoice_partner_bank_id.bank_id.street">
                                                 <br/>
-                                                <t t-esc="o.company_id.street"/>
-                                                <t t-esc="o.company_id.street2"/>
-                                            </span>
-                                            <span><t t-esc="o.company_id.state_id.name"/>,
-                                                <t t-esc="o.company_id.country_id.name"/>
-                                            </span>
-
-                                            <br/>
-                                            <span t-esc="o.invoice_partner_bank_id.acc_number"/>
-                                            <br/>
-
-                                            <span t-esc="o.invoice_partner_bank_id.bank_id.bic"/>
-                                            <br/>
-                                            <span t-esc="o.invoice_partner_bank_id.bank_id.bic"/>
+                                                <span><t t-esc="o.invoice_partner_bank_id.bank_id.street"/>,
+                                                </span>
+                                            </t>
+                                            <t t-if="o.invoice_partner_bank_id.bank_id.street2">
+                                                <br/>
+                                                <span><t t-esc="o.invoice_partner_bank_id.bank_id.street2"/>,
+                                                </span>
+                                            </t>
+                                            <t t-if="o.invoice_partner_bank_id.bank_id.city">
+                                                <br/>
+                                                <span>
+                                                    <t t-esc="o.invoice_partner_bank_id.bank_id.city"/>
+                                                    <t t-if="o.invoice_partner_bank_id.bank_id.zip">
+                                                        ,
+                                                        <t t-esc="o.invoice_partner_bank_id.bank_id.zip"/>
+                                                    </t>
+                                                </span>
+                                            </t>
+                                            <t t-if="o.invoice_partner_bank_id.bank_id.state">
+                                                <br/>
+                                                <span><t t-esc="o.invoice_partner_bank_id.bank_id.state.name"/>,
+                                                    <t t-esc="o.invoice_partner_bank_id.bank_id.country.name"/>
+                                                </span>
+                                            </t>
+                                            <t t-if="o.invoice_partner_bank_id.acc_number">
+                                                <br/>
+                                                <span t-esc="o.invoice_partner_bank_id.acc_number"/>
+                                            </t>
+                                            <t t-if="o.invoice_partner_bank_id.bank_id.bic">
+                                                <br/>
+                                                <span t-esc="o.invoice_partner_bank_id.bank_id.bic"/>
+                                            </t>
                                         </div>
                                     </div>
 
