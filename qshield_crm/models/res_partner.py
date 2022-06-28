@@ -5,6 +5,21 @@ from odoo import models, fields, api, _
 class ResPartner(models.Model):
     _inherit = 'res.partner'
 
+    @api.model
+    def default_get(self, fields):
+        res = super(ResPartner, self).default_get(fields)
+        if 'property_account_receivable_id' in fields and 'property_account_payable_id' in fields:
+            property_account_receivable_id = self.env['account.account'].search(
+                [('internal_type', '=', 'receivable'), ('deprecated', '=', False),
+                 ('company_id', '=', self.env.company.id)], limit=1)
+            property_account_payable_id = self.env['account.account'].search(
+                [('internal_type', '=', 'payable'), ('deprecated', '=', False),
+                 ('company_id', '=', self.env.company.id)], limit=1)
+            res.update({
+                'property_account_receivable_id': property_account_receivable_id and property_account_receivable_id.id or False,
+                'property_account_payable_id': property_account_payable_id and property_account_payable_id.id or False})
+        return res
+
     partner_invoice_type = fields.Selection(
         [('retainer', 'Retainer'), ('per_transaction', 'Per Transaction'),
          ('one_time_transaction', 'One time Transaction'),
@@ -12,6 +27,7 @@ class ResPartner(models.Model):
 
     pending_invoice_count = fields.Integer(compute="compute_pending_invoice_count", string="Pending invoice count")
     expense_invoice_count = fields.Integer(compute="compute_expense_invoice_count", string="Expense invoice count")
+    iban_number = fields.Char(string="IBAN Number")
 
     def compute_expense_invoice_count(self):
         for rec in self:
@@ -66,3 +82,9 @@ class ResPartner(models.Model):
             'type': 'ir.actions.act_window',
             'context': {'search_default_current_month': 1}
         }
+
+
+class ResPartnerBank(models.Model):
+    _inherit = 'res.partner.bank'
+
+    custom_account_type = fields.Selection([('current_account', 'Current Account'), ('saving_account', 'Saving Account')])

@@ -121,6 +121,29 @@
                 </t>
             </tbody>
         </xpath>
+        <xpath expr="//div[2]" position="inside">
+            <section class="mt-5" t-if="sale_order.no_of_employees">
+                <span>Terms &amp; Conditions</span>
+                <hr class="mt-0 mb-1"/>
+                <ul>
+                    <li>
+                        <span>
+                            You have &amp;nbsp;<t t-esc="sale_order.amount_total"/>&amp;nbsp;amount of services for
+                            <t t-esc="sale_order.no_of_employees"/>
+                            &amp;nbsp;employees only for the certain period
+                        </span>
+                        <t t-if="sale_order.start_date and sale_order.end_date">
+                            <span>From :&amp;nbsp;
+                                <t t-esc="sale_order.start_date.strftime('%d %b %Y')"/>
+                                &amp;nbsp; To :&amp;nbsp;
+                                <t t-esc="sale_order.end_date.strftime('%d %b %Y')"/>
+                            </span>
+                        </t>
+
+                    </li>
+                </ul>
+            </section>
+        </xpath>
 
     </template>
 </odoo>

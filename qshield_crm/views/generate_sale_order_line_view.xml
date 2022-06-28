@@ -26,9 +26,9 @@
                         <field name="service_type_consolidation_manual_ids" nolabel="1">
                             <tree editable="bottom">
                                 <field name="consolidation_id" domain="[('service_type_variant_ids','!=',False)]"/>
-                                <field name="price" context="{'price' : 1}" sum="Total Amount"/>
-                                <field name="quantity"/>
-                                <field name="is_set_automatic" string="Is Set Price Automatic"/>
+                                <field name="price" invisible="1" context="{'price' : 1}" sum="Total Amount"/>
+                                <field name="quantity" invisible="1"/>
+                                <field name="is_set_automatic" invisible="1" string="Is Set Price Automatic"/>
                             </tree>
                         </field>
                         <field name="generate_service_type_variant_ids" force_save="1" nolabel="1">

@@ -256,6 +256,27 @@ class ServiceTypeConsolidation(models.Model):
     service_type = fields.One2many('ebs_mod.service.types', 'consolidation_id')
     service_type_variant_ids = fields.One2many('ebs_mod.service.type.variants', 'consolidation_id')
 
+    #
+    # def import_original_product(self):
+    #     file_path = os.path.dirname(os.path.dirname(__file__)) + '/demo/service_type_consolidation.xls'
+    #     with open(file_path, 'rb') as f:
+    #         try:
+    #             file_data = f.read()
+    #             workbook = xlrd.open_workbook(file_contents=file_data)
+    #             worksheet = workbook.sheet_by_index(1)
+    #             first_row = []
+    #             for col in range(worksheet.ncols):
+    #                 first_row.append(worksheet.cell_value(0, col))
+    #             data = []
+    #             for row in range(1, worksheet.nrows):
+    #                 elm = {}
+    #                 for col in range(worksheet.ncols):
+    #                     if worksheet.cell_value(row, col) != '' and worksheet.cell_value(row, col) != 'NA':
+    #                         elm[first_row[col]] = worksheet.cell_value(row, col)
+    #                     else:
+    #                         elm[first_row[col]] = False
+    #                 data.append(elm)
+
     def import_service_type_consolidation(self):
         print('----------------------------')
         file_path = os.path.dirname(os.path.dirname(__file__)) + '/demo/service_type_consolidation.xls'
@@ -303,47 +324,61 @@ class ServiceTypeConsolidation(models.Model):
                             service_type_variant.sudo().write({
                                 'service_type': [(4, service_type.id)]
                             })
-                    if record.get('Grouped Services'):
-                        service_type_consolidation = self.env['ebs_mod.service.type.consolidation'].sudo().search(
-                            [('name', '=', record.get('Grouped Services'))])
-                        if service_type_consolidation:
-                            self.env['ebs_mod.service.type.consolidation'].sudo().write(
-                                {'name': record.get('Grouped Services')})
-                        else:
-                            service_type_consolidation = self.env['ebs_mod.service.type.consolidation'].sudo().create({
-                                'name': record.get('Grouped Services')
-                            })
-                        if service_type_variant and service_type_variant.id not in \
-                                service_type_consolidation.service_type_variant_ids.ids:
-                            service_type_consolidation.sudo().write(
-                                {'service_type_variant_ids': [(4, service_type_variant.id)]})
-
+                        if service_type_variant:
+                            product_id = self.env['product.product'].sudo().search(
+                                [('name', '=', service_type_variant.name)],
+                                limit=1)
+                            if product_id:
+                                product_id.write({'lst_price': 1.0})
+                            if not product_id:
+                                product_id = self.env['product.product'].sudo().create(
+                                    {'name': service_type_variant.name,
+                                     'type': 'service',
+                                     'lst_price': 1.0}
+                                )
+                                service_type_variant.write({'product_id': product_id.id})
+                        if record.get('Grouped Services'):
+                            service_type_consolidation = self.env['ebs_mod.service.type.consolidation'].sudo().search(
+                                [('name', '=', record.get('Grouped Services'))])
+                            if service_type_consolidation:
+                                self.env['ebs_mod.service.type.consolidation'].sudo().write(
+                                    {'name': record.get('Grouped Services')})
+                            else:
+                                service_type_consolidation = self.env[
+                                    'ebs_mod.service.type.consolidation'].sudo().create({
+                                    'name': record.get('Grouped Services')
+                                })
+                            if service_type_variant and service_type_variant.id not in \
+                                    service_type_consolidation.service_type_variant_ids.ids:
+                                service_type_consolidation.sudo().write(
+                                    {'service_type_variant_ids': [(4, service_type_variant.id)]})
             except Exception as e:
                 print('Something Wrong', e)
 
-    @api.model
-    def get_request(self):
-        request_list = []
-        consolidated = self.env['ebs_mod.service.type.consolidation'].search([])
-        for each_consolidated in consolidated:
-            domain = [('consolidation_id', '=', each_consolidated.id)]
-            variants = self.env['ebs_mod.service.type.variants'].sudo().search(domain)
-            for variant in variants:
-                service_types = self.env['ebs_mod.service.types'].sudo().search([('variant_id', '=', variant.id)])
-                no_of_all = 0
-                for each_service_type in service_types:
-                    # print(each_service_type)
-                    domain = [('status', '=', 'progress'), ('service_type_id', '=', each_service_type.id)]
-                    no_of_inprogress = self.env['ebs_mod.service.request'].search_count(domain)
-                    no_of_all += no_of_inprogress
-                if no_of_all:
-                    request_dict = {
-                        'consolidated_service_id': each_consolidated.id,
-                        'consolidated_service_name': each_consolidated.name,
-                        'count': no_of_all
-                    }
-                    request_list.append(request_dict.copy())
-        return request_list
+
+@api.model
+def get_request(self):
+    request_list = []
+    consolidated = self.env['ebs_mod.service.type.consolidation'].search([])
+    for each_consolidated in consolidated:
+        domain = [('consolidation_id', '=', each_consolidated.id)]
+        variants = self.env['ebs_mod.service.type.variants'].sudo().search(domain)
+        for variant in variants:
+            service_types = self.env['ebs_mod.service.types'].sudo().search([('variant_id', '=', variant.id)])
+            no_of_all = 0
+            for each_service_type in service_types:
+                # print(each_service_type)
+                domain = [('status', '=', 'progress'), ('service_type_id', '=', each_service_type.id)]
+                no_of_inprogress = self.env['ebs_mod.service.request'].search_count(domain)
+                no_of_all += no_of_inprogress
+            if no_of_all:
+                request_dict = {
+                    'consolidated_service_id': each_consolidated.id,
+                    'consolidated_service_name': each_consolidated.name,
+                    'count': no_of_all
+                }
+                request_list.append(request_dict.copy())
+    return request_list
 
 
 class ServiceTypeVariants(models.Model):
