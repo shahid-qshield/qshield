@@ -40,6 +40,8 @@ class AccountMove(models.Model):
 class AccountMoveLine(models.Model):
     _inherit = 'account.move.line'
 
+    description = fields.Char(string="Description")
+
     service_request_id = fields.Many2one('ebs_mod.service.request', string="Service Request")
     service_status = fields.Selection(related="service_request_id.status", string="Status")
     related_company_id = fields.Many2one('res.partner', related="service_request_id.related_company_ro",
@@ -47,6 +49,8 @@ class AccountMoveLine(models.Model):
     service_type_id = fields.Many2one('ebs_mod.service.types', string="Service Request Type",
                                       related="service_request_id.service_type_id")
     case_id = fields.Char(related="service_request_id.name")
+    is_government_fees_line = fields.Boolean(string="Is Goverment Fees Line")
+
 
 class MailComposer(models.TransientModel):
     _inherit = 'mail.compose.message'
@@ -70,5 +74,5 @@ class MailComposer(models.TransientModel):
                     new_attachment_ids.append(self.env['ir.attachment'].sudo().create(data_attach).id)
                 if values.get('value') and values.get('value').get('attachment_ids'):
                     old_attachment = values.get('value').get('attachment_ids')[0][2]
-                    values.get('value').update({'attachment_ids': [(6, 0, old_attachment + new_attachment_ids)]})
+                    values.get('value').update({'attachment_ids': [(6, 0, new_attachment_ids)]})
         return values

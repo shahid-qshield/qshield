@@ -95,6 +95,12 @@
                                 string="Confirm" type="object"
                                 attrs="{'invisible': ['|','&amp;',('opportunity_id', '=', False),('state', 'not in', ['draft']),'&amp;','|',('is_out_of_scope', '!=', False),('opportunity_id', '!=', False),('state', '!=',
                                                                 'quotation_approved')]}"/>
+                        <!-- create invoice term on state confirm-->
+                        <button name="action_create_invoice_term" type="object"
+                                class="oe_highlight"
+                                attrs="{'invisible': [('state', '!=', 'sale')]}"
+                                string="Create Invoice Term"/>
+
 
                         <!--add for service flow-->
                         <button name="action_confirm"
@@ -175,6 +181,10 @@
                     <field name="approver_setting_id"
                            attrs="{'invisible': [('is_out_of_scope', '=', False),('opportunity_id','=',False)]}"
                            options='{"no_open": True, "no_create": True}'/>
+                    <field name="is_invoice_term_created"
+                           readonly="1"
+                    />
+
                     <field name="refuse_quotation_reason"
                            attrs="{'invisible': ['|',('refuse_quotation_reason','=',False),('opportunity_id','=',False)]}"/>
                     <field name="refuse_agreement_reason"
@@ -182,11 +192,11 @@
                 </field>
                 <field name="partner_id" position="after">
                     <field name="start_date"
-                           attrs="{'invisible': ['|','&amp;',('is_out_of_scope','=',False),('opportunity_id','=',False),('state','not in',['sale','agreement_submit','submit_client_operation','done','cancel'])],'readonly':[('state','!=','sale')],'required' : ['|','&amp;',('is_out_of_scope','!=',False),('state','=','sale'),'&amp;',('opportunity_id','!=',False),('state','=','sale')]}"/>
+                           attrs="{'invisible': ['|','&amp;',('is_out_of_scope','=',False),('opportunity_id','=',False),('state','not in',['sale','agreement_submit','submit_client_operation','done','cancel'])],'readonly':['|',('state','!=','sale'),('is_invoice_term_created','=',True)],'required' : ['|','&amp;',('is_out_of_scope','!=',False),('state','=','sale'),'&amp;',('opportunity_id','!=',False),('state','=','sale')]}"/>
                     <field name="end_date"
-                           attrs="{'invisible': ['|','&amp;',('is_out_of_scope','=',False),('opportunity_id','=',False),('state','not in',['sale','agreement_submit','submit_client_operation','done','cancel'])],'readonly':[('state','!=','sale')],'required' : ['|','&amp;',('is_out_of_scope','!=',False),('state','=','sale'),'&amp;',('opportunity_id','!=',False),('state','=','sale')]}"/>
-                    <field name="no_of_employees"
-                           attrs="{'invisible': ['|','&amp;',('is_out_of_scope','=',False),('opportunity_id','=',False),('state','not in',['sale','agreement_submit','submit_client_operation','done','cancel'])],'readonly':[('state','!=','sale')],'required' : [('opportunity_id','!=',False),('state','=','sale')]}"/>
+                           attrs="{'invisible': ['|','&amp;',('is_out_of_scope','=',False),('opportunity_id','=',False),('state','not in',['sale','agreement_submit','submit_client_operation','done','cancel'])],'readonly':['|',('state','!=','sale'),('is_invoice_term_created','=',True)],'required' : ['|','&amp;',('is_out_of_scope','!=',False),('state','=','sale'),'&amp;',('opportunity_id','!=',False),('state','=','sale')]}"/>
+                    <field name="no_of_employees"/>
+                    <!--attrs="{'invisible': ['|','&amp;',('is_out_of_scope','=',False),('opportunity_id','=',False),('state','not in',['sale','agreement_submit','submit_client_operation','done','cancel'])],'readonly':[('state','!=','sale')],'required' : [('opportunity_id','!=',False),('state','=','sale')]}"-->
                     <!--                    <field name="start_date" invisible="1"/>-->
                     <!--                    <field name="end_date" invisible="1"/>-->
                 </field>

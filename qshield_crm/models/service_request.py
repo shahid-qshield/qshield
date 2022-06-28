@@ -27,9 +27,7 @@ class ServiceRequest(models.Model):
                 self.write({'sale_order_id': order_id.id})
                 order_id.sudo().write({'order_line': [(0, 0, {
                     'display_type': 'line_section',
-                    'name': self.service_type_id.variant_id.consolidation_id.name + '                Price : ' + str(
-                        self.service_type_id.variant_id.product_id.lst_price) + '             Quantity : ' + str(
-                        1) + '   Total Price : ' + str(self.service_type_id.variant_id.product_id.lst_price * 1),
+                    'name': self.service_type_id and self.service_type_id.variant_id and self.service_type_id.variant_id.consolidation_id.name
                 })]})
                 order_id.sudo().write({'order_line': [(0, 0, {
                     'product_id': self.service_type_id.variant_id.product_id.id,
@@ -43,6 +41,7 @@ class EbsModContracts(models.Model):
     _inherit = 'ebs_mod.contracts'
 
     sale_order_id = fields.Many2one(comodel_name='sale.order', string="Sale Order")
+    no_of_employees = fields.Integer(string="No Of Employees")
 
 
 class ExpenseTypes(models.Model):

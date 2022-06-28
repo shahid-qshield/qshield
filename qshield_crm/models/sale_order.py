@@ -48,8 +48,14 @@ class SaleOrder(models.Model):
                                            default='manual')
     is_out_of_scope = fields.Boolean(string="Is out of scope")
     no_of_employees = fields.Integer(string="Number of Employees")
+    is_invoice_term_created = fields.Boolean(string="Is Invoice Term Created",
+                                             compute="_compute_is_invoice_term_created")
 
     # is_notification_sent_to_account_manager = fields.Boolean(string="Is Notification Sent To Account Manager")
+    @api.depends('invoice_term_ids')
+    def _compute_is_invoice_term_created(self):
+        for rec in self:
+            rec.is_invoice_term_created = True if rec.invoice_term_ids else False
 
     def action_generate_sale_order_line(self):
         if self.id:
@@ -105,8 +111,9 @@ class SaleOrder(models.Model):
                 # return True
         return action
 
-    def action_done(self):
-        res = super(SaleOrder, self).action_done()
+    def action_create_invoice_term(self):
+        if self.invoice_term_ids:
+            self.sudo().invoice_term_ids.unlink()
         if self.is_agreement == 'is_retainer':
             # num_months = (self.end_date.year - self.start_date.year) * 12 + (
             #         self.end_date.month - self.start_date.month) + 1
@@ -139,7 +146,39 @@ class SaleOrder(models.Model):
                 'amount': self.amount_total,
                 'sale_id': self.id
             })
-        return res
+        return True
+
+    # def action_done(self):
+    #     res = super(SaleOrder, self).action_done()
+    #     if self.is_agreement == 'is_retainer':
+    #         for first_day_date in self.months_between(self.end_date, self.start_date):
+    #             if first_day_date:
+    #                 last_day_of_month = calendar.monthrange(first_day_date.year, first_day_date.month)[1]
+    #                 last_day_date = first_day_date.replace(day=last_day_of_month)
+    #                 self.env['invoice.term.line'].sudo().create({
+    #                     'name': first_day_date.strftime('%b') + ' ' + first_day_date.strftime('%Y') + ' - invoice term',
+    #                     'start_term_date': first_day_date,
+    #                     'end_term_date': last_day_date,
+    #                     'due_date': last_day_date,
+    #                     'type': 'down',
+    #                     'invoice_amount_type': 'amount',
+    #                     'amount': self.amount_total,
+    #                     'sale_id': self.id
+    #                 })
+    #         if self.is_out_of_scope:
+    #             self.create_agreement_of_customer()
+    #     elif self.is_agreement == 'one_time_payment':
+    #         self.env['invoice.term.line'].sudo().create({
+    #             'name': self.start_date.strftime('%b') + ' ' + self.start_date.strftime('%Y') + ' - invoice term',
+    #             'start_term_date': self.start_date,
+    #             'end_term_date': self.end_date,
+    #             'due_date': self.end_date,
+    #             'type': 'regular_invoice',
+    #             'invoice_amount_type': 'amount',
+    #             'amount': self.amount_total,
+    #             'sale_id': self.id
+    #         })
+    #     return res
 
     def months_between(self, end_date, start_date):
         if start_date > end_date:
@@ -395,6 +434,8 @@ class SaleOrder(models.Model):
         self.write({'state': 'agreement_submit'})
         if self.state == 'agreement_submit':
             self.create_agreement_of_customer()
+        if not self.invoice_term_ids:
+            self.action_create_invoice_term()
 
     def create_agreement_of_customer(self):
         product_ids = self.order_line.mapped('product_id').ids
@@ -413,7 +454,9 @@ class SaleOrder(models.Model):
                 'end_date': end_date,
                 'contract_type': 'retainer_agreement',
                 'service_ids': service_types.ids,
-                'contact_id': self.partner_id.id
+                'contact_id': self.partner_id.id,
+                'sale_order_id': self.id,
+                'no_of_employees': self.no_of_employees
             })
         else:
             contract.write({
@@ -422,7 +465,9 @@ class SaleOrder(models.Model):
                 'end_date': end_date,
                 'contract_type': 'retainer_agreement',
                 'service_ids': service_types.ids,
-                'contact_id': self.partner_id.id
+                'contact_id': self.partner_id.id,
+                'sale_order_id': self.id,
+                'no_of_employees': self.no_of_employees
             })
 
     def action_cancel(self):

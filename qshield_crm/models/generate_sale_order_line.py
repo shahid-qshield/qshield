@@ -75,9 +75,7 @@ class GenerateSaleOrderLine(models.Model):
                 for key, values in consolidation.items():
                     self.sale_order_id.sudo().write({'order_line': [(0, 0, {
                         'display_type': 'line_section',
-                        'name': key.consolidation_id.name + '                Price : ' + str(
-                            key.price) + '             Quantity : ' + str(
-                            key.quantity) + '   Total Price : ' + str(key.price * key.quantity),
+                        'name': key.consolidation_id.name or '',
                     })]})
                     price = 0
                     if key.price > 0 and len(values) > 0:

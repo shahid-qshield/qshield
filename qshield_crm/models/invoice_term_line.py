@@ -4,6 +4,9 @@ from odoo import models, fields, api, _
 from odoo.exceptions import UserError
 import calendar
 import time
+import logging
+
+logger = logging.getLogger(__name__)
 
 
 class InvoiceTermLine(models.Model):
@@ -11,7 +14,7 @@ class InvoiceTermLine(models.Model):
     _description = 'Invoice Term Line'
 
     name = fields.Char('Invoice Term')
-    type = fields.Selection([('down', 'Down Payment'),
+    type = fields.Selection([('down', 'Regular Invoice'),
                              ('regular_invoice', 'Regular Invoice'),
                              ('regular_invoice_with_deduct', 'Regular invoice with Deduct down payments')], 'Type',
                             default='down')
@@ -98,6 +101,8 @@ class InvoiceTermLine(models.Model):
             }
             invoice_line_vals = []
             for invoice_term in partner_invoice_term_ids:
+                service_request = self.env['ebs_mod.service.request'].sudo().search(
+                    [('sale_order_id', '=', invoice_term.sale_id.id)])
                 if invoice_term.type == 'down':
                     product_id = self.env['ir.config_parameter'].sudo().get_param('sale.default_deposit_product_id')
                     if product_id:
@@ -133,7 +138,22 @@ class InvoiceTermLine(models.Model):
 
                     so_line_values = self._prepare_so_line(invoice_term.sale_id, analytic_tag_ids, tax_ids, amount,
                                                            product_id)
+                    description = ''
                     so_line = self.env['sale.order.line'].create(so_line_values)
+                    if invoice_term.sale_id and invoice_term.sale_id.is_agreement == 'is_retainer':
+                        contract = self.env['ebs_mod.contracts'].search(
+                            [('sale_order_id', '=', invoice_term.sale_id.id)], limit=1)
+                        service_request = self.env['ebs_mod.service.request'].search(
+                            [('sale_order_id', '=', invoice_term.sale_id.id)], limit=1)
+                        if contract or service_request:
+                            description = 'Retainer Out of Scope %s' % service_request.name if \
+                                invoice_term.sale_id.is_out_of_scope and service_request else \
+                                'Retainer %s' % contract.name
+                    elif invoice_term.sale_id and invoice_term.sale_id.is_agreement == 'one_time_payment':
+                        service_request = self.env['ebs_mod.service.request'].search(
+                            [('sale_order_id', '=', invoice_term.sale_id.id)], limit=1)
+                        description = 'One Time Payment %s' % service_request.name if service_request else ''
+
                     invoice_line_vals.append((0, 0, {
                         'name': name,
                         'price_unit': amount,
@@ -142,8 +162,10 @@ class InvoiceTermLine(models.Model):
                         'product_uom_id': so_line.product_uom.id,
                         'tax_ids': [(6, 0, so_line.tax_id.ids)],
                         'sale_line_ids': [(6, 0, [so_line.id])],
+                        'description': description,
                         'analytic_tag_ids': [(6, 0, so_line.analytic_tag_ids.ids)],
                         'analytic_account_id': invoice_term.sale_id.analytic_account_id.id or False,
+                        'service_request_id': service_request.id if service_request else False
                     }))
                 elif invoice_term.type == 'regular_invoice':
                     invoiceable_lines = invoice_term.sale_id._get_invoiceable_lines(final=True)
@@ -156,6 +178,24 @@ class InvoiceTermLine(models.Model):
                         for line in invoiceable_lines:
                             if line.product_id:
                                 vals = line._prepare_invoice_line()
+                                description = ''
+                                if invoice_term.sale_id and invoice_term.sale_id.opportunity_id and invoice_term.sale_id.is_agreement == 'is_retainer':
+                                    contract = self.env['ebs_mod.contracts'].search(
+                                        [('sale_order_id', '=', invoice_term.sale_id.id)], limit=1)
+                                    service_request = self.env['ebs_mod.service.request'].search(
+                                        [('sale_order_id', '=', invoice_term.sale_id.id)], limit=1)
+                                    if contract or service_request:
+                                        description = 'Retainer Out of Scope %s' % service_request.name if \
+                                            invoice_term.sale_id.is_out_of_scope and service_request else \
+                                            'Retainer %s' % contract.name
+                                elif invoice_term.sale_id and invoice_term.sale_id.is_agreement == 'one_time_payment':
+                                    service_request = self.env['ebs_mod.service.request'].search(
+                                        [('sale_order_id', '=', invoice_term.sale_id.id)], limit=1)
+                                    description = 'One Time Payment %s' % service_request.name if service_request else ''
+                                if description:
+                                    vals.update({'description': description})
+                                if service_request:
+                                    vals.update({'service_request_id': service_request.id})
                                 if vals:
                                     invoice_line_vals.append((0, 0, vals))
             for expenses_id in expenses_ids.filtered(lambda s: s.service_request_id in partner_service_request_ids):
@@ -165,12 +205,18 @@ class InvoiceTermLine(models.Model):
                     'quantity': 1,
                     'price_unit': expenses_id.amount if expenses_id.amount else
                     expenses_id.expense_type_id.product_id.lst_price,
-                    'service_request_id': expenses_id.service_request_id.id
+                    'description': expenses_id.service_request_id.name,
+                    'service_request_id': expenses_id.service_request_id.id,
+                    'is_government_fees_line': True
                 }))
 
             if invoice_line_vals:
                 invoice_vals.update({'invoice_line_ids': invoice_line_vals})
-            invoice_id = self.env['account.move'].sudo().create(invoice_vals)
+            invoice_id = False
+            try:
+                invoice_id = self.env['account.move'].sudo().create(invoice_vals)
+            except Exception as e:
+                logger.info("Something went Wrong", e)
             if invoice_id:
                 if partner_invoice_term_ids:
                     partner_invoice_term_ids.write({'invoice_id': invoice_id.id})
