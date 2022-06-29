@@ -2,7 +2,7 @@
 
 from odoo import models, fields, api, _
 from datetime import datetime
-from pytz import timezone, UTC
+from pytz import timezone
 
 
 class RefuseQuotation(models.TransientModel):

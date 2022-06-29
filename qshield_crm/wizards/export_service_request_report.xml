@@ -1,0 +1,40 @@
+<odoo>
+    <data>
+        <record id="export_service_request_form" model="ir.ui.view">
+            <field name="name">export.service.request.form</field>
+            <field name="model">export.service.request</field>
+            <field name="arch" type="xml">
+                <form string="Export Services">
+                    <group>
+                        <field name="export_for_contact" required="1"/>
+                        <field name="contact_ids" widget="many2many_tags"
+                               attrs="{'invisible' : [('export_for_contact','=','all_contact')]}"/>
+                        <field name="start_date" required="1"/>
+                        <field name="end_date" required="1"/>
+                    </group>
+                    <footer>
+                        <button string="Print xlsx Report" class="btn-primary" type="object" name="print_xlsx_report"/>
+                        <button string="Close" class="btn-primary" special="cancel"/>
+                    </footer>
+                </form>
+            </field>
+        </record>
+
+        <record id="action_export_service_request_report" model="ir.actions.act_window">
+            <field name="name">Export Service Request Report</field>
+            <field name="type">ir.actions.act_window</field>
+            <field name="res_model">export.service.request</field>
+            <field name="view_mode">form</field>
+            <field name="target">new</field>
+        </record>
+
+        <menuitem
+                id="export_service_request_menu"
+                name="Export Service Request"
+                action="action_export_service_request_report"
+                parent="ebs_qsheild_mod.services_config"
+                sequence="30"
+        />
+
+    </data>
+</odoo>
