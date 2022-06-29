@@ -75,7 +75,7 @@
                         <!--                                attrs="{'invisible': ['|','|',('state', '!=', 'sale'),('invoice_status', '!=', 'no'),'&amp;',('opportunity_id', '!=', False),'|',('invoice_status', '!=', 'no'), ('state', '!=', 'submit_client_operation')]}"/>-->
                         <button name="%(sale.action_view_sale_advance_payment_inv)d" string="Create Invoice"
                                 type="action" class="btn-primary"
-                                attrs="{'invisible': ['|',('invoice_status', '!=', 'to invoice'),('opportunity_id', '!=', False)]}"/>
+                                attrs="{'invisible': ['|',('invoice_status', '!=', 'to invoice'),'|',('opportunity_id', '!=', False),('is_out_of_scope', '!=', False)]}"/>
                         <button name="%(sale.action_view_sale_advance_payment_inv)d" string="Create Invoice"
                                 type="action"
                                 context="{'default_advance_payment_method': 'percentage'}"
@@ -98,7 +98,7 @@
                         <!-- create invoice term on state confirm-->
                         <button name="action_create_invoice_term" type="object"
                                 class="oe_highlight"
-                                attrs="{'invisible': [('state', '!=', 'sale')]}"
+                                attrs="{'invisible': ['|',('state', '!=', 'sale'),('is_invoice_term_created','!=',False)]}"
                                 string="Create Invoice Term"/>
 
 
@@ -159,8 +159,8 @@
                         <field name="qshield_crm_state" widget="statusbar"
                                statusbar_visible="draft,quotation_submit,quotation_approved,sent,sale,agreement_submit,submit_client_operation,done,cancel"
                                attrs="{'invisible': [('opportunity_id', '=', False)]}"/>
-                        <button name="%(action_create_multiple_invoice)d" string="Create Invoices" type="action"
-                                attrs="{'invisible':['|','|',('invoice_status', '!=', 'to invoice'),('state', '!=', 'submit_client_operation'),'|',('invoice_term_ids','=',False),('opportunity_id','=',False)]}"/>
+                        <!--                        <button name="%(action_create_multiple_invoice)d" string="Create Invoices" type="action"-->
+                        <!--                                attrs="{'invisible':['|','|',('invoice_status', '!=', 'to invoice'),('state', '!=', 'submit_client_operation'),'|',('invoice_term_ids','=',False),('opportunity_id','=',False)]}"/>-->
                     </header>
                 </xpath>
                 <field name="amount_tax" position="attributes">

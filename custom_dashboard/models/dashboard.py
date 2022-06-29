@@ -356,29 +356,29 @@ class ServiceTypeConsolidation(models.Model):
                 print('Something Wrong', e)
 
 
-@api.model
-def get_request(self):
-    request_list = []
-    consolidated = self.env['ebs_mod.service.type.consolidation'].search([])
-    for each_consolidated in consolidated:
-        domain = [('consolidation_id', '=', each_consolidated.id)]
-        variants = self.env['ebs_mod.service.type.variants'].sudo().search(domain)
-        for variant in variants:
-            service_types = self.env['ebs_mod.service.types'].sudo().search([('variant_id', '=', variant.id)])
-            no_of_all = 0
-            for each_service_type in service_types:
-                # print(each_service_type)
-                domain = [('status', '=', 'progress'), ('service_type_id', '=', each_service_type.id)]
-                no_of_inprogress = self.env['ebs_mod.service.request'].search_count(domain)
-                no_of_all += no_of_inprogress
-            if no_of_all:
-                request_dict = {
-                    'consolidated_service_id': each_consolidated.id,
-                    'consolidated_service_name': each_consolidated.name,
-                    'count': no_of_all
-                }
-                request_list.append(request_dict.copy())
-    return request_list
+    @api.model
+    def get_request(self):
+        request_list = []
+        consolidated = self.env['ebs_mod.service.type.consolidation'].search([])
+        for each_consolidated in consolidated:
+            domain = [('consolidation_id', '=', each_consolidated.id)]
+            variants = self.env['ebs_mod.service.type.variants'].sudo().search(domain)
+            for variant in variants:
+                service_types = self.env['ebs_mod.service.types'].sudo().search([('variant_id', '=', variant.id)])
+                no_of_all = 0
+                for each_service_type in service_types:
+                    # print(each_service_type)
+                    domain = [('status', '=', 'progress'), ('service_type_id', '=', each_service_type.id)]
+                    no_of_inprogress = self.env['ebs_mod.service.request'].search_count(domain)
+                    no_of_all += no_of_inprogress
+                if no_of_all:
+                    request_dict = {
+                        'consolidated_service_id': each_consolidated.id,
+                        'consolidated_service_name': each_consolidated.name,
+                        'count': no_of_all
+                    }
+                    request_list.append(request_dict.copy())
+        return request_list
 
 
 class ServiceTypeVariants(models.Model):
