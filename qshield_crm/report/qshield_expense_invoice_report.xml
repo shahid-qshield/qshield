@@ -16,7 +16,7 @@
             <field name="page_height">297</field>
             <field name="page_width">210</field>
             <field name="orientation">Landscape</field>
-            <field name="margin_top">30</field>
+            <field name="margin_top">21</field>
             <field name="margin_bottom">23</field>
             <field name="margin_left">5</field>
             <field name="margin_right">5</field>
@@ -50,8 +50,13 @@
                                 <style type="text/css">
                                     body{
                                     text-align:justify;
-                                    font-size:16px;
-                                    line-height: 1.5;
+                                    font-size:14px;
+                                    line-height: 2.5;
+                                    }
+                                    .table th, .table td
+                                    {
+                                    line-height: 1.9;
+                                    padding: 2px 25px 0px 25px;
                                     }
                                 </style>
                                 <body>
@@ -63,61 +68,95 @@
                                     </div>
                                     <div class="row">
                                         <div class="col-4">
-
                                             <span>
                                                 <t t-esc="o.partner_id.name"/>
                                             </span>
-                                            <t t-if="o.partner_id.street">
+                                            <t t-if="o.partner_id.street or o.partner_id.street2">
                                                 <br/>
-                                                <span><t t-esc="o.partner_id.street"/>,
+                                                <span>
+                                                    <t t-esc="o.partner_id.street"/>
                                                 </span>
+                                                <t t-if="o.partner_id.street2">
+                                                    <t t-if="o.partner_id.street">
+                                                        <span>-</span>
+                                                    </t>
+                                                    <span>
+                                                        <t t-esc="o.partner_id.street2"/>
+                                                    </span>
+                                                </t>
                                             </t>
-                                            <t t-if="o.partner_id.street2">
-                                                <br/>
-                                                <span><t t-esc="o.partner_id.street2"/>,
-                                                </span>
-                                            </t>
-                                            <t t-if="o.partner_id.city">
+
+                                            <t t-if="o.partner_id.city or o.partner_id.country_id">
                                                 <br/>
                                                 <span>
                                                     <t t-esc="o.partner_id.city"/>
-                                                    <t t-if="o.partner_id.zip">
-                                                        ,
-                                                        <t t-esc="o.partner_id.zip"/>
+                                                </span>
+                                                <t t-if="o.partner_id.country_id">
+                                                    <t t-if="o.partner_id.city">
+                                                        <span>-</span>
                                                     </t>
-                                                </span>
+                                                    <t t-if="o.partner_id.state_id">
+                                                        <t t-esc="o.partner_id.state_id.name"/>,
+                                                    </t>
+                                                    <span>
+                                                        <t t-esc="o.partner_id.country_id.name"/>
+                                                    </span>
+                                                </t>
                                             </t>
-                                            <t t-if="o.partner_id.state_id">
-                                                <br/>
-                                                <span><t t-esc="o.partner_id.state_id.name"/>,
-                                                    <t t-esc="o.partner_id.country_id.name"/>
-                                                </span>
-                                            </t>
-
-
                                         </div>
                                         <div class="col-4">
-                                            <span>
-                                                <i class="fas fa-map-marker-alt"></i>
-                                                <t t-esc="o.company_id.partner_id.name"/>
+                                            <t t-esc="o.company_id.partner_id.name"/>
+                                            <t t-if="o.company_id.partner_id.street or o.company_id.partner_id.street2">
                                                 <br/>
-                                                <t t-esc="o.company_id.street"/>
-                                                <br/>
-                                                <t t-esc="o.company_id.street2"/>
-                                            </span>
+                                                <span>
+                                                    <t t-esc="o.company_id.partner_id.street"/>
+                                                </span>
+                                                <t t-if="o.company_id.partner_id.street2">
+                                                    <t t-if="o.company_id.partner_id.street">
+                                                        <span>-</span>
+                                                    </t>
+                                                    <span>
+                                                        <t t-esc="o.company_id.partner_id.street2"/>
+                                                    </span>
+                                                </t>
+                                            </t>
 
-                                            <span><t t-esc="o.company_id.state_id.name"/>,
-                                                <t t-esc="o.company_id.country_id.name"/>
-                                            </span>
+                                            <t t-if="o.company_id.partner_id.city or o.company_id.partner_id.country_id">
+                                                <br/>
+                                                <span>
+                                                    <t t-esc="o.company_id.partner_id.city"/>
+                                                </span>
+                                                <t t-if="o.company_id.partner_id.country_id">
+                                                    <t t-if="o.company_id.partner_id.city">
+                                                        <span>-</span>
+                                                    </t>
+
+                                                    <t t-if="o.company_id.partner_id.state_id">
+                                                        <span><t t-esc="o.company_id.partner_id.state_id.name"/>,
+                                                        </span>
+                                                    </t>
+                                                    <span>
+                                                        <t t-esc="o.company_id.partner_id.country_id.name"/>
+                                                    </span>
+                                                </t>
+                                            </t>
+                                            <!--                                            <span>-->
+                                            <!--                                                <i class="fas fa-map-marker-alt"></i>-->
+                                            <!--                                                <t t-esc="o.company_id.partner_id.name"/>-->
+                                            <!--                                                <br/>-->
+                                            <!--                                                <t t-esc="o.company_id.street"/>-->
+                                            <!--                                                <br/>-->
+                                            <!--                                                <t t-esc="o.company_id.street2"/>-->
+                                            <!--                                            </span>-->
+
+                                            <!--                                            <span><t t-esc="o.company_id.state_id.name"/>,-->
+                                            <!--                                                <t t-esc="o.company_id.country_id.name"/>-->
+                                            <!--                                            </span>-->
                                             <br/>
                                             <span>
+                                                <span>Tel:</span> &amp;nbsp;
                                                 <i class="fal fa-phone-square-alt"></i>
                                                 <t t-esc="o.company_id.phone"/>
-                                            </span>
-                                            <br/>
-                                            <span>
-                                                <i class="far fa-envelope"></i>
-                                                <t t-esc="o.company_id.email"/>
                                             </span>
                                             <br/>
 
@@ -136,196 +175,308 @@
                                             </span>
                                         </div>
                                     </div>
-
-                                    <table class="table table-borderless" style="border: 1px solid black;">
-                                        <thead>
-                                            <tr>
-                                                <td colspan="8">
-                                                    <span>
-                                                        <b>
-                                                            <t t-esc="o.name"/>
-                                                        </b>
-                                                    </span>
-                                                </td>
-                                            </tr>
-                                            <tr>
-                                                <th>No</th>
-                                                <th>Contact</th>
-                                                <th>Contract(Company)</th>
-                                                <th>Service Name</th>
-                                                <th>Case Id</th>
-                                                <th>Status</th>
-                                                <th>Government Fee</th>
-                                                <th>Service Fee</th>
-                                            </tr>
-                                        </thead>
-                                        <tbody>
-                                            <t t-set="i" t-value="1"/>
-                                            <t t-set="total_government" t-value="0.0"/>
-                                            <t t-set="total_service_amount" t-value="0.0"/>
-                                            <tr t-foreach="o.invoice_line_ids" t-as="line">
-                                                <!--                                                <t t-if="line.service_request_id">-->
-                                                <td>
-                                                    <span t-esc="i"/>
-                                                    <t t-set="i" t-value="i+1"/>
-                                                </td>
-                                                <td>
-                                                    <span t-esc="line.move_id.partner_id.name"/>
-                                                </td>
-                                                <td>
-                                                    <t t-if="line.partner_id.person_type == 'company'">
-                                                        <span t-esc="line.partner_id.name"/>
-                                                    </t>
-                                                    <t t-if="line.partner_id.person_type != 'company' and line.partner_id.related_company">
-                                                        <span t-esc="line.partner_id.related_company.name"/>
-                                                    </t>
-                                                </td>
-                                                <td>
-                                                    <t t-if="line.service_request_id">
-                                                        <span t-esc="line.service_request_id.service_type_id.name"/>
-                                                    </t>
-                                                    <t t-else="">
-                                                        <span t-esc="line.name"/>
-                                                    </t>
-                                                </td>
-                                                <td>
-                                                    <t t-if="line.service_request_id">
-                                                        <span t-esc="line.service_request_id.name"/>
-                                                    </t>
-                                                    <t t-set="sale_order"
-                                                       t-value="line.sale_line_ids.mapped('order_id')"/>
-                                                    <t t-if="sale_order.is_agreement == 'is_retainer' and sale_order.approver_setting_id.type =='crm_approver'">
-                                                        <t t-set="contract_id"
-                                                           t-value="o.env['ebs_mod.contracts'].search([('sale_order_id','=',sale_order.id)],limit=1)"/>
-                                                        <span>Retainer</span>
-                                                        <span t-esc="contract_id.name"/>
-                                                    </t>
-
-                                                </td>
-                                                <td>
-                                                    <t t-if="line.service_request_id.status">
-                                                        <span t-esc="line.service_request_id.status"/>
-                                                    </t>
-                                                    <t t-else="">
-                                                        <span>-</span>
-                                                    </t>
-                                                </td>
-                                                <td class="text-right">
-                                                    <t t-if="line.is_government_fees_line">
-                                                        <t t-set="total_government"
-                                                           t-value="total_government + line.price_unit"/>
-                                                        <span t-esc="line.price_unit"
-                                                              t-esc-options='{"widget": "monetary", "display_currency": o.company_id.currency_id}'/>
-                                                    </t>
-                                                    <t t-else="">
-                                                        <span>0.0</span>
-                                                    </t>
-                                                </td>
-                                                <td class="text-right">
-                                                    <t t-if="not line.is_government_fees_line">
-                                                        <t t-set="total_service_amount"
-                                                           t-value="total_service_amount + line.price_unit"/>
-                                                        <span t-esc="line.price_unit"
-                                                              t-esc-options='{"widget": "monetary", "display_currency": o.company_id.currency_id}'/>
-                                                    </t>
-                                                    <t t-else="">
-                                                        <span>0.0</span>
-                                                    </t>
-                                                </td>
-                                                <!--                                                </t>-->
-                                            </tr>
-                                        </tbody>
-                                    </table>
-
-                                    <div class="row justify-content-end">
-                                        <div class="col-4">
-                                            <table class="table table-sm">
-                                                <tr class="border-black">
-                                                    <td class="text-left">
-                                                        <strong>Sub Total in [OAR,USD]</strong>
+                                    <div class="row">
+                                        <table class="table table-borderless"
+                                               style="border: 1px solid black; width: 100%;border-collapse: separate;">
+                                            <thead style="display: table-row-group;">
+                                                <tr>
+                                                    <td colspan="8"></td>
+                                                </tr>
+                                                <tr>
+                                                    <td colspan="8"></td>
+                                                </tr>
+                                                <tr>
+                                                    <td colspan="8"></td>
+                                                </tr>
+                                                <tr>
+                                                    <td colspan="8"></td>
+                                                </tr>
+                                                <tr>
+                                                    <td colspan="8"></td>
+                                                </tr>
+                                                <tr>
+                                                    <td colspan="8">
+                                                        <span>
+                                                            <strong>
+                                                                <t t-esc="o.name"/>
+                                                            </strong>
+                                                        </span>
                                                     </td>
-                                                    <td class="text-right">
+                                                </tr>
+                                                <tr>
+                                                    <td colspan="8"></td>
+                                                </tr>
+                                                <tr>
+                                                    <td colspan="8"></td>
+                                                </tr>
+                                                <tr>
+                                                    <td colspan="8"></td>
+                                                </tr>
+                                                <tr>
+                                                    <td colspan="8"></td>
+                                                </tr>
+                                                <tr>
+                                                    <th>
+                                                        <strong>No.</strong>
+                                                    </th>
+                                                    <th>
+                                                        <strong>Contact</strong>
+                                                    </th>
+                                                    <th>
+                                                        <strong>Contract (Company)</strong>
+                                                    </th>
+                                                    <th>
+                                                        <strong>Service Name</strong>
+                                                    </th>
+                                                    <th>
+                                                        <strong>Case ID</strong>
+                                                    </th>
+                                                    <th>
+                                                        <strong>Status</strong>
+                                                    </th>
+                                                    <th>
+                                                        <strong>Government Fee</strong>
+                                                    </th>
+                                                    <th>
+                                                        <strong>Services Fee</strong>
+                                                    </th>
+                                                </tr>
+                                                <tr>
+                                                    <td colspan="8"></td>
+                                                </tr>
+                                                <tr>
+                                                    <td colspan="8"></td>
+                                                </tr>
+                                                <tr>
+                                                    <td colspan="8"></td>
+                                                </tr>
+                                            </thead>
+                                            <tbody>
+                                                <t t-set="i" t-value="1"/>
+                                                <t t-set="total_government" t-value="0.0"/>
+                                                <t t-set="total_service_amount" t-value="0.0"/>
+                                                <tr t-foreach="o.invoice_line_ids" t-as="line">
+                                                    <!--                                                <t t-if="line.service_request_id">-->
+                                                    <td>
+                                                        <span t-esc="i"/>
+                                                        <t t-set="i" t-value="i+1"/>
+                                                    </td>
+                                                    <td>
+                                                        <span t-esc="line.move_id.partner_id.name"/>
+                                                    </td>
+                                                    <td>
+                                                        <t t-if="line.partner_id.person_type == 'company'">
+                                                            <span t-esc="line.partner_id.name"/>
+                                                        </t>
+                                                        <t t-if="line.partner_id.person_type != 'company' and line.partner_id.related_company">
+                                                            <span t-esc="line.partner_id.related_company.name"/>
+                                                        </t>
+                                                    </td>
+                                                    <td>
+                                                        <t t-if="line.service_request_id">
+                                                            <span t-esc="line.service_request_id.service_type_id.name"/>
+                                                        </t>
+                                                        <t t-else="">
+                                                            <span t-esc="line.name"/>
+                                                        </t>
+                                                    </td>
+                                                    <td>
+                                                        <t t-if="line.service_request_id">
+                                                            <span t-esc="line.service_request_id.name"/>
+                                                        </t>
+                                                        <t t-set="sale_order"
+                                                           t-value="line.sale_line_ids.mapped('order_id')"/>
+                                                        <t t-if="sale_order.is_agreement == 'is_retainer' and sale_order.approver_setting_id.type =='crm_approver'">
+                                                            <t t-set="contract_id"
+                                                               t-value="o.env['ebs_mod.contracts'].search([('sale_order_id','=',sale_order.id)],limit=1)"/>
+                                                            <span>Retainer</span>
+                                                            <span t-esc="contract_id.name"/>
+                                                        </t>
+
+                                                    </td>
+                                                    <td>
+                                                        <t t-if="line.service_request_id.status">
+                                                            <span t-esc="line.service_request_id.status"/>
+                                                        </t>
+                                                        <t t-else="">
+                                                            <span>-</span>
+                                                        </t>
+                                                    </td>
+                                                    <td class="text-left">
+                                                        <t t-if="line.is_government_fees_line">
+                                                            <t t-set="total_government"
+                                                               t-value="total_government + line.price_unit"/>
+                                                            <span>
+                                                                <t t-esc="o.currency_id.symbol"/>
+                                                            </span>
+                                                            <span t-esc="line.price_unit"
+                                                                  t-esc-options='{"widget": "monetary", "display_currency": o.company_id.currency_id}'/>
+                                                        </t>
+                                                        <t t-else="">
+                                                            <span><t t-esc="o.currency_id.symbol"/>0.0
+                                                            </span>
+                                                        </t>
+                                                    </td>
+                                                    <td class="text-left">
+                                                        <t t-if="not line.is_government_fees_line">
+                                                            <t t-set="total_service_amount"
+                                                               t-value="total_service_amount + line.price_unit"/>
+                                                            <span>
+                                                                <t t-esc="o.currency_id.symbol"/>
+                                                            </span>
+                                                            <span t-esc="line.price_unit"
+                                                                  t-esc-options='{"widget": "monetary", "display_currency": o.company_id.currency_id}'/>
+                                                        </t>
+                                                        <t t-else="">
+                                                            <span><t t-esc="o.currency_id.symbol"/>0.0
+                                                            </span>
+                                                        </t>
+                                                    </td>
+                                                    <!--                                                </t>-->
+                                                </tr>
+                                                <tr>
+                                                    <td colspan="8"></td>
+                                                </tr>
+                                                <tr>
+                                                    <td colspan="8"></td>
+                                                </tr>
+                                                <tr>
+                                                    <td colspan="8"></td>
+                                                </tr>
+                                                <tr>
+                                                    <td class="text-left" colspan="6">
+                                                        <strong>Sub Total in [QAR/USD]</strong>
+                                                    </td>
+                                                    <td class="text-left">
+                                                        <span>
+                                                            <t t-esc="o.currency_id.symbol"/>
+                                                        </span>
                                                         <span t-esc="total_government"
                                                               t-esc-options='{"widget": "monetary", "display_currency": o.company_id.currency_id}'/>
                                                     </td>
-                                                    <td class="text-right">
+                                                    <td class="text-left">
+                                                        <span>
+                                                            <t t-esc="o.currency_id.symbol"/>
+                                                        </span>
                                                         <span t-esc="total_service_amount"
                                                               t-esc-options='{"widget": "monetary", "display_currency": o.company_id.currency_id}'/>
                                                     </td>
                                                 </tr>
-                                                <tr class="border-black">
-                                                    <td class="text-left">
+                                                <tr>
+                                                    <td colspan="8"></td>
+                                                </tr>
+                                                <tr>
+                                                    <td colspan="8"></td>
+                                                </tr>
+                                                <tr>
+                                                    <td colspan="8"></td>
+                                                </tr>
+                                                <tr>
+                                                    <td class="text-left" colspan="6">
                                                         <strong>End Total</strong>
                                                     </td>
-                                                    <td class="text-right">
+                                                    <td class="text-left">
+                                                        <span>
+                                                            <t t-esc="o.currency_id.symbol"/>
+                                                        </span>
                                                         <span t-esc="total_government + total_service_amount"
                                                               t-esc-options='{"widget": "monetary", "display_currency": o.company_id.currency_id}'/>
                                                     </td>
+                                                    <td class="text-left">
+                                                    </td>
                                                 </tr>
-                                            </table>
-                                        </div>
+                                                <tr>
+                                                    <td colspan="8"></td>
+                                                </tr>
+                                                <tr>
+                                                    <td colspan="8"></td>
+                                                </tr>
+                                                <tr>
+                                                    <td colspan="8"></td>
+                                                </tr>
+                                                <tr>
+                                                    <td colspan="8">
+
+                                                        <span>Bank Detail</span>
+                                                        <br/>
+                                                        <strong>Currency</strong>
+                                                        <br/>
+                                                        <span>Bank Account Name</span>
+                                                        <t t-if="o.invoice_partner_bank_id.acc_number">
+                                                            <span t-esc="o.invoice_partner_bank_id.partner_id.name"/>
+                                                        </t>
+
+                                                        <br/>
+                                                        <span>Bank Name</span>
+                                                        <t t-if="o.invoice_partner_bank_id.bank_id">
+                                                            <span t-esc="o.invoice_partner_bank_id.bank_id.name"/>
+                                                        </t>
+                                                        <br/>
+                                                        <span>Bank Address</span>
+                                                        <t t-if="o.invoice_partner_bank_id.bank_id.street">
+                                                            <span>
+                                                                <t t-esc="o.invoice_partner_bank_id.bank_id.street"/>
+                                                            </span>
+                                                        </t>
+                                                        <t t-if="o.invoice_partner_bank_id.bank_id.street2">
+                                                            <span>,
+                                                                <t t-esc="o.invoice_partner_bank_id.bank_id.street2"/>
+                                                            </span>
+                                                        </t>
+                                                        <t t-if="o.invoice_partner_bank_id.bank_id.city">
+                                                            <span>,
+                                                                <t t-esc="o.invoice_partner_bank_id.bank_id.city"/>
+                                                                <t t-if="o.invoice_partner_bank_id.bank_id.zip">
+                                                                    ,
+                                                                    <t t-esc="o.invoice_partner_bank_id.bank_id.zip"/>
+                                                                </t>
+                                                            </span>
+                                                        </t>
+                                                        <t t-if="o.invoice_partner_bank_id.bank_id.state">
+                                                            <span>,
+                                                                <t t-esc="o.invoice_partner_bank_id.bank_id.state.name"/>
+                                                                ,
+                                                                <t t-esc="o.invoice_partner_bank_id.bank_id.country.name"/>
+                                                            </span>
+                                                        </t>
+                                                        <br/>
+                                                        <span>Bank Account Number</span>
+                                                        <t t-if="o.invoice_partner_bank_id.acc_number">
+                                                            <span t-esc="o.invoice_partner_bank_id.acc_number"/>
+                                                        </t>
+                                                        <br/>
+                                                        <span>IBAN Number</span>
+                                                        <t t-if="o.invoice_partner_bank_id.partner_id.iban_number">
+                                                            <span t-esc="o.invoice_partner_bank_id.partner_id.iban_number"/>
+                                                        </t>
+                                                        <br/>
+                                                        <span>SWIFT BIC Number</span>
+                                                        <t t-if="o.invoice_partner_bank_id.bank_id.bic">
+                                                            <span t-esc="o.invoice_partner_bank_id.bank_id.bic"/>
+                                                        </t>
+                                                    </td>
+                                                </tr>
+                                                <tr>
+                                                    <td colspan="8"/>
+                                                </tr>
+                                                <tr>
+                                                    <td colspan="8"/>
+                                                </tr>
+                                                <tr>
+                                                    <td colspan="8"/>
+                                                </tr>
+                                                <tr>
+                                                    <td colspan="8"/>
+                                                </tr>
+                                                <tr>
+                                                    <td colspan="8"/>
+                                                </tr>
+                                                <tr>
+                                                    <td colspan="8"/>
+                                                </tr>
+                                            </tbody>
+                                        </table>
                                     </div>
-
-                                    <div class="row">
-                                        <div class="col-6">
-                                            <span>Bank Detail</span>
-                                            <br/>
-                                            <strong>Currency</strong>
-                                            <br/>
-                                            <span>Bank Account Name</span>
-                                            <t t-if="o.invoice_partner_bank_id.acc_number">
-                                                <span t-esc="o.invoice_partner_bank_id.partner_id.name"/>
-                                            </t>
-
-                                            <br/>
-                                            <span>Bank Name:</span>
-                                            <t t-if="o.invoice_partner_bank_id.bank_id">
-                                                <span t-esc="o.invoice_partner_bank_id.bank_id.name"/>
-                                            </t>
-                                            <br/>
-                                            <span>Bank Address</span>
-                                            <t t-if="o.invoice_partner_bank_id.bank_id.street">
-                                                <span>
-                                                    <t t-esc="o.invoice_partner_bank_id.bank_id.street"/>
-                                                </span>
-                                            </t>
-                                            <t t-if="o.invoice_partner_bank_id.bank_id.street2">
-                                                <span>,
-                                                    <t t-esc="o.invoice_partner_bank_id.bank_id.street2"/>
-                                                </span>
-                                            </t>
-                                            <t t-if="o.invoice_partner_bank_id.bank_id.city">
-                                                <span>,
-                                                    <t t-esc="o.invoice_partner_bank_id.bank_id.city"/>
-                                                    <t t-if="o.invoice_partner_bank_id.bank_id.zip">
-                                                        ,
-                                                        <t t-esc="o.invoice_partner_bank_id.bank_id.zip"/>
-                                                    </t>
-                                                </span>
-                                            </t>
-                                            <t t-if="o.invoice_partner_bank_id.bank_id.state">
-                                                <span>,<t t-esc="o.invoice_partner_bank_id.bank_id.state.name"/>,
-                                                    <t t-esc="o.invoice_partner_bank_id.bank_id.country.name"/>
-                                                </span>
-                                            </t>
-                                            <br/>
-                                            <span>Bank Account Number</span>
-                                            <t t-if="o.invoice_partner_bank_id.acc_number">
-                                                <span t-esc="o.invoice_partner_bank_id.acc_number"/>
-                                            </t>
-                                            <br/>
-                                            <span>IBAN Number</span>
-                                            <t t-if="o.invoice_partner_bank_id.partner_id.iban_number">
-                                                <span t-esc="o.invoice_partner_bank_id.partner_id.iban_number"/>
-                                            </t>
-                                            <br/>
-                                            <span>SWIFTBIC Number</span>
-                                            <t t-if="o.invoice_partner_bank_id.bank_id.bic">
-                                                <span t-esc="o.invoice_partner_bank_id.bank_id.bic"/>
-                                            </t>
-                                        </div>
-                                    </div>
-
                                 </body>
                             </html>
                         </div>
