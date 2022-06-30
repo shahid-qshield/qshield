@@ -15,6 +15,8 @@ class CrmLead(models.Model):
     @api.model
     def create(self, vals):
         res = super(CrmLead, self).create(vals)
+        if res.partner_id and res.partner_id.company_type == 'company':
+            res.company_name = res.partner_id.name
         if res.type == 'opportunity':
             res.responsible_user = res.user_id.id
         return res
@@ -26,6 +28,9 @@ class CrmLead(models.Model):
         else:
             vals.update({'planned_revenue': order.amount_total})
         res = super(CrmLead, self).write(vals)
+        if vals.get('partner_id'):
+            partner = self.env['res.partner'].sudo().browse(vals.get('partner_id'))
+            self.company_name = partner.name
         return res
 
     def redirect_lead_opportunity_view(self):
