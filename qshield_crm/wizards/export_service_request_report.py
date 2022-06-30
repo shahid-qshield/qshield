@@ -7,6 +7,7 @@ from odoo.exceptions import UserError
 import xlsxwriter
 import io
 import base64
+from odoo.http import request
 
 
 class ExportServiceRequest(models.TransientModel):
@@ -107,12 +108,16 @@ class ExportServiceRequest(models.TransientModel):
                             format1)
 
                 if attachment_ids:
-                    base_url = self.env['ir.config_parameter'].get_param('web.base.url')
+                    base_url = request.httprequest.host_url
+                    # base_url = self.env['ir.config_parameter'].get_param('web.base.url')
                     col = 11
                     for attachment_id in attachment_ids:
                         sheet.write_url(row=row, col=col, url=str(
-                            base_url) + '/web/content/{id}?download=true'.format(id=attachment_id.id), tip='Click here',
+                            base_url) + 'web/content/{id}?download=true'.format(id=attachment_id.id), tip='Click here',
                                         string='Attachment link')
+                        # sheet.write_url(row=row, col=col, url=str(
+                        #     base_url) + '/web/content/{id}?download=true'.format(id=attachment_id.id), tip='Click here',
+                        #                 string='Attachment link')
                         col += 1
                 row += 1
         workbook.close()
