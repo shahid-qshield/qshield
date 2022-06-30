@@ -1,5 +1,16 @@
 <odoo>
     <data>
+        <record id="view_partner_property_form_inherit" model="ir.ui.view">
+            <field name="name">view.move.form.custom.inherit</field>
+            <field name="model">res.partner</field>
+            <field name="inherit_id" ref="account.view_partner_property_form"/>
+            <field name="arch" type="xml">
+                <xpath expr="//page[@name='accounting']//group//group[@name='accounting_entries']"
+                       position="attributes">
+                    <attribute name="invisible">1</attribute>
+                </xpath>
+            </field>
+        </record>
         <!--  Server Action of Confirm invoice-->
         <record id="server_action_of_confirm_invoice" model="ir.actions.server">
             <field name="name">Confirm Invoice</field>
@@ -39,7 +50,7 @@
                     <filter domain="[('invoice_user_id', '=', uid)]" name="myinvoices" help="My Invoices"/>
                     <separator/>
                     <filter name="draft" string="Draft" domain="[('state','=','draft')]"/>
-                    <filter name="posted" string="Posted" domain="[('state', '=', 'posted')]"/>
+                    <filter name="posted" string="Lock" domain="[('state', '=', 'posted')]"/>
                     <filter name="cancel" string="Cancelled" domain="[('state', '=', 'cancel')]"/>
                     <separator/>
                     <filter name="in_payment" string="In Payment"
@@ -93,7 +104,9 @@
 
 
         <record id="account.action_move_out_invoice_type" model="ir.actions.act_window">
-            <field name="context">{'default_type': 'out_invoice','search_default_current_month': 1}</field>
+            <field name="context">{'default_type': 'out_invoice','search_default_current_month':
+                1,'search_default_posted' : 1,'search_default_partner' : 1}
+            </field>
         </record>
 
         <record id="view_move_form_custom_inherit" model="ir.ui.view">
