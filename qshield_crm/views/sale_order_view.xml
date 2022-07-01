@@ -172,6 +172,10 @@
                 <field name="payment_term_id" position="attributes">
                     <attribute name="required">1</attribute>
                 </field>
+                <field name="amount_total" position="attributes">
+                    <attribute name="widget">float</attribute>
+                    <attribute name="digit">[8,2]</attribute>
+                </field>
                 <field name="payment_term_id" position="after">
                     <field name="is_agreement" string="Is Agreement" widget="radio"
                            attrs="{'invisible': [('is_out_of_scope','=',False),('opportunity_id','=',False)],'readonly' : [('state','=','done')]}"/>
