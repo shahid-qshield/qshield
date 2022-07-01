@@ -172,10 +172,10 @@
                 <field name="payment_term_id" position="attributes">
                     <attribute name="required">1</attribute>
                 </field>
-                <field name="amount_total" position="attributes">
-                    <attribute name="widget">float</attribute>
-                    <attribute name="digit">[8,2]</attribute>
-                </field>
+                <!--                <field name="amount_total" position="attributes">-->
+                <!--                    <attribute name="widget">float</attribute>-->
+                <!--                    <attribute name="digit">[8,2]</attribute>-->
+                <!--                </field>-->
                 <field name="payment_term_id" position="after">
                     <field name="is_agreement" string="Is Agreement" widget="radio"
                            attrs="{'invisible': [('is_out_of_scope','=',False),('opportunity_id','=',False)],'readonly' : [('state','=','done')]}"/>
@@ -233,11 +233,15 @@
                     <attribute name="attrs">{'column_invisible':
                         [('parent.generate_order_line','=','from_consolidation')]}
                     </attribute>
+                     <attribute name="widget">float</attribute>
+                     <attribute name="digits">[8,2]</attribute>
+                     <attribute name="force_save">1</attribute>
                 </xpath>
                 <xpath expr="//field[@name='order_line']/tree/field[@name='price_subtotal']" position="attributes">
                     <attribute name="attrs">{'column_invisible':
                         [('parent.generate_order_line','=','from_consolidation')]}
                     </attribute>
+                    <attribute name="widget">float</attribute>
                 </xpath>
                 <xpath expr="//field[@name='order_line']/tree/field[@name='qty_delivered']" position="attributes">
                     <attribute name="attrs">{'column_invisible':
