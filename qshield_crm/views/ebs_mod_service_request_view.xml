@@ -1,6 +1,17 @@
 <odoo>
     <data>
 
+        <record id="contracts_form_custom_inherit" model="ir.ui.view">
+            <field name="name">contracts.form.custom.inherit</field>
+            <field name="model">ebs_mod.contracts</field>
+            <field name="inherit_id" ref="ebs_qsheild_mod.contracts_form"/>
+            <field name="arch" type="xml">
+                <field name="related_company_ids" position="after">
+                    <field name="no_of_employees"/>
+                </field>
+            </field>
+        </record>
+
         <record id="service_expenses_filter_inherit" model="ir.ui.view">
             <field name="name">service.expenses.filter.inherit</field>
             <field name="model">ebs_mod.service.request.expenses</field>
