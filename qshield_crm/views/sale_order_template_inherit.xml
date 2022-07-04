@@ -1,5 +1,11 @@
 <?xml version="1.0" encoding="utf-8"?>
 <odoo>
+    <template id="portal_invoice_page_inherit" inherit_id="account.portal_invoice_page">
+        <xpath expr="//div[@id='invoice_content']" position="attributes">
+            <attribute name="style">flex-basis: unset;</attribute>
+        </xpath>
+    </template>
+
     <template id="assets_frontend" name="open_website_quote_request" inherit_id="web_editor.assets_frontend">
         <xpath expr="." position="inside">
             <script type="text/javascript" src="/qshield_crm/static/src/js/portal.js"></script>

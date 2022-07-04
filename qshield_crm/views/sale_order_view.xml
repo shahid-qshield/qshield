@@ -98,7 +98,7 @@
                         <!-- create invoice term on state confirm-->
                         <button name="action_create_invoice_term" type="object"
                                 class="oe_highlight"
-                                attrs="{'invisible': ['|',('state', '!=', 'sale'),('is_invoice_term_created','!=',False)]}"
+                                attrs="{'invisible': ['|','&amp;',('is_out_of_scope', '=', False),('opportunity_id', '=', False),'|',('state', '!=', 'sale'),('is_invoice_term_created','!=',False)]}"
                                 string="Create Invoice Term"/>
 
 
@@ -177,8 +177,8 @@
                 <!--                    <attribute name="digit">[8,2]</attribute>-->
                 <!--                </field>-->
                 <field name="payment_term_id" position="after">
-                    <field name="is_agreement" string="Is Agreement" widget="radio"
-                           attrs="{'invisible': [('is_out_of_scope','=',False),('opportunity_id','=',False)],'readonly' : [('state','=','done')]}"/>
+                    <field name="is_agreement" string="Is Agreement" widget="radio" readonly="1"
+                           attrs="{'invisible': [('is_out_of_scope','=',False),('opportunity_id','=',False)]}"/>
                     <field name="account_manager" context="{'account_manager':True}"
                            attrs="{'invisible': [('state','!=','submit_client_operation')]}"/>
                     <field name="due_date" attrs="{'invisible': [('state','!=','submit_client_operation')]}"/>
@@ -233,9 +233,9 @@
                     <attribute name="attrs">{'column_invisible':
                         [('parent.generate_order_line','=','from_consolidation')]}
                     </attribute>
-                     <attribute name="widget">float</attribute>
-                     <attribute name="digits">[8,2]</attribute>
-                     <attribute name="force_save">1</attribute>
+                    <attribute name="widget">float</attribute>
+                    <attribute name="digits">[8,2]</attribute>
+                    <attribute name="force_save">1</attribute>
                 </xpath>
                 <xpath expr="//field[@name='order_line']/tree/field[@name='price_subtotal']" position="attributes">
                     <attribute name="attrs">{'column_invisible':
