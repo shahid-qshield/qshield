@@ -92,7 +92,7 @@
                 <xpath expr="//field[@name='expenses_ids']/tree/field[@name='desc']" position="after">
                     <field name="attachment_ids" widget="many2many_binary" string="Attach a file" class="oe_inline"/>
                     <field name="to_invoice"/>
-                    <field name="invoice_id"/>
+                    <field name="invoice_id" readonly="1"/>
                 </xpath>
                 <xpath expr="//field[@name='service_type_id']" position="attributes">
                     <attribute name="attrs">{'readonly': [('sale_order_id', '!=', False)]}</attribute>
