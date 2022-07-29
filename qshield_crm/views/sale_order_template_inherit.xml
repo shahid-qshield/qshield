@@ -56,6 +56,11 @@
                 <thead class="bg-100">
                     <tr>
                         <th class="text-left">Description</th>
+                        <th t-attf-class="text-right {{ 'd-none d-md-table-cell' if report_type == 'html' else '' }}">
+                        </th>
+                        <th></th>
+                        <th></th>
+                        <th></th>
                     </tr>
                 </thead>
                 <tbody class="sale_tbody">
