@@ -76,6 +76,7 @@
                                        options="{&quot;no_open&quot;: True}" invisible="1"/>
                             </div>
                             <field name="company_name"/>
+                            <field name="partner_invoice_type"/>
                             <field name="website" string="Company Website"/>
                             <field name="tag_ids" widget="many2many_tags"
                                    options="{'color_field': 'color', 'no_create_edit': True}" string="Tag"/>
@@ -143,6 +144,18 @@
                 <field name="company_id" position="after">
                     <field name="source_id"/>
                 </field>
+            </field>
+        </record>
+
+
+        <record id="quick_create_opportunity_form_custom_inherit" model="ir.ui.view">
+            <field name="name">quick.create.opportunity.form.custom.inherit</field>
+            <field name="model">crm.lead</field>
+            <field name="inherit_id" ref="crm.quick_create_opportunity_form"/>
+            <field name="arch" type="xml">
+                <xpath expr="//field[@name='partner_id']" position="after">
+                    <field name="partner_invoice_type"/>
+                </xpath>
             </field>
         </record>
 
