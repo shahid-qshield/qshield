@@ -313,9 +313,7 @@
                             </page>
 
                             <page name="expense_page" string="Expenses">
-                                <field name="expenses_ids"
-                                       groups="ebs_qsheild_mod.qshield_accountant_admin"
-                                >
+                                <field name="expenses_ids">
                                     <tree editable="bottom">
                                         <field name="expense_type_id"/>
                                         <field name="date" string="Date"/>
@@ -733,9 +731,7 @@
                             </page>
 
                             <page name="expense_page" string="Expenses">
-                                <field name="expenses_ids"
-                                       groups="ebs_qsheild_mod.qshield_accountant_admin"
-                                >
+                                <field name="expenses_ids">
                                     <tree editable="bottom">
                                         <field name="expense_type_id"/>
                                         <field name="date" string="Date"/>
