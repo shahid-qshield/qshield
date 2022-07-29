@@ -122,6 +122,27 @@
             <field name="auto_delete" eval="False"/>
         </record>
 
+        <record id="email_template_quotation_submit_to_client" model="mail.template">
+            <field name="name">Qshield Quotation Submit to client operation: Send by email</field>
+            <field name="model_id" ref="sale.model_sale_order"/>
+            <field name="subject">${object.name} Quotation Submit to client operation
+            </field>
+            <field name="email_from">${ctx['email_from']|safe}</field>
+            <field name="email_to">${ctx['email_to']|safe}</field>
+            <field name="body_html" type="html">
+                <div style="margin: 0px; padding: 0px;">
+                    <p style="margin: 0px; padding: 0px; font-size: 13px;">
+                        <strong>${object.name} Quotation is Submit to client operation at
+                            ${datetime.datetime.now().strftime('%m/%d/%Y %H:%M:%S')}
+                        </strong>
+                    </p>
+                </div>
+            </field>
+            <field name="lang">${object.partner_id.lang}</field>
+            <field name="user_signature" eval="False"/>
+            <field name="auto_delete" eval="False"/>
+        </record>
+
 
         <record id="email_template_of_create_retainer_invoice" model="mail.template">
             <field name="name">Custom Template Invoice: Send by email</field>
