@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
-import datetime
 
 from odoo import models, fields, api, _
+import calendar
 
 
 class ServiceRequest(models.Model):
@@ -13,6 +13,7 @@ class ServiceRequest(models.Model):
         if self.is_out_of_scope or self.is_one_time_transaction:
             order_id = self.env['sale.order'].sudo().create({
                 'partner_id': self.partner_id.id,
+                'account_manager': self.partner_id.account_manager.id if self.partner_id.account_manager else False,
                 'is_out_of_scope': True,
                 'generate_order_line': 'from_consolidation',
                 'is_agreement': 'one_time_payment' if self.is_one_time_transaction else 'is_retainer',
@@ -56,6 +57,16 @@ class EbsModServiceRequestExpenses(models.Model):
     attachment_ids = fields.Many2many('ir.attachment', string='Attachment')
     invoice_id = fields.Many2one('account.move', string="Related Invoice")
     to_invoice = fields.Boolean(string="To Invoice", compute="compute_to_invoice")
+    invoice_due_date = fields.Date(string="Invoice Due Date", compute="compute_invoice_due_date", store=True)
+
+    @api.depends('date')
+    def compute_invoice_due_date(self):
+        for record in self:
+            if record.date:
+                last_day_of_month = calendar.monthrange(record.date.year, record.date.month)[1]
+                record.invoice_due_date = record.date.replace(day=last_day_of_month)
+            else:
+                record.invoice_due_date = False
 
     def compute_to_invoice(self):
         for rec in self:
