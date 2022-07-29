@@ -38,7 +38,7 @@ class InvoiceTermLine(models.Model):
 
     def _prepare_deposit_product(self):
         return {
-            'name': 'Down payment',
+            'name': 'Retainer payment',
             'type': 'service',
             'invoice_policy': 'order',
             'property_account_income_id': self.product_id.property_account_income_id.id,
@@ -52,16 +52,16 @@ class InvoiceTermLine(models.Model):
                 amount = order.amount_total * invoice_term.percentage / 100
             else:
                 amount = order.amount_untaxed * invoice_term.percentage / 100
-            name = _("Down payment of %s%%") % (invoice_term.percentage)
+            name = _("Retainer payment of %s%%") % (invoice_term.percentage)
         elif invoice_term.amount > 0:
             amount = invoice_term.amount
-            name = _("Down payment")
+            name = _("Retainer payment")
         return amount, name
 
     def _prepare_so_line(self, order, analytic_tag_ids, tax_ids, amount, product_id):
         context = {'lang': order.partner_id.lang}
         so_values = {
-            'name': _('Down Payment: %s') % (time.strftime('%m %Y'),),
+            'name': _('Retainer Payment: %s') % (time.strftime('%m %Y'),),
             'price_unit': amount,
             'product_uom_qty': 0.0,
             'order_id': order.id,
@@ -76,15 +76,17 @@ class InvoiceTermLine(models.Model):
         return so_values
 
     def create_retainer_invoice(self):
-        first_day_month = datetime.date.today().replace(day=1)
-        last_no_day = calendar.monthrange(datetime.date.today().year, datetime.date.today().month)[1]
-        last_day_month = datetime.date.today().replace(day=last_no_day)
+        # first_day_month = datetime.date.today().replace(day=1)
+        # last_no_day = calendar.monthrange(datetime.date.today().year, datetime.date.today().month)[1]
+        # last_day_month = datetime.date.today().replace(day=last_no_day)
         action = self.env.ref('qshield_crm.action_move_out_invoice_type_custom_action')
-        # invoice_term_ids = self.sudo().search([('invoice_id', '=', False),('due_date', '<=', datetime.date.today())])
-        invoice_term_ids = self.sudo().search(
-            [('invoice_id', '=', False), ('due_date', '>=', first_day_month), ('due_date', '<=', last_day_month)])
+        invoice_term_ids = self.sudo().search([('invoice_id', '=', False),('due_date', '=', datetime.date.today())])
+        # invoice_term_ids = self.sudo().search(
+        #     [('invoice_id', '=', False), ('due_date', '>=', first_day_month), ('due_date', '<=', last_day_month)])
+        # expenses_ids = self.env['ebs_mod.service.request.expenses'].sudo().search(
+        #     [('invoice_id', '=', False), ('date', '>=', first_day_month), ('date', '<=', last_day_month)])
         expenses_ids = self.env['ebs_mod.service.request.expenses'].sudo().search(
-            [('invoice_id', '=', False), ('date', '>=', first_day_month), ('date', '<=', last_day_month)])
+            [('invoice_id', '=', False), ('invoice_due_date', '=', datetime.date.today())])
         service_request_ids = expenses_ids.mapped('service_request_id')
         sale_orders = invoice_term_ids.mapped('sale_id')
         partners = invoice_term_ids.mapped('sale_id').mapped('partner_id')
@@ -109,7 +111,7 @@ class InvoiceTermLine(models.Model):
                         product_id = self.env['product.product'].sudo().browse(int(product_id))
                     if not product_id:
                         vals = {
-                            'name': 'Down payment',
+                            'name': 'Retainer payment',
                             'type': 'service',
                             'invoice_policy': 'order',
                             'company_id': False,
@@ -119,11 +121,9 @@ class InvoiceTermLine(models.Model):
                                                                          product_id.id)
                     amount, name = self._get_advance_details(invoice_term, invoice_term.sale_id, product_id)
                     if product_id.invoice_policy != 'order':
-                        raise UserError(
-                            _('The product used to invoice a down payment should have an invoice policy set to "Ordered quantities". Please update your deposit product to be able to create a deposit invoice.'))
+                        continue
                     if product_id.type != 'service':
-                        raise UserError(
-                            _("The product used to invoice a down payment should be of type 'Service'. Please use another product or update this product."))
+                        continue
                     taxes = product_id.taxes_id.filtered(
                         lambda
                             r: not invoice_term.sale_id.company_id or r.company_id == invoice_term.sale_id.company_id)
@@ -155,7 +155,7 @@ class InvoiceTermLine(models.Model):
                         description = 'One Time Payment %s' % service_request.name if service_request else ''
 
                     invoice_line_vals.append((0, 0, {
-                        'name': name,
+                        'name': product_id.name,
                         'price_unit': amount,
                         'quantity': 1.0,
                         'product_id': product_id.id,
@@ -170,10 +170,7 @@ class InvoiceTermLine(models.Model):
                 elif invoice_term.type == 'regular_invoice':
                     invoiceable_lines = invoice_term.sale_id._get_invoiceable_lines(final=True)
                     if not invoiceable_lines:
-                        raise UserError(
-                            _('There is no invoiceable line. If a product has a Delivered quantities invoicing policy, please make sure that a quantity has been delivered.'))
-                    # invoice_line_vals.append((0, 0, line._prepare_invoice_line())
-                    #                          for line in invoiceable_lines)
+                        continue
                     if invoiceable_lines:
                         for line in invoiceable_lines:
                             if line.product_id:

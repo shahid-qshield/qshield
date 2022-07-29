@@ -39,6 +39,7 @@
             <field name="inherit_id" ref="ebs_qsheild_mod.service_expenses_tree"/>
             <field name="arch" type="xml">
                 <field name="desc" position="after">
+                    <field name="invoice_due_date"/>
                     <field name="to_invoice"/>
                     <field name="invoice_id"/>
                 </field>
@@ -51,6 +52,7 @@
             <field name="inherit_id" ref="ebs_qsheild_mod.service_expense_form"/>
             <field name="arch" type="xml">
                 <field name="amount" position="after">
+                    <field name="invoice_due_date"/>
                     <field name="to_invoice"/>
                     <field name="invoice_id"/>
                     <field name="service_request_id"/>
@@ -91,6 +93,7 @@
                 </xpath>
                 <xpath expr="//field[@name='expenses_ids']/tree/field[@name='desc']" position="after">
                     <field name="attachment_ids" widget="many2many_binary" string="Attach a file" class="oe_inline"/>
+                    <field name="invoice_due_date"/>
                     <field name="to_invoice"/>
                     <field name="invoice_id" readonly="1"/>
                 </xpath>
