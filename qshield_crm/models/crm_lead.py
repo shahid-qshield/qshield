@@ -11,26 +11,58 @@ class CrmLead(models.Model):
     company_name = fields.Char(string="Company Name")
     business_nature = fields.Char(string="Business Nature")
     company_size = fields.Integer(string="Company Size")
+    partner_invoice_type = fields.Selection(
+        [('retainer', 'Retainer'), ('per_transaction', 'Per Transaction'),
+         ('one_time_transaction', 'One time Transaction'),
+         ('partners', 'Partners'), ('outsourcing', 'Outsourcing')])
+
+    @api.onchange('partner_id')
+    def onchange_partner_id(self):
+        if self.partner_id and self.partner_id.partner_invoice_type:
+            self.partner_invoice_type = self.partner_id.partner_invoice_type
 
     @api.model
     def create(self, vals):
         res = super(CrmLead, self).create(vals)
-        if res.partner_id and res.partner_id.company_type == 'company':
-            res.company_name = res.partner_id.name
-        if res.type == 'opportunity':
-            res.responsible_user = res.user_id.id
+        for record in res:
+            if record.partner_id and record.partner_id.company_type == 'company':
+                record.company_name = record.partner_id.name
+            if record.type == 'opportunity':
+                record.responsible_user = record.user_id.id
+            if record.partner_id and record.partner_invoice_type:
+                record.partner_id.sudo().write({'partner_invoice_type': record.partner_invoice_type})
         return res
 
+    # def write(self, vals):
+    #     order = self.env['sale.order'].search([('opportunity_id', '=', self.id)], order='id desc', limit=1)
+    #     if order and order.is_agreement == 'is_retainer':
+    #         vals.update({'planned_revenue': order.amount_total * 12})
+    #     else:
+    #         vals.update({'planned_revenue': order.amount_total})
+    #     res = super(CrmLead, self).write(vals)
+    #     if vals.get('partner_id'):
+    #         partner = self.env['res.partner'].sudo().browse(vals.get('partner_id'))
+    #         self.company_name = partner.name
+    #     return res
+
     def write(self, vals):
-        order = self.env['sale.order'].search([('opportunity_id', '=', self.id)], order='id desc', limit=1)
-        if order and order.is_agreement == 'is_retainer':
-            vals.update({'planned_revenue': order.amount_total * 12})
-        else:
-            vals.update({'planned_revenue': order.amount_total})
+        for record in self:
+            if vals.get('partner_id'):
+                partner = self.env['res.partner'].sudo().browse(vals.get('partner_id'))
+                if partner:
+                    vals.update({'company_name': partner.name})
+                if partner and partner.partner_invoice_type:
+                    vals.update({'partner_invoice_type': partner.partner_invoice_type})
+                if partner and record.partner_invoice_type:
+                    partner.sudo().write({'partner_invoice_type': record.partner_invoice_type})
+            if vals.get('partner_invoice_type'):
+                record.partner_id.sudo().write({'partner_invoice_type': vals.get('partner_invoice_type')})
+            order = self.env['sale.order'].search([('opportunity_id', '=', record.id)], order='id desc', limit=1)
+            if order and order.is_agreement == 'is_retainer':
+                vals.update({'planned_revenue': order.amount_total * 12})
+            else:
+                vals.update({'planned_revenue': order.amount_total})
         res = super(CrmLead, self).write(vals)
-        if vals.get('partner_id'):
-            partner = self.env['res.partner'].sudo().browse(vals.get('partner_id'))
-            self.company_name = partner.name
         return res
 
     def redirect_lead_opportunity_view(self):
