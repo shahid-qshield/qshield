@@ -7,7 +7,7 @@
             <field name="inherit_id" ref="ebs_qsheild_mod.custom_contacts_view"/>
             <field name="arch" type="xml">
                 <field name="sponsor" position="after">
-                    <field name="partner_invoice_type"/>
+                    <field name="partner_invoice_type" readonly="1"/>
                     <field name="iban_number"/>
                 </field>
                 <xpath expr="//button[@name='action_see_services']" position="after">

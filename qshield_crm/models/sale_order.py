@@ -50,8 +50,15 @@ class SaleOrder(models.Model):
     no_of_employees = fields.Integer(string="Number of Employees")
     is_invoice_term_created = fields.Boolean(string="Is Invoice Term Created",
                                              compute="_compute_is_invoice_term_created")
+    partner_invoice_type = fields.Selection(related="partner_id.partner_invoice_type")
 
     # is_notification_sent_to_account_manager = fields.Boolean(string="Is Notification Sent To Account Manager")
+
+    @api.onchange('partner_id')
+    def onchange_partner_id_custom_method(self):
+        if self.partner_id and self.partner_id.account_manager:
+            self.account_manager = self.partner_id.account_manager.id
+
     @api.depends('invoice_term_ids')
     def _compute_is_invoice_term_created(self):
         for rec in self:
@@ -136,11 +143,13 @@ class SaleOrder(models.Model):
             if self.is_out_of_scope:
                 self.create_agreement_of_customer()
         elif self.is_agreement == 'one_time_payment':
+            last_day_of_month = calendar.monthrange(self.end_date.year, self.end_date.month)[1]
+            last_day_date = self.end_date.replace(day=last_day_of_month)
             self.env['invoice.term.line'].sudo().create({
                 'name': self.start_date.strftime('%b') + ' ' + self.start_date.strftime('%Y') + ' - invoice term',
                 'start_term_date': self.start_date,
                 'end_term_date': self.end_date,
-                'due_date': self.end_date,
+                'due_date': last_day_date,
                 'type': 'regular_invoice',
                 'invoice_amount_type': 'amount',
                 'amount': self.amount_total,
@@ -414,6 +423,10 @@ class SaleOrder(models.Model):
             approvers[0]._create_activity()
             approvers[0].write({'status': 'pending'})
         else:
+            template = self.env.ref(
+                'qshield_crm.email_template_quotation_submit_to_client',
+                raise_if_not_found=False)
+            self.send_notification(template)
             self.write({'state': 'submit_client_operation'})
 
     def create_refuse_activity(self):
@@ -507,7 +520,8 @@ class SaleOrder(models.Model):
         return res
 
     def send_notification(self, template):
-        partner_to = self.approver_setting_id.service_approver_notification_email
+        # partner_to = self.approver_setting_id.service_approver_notification_email
+        partner_to = self.account_manager.work_email
         service = self.env['ebs_mod.service.request'].sudo().search([('sale_order_id', '=', self.id)], limit=1)
         if service and service.partner_id and service.partner_id.email:
             partner_to = partner_to + ',' + service.partner_id.email
