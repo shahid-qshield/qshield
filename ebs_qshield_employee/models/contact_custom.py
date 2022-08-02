@@ -2,6 +2,8 @@
 
 from odoo import models, fields, api, _
 from odoo.exceptions import ValidationError, UserError
+import os
+import xlrd
 
 
 class ContactCustom(models.Model):
@@ -14,6 +16,43 @@ class ContactCustom(models.Model):
     is_qshield_sponsor = fields.Boolean(string='Is Qshield Sponsor')
     check_qshield_sponsor = fields.Boolean(compute="compute_check_qshield_sponsor")
     is_address = fields.Boolean(string="Is Address", default=False)
+
+    def update_invoice_type(self):
+        file_path = os.path.dirname(os.path.dirname(__file__)) + '/data/Company Types.xlsx'
+        with open(file_path, 'rb') as f:
+            try:
+                workbook = xlrd.open_workbook(file_path, on_demand=True)
+                worksheet = workbook.sheet_by_index(0)
+                first_row = []
+                for col in range(worksheet.ncols):
+                    first_row.append(worksheet.cell_value(0, col))
+                data = []
+                for row in range(1, worksheet.nrows):
+                    elm = {}
+                    for col in range(worksheet.ncols):
+                        elm[first_row[col]] = worksheet.cell_value(row, col)
+                    data.append(elm)
+                for rec in data:
+                    partner = self.sudo().search([('name', 'ilike', rec.get('Name')), ('active', 'in', [False, True])])
+                    if partner:
+                        if rec.get('Company Type') and rec.get('Company Type').capitalize() == 'Per transaction':
+                            partner.write({'partner_invoice_type': 'per_transaction'})
+                        elif rec.get('Company Type') and rec.get('Company Type').capitalize() == 'Retainer':
+                            partner.write({'partner_invoice_type': 'retainer'})
+                        elif rec.get('Company Type') and rec.get('Company Type').capitalize() == 'Partner':
+                            partner.write({'partner_invoice_type': 'partners'})
+                        elif rec.get('Company Type') and rec.get('Company Type').capitalize() == 'Outsourcing':
+                            partner.write({'partner_invoice_type': 'outsourcing'})
+                        elif rec.get('Company Type') and rec.get('Company Type').capitalize() == 'One time transaction':
+                            partner.write({'partner_invoice_type': 'one_time_transaction'})
+                        elif rec.get('Company Type') and rec.get(
+                                'Company Type').capitalize() == 'Retainer, outsourcing':
+                            partner.write({'partner_invoice_type': 'retainer'})
+                        elif rec.get('Company Type') and rec.get('Company Type').capitalize() == "Please archive":
+                            if partner.active:
+                                partner.active = False
+            except Exception as e:
+                raise UserError(e)
 
     @api.depends('sponsor', 'person_type')
     def compute_check_qshield_sponsor(self):
