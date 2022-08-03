@@ -8,6 +8,7 @@
             <field name="arch" type="xml">
                 <field name="is_one_time_transaction" position="after">
                     <field name="is_in_scope" invisible="1"/>
+                    <field name="partner_invoice_type" invisible="1"/>
                 </field>
                 <field name="is_one_time_transaction" position="attributes">
                     <attribute name="attrs">{'invisible' : ['|',('partner_invoice_type','in',['per_transaction',
