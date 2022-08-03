@@ -85,6 +85,44 @@ class EmployeeCustom(models.Model):
     employee_address = fields.Text(string="Address")
     iban_number = fields.Char(string="IBAN Number")
 
+    def update_first_name_and_last_name_of_employee(self):
+        file_path = os.path.dirname(os.path.dirname(__file__)) + '/data/Production Employee-First-lastname.xls'
+        with open(file_path, 'rb') as f:
+            try:
+                file_data = f.read()
+                workbook = xlrd.open_workbook(file_contents=file_data)
+                worksheet = workbook.sheet_by_index(1)
+                first_row = []
+                for col in range(worksheet.ncols):
+                    first_row.append(worksheet.cell_value(0, col))
+                data = []
+                for row in range(1, worksheet.nrows):
+                    elm = {}
+                    for col in range(worksheet.ncols):
+                        if first_row[col] in ['First Name', 'Middle Name', 'Last Name',
+                                              'QID Number']:
+                            if worksheet.cell_value(row, col) != '':
+                                elm[first_row[col]] = worksheet.cell_value(row, col)
+                            else:
+                                elm[first_row[col]] = False
+                    data.append(elm)
+                count = 0
+                for record in data:
+                    if record.get('QID Number'):
+                        employee = self.env['hr.employee'].sudo().search(
+                            [('identification_id', '=', str(int(record.get('QID Number'))))], limit=1)
+                        if employee:
+                            employee_vals = {
+                                'first_name': record.get('First Name'),
+                                'middle_name': record.get('Middle Name'),
+                                'last_name': record.get('Last Name'),
+                            }
+                            employee.sudo().write(employee_vals)
+                            count += 1
+                print('----------==============---------------------===========',count)
+            except Exception as e:
+                print('Something Wrong', e)
+
     def update_employee_info(self):
         file_path = os.path.dirname(os.path.dirname(__file__)) + '/data/Employment contracts.xls'
         with open(file_path, 'rb') as f:
@@ -99,7 +137,8 @@ class EmployeeCustom(models.Model):
                 for row in range(1, worksheet.nrows):
                     elm = {}
                     for col in range(worksheet.ncols):
-                        if first_row[col] in ['Address (Home Country)', 'Identification No', 'Proper Nationality','IBAN']:
+                        if first_row[col] in ['Address (Home Country)', 'Identification No', 'Proper Nationality',
+                                              'IBAN']:
                             if worksheet.cell_value(row, col) != '':
                                 elm[first_row[col]] = worksheet.cell_value(row, col)
                             else:
