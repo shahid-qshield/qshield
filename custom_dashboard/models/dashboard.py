@@ -355,7 +355,6 @@ class ServiceTypeConsolidation(models.Model):
             except Exception as e:
                 print('Something Wrong', e)
 
-
     @api.model
     def get_request(self):
         request_list = []
@@ -420,67 +419,73 @@ class EbsModContract(models.Model):
                         else:
                             elm[first_row[col]] = False
                     data.append(elm)
+                contract = False
                 for record in data:
                     contact_id = False
                     contract_type = False
                     payment_term = False
+
                     if record.get('contact_id'):
                         contact_id = self.env['res.partner'].sudo().search(
                             [('name', 'ilike', record.get('contact_id'))], limit=1)
-                    if contact_id:
-                        if record.get('contract_type') == 'Service Agreement Retainer':
-                            contract_type = 'retainer_agreement'
-                        elif record.get('contract_type') == 'Service Agreement per Transaction':
-                            contract_type = 'transaction_agreement'
-                        elif record.get('contract_type') == 'Technical Agreement':
-                            contract_type = 'tech_agreement'
-                        if record.get('payment_term') == 'Monthly':
-                            payment_term = 'monthly'
-                        elif record.get('payment_term') == 'Yearly':
-                            payment_term = 'yearly'
-                        if record.get('name'):
-                            contract_vals = {}
-                            contract = self.env['ebs_mod.contracts']
-                            if type(record.get('start_date')) == float:
-                                test = xlrd.xldate_as_datetime(record.get('start_date'), 0).strftime('%m/%d/%Y')
-                                record.update({'start_date': test})
-                            start_date = datetime.strptime(record.get('start_date'), "%m/%d/%Y")
-                            end_date = datetime.strptime(record.get('end_date'), "%m/%d/%Y")
-                            contract_vals.update({
-                                'name': record.get('name'),
-                                'contact_id': contact_id.id if contact_id else False,
-                                'contract_type': contract_type,
-                                'payment_term': payment_term,
-                                'start_date': start_date.strftime('%Y-%m-%d') if start_date else False,
-                                'end_date': end_date.strftime('%Y-%m-%d') if end_date else False,
-                            })
-                            if contact_id.name == 'Eaton' and record.get('name') == 'Eaton- Service Agreement':
-                                contract_vals.update({'desc': 'without end date'})
-                            if contact_id.name == 'ATOS':
-                                contract = self.env['ebs_mod.contracts'].sudo().search(
-                                    [('contact_id', '=', contact_id.id), ('name', '=', record.get('name'))], limit=1)
-                            if contact_id.name == 'MASIMO GULF LLC':
-                                contract = self.env['ebs_mod.contracts'].sudo().search(
-                                    [('contact_id', '=', contact_id.id), ('name', '=', contact_id.name)], limit=1)
-                            if not contract:
+                    # if contact_id:
+                    if record.get('contract_type') == 'Service Agreement Retainer':
+                        contract_type = 'retainer_agreement'
+                    elif record.get('contract_type') == 'Service Agreement per Transaction':
+                        contract_type = 'transaction_agreement'
+                    elif record.get('contract_type') == 'Technical Agreement':
+                        contract_type = 'tech_agreement'
+                    if record.get('payment_term') == 'Monthly':
+                        payment_term = 'monthly'
+                    elif record.get('payment_term') == 'Yearly':
+                        payment_term = 'yearly'
+                    if record.get('name'):
+                        contract_vals = {}
+                        contract = self.env['ebs_mod.contracts']
+                        if type(record.get('start_date')) == float:
+                            test = xlrd.xldate_as_datetime(record.get('start_date'), 0).strftime('%m/%d/%Y')
+                            record.update({'start_date': test})
+                        start_date = datetime.strptime(record.get('start_date'), "%m/%d/%Y")
+                        end_date = datetime.strptime(record.get('end_date'), "%m/%d/%Y")
+                        contract_vals.update({
+                            'name': record.get('name'),
+                            'contact_id': contact_id.id if contact_id else False,
+                            'contract_type': contract_type,
+                            'payment_term': payment_term,
+                            'start_date': start_date.strftime('%Y-%m-%d') if start_date else False,
+                            'end_date': end_date.strftime('%Y-%m-%d') if end_date else False,
+                        })
+                        if record.get('Number Of Employees') and record.get('Number Of Employees') != 'MISSING':
+                            no_of_employees = int(record.get('Number Of Employees'))
+                            contract_vals.update({'no_of_employees': no_of_employees})
+                        if contact_id and contact_id.name == 'Eaton' and record.get(
+                                'name') == 'Eaton- Service Agreement':
+                            contract_vals.update({'desc': 'without end date'})
+                        if contact_id and contact_id.name == 'ATOS':
+                            contract = self.env['ebs_mod.contracts'].sudo().search(
+                                [('contact_id', '=', contact_id.id), ('name', '=', record.get('name'))], limit=1)
+                        if contact_id and contact_id.name == 'MASIMO GULF LLC':
+                            contract = self.env['ebs_mod.contracts'].sudo().search(
+                                [('contact_id', '=', contact_id.id), ('name', '=', contact_id.name)], limit=1)
+                        if not contract:
+                            if contact_id:
                                 contract = self.env['ebs_mod.contracts'].sudo().search(
                                     [('contact_id', '=', contact_id.id)], limit=1)
-                            if contract:
-                                contract_vals.pop('contact_id')
-                                contract.sudo().write(contract_vals)
-                                if contract.service_ids:
-                                    contract.sudo().write({'service_ids': False})
-                            else:
-                                contract = self.env['ebs_mod.contracts'].sudo().create(contract_vals)
+                        if contract:
+                            contract_vals.pop('contact_id')
+                            contract.sudo().write(contract_vals)
+                            if contract.service_ids:
+                                contract.sudo().write({'service_ids': False})
+                        else:
+                            contract = self.env['ebs_mod.contracts'].sudo().create(contract_vals)
+                    if contract:
                         if record.get('Sub Service'):
                             variant_id = self.env['ebs_mod.service.type.variants'].sudo().search(
-                                [('name', 'ilike', record.get('Sub Service'))], limit=1)
+                                [('name', '=', record.get('Sub Service'))], limit=1)
                             if variant_id:
                                 for service_type in variant_id.service_type:
-                                    # service_types.append(service_type.id)
                                     if contract:
                                         contract.sudo().write({'service_ids': [(4, service_type.id)]})
-                                # contract_vals.update({'service_ids' : [(6,0,service_types)]})
                         if record.get('contact_id') and not record.get('name'):
                             related_company_id = self.env['res.partner'].sudo().search(
                                 [('name', 'ilike', record.get('contact_id'))], limit=1)

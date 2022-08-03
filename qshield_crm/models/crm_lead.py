@@ -15,11 +15,63 @@ class CrmLead(models.Model):
         [('retainer', 'Retainer'), ('per_transaction', 'Per Transaction'),
          ('one_time_transaction', 'One time Transaction'),
          ('partners', 'Partners'), ('outsourcing', 'Outsourcing')])
+    service_request_ids = fields.One2many('ebs_mod.service.request', 'opportunity_id', string="Services")
+    service_request_count = fields.Integer(string="Service count", compute="compute_service_request_count")
+
+    @api.onchange('partner_invoice_type')
+    def onchange_partner_invoice_type(self):
+        if self.partner_id and self.partner_id.partner_invoice_type:
+            self.partner_invoice_type = self.partner_id.partner_invoice_type
+    @api.depends('service_request_ids')
+    def compute_service_request_count(self):
+        for record in self:
+            if record.service_request_ids:
+                record.service_request_count = len(record.service_request_ids)
+            else:
+                record.service_request_count = 0
+
+    def action_view_service_request(self):
+        action = {
+            'type': 'ir.actions.act_window',
+            'view_mode': 'tree,form',
+            'res_model': 'ebs_mod.service.request',
+            'target': 'current',
+            'domain': [('id', 'in', self.service_request_ids.ids if self.service_request_ids else [])],
+
+        }
+        return action
+
+    def action_service_request_new(self):
+        print('-------------------------------------')
+        if self.partner_id:
+            context = {
+                'search_default_partner_id': self.partner_id.id,
+                'default_partner_id': self.partner_id.id,
+                'default_opportunity_id': self.id,
+                'default_is_one_time_transaction': True
+            }
+            if self.user_id:
+                context.update({'default_activity_user_id': self.user_id.id})
+            action = {
+                'type': 'ir.actions.act_window',
+                'view_mode': 'form',
+                'res_model': 'ebs_mod.service.request',
+                'target': 'current',
+                'context': context,
+
+            }
+            return action
+        else:
+            return True
 
     @api.onchange('partner_id')
     def onchange_partner_id(self):
         if self.partner_id and self.partner_id.partner_invoice_type:
             self.partner_invoice_type = self.partner_id.partner_invoice_type
+        elif self.partner_id and self.partner_invoice_type:
+            pass
+        elif not self._context.get('from_convert_to_opportunity'):
+            self.partner_invoice_type = False
 
     @api.model
     def create(self, vals):
@@ -29,7 +81,7 @@ class CrmLead(models.Model):
                 record.company_name = record.partner_id.name
             if record.type == 'opportunity':
                 record.responsible_user = record.user_id.id
-            if record.partner_id and record.partner_invoice_type:
+            if record.partner_id and not record.partner_id.partner_invoice_type and record.partner_invoice_type:
                 record.partner_id.sudo().write({'partner_invoice_type': record.partner_invoice_type})
         return res
 
@@ -53,10 +105,10 @@ class CrmLead(models.Model):
                     vals.update({'company_name': partner.name})
                 if partner and partner.partner_invoice_type:
                     vals.update({'partner_invoice_type': partner.partner_invoice_type})
-                if partner and record.partner_invoice_type:
-                    partner.sudo().write({'partner_invoice_type': record.partner_invoice_type})
-            if vals.get('partner_invoice_type'):
-                record.partner_id.sudo().write({'partner_invoice_type': vals.get('partner_invoice_type')})
+                # if partner and record.partner_invoice_type:
+                #     partner.sudo().write({'partner_invoice_type': record.partner_invoice_type})
+            # if vals.get('partner_invoice_type'):
+            #     record.partner_id.sudo().write({'partner_invoice_type': vals.get('partner_invoice_type')})
             order = self.env['sale.order'].search([('opportunity_id', '=', record.id)], order='id desc', limit=1)
             if order and order.is_agreement == 'is_retainer':
                 vals.update({'planned_revenue': order.amount_total * 12})
@@ -124,19 +176,21 @@ class CrmLead(models.Model):
             contact_name = Partner._parse_partner_name(self.email_from)[0] if self.email_from else False
 
         if self.partner_name:
-            partner_company = Partner.create(self._create_lead_partner_data(self.partner_name, True))
+            partner_company = Partner.with_context(partner_invoice_type=self.partner_invoice_type).create(
+                self._create_lead_partner_data(self.partner_name, True))
         elif self.partner_id:
             partner_company = self.partner_id
         else:
             partner_company = None
 
         if contact_name:
-            return Partner.create(
+            return Partner.with_context(partner_invoice_type=self.partner_invoice_type).create(
                 self._create_lead_partner_data(contact_name, False, partner_company.id if partner_company else False))
 
         if partner_company:
             return partner_company
-        return Partner.create(self._create_lead_partner_data(self.name, False))
+        return Partner.with_context(partner_invoice_type=self.partner_invoice_type).create(
+            self._create_lead_partner_data(self.name, False))
 
 
 class Lead2OpportunityPartner(models.TransientModel):
@@ -159,5 +213,11 @@ class Lead2OpportunityPartner(models.TransientModel):
     def action_apply(self):
         if self.custom_action:
             self.write({'action': self.custom_action})
+        if self.partner_id and self._context.get('active_id') and self._context.get('active_model'):
+            lead = self.env[self._context.get('active_model')].browse(self._context.get('active_id'))
+            if lead and self.partner_id.partner_invoice_type:
+                lead.write({'partner_invoice_type': self.partner_id.partner_invoice_type})
+            if lead and lead.partner_invoice_type and not self.partner_id.partner_invoice_type:
+                self.partner_id.write({'partner_invoice_type': lead.partner_invoice_type})
         result = super(Lead2OpportunityPartner, self).action_apply()
         return result

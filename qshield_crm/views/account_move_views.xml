@@ -137,15 +137,21 @@
                     <attribute name="attrs">{'readonly' : [('state','=','posted')]}</attribute>
                 </field>
                 <xpath expr="//header" position="inside">
+                    <field name="partner_invoice_type" invisible="1"/>
                     <button name="action_invoice_submit" type="object"
                             class="oe_highlight"
-                            attrs="{'invisible': [('state', '!=', 'draft')]}"
+                            attrs="{'invisible': ['|',('partner_invoice_type', '=', 'partners'),('state', '!=', 'draft')]}"
                             string="Submit"/>
                     <button name="action_invoice_approve" type="object"
                             class="oe_highlight"
                             attrs="{'invisible': [('state', '!=', 'new')]}"
                             string="Approve"
                             groups="ebs_leave_appilcation_request.group_finance_department_user"/>
+                </xpath>
+                <xpath expr="//button[@name='button_cancel']" position="attributes">
+                    <attribute name="attrs">{'invisible' : ['|',('partner_invoice_type', '=', 'partners'),'|', ('id',
+                        '=', False), ('state', '!=', 'draft')]}
+                    </attribute>
                 </xpath>
                 <xpath expr="//page[@id='invoice_tab']/field[@name='invoice_line_ids']/tree/field[@name='product_id']"
                        position="after">

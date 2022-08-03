@@ -577,7 +577,7 @@ class ServiceRequest(models.Model):
                 ('start_date', '<=', self.date),
                 ('end_date', '>=', self.date),
             ])
-            if len(contract_list) == 0:
+            if len(contract_list) == 0 and self.partner_id.partner_invoice_type in ['retainer','outsourcing']:
                 return {'warning': {'title': _('Warning'),
                                     'message': _('No contract found for this company and date combination.')}}
             else:
@@ -872,6 +872,16 @@ class ServiceRequestExpenses(models.Model):
     _description = "Service Request Expenses"
     _order = 'date'
 
+    def _domain_currency(self):
+        currency_ids = []
+        qatari_rials = self.env.ref('base.QAR')
+        usd = self.env.ref('base.USD')
+        if qatari_rials:
+            currency_ids.append(qatari_rials.id)
+        if usd:
+            currency_ids.append(usd.id)
+        return [('id', 'in', currency_ids)]
+
     expense_type_id = fields.Many2one(
         comodel_name='ebs_mod.expense.types',
         string='Expense type',
@@ -915,7 +925,9 @@ class ServiceRequestExpenses(models.Model):
     currency_id = fields.Many2one(
         comodel_name='res.currency',
         string='Currency',
-        required=True)
+        required=True,
+        default=lambda self: self.env.user.company_id.currency_id,
+        domain=_domain_currency)
     amount = fields.Monetary(
         string='Amount',
         currency_field='currency_id',
@@ -926,6 +938,11 @@ class ServiceRequestExpenses(models.Model):
         string='Payment Date',
         required=True)
 
-    payment_by = fields.Char(
-        string='Payment By',
-        required=True)
+    payment_by = fields.Selection([('qnb_0023', 'QNB 0023'),
+                                   ('qnb_0015', 'QNB 0015'),
+                                   ('doha_2766', 'DOHA 2766'),
+                                   ('doha_8705', 'DOHA 8705'),
+                                   ('e_cash_4364', 'E-CASH 4364'),
+                                   ('cash', 'CASH')],
+                                  string='Payment By',
+                                  required=True)

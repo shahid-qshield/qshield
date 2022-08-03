@@ -22,6 +22,8 @@ class AccountMove(models.Model):
         [('retainer', 'Retainer'), ('out_of_scope_retainer', 'Out of Scope Retainer'),
          ('out_of_scope_one_time_payment', 'Out of Scope One time Payment'),
          ('one_time_payment', 'One Time Payment'), ('expense_invoice', 'Expense Invoice')])
+    partner_invoice_type = fields.Selection(related="partner_id.partner_invoice_type")
+
 
     def action_invoice_submit(self):
         self.sudo().write({'state': 'new'})

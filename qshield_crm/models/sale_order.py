@@ -11,6 +11,14 @@ import calendar
 class SaleOrder(models.Model):
     _inherit = 'sale.order'
 
+    def default_start_date(self):
+        return date.today().replace(day=1)
+
+    def default_end_date(self):
+        today = date.today()
+        days = calendar.monthrange(today.year, today.month)
+        return today.replace(day=days[1])
+
     state = fields.Selection([
         ('draft', 'Quotation'),
         ('quotation_submit', 'Quotation Submit'),
@@ -42,8 +50,8 @@ class SaleOrder(models.Model):
     invoice_term_ids = fields.One2many('invoice.term.line', 'sale_id', 'Invoicing Terms')
     is_agreement = fields.Selection([('is_retainer', 'Is Retainer'), ('one_time_payment', 'One time Payment')],
                                     default='is_retainer')
-    start_date = fields.Date(string="Start Date")
-    end_date = fields.Date(string="End Date")
+    start_date = fields.Date(string="Start Date", default=default_start_date)
+    end_date = fields.Date(string="End Date", default=default_end_date)
     generate_order_line = fields.Selection([('from_consolidation', 'From Consolidation'), ('manual', 'Manual')],
                                            default='manual')
     is_out_of_scope = fields.Boolean(string="Is out of scope")
@@ -445,7 +453,7 @@ class SaleOrder(models.Model):
         activity = self.env.ref('qshield_crm.mail_activity_data_sale_order').id
         self.sudo()._get_user_approval_activities(user=self.env.user, activity_type_id=activity).action_feedback()
         self.write({'state': 'agreement_submit'})
-        if self.state == 'agreement_submit':
+        if self.state == 'agreement_submit' and self.partner_invoice_type in ['retainer', 'outsourcing']:
             self.create_agreement_of_customer()
         if not self.invoice_term_ids:
             self.action_create_invoice_term()
@@ -497,9 +505,15 @@ class SaleOrder(models.Model):
 
     def action_draft(self):
         res = super(SaleOrder, self).action_draft()
-        if self.approver_ids:
-            for approver in self.approver_ids:
-                approver.write({'status': 'draft'})
+        for record in self:
+            if record.approver_ids:
+                for approver in record.approver_ids:
+                    approver.write({'status': 'draft'})
+            if record.invoice_term_ids:
+                record.invoice_term_ids.sudo().unlink()
+            service_request = self.env['ebs_mod.service.request'].sudo().search([('sale_order_id', '=', record.id)])
+            if service_request:
+                service_request.sudo().write({'status': 'draft'})
         return res
 
     def action_confirm(self):
@@ -521,10 +535,15 @@ class SaleOrder(models.Model):
 
     def send_notification(self, template):
         # partner_to = self.approver_setting_id.service_approver_notification_email
-        partner_to = self.account_manager.work_email
+        partner_to = False
+        if self.account_manager and self.account_manager.work_email:
+            partner_to = self.account_manager.work_email
         service = self.env['ebs_mod.service.request'].sudo().search([('sale_order_id', '=', self.id)], limit=1)
         if service and service.partner_id and service.partner_id.email:
-            partner_to = partner_to + ',' + service.partner_id.email
+            if partner_to:
+                partner_to = partner_to + ',' + service.partner_id.email
+            else:
+                partner_to = service.partner_id.email
         if partner_to and template:
             email_list = partner_to.split(',')
             email_from = self.env['ir.mail_server'].sudo().search([('smtp_user', '!=', False)], limit=1).smtp_user
