@@ -179,7 +179,8 @@
                 <field name="payment_term_id" position="after">
                     <field name="is_agreement" string="Is Agreement" widget="radio" readonly="1"
                            attrs="{'invisible': [('is_out_of_scope','=',False),('opportunity_id','=',False)]}"/>
-                    <field name="account_manager" context="{'account_manager':True}"/>
+                    <field name="account_manager" context="{'account_manager':True}"
+                           attrs="{'required': ['|',('is_out_of_scope','!=',False),('opportunity_id','!=',False)]}"/>
                     <field name="due_date" attrs="{'invisible': [('state','!=','submit_client_operation')]}"/>
                     <field name="approver_setting_id"
                            attrs="{'invisible': [('is_out_of_scope', '=', False),('opportunity_id','=',False)]}"
@@ -196,9 +197,11 @@
                 <field name="partner_id" position="after">
                     <field name="partner_invoice_type"/>
                     <field name="start_date"
-                           attrs="{'invisible': ['|','&amp;',('is_out_of_scope','=',False),('opportunity_id','=',False),('state','not in',['sale','agreement_submit','submit_client_operation','done','cancel'])],'readonly':['|',('state','!=','sale'),('is_invoice_term_created','=',True)],'required' : ['|','&amp;',('is_out_of_scope','!=',False),('state','=','sale'),'&amp;',('opportunity_id','!=',False),('state','=','sale')]}"/>
+                           attrs="{'invisible': ['|',('partner_invoice_type','in',['per_transaction',
+                        'one_time_transaction', 'partners']),'|','&amp;',('is_out_of_scope','=',False),('opportunity_id','=',False),('state','not in',['sale','agreement_submit','submit_client_operation','done','cancel'])],'readonly':['|',('state','!=','sale'),('is_invoice_term_created','=',True)],'required' : ['|','&amp;',('is_out_of_scope','!=',False),('state','=','sale'),'&amp;',('opportunity_id','!=',False),('state','=','sale')]}"/>
                     <field name="end_date"
-                           attrs="{'invisible': ['|','&amp;',('is_out_of_scope','=',False),('opportunity_id','=',False),('state','not in',['sale','agreement_submit','submit_client_operation','done','cancel'])],'readonly':['|',('state','!=','sale'),('is_invoice_term_created','=',True)],'required' : ['|','&amp;',('is_out_of_scope','!=',False),('state','=','sale'),'&amp;',('opportunity_id','!=',False),('state','=','sale')]}"/>
+                           attrs="{'invisible': ['|',('partner_invoice_type','in',['per_transaction',
+                        'one_time_transaction', 'partners']),'|','&amp;',('is_out_of_scope','=',False),('opportunity_id','=',False),('state','not in',['sale','agreement_submit','submit_client_operation','done','cancel'])],'readonly':['|',('state','!=','sale'),('is_invoice_term_created','=',True)],'required' : ['|','&amp;',('is_out_of_scope','!=',False),('state','=','sale'),'&amp;',('opportunity_id','!=',False),('state','=','sale')]}"/>
                     <field name="no_of_employees"/>
                     <!--attrs="{'invisible': ['|','&amp;',('is_out_of_scope','=',False),('opportunity_id','=',False),('state','not in',['sale','agreement_submit','submit_client_operation','done','cancel'])],'readonly':[('state','!=','sale')],'required' : [('opportunity_id','!=',False),('state','=','sale')]}"-->
                     <!--                    <field name="start_date" invisible="1"/>-->

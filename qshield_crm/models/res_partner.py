@@ -29,6 +29,15 @@ class ResPartner(models.Model):
     expense_invoice_count = fields.Integer(compute="compute_expense_invoice_count", string="Expense invoice count")
     iban_number = fields.Char(string="IBAN Number")
 
+    @api.model
+    def create(self, values):
+        res = super(ResPartner, self).create(values)
+        for record in res:
+            if self._context.get('partner_invoice_type'):
+                record.partner_invoice_type = self._context.get('partner_invoice_type')
+                record.person_type = 'company'
+        return res
+
     def compute_expense_invoice_count(self):
         for rec in self:
             expense_invoice_count = 0
@@ -87,4 +96,5 @@ class ResPartner(models.Model):
 class ResPartnerBank(models.Model):
     _inherit = 'res.partner.bank'
 
-    custom_account_type = fields.Selection([('current_account', 'Current Account'), ('saving_account', 'Saving Account')])
+    custom_account_type = fields.Selection(
+        [('current_account', 'Current Account'), ('saving_account', 'Saving Account')])

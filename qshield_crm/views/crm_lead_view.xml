@@ -33,6 +33,26 @@
                 <xpath expr="//button[@name='action_sale_quotations_new']" position="attributes">
                     <attribute name="groups">qshield_crm.qshield_crm_sales_person,qshield_crm.qshield_crm_management
                     </attribute>
+                    <attribute name="attrs">{'invisible': ['|',('type','=','lead'),
+                        ('partner_invoice_type', 'not in',['outsourcing','retainer'])]}
+                    </attribute>
+                </xpath>
+                <xpath expr="//button[@name='action_sale_quotations_new']" position="after">
+                    <field name="partner_invoice_type" invisible="1"/>
+                    <button string="New Service" name="action_service_request_new" type="object" class="oe_highlight"
+                            attrs="{'invisible': ['|',('partner_invoice_type', 'in',['outsourcing','retainer']
+                        ),'|', ('type', '=', 'lead'), '&amp;', ('probability', '=', 0), ('active', '=', False)]}"/>
+
+                </xpath>
+                <xpath expr="//button[@name='action_view_sale_quotation']" position="attributes">
+                    <attribute name="attrs">{'invisible': ['|',('type', '=', 'lead'),
+                        ('partner_invoice_type', 'not in',['outsourcing','retainer'])]}
+                    </attribute>
+                </xpath>
+                <xpath expr="//button[@name='action_view_sale_order']" position="attributes">
+                    <attribute name="attrs">{'invisible': ['|','|', ('sale_order_count', '=', 0), ('type', '=', 'lead'),
+                        ('partner_invoice_type', 'not in',['outsourcing','retainer'])]}
+                    </attribute>
                 </xpath>
             </field>
         </record>
@@ -76,7 +96,8 @@
                                        options="{&quot;no_open&quot;: True}" invisible="1"/>
                             </div>
                             <field name="company_name"/>
-                            <field name="partner_invoice_type"/>
+                            <field name="partner_invoice_type"
+                                   attrs="{'readonly' : [('type','=','opportunity')],'required' : [('type','=','lead')]}"/>
                             <field name="website" string="Company Website"/>
                             <field name="tag_ids" widget="many2many_tags"
                                    options="{'color_field': 'color', 'no_create_edit': True}" string="Tag"/>
@@ -95,7 +116,13 @@
                 <xpath expr="//notebook" position="attributes">
                     <attribute name="invisible">1</attribute>
                 </xpath>
-
+                <button name="action_schedule_meeting" position="after">
+                    <button class="oe_stat_button" type="object" name="action_view_service_request"
+                            icon="fa-pencil-square-o"
+                            attrs="{'invisible': ['|',('type', '=', 'lead'),('partner_invoice_type', 'in',['outsourcing','retainer'])]}">
+                        <field name="service_request_count" widget="statinfo" string="Services"/>
+                    </button>
+                </button>
             </field>
         </record>
 
@@ -153,8 +180,13 @@
             <field name="model">crm.lead</field>
             <field name="inherit_id" ref="crm.quick_create_opportunity_form"/>
             <field name="arch" type="xml">
-                <xpath expr="//field[@name='partner_id']" position="after">
+                <xpath expr="//field[@name='partner_id']" position="before">
                     <field name="partner_invoice_type"/>
+                </xpath>
+                <xpath expr="//field[@name='partner_id']" position="attributes">
+                    <attribute name="context">{'res_partner_search_mode': 'customer', 'show_vat':
+                        True,'partner_invoice_type' : partner_invoice_type}
+                    </attribute>
                 </xpath>
             </field>
         </record>

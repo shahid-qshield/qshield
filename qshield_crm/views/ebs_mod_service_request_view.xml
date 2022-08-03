@@ -1,6 +1,22 @@
 <odoo>
     <data>
 
+        <record id="service_request_form_custom_custom_dashboard_inherit" model="ir.ui.view">
+            <field name="name">service.request.form.custom.custom.dashboard.inherit</field>
+            <field name="model">ebs_mod.service.request</field>
+            <field name="inherit_id" ref="custom_dashboard.service_request_form_custom"/>
+            <field name="arch" type="xml">
+                <field name="is_one_time_transaction" position="after">
+                    <field name="is_in_scope" invisible="1"/>
+                </field>
+                <field name="is_one_time_transaction" position="attributes">
+                    <attribute name="attrs">{'invisible' : ['|',('partner_invoice_type','in',['per_transaction',
+                        'one_time_transaction', 'partners']),('is_in_scope','=',True)]}
+                    </attribute>
+                </field>
+            </field>
+        </record>
+
         <record id="contracts_form_custom_inherit" model="ir.ui.view">
             <field name="name">contracts.form.custom.inherit</field>
             <field name="model">ebs_mod.contracts</field>
@@ -90,15 +106,33 @@
                            readonly="1"
                            options='{"no_open": True}'
                     />
+                    <field name="partner_invoice_type" attrs="{'invisible' : [('partner_id','=',False)]}"/>
+                    <field name="invoice_term_start_date"
+                           attrs="{'invisible' : [('partner_invoice_type','!=','partners')],'required' : [('partner_invoice_type','=','partners')]}"/>
+                    <field name="invoice_term_end_date"
+                           attrs="{'invisible' : [('partner_invoice_type','!=','partners')],'required' : [('partner_invoice_type','=','partners')]}"/>
                 </xpath>
                 <xpath expr="//field[@name='expenses_ids']/tree/field[@name='desc']" position="after">
                     <field name="attachment_ids" widget="many2many_binary" string="Attach a file" class="oe_inline"/>
+                    <field name="made_by"/>
                     <field name="invoice_due_date"/>
                     <field name="to_invoice"/>
                     <field name="invoice_id" readonly="1"/>
                 </xpath>
+                <xpath expr="//field[@name='expenses_ids']/tree/field[@name='expense_type_id']" position="attributes">
+                    <attribute name="options">{'no_create' : True}</attribute>
+                    <attribute name="domain">[('type','in',['other','government'])]</attribute>
+                </xpath>
+                <xpath expr="//field[@name='expenses_ids']/tree/field[@name='currency_id']" position="attributes">
+                    <attribute name="options">{'no_create' : True}</attribute>
+                </xpath>
                 <xpath expr="//field[@name='service_type_id']" position="attributes">
                     <attribute name="attrs">{'readonly': [('sale_order_id', '!=', False)]}</attribute>
+                </xpath>
+                <xpath expr="//button[@name='request_submit']" position="attributes">
+                    <attribute name="attrs">{'invisible': ['|',('status','!=','draft'),
+                        ('partner_invoice_type', 'not in',['outsourcing','retainer'])]}
+                    </attribute>
                 </xpath>
             </field>
         </record>
@@ -110,6 +144,7 @@
             <field name="arch" type="xml">
                 <field name="name" position="after">
                     <field name="product_id"/>
+                    <field name="type"/>
                 </field>
             </field>
         </record>
