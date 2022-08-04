@@ -3,6 +3,7 @@
 from odoo import models, fields, api, _
 import calendar
 from datetime import datetime, date
+from odoo.exceptions import ValidationError
 
 
 class ServiceRequest(models.Model):
@@ -47,6 +48,15 @@ class ServiceRequest(models.Model):
         if self.partner_id and self.partner_id.partner_invoice_type and self.partner_id.partner_invoice_type not in [
             'retainer', 'outsourcing']:
             self.is_one_time_transaction = True
+
+    @api.model
+    def create(self, values):
+        res = super(ServiceRequest, self).create(values)
+        if len(res.service_flow_ids) == 0:
+            raise ValidationError(_("Missing Workflow!"))
+        if res.partner_invoice_type in ['partners', 'per_transaction']:
+            res.generate_sale_order()
+        return res
 
     def generate_sale_order(self):
         if self.is_out_of_scope or self.is_one_time_transaction:
