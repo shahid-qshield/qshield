@@ -1,9 +1,9 @@
 <?xml version="1.0" encoding="utf-8"?>
 <odoo>
     <data noupdate="0">
-<!--        <record id="account.email_template_edi_invoice" model="mail.template">-->
-<!--            <field name="report_template" ref="qshield_crm.account_monthly_invoices"></field>-->
-<!--        </record>-->
+        <!--        <record id="account.email_template_edi_invoice" model="mail.template">-->
+        <!--            <field name="report_template" ref="qshield_crm.account_monthly_invoices"></field>-->
+        <!--        </record>-->
 
         <record id="mail_activity_due_date_sale_order" model="mail.activity.type">
             <field name="name">Due Date of Sale Order</field>
@@ -174,7 +174,7 @@
             <field name="subject">Quotation link
             </field>
             <field name="email_from">${(object.user_id.email_formatted or user.email_formatted) | safe}</field>
-            <field name="partner_to">${object.partner_id.id}</field>
+            <field name="email_to">${ctx['email_to']|safe}</field>
             <field name="body_html" type="html">
                 <div style="margin: 0px; padding: 0px;">
                     <p style="margin: 0px; padding: 0px; font-size: 13px;">
