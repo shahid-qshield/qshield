@@ -408,7 +408,7 @@ class ServiceTypeVariants(models.Model):
                 for record in data:
                     service_variant = self.sudo().search([('name', '=', record.get('Variant Name'))])
                     if service_variant and service_variant.product_id:
-                        service_variant.product_id.sudo().write({'lst_price' : record.get('Product/Sales Price')})
+                        service_variant.product_id.sudo().write({'lst_price': record.get('Product/Sales Price')})
 
             except Exception as e:
                 print('Something Wrong', e)
@@ -465,6 +465,8 @@ class EbsModContract(models.Model):
                     elif record.get('payment_term') == 'Yearly':
                         payment_term = 'yearly'
                     if record.get('name'):
+                        if not contact_id:
+                            continue
                         contract_vals = {}
                         contract = self.env['ebs_mod.contracts']
                         if type(record.get('start_date')) == float:
