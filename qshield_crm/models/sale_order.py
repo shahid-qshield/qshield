@@ -116,11 +116,21 @@ class SaleOrder(models.Model):
                 url = self.env['ir.config_parameter'].get_param('web.base.url') + self.get_portal_url()
                 prepared_url = '<a href="' + url + '">' + 'View Quotation' + '</a>'
                 db_manager_link = '<a href="' + db_manager_url + '">' + 'Select Database' + '</a>'
-                template_id.sudo().with_context(
-                    email_to=self.partner_id.email, email_from=self.env.user.email, link=prepared_url,
-                    db_manager_link=db_manager_link).send_mail(
-                    self.id,
-                    force_send=True)
+                partner_to = self.account_manager.work_email if self.account_manager and self.account_manager.work_email else ''
+                notification_approver_emails = self.env['sale.order.approver.settings'].search(
+                    [('approver_notification_email', '!=', False)]).approver_notification_email
+                if self.approver_setting_id and self.approver_setting_id.approver_notification_email:
+                    partner_to = partner_to + ',' + self.approver_setting_id.approver_notification_email
+                elif notification_approver_emails:
+                    partner_to = partner_to + ',' + notification_approver_emails
+                if partner_to:
+                    email_list = partner_to.split(',')
+                    for email in email_list:
+                        template_id.sudo().with_context(
+                            email_to=email, email_from=self.env.user.email, link=prepared_url,
+                            db_manager_link=db_manager_link).send_mail(
+                            self.id,
+                            force_send=True)
                 self.write({'state': 'sent'})
                 return True
                 # return True

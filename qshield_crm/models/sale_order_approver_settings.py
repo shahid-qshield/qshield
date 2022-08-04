@@ -9,5 +9,5 @@ class SaleOrderApproverSettings(models.Model):
     name = fields.Char(string="Name")
     approver_ids = fields.Many2many('res.users')
     type = fields.Selection([('service_approver', 'Service Approver'), ('crm_approver', 'CRM Approver')])
-    service_approver_notification_email = fields.Text(string="Service Approver Notification Emails")
+    approver_notification_email = fields.Text(string="Approver Notification Emails")
     finance_user_ids = fields.Many2many('res.users', 'approver_setting_id', string="Finance Department user")
