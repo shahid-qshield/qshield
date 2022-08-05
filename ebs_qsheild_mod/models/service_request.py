@@ -318,11 +318,30 @@ class ServiceRequest(models.Model):
         for rec in self:
             messages = self.env['mail.message'].search([('res_id', '=', rec.id)])
             for message in messages:
-                msg = re.search(r'(?<=>).*(?=<)', message.body).group(0)
-                if msg == "Status changed from In Progress to Completed.":
+                msg = re.search(r'(?<=>).*(?=<)', message.body)
+                if msg and msg.group(0) == "Status changed from In Progress to Completed.":
                     service = self.env[message.model].browse(message.res_id)
                     if not service.end_date:
                         service.sudo().write({'end_date': message.date.date()})
+                        continue
+                incomplete_msg = re.search("^.*to Incomplete.$", msg.group() if msg else '')
+                if incomplete_msg:
+                    service = self.env[message.model].browse(message.res_id)
+                    if not service.end_date:
+                        service.sudo().write({'end_date': message.date.date()})
+                        continue
+                rejected_msg = re.search("^.*to Rejected.$", msg.group() if msg else '')
+                if rejected_msg:
+                    service = self.env[message.model].browse(message.res_id)
+                    if not service.end_date:
+                        service.sudo().write({'end_date': message.date.date()})
+                        continue
+                cancel_msg = re.search("^.*to Canceled.$", msg.group() if msg else '')
+                if cancel_msg:
+                    service = self.env[message.model].browse(message.res_id)
+                    if not service.end_date:
+                        service.sudo().write({'end_date': message.date.date()})
+                        continue
 
     @api.onchange('service_type_id', )
     def get_domain_document_id(self):
@@ -577,7 +596,7 @@ class ServiceRequest(models.Model):
                 ('start_date', '<=', self.date),
                 ('end_date', '>=', self.date),
             ])
-            if len(contract_list) == 0 and self.partner_id.partner_invoice_type in ['retainer','outsourcing']:
+            if len(contract_list) == 0 and self.partner_id.partner_invoice_type in ['retainer', 'outsourcing']:
                 return {'warning': {'title': _('Warning'),
                                     'message': _('No contract found for this company and date combination.')}}
             else:
@@ -709,6 +728,7 @@ class ServiceRequest(models.Model):
     #     self.status = 'new'
 
     def request_cancel(self):
+        self.end_date = date.today()
         workflow_id = self.env['ebs_mod.service.request.workflow'].search(
             [('service_request_id', '=', self.id), ('is_application_submission', '=', True)], limit=1)
         if workflow_id:
@@ -732,6 +752,7 @@ class ServiceRequest(models.Model):
                 'ebs_qsheild_mod.qshield_operational_manager'):
             raise UserError('Account manager groups are not allowed to reject service')
         else:
+            self.end_date = date.today()
             workflow_id = self.env['ebs_mod.service.request.workflow'].search(
                 [('service_request_id', '=', self.id), ('is_application_submission', '=', True)], limit=1)
             if workflow_id:
@@ -815,6 +836,7 @@ class ServiceRequest(models.Model):
 
     def request_incomplete(self):
         self.incomplete_date = date.today()
+        self.end_date = date.today()
         workflow_id = self.env['ebs_mod.service.request.workflow'].search(
             [('service_request_id', '=', self.id), ('is_application_submission', '=', True)], limit=1)
         if workflow_id:
