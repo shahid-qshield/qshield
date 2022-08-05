@@ -118,7 +118,7 @@ class SaleOrder(models.Model):
                 db_manager_link = '<a href="' + db_manager_url + '">' + 'Select Database' + '</a>'
                 partner_to = self.account_manager.work_email if self.account_manager and self.account_manager.work_email else ''
                 notification_approver_emails = self.env['sale.order.approver.settings'].search(
-                    [('approver_notification_email', '!=', False)]).approver_notification_email
+                    [('approver_notification_email', '!=', False)],limit=1).approver_notification_email
                 if self.approver_setting_id and self.approver_setting_id.approver_notification_email:
                     partner_to = partner_to + ',' + self.approver_setting_id.approver_notification_email
                 elif notification_approver_emails:
