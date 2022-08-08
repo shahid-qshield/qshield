@@ -965,6 +965,8 @@ class ServiceRequestExpenses(models.Model):
                                    ('doha_2766', 'DOHA 2766'),
                                    ('doha_8705', 'DOHA 8705'),
                                    ('e_cash_4364', 'E-CASH 4364'),
+                                   ('amex_6201', 'AMEX 6201'),
+                                   ('amex_3004', 'AMEX 3004'),
                                    ('cash', 'CASH')],
                                   string='Payment By',
                                   required=True)
