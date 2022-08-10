@@ -36,6 +36,30 @@ class ResPartner(models.Model):
             if self._context.get('partner_invoice_type'):
                 record.partner_invoice_type = self._context.get('partner_invoice_type')
                 record.person_type = 'company'
+            if record.person_type in ['emp', 'visitor', 'child'] and record.related_company:
+                record.partner_invoice_type = record.related_company.partner_invoice_type
+        return res
+
+    def write(self, vals):
+        if vals.get('person_type') == 'child':
+            if vals.get('parent_id'):
+                related_company = self.search([('parent_id', '=', vals.get('parent_id'))])
+                if related_company:
+                    vals.update({'partner_invoice_type': related_company.partner_invoice_type})
+            elif self.related_company and self.related_company.partner_invoice_type:
+                vals.update({'partner_invoice_type': self.related_company.partner_invoice_type})
+        elif vals.get('person_type') in ['emp', 'visitor']:
+            if vals.get('parent_id'):
+                related_company = self.search([('id', '=', vals.get('parent_id'))])
+                if related_company:
+                    vals.update({'partner_invoice_type': related_company.partner_invoice_type})
+            elif self.related_company and self.related_company.partner_invoice_type:
+                vals.update({'partner_invoice_type': self.related_company.partner_invoice_type})
+        if vals.get('parent_id') and not vals.get('person_type'):
+            related_company = self.search([('id', '=', vals.get('parent_id'))])
+            if related_company:
+                vals.update({'partner_invoice_type': related_company.partner_invoice_type})
+        res = super(ResPartner, self).write(vals)
         return res
 
     def compute_expense_invoice_count(self):
