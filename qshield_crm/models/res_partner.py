@@ -28,6 +28,15 @@ class ResPartner(models.Model):
     pending_invoice_count = fields.Integer(compute="compute_pending_invoice_count", string="Pending invoice count")
     expense_invoice_count = fields.Integer(compute="compute_expense_invoice_count", string="Expense invoice count")
     iban_number = fields.Char(string="IBAN Number")
+    is_editable_partner_invoice_type = fields.Boolean(compute="compute_is_editable_partner_invoice_type")
+
+    @api.depends()
+    def compute_is_editable_partner_invoice_type(self):
+        for record in self:
+            is_editable_partner_invoice_type = False
+            if self.env.user.has_group('qshield_crm.editable_partner_invoice_type'):
+                is_editable_partner_invoice_type = True
+            record.is_editable_partner_invoice_type = is_editable_partner_invoice_type
 
     @api.model
     def create(self, values):
