@@ -21,6 +21,10 @@
         <field name="category_id" ref="module_qshield_crm"/>
     </record>
 
+    <record model="res.groups" id="editable_partner_invoice_type">
+        <field name="name">Editable Partner invoice type</field>
+    </record>
+
     <!--    <record model="res.groups" id="qshield_CRM_employee">-->
     <!--        <field name="name"></field>-->
     <!--        <field name="category_id" ref="module_category_qshield"/>-->
