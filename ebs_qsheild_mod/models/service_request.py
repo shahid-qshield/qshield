@@ -342,6 +342,18 @@ class ServiceRequest(models.Model):
                     if not service.end_date:
                         service.sudo().write({'end_date': message.date.date()})
                         continue
+                escalated_complete_msg = re.search("^.*Escalated Completed.$", msg.group() if msg else '')
+                if escalated_complete_msg:
+                    service = self.env[message.model].browse(message.res_id)
+                    if not service.end_date:
+                        service.sudo().write({'end_date': message.date.date()})
+                        continue
+                escalated_in_complete_msg = re.search("^.*Escalated Incomplete.$", msg.group() if msg else '')
+                if escalated_in_complete_msg:
+                    service = self.env[message.model].browse(message.res_id)
+                    if not service.end_date:
+                        service.sudo().write({'end_date': message.date.date()})
+                        continue
 
     @api.onchange('service_type_id', )
     def get_domain_document_id(self):
@@ -816,6 +828,7 @@ class ServiceRequest(models.Model):
 
     def request_escalated_in_complete(self):
         self.escalated_incomplete_date = date.today()
+        self.end_date = date.today()
         workflow_id = self.env['ebs_mod.service.request.workflow'].search(
             [('service_request_id', '=', self.id), ('is_application_submission', '=', True)], limit=1)
         if workflow_id:
@@ -826,6 +839,7 @@ class ServiceRequest(models.Model):
 
     def request_escalated_complete(self):
         self.escalated_complete_date = date.today()
+        self.end_date = date.today()
         workflow_id = self.env['ebs_mod.service.request.workflow'].search(
             [('service_request_id', '=', self.id), ('is_application_submission', '=', True)], limit=1)
         if workflow_id:
