@@ -108,7 +108,7 @@ class ServiceRequest(models.Model):
 class EbsModContracts(models.Model):
     _inherit = 'ebs_mod.contracts'
 
-    sale_order_id = fields.Many2one(comodel_name='sale.order', string="Sale Order")
+    sale_order_id = fields.Many2one(comodel_name='sale.order', string="Sale Order", track_visibility='onchange')
     no_of_employees = fields.Integer(string="No Of Employees")
 
 

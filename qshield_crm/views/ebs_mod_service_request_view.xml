@@ -24,6 +24,7 @@
             <field name="inherit_id" ref="ebs_qsheild_mod.contracts_form"/>
             <field name="arch" type="xml">
                 <field name="related_company_ids" position="after">
+                    <field name="sale_order_id"/>
                     <field name="no_of_employees"/>
                 </field>
             </field>
