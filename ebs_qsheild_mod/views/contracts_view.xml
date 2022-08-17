@@ -141,14 +141,19 @@
                             </page>
 
                             <page name="services_page" string="Services">
-<!--                                <button name="add_all_services" type="object" string="Add Services"-->
-<!--                                        class="btn btn-primary" style="margin-right:10px"/>-->
-<!--                                <button name="remove_all_services" type="object" string="Remove Services"-->
-<!--                                        class="btn btn-secondary"/>-->
+                                <!--                                <button name="add_all_services" type="object" string="Add Services"-->
+                                <!--                                        class="btn btn-primary" style="margin-right:10px"/>-->
+                                <!--                                <button name="remove_all_services" type="object" string="Remove Services"-->
+                                <!--                                        class="btn btn-secondary"/>-->
                                 <field name="service_ids" options="{'no_create': True, 'no_create_edit':True}"/>
                             </page>
                         </notebook>
                     </sheet>
+                    <div class="oe_chatter">
+                        <field name="message_follower_ids" widget="mail_followers"/>
+                        <field name="activity_ids" widget="mail_activity"/>
+                        <field name="message_ids" widget="mail_thread"/>
+                    </div>
                 </form>
             </field>
         </record>

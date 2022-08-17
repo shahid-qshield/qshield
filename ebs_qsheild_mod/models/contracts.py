@@ -8,6 +8,7 @@ import math
 
 class Contracts(models.Model):
     _name = 'ebs_mod.contracts'
+    _inherit = ['portal.mixin', 'mail.thread', 'mail.activity.mixin', 'utm.mixin']
     _description = "Contracts"
 
     name = fields.Char(
