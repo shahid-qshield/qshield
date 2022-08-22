@@ -294,20 +294,20 @@
                                 <field name="service_document_ids"
                                        attrs="{'readonly':[('status','=','complete')]}"
                                 >
-                                    <tree editable="bottom">
-                                        <field name="document_number"/>
-                                        <field name="name"/>
-                                        <field name="document_type_id"/>
-                                        <field name="status"/>
-                                        <field name="tag_ids"/>
-                                        <field name="partner_id"/>
-                                        <field name="issue_date"/>
-                                        <field name="expiry_date"/>
-                                        <field name="type"/>
-                                        <!--                 <field name="attachment_ids" widget="many2many_binary"/>-->
-                                        <field name="folder_id"/>
-                                    </tree>
                                 </field>
+                                <!--                                    <tree editable="bottom">-->
+                                <!--                                        <field name="document_number"/>-->
+                                <!--                                        <field name="name"/>-->
+                                <!--                                        <field name="document_type_id"/>-->
+                                <!--                                        <field name="status"/>-->
+                                <!--                                        <field name="tag_ids"/>-->
+                                <!--                                        <field name="partner_id"/>-->
+                                <!--                                        <field name="issue_date"/>-->
+                                <!--                                        <field name="expiry_date"/>-->
+                                <!--                                        <field name="type"/>-->
+                                <!--                                        &lt;!&ndash;                 <field name="attachment_ids" widget="many2many_binary"/>&ndash;&gt;-->
+                                <!--                                        <field name="folder_id"/>-->
+                                <!--                                    </tree>-->
 
 
                             </page>

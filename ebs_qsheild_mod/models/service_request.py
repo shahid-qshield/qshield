@@ -502,6 +502,8 @@ class ServiceRequest(models.Model):
             self.send_notification_all_account_manager()
         elif vals.get('status') == 'cancel' and self.status == 'cancel' and is_send_service_notification:
             self.send_notification_all_account_manager()
+        elif vals.get('status') == 'pending_payment' and self.status == 'pending_payment' and is_send_service_notification:
+            self.send_notification_all_account_manager()
         return res
 
     def send_notification_all_account_manager(self):
