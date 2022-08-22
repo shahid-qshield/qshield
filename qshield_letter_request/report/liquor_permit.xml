@@ -10,6 +10,7 @@
                                 body{
                                 text-align: justify;
                                 font-size:18px
+                                word-spacing: 10px;
                                 }
 
                             </style>
@@ -53,13 +54,14 @@
                                 </div>
                                 <div>
                                     <!--                                    <p>Dear <t t-if="o.employee_id.gender == 'male'">Sir</t><t t-if="o.employee_id.gender == 'female'">Mam</t>,</p>-->
-                                    <p>Dear Sir/Ma'am,</p>
+                                    <p>To whom it may concern,</p>
                                 </div>
 
                                 <p style="line-height: 2;">
-                                    We kindly request your office to provide Liquor permit for <t
-                                        t-if="o.employee_id.gender == 'male'">Mr.
-                                </t>
+                                    We kindly request your office to provide Liquor permit for
+                                    <t
+                                            t-if="o.employee_id.gender == 'male'">Mr.
+                                    </t>
                                     <t t-if="o.employee_id.gender == 'female' and o.employee_id.marital == 'single'">
                                         Miss.
                                     </t>
@@ -123,15 +125,15 @@
                                     <br/>
                                     <br/>
                                     <br/>
-                                    For<span style="padding-right:5px;" t-field="o.addressed_to"/>,
+                                    <span>Yours faithfully,</span>
                                     <br/>
-                                    Yours QSHIELD.,
+                                    <span>QShield, LLC</span>
                                     <br/>
                                     <br/>
-                                    <strong>NAME OF SIGNATORY:</strong>
+                                    <!--                                    <strong>NAME OF SIGNATORY:</strong>-->
                                     <span style="padding-right:5px;" t-field="o.signatory_id.name"/>
                                     <br/>
-                                    <strong>DESIGNATION:</strong>
+                                    <!--                                    <strong>DESIGNATION:</strong>-->
                                     <span style="padding-right:5px;" t-field="o.signatory_id.job_id.name"/>
                                 </div>
                                 <!--                                <div><br/><br/><br/>-->

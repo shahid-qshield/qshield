@@ -8,59 +8,111 @@
                         <html>
                             <style>
                                 body{
-                                    text-align: justify;
-                                    font-size:18px
+                                text-align: justify;
+                                font-size:18px
+                                word-spacing: 10px;
                                 }
 
                             </style>
                             <body>
                                 <div style="margin-left:70%">
-                                    <p style="  line-height: 2; text-align: justify;"><strong>Ref. No.
-                                        <span style="padding-right:5px;" t-field="o.name"/><br/>
-                                            Date: <span style="padding-right:5px;"
-                                                       t-esc="o['print_date'].strftime('%d-%b-%Y')" /></strong></p>
+                                    <p style="  line-height: 2; text-align: justify;">
+                                        <strong>Ref. No.
+                                            <span style="padding-right:5px;" t-field="o.name"/>
+                                            <br/>
+                                            Date:
+                                            <span style="padding-right:5px;"
+                                                  t-esc="o['print_date'].strftime('%d-%b-%Y')"/>
+                                        </strong>
+                                    </p>
                                 </div>
 
                                 <div>
-                                    <p style="  line-height: 2;"><strong>ADDRESSED TO:
-                                        <span style="padding-right:7px;" t-field="o.addressed_to"/><br/>
-                                        ADDRESS: <span style="padding-right:5px;" t-field="o.address"/>
-                                        </strong></p>
-                                </div><br/>
+                                    <p style="  line-height: 2;">
+                                        <strong>ADDRESSED TO:
+                                            <span style="padding-right:7px;" t-field="o.addressed_to"/>
+                                            <br/>
+                                            ADDRESS:
+                                            <span style="padding-right:5px;" t-field="o.address"/>
+                                        </strong>
+                                    </p>
+                                </div>
+                                <br/>
 
-                                <div align="center" >
+                                <div align="center">
                                     <p style="line-height: 2;">
                                         <strong>SUBJECT: SALARY CERTIFICATE Of
-                                       <t t-if="o.employee_id.gender == 'male'"> MR. </t> <t t-if="o.employee_id.gender == 'female' and o.employee_id.marital == 'single'"> MISS. </t> <t t-if="o.employee_id.gender == 'female' and o.employee_id.marital == 'married'"> MRS. </t><span style="padding-right:5px;" t-field="o.employee_id.name"/></strong>
+                                            <t t-if="o.employee_id.gender == 'male'">MR.</t>
+                                            <t t-if="o.employee_id.gender == 'female' and o.employee_id.marital == 'single'">
+                                                MISS.
+                                            </t>
+                                            <t t-if="o.employee_id.gender == 'female' and o.employee_id.marital == 'married'">
+                                                MRS.
+                                            </t>
+                                            <span style="padding-right:5px;" t-field="o.employee_id.name"/>
+                                        </strong>
                                     </p>
                                 </div>
                                 <div>
-                                    <p>Dear <t t-if="o.employee_id.gender == 'male'">Sir</t><t t-if="o.employee_id.gender == 'female'">Mam</t>,</p>
+                                    <p>To whom it may concern,</p>
                                 </div>
 
                                 <p style="line-height: 2;">
-                                    This to confirm that <t t-if="o.employee_id.gender == 'male'"> Mr. </t> <t t-if="o.employee_id.gender == 'female' and o.employee_id.marital == 'single'"> Miss. </t> <t t-if="o.employee_id.gender == 'female' and o.employee_id.marital == 'married'"> Mrs. </t> <span style="padding-right:5px;" t-field="o.employee_id.name"/>,
+                                    This to confirm that
+                                    <t t-if="o.employee_id.gender == 'male'">Mr.</t>
+                                    <t t-if="o.employee_id.gender == 'female' and o.employee_id.marital == 'single'">
+                                        Miss.
+                                    </t>
+                                    <t t-if="o.employee_id.gender == 'female' and o.employee_id.marital == 'married'">
+                                        Mrs.
+                                    </t>
+                                    <span style="padding-right:5px;" t-field="o.employee_id.name"/>,
                                     <span style="padding-right:5px;" t-field="o.employee_id.nationality"/>Nationality,
-                                    holding a Passport No. <span style="padding-right:5px;" t-field="o.employee_id.passport_id"/> and QID No.
-                                    <span style="padding-right:5px;" t-field="o.employee_id.qid_number"/> is a confirmed employee of
-                                     <span style="padding-right:5px;" t-field="o.employee_id.company_id.partner_id.name"/>, LLC.
-                                    <t t-if="o.employee_id.gender == 'male'"> He </t><t t-if="o.employee_id.gender == 'female'">She</t> joined the company
-                                    <span style="padding-right:5px;" t-esc="o.employee_id['joining_date'].strftime('%d-%b-%Y')"/>
+                                    holding a Passport No.
+                                    <span style="padding-right:5px;" t-field="o.employee_id.passport_id"/>
+                                    and QID No.
+                                    <span style="padding-right:5px;" t-field="o.employee_id.qid_number"/>
+                                    is a confirmed employee of
+                                    <span style="padding-right:5px;"
+                                          t-field="o.employee_id.company_id.partner_id.name"/>, LLC.
+                                    <t t-if="o.employee_id.gender == 'male'">He joined the company</t>
+                                    <t t-if="o.employee_id.gender == 'female'">She joined the company</t>
+                                    <span style="padding-right:5px;"
+                                          t-esc="o.employee_id['joining_date'].strftime('%d-%b-%Y')"/>
                                     and is currently working as
                                     <span style="padding-right:5px;" t-field="o.employee_id.job_id.name"/>.
-                                    <t t-if="o.employee_id.gender == 'male'"> His </t><t t-if="o.employee_id.gender == 'female'">Her</t> salary is <span style="padding-right:5px;" t-field="o.gross_salary"/>  (
-                                   <span style="padding-right:5px;" t-field="o.num_word"/>Only) per month.
-                                </p><br/>
+                                    <t t-if="o.employee_id.gender == 'male'">His salary is</t>
+                                    <t t-if="o.employee_id.gender == 'female'">Her salary is</t>
+                                    <span style="padding-right:5px;" t-field="o.gross_salary"/>
+                                    (
+                                    <span style="padding-right:5px;" t-field="o.num_word"/>Only) per month.
+                                </p>
+                                <br/>
                                 <p>This certificate is being issued upon request of the above employee for whatever
-                                    purpose it may serve <t t-if="o.employee_id.gender == 'male'"> him </t><t t-if="o.employee_id.gender == 'female'">her</t> best with no liabilities to the company.</p>
-                                <br/><br/><br/>
+                                    purpose it may serve
+                                    <t t-if="o.employee_id.gender == 'male'">him best with no liabilities to the
+                                        company.
+                                    </t>
+                                    <t t-if="o.employee_id.gender == 'female'">her best with no liabilities to the
+                                        company.
+                                    </t>
+                                </p>
+                                <br/>
+                                <br/>
+                                <br/>
                                 <div>
-                                    Yours, QShield<br/>
-                                    for <span style="padding-right:5px;" t-field="o.addressed_to"/>.,<br/><br/>
-                                    <strong>NAME OF SIGNATORY:</strong> <span style="padding-right:5px;" t-field="o.signatory_id.name"/><br/>
-                                    <strong>DESIGNATION: </strong> <span style="padding-right:5px;" t-field="o.signatory_id.job_id.name"/>
+                                    <span>Yours faithfully,</span>
+                                    <br/>
+                                    <span>QShield, LLC</span>
+                                    <br/>
+                                    <br/>
+                                    <!--                                    <strong>NAME OF SIGNATORY:</strong> -->
+                                    <span style="padding-right:5px;" t-field="o.signatory_id.name"/>
+                                    <br/>
+                                    <!--                                    <strong>DESIGNATION: </strong>-->
+                                    <span style="padding-right:5px;" t-field="o.signatory_id.job_id.name"/>
                                 </div>
-                           </body>
+                            </body>
                         </html>
 
                     </div>
