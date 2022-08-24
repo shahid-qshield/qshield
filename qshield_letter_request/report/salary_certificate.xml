@@ -29,10 +29,9 @@
 
                                 <div>
                                     <p style="  line-height: 2;">
-                                        <strong>ADDRESSED TO:
+                                        <strong>
                                             <span style="padding-right:7px;" t-field="o.addressed_to"/>
                                             <br/>
-                                            ADDRESS:
                                             <span style="padding-right:5px;" t-field="o.address"/>
                                         </strong>
                                     </p>

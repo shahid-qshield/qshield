@@ -101,12 +101,8 @@
                                             <t t-esc="o.employee_id.company_id.phone"></t>
                                         </span>
                                         <br/>
-                                        <span>Fax :
-                                            <t t-esc="o.employee_id.company_id.phone"></t>
-                                        </span>
                                     </div>
                                 </div>
-
                                 <t t-if="o.contract_id">
                                     <table style="margin-top:10px; border: 1px solid gray; width:100%">
                                         <thead style="border-bottom: 1px solid gray;">
@@ -299,8 +295,8 @@
                                             </td>
 
                                             <td style="text-align: right; padding-right:15px;">
-                                                <span style="margin-left: 60px;" t-field="o.net_pay"/>
                                                 <hr style="width:15%;text-align: right;margin-left: 85%; border: 1px solid gray;"></hr>
+                                                <span style="margin-left: 60px;" t-field="o.net_pay"/>
                                                 <hr style="width:15%;text-align: right;margin-left: 85%; border: 1px solid gray;"></hr>
                                             </td>
                                         </tr>
@@ -363,18 +359,18 @@
                                         Amount paid to your account in Qatari Riyals........
                                     </span>
                                 </div>
-                                <table style="margin-top:40px; float:left; width:50%;">
-                                    <tr>
-                                        <td>
-                                            <hr style="border: 1px solid gray;"/>
-                                        </td>
-                                    </tr>
-                                    <tr>
-                                        <td style="text-align:center; font-size:13px;">
-                                            <span>Employee's Signature</span>
-                                        </td>
-                                    </tr>
-                                </table>
+                                <!--                                <table style="margin-top:40px; float:left; width:50%;">-->
+                                <!--                                    <tr>-->
+                                <!--                                        <td>-->
+                                <!--                                            <hr style="border: 1px solid gray;"/>-->
+                                <!--                                        </td>-->
+                                <!--                                    </tr>-->
+                                <!--                                    <tr>-->
+                                <!--                                        <td style="text-align:center; font-size:13px;">-->
+                                <!--                                            <span>Employee's Signature</span>-->
+                                <!--                                        </td>-->
+                                <!--                                    </tr>-->
+                                <!--                                </table>-->
 
                             </div>
                         </div>
