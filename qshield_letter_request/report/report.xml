@@ -29,7 +29,7 @@
             <field name="name">Termination Letter</field>
             <field name="model">ebs.hr.letter.request</field>
             <field name="report_type">qweb-pdf</field>
-            <field name="report_name">qshield_letter_request.termination_letter</field>
+            <field name="report_name">qshield_letter_request.report_termination_letter</field>
             <field name="report_file">qshield_letter_request.report_termination_letter_template</field>
             <field name="print_report_name">object.employee_id.name</field>
             <field name="binding_model_id" eval="False"/>

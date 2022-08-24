@@ -21,6 +21,7 @@ class Payslip(models.Model):
 
     employee_id = fields.Many2one('hr.employee', required=True, default=_default_employee)
     qid = fields.Char(related='employee_id.identification_id', string='QID')
+    iban_number = fields.Char(related='employee_id.identification_id', string='IBAN Number')
     designation_id = fields.Many2one('hr.job', related='employee_id.job_id', string='Designation')
     contract_id = fields.Many2one('hr.contract', compute='_get_employee_contract')
     date_of_joining = fields.Date(string='Date of Joining', related='contract_id.date_start')
@@ -84,6 +85,9 @@ class Payslip(models.Model):
                 ], limit=1)
                 if contract:
                     record.contract_id = contract.id
+            if record.employee_id.bank_account_id:
+                record.account_number = record.employee_id.bank_account_id.acc_number
+                record.bank_id = record.employee_id.bank_account_id.bank_id.id
 
     @api.onchange('basic_salary_payable', 'housing_allowance_payable', 'transport_allowance_payable',
                   'telephone_allowance_payable', 'petrol_allowance_payable', 'other_allowance_payable')

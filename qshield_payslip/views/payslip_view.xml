@@ -10,15 +10,13 @@
                             <group>
                                 <field name="employee_id"/>
                                 <field name="qid"/>
+                                <field name="iban_number"/>
                                 <field name="designation_id"/>
                                 <field name="contract_id" invisible="1"/>
                                 <field name="currency_id" invisible="1"/>
                                 <field name="date_of_joining"/>
                             </group>
-
-
                         </group>
-
                         <group>
                             <div>
                                 <label for="month" string="Payroll Month"
