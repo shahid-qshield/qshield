@@ -21,7 +21,7 @@ class Payslip(models.Model):
 
     employee_id = fields.Many2one('hr.employee', required=True, default=_default_employee)
     qid = fields.Char(related='employee_id.identification_id', string='QID')
-    iban_number = fields.Char(related='employee_id.identification_id', string='IBAN Number')
+    iban_number = fields.Char(related='employee_id.iban_number', string='IBAN Number')
     designation_id = fields.Many2one('hr.job', related='employee_id.job_id', string='Designation')
     contract_id = fields.Many2one('hr.contract', compute='_get_employee_contract')
     date_of_joining = fields.Date(string='Date of Joining', related='contract_id.date_start')
