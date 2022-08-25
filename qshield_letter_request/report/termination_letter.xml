@@ -32,7 +32,6 @@
                                         <strong>To:
                                             <span style="padding-right:5px;" t-field="o.employee_id.name"/>
                                             <br/>
-                                            COMPANY NAME
                                             <span style="padding-right:5px;"
                                                   t-field="o.employee_id.company_id.partner_id.name"/>
                                         </strong>
@@ -46,7 +45,7 @@
                                     </p>
                                 </div>
                                 <div>
-                                    <p>To whom it may concern,</p>
+                                    <p>Dear <t t-esc="o.employee_id.name"/></p>
                                 </div>
                                 <p style="line-height: 2;">
                                     We regret to inform you that your employment with QShield LLC is being terminated,
