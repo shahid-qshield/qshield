@@ -266,8 +266,6 @@ class EBSHRLetterRequest(models.Model):
                         raise ValidationError(_("Please, fill Employee's Job Position"))
                     if not rec.employee_id.joining_date:
                         raise ValidationError(_("Please, fill Employee's Joining date"))
-                    if not rec.employee_id.company_id.company_registry:
-                        raise ValidationError(_("Please, fill Employee's company register number"))
                     if not rec.subject_from:
                         raise ValidationError(_("Please, fill Subject from"))
                     if not rec.gross_salary:

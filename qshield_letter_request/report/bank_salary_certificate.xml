@@ -71,11 +71,11 @@
                                     <t style="padding-right:5px;" t-esc="o.employee_id.qid_number"/>
                                     is confirmed employee of QShield LLC., Commercial Registration No.
                                     <t style="padding-right:5px;"
-                                          t-esc="o.employee_id.company_id.company_registry"/>.
+                                       t-esc="o.employee_id.partner_id.cr_number_doc.document_number"/>.
                                     <t t-if="o.employee_id.gender == 'male'">He joined the company</t>
                                     <t t-if="o.employee_id.gender == 'female'">She joined the company</t>
                                     <t style="padding-right:5px;"
-                                          t-esc="o.employee_id['joining_date'].strftime('%d-%b-%Y')"/>
+                                       t-esc="o.employee_id['joining_date'].strftime('%d-%b-%Y')"/>
                                     and is currently working as
                                     <t style="padding-right:5px;" t-esc="o.employee_id.job_id.name"/>.
                                     <t t-if="o.employee_id.gender == 'male'">His present salary is</t>
@@ -90,22 +90,22 @@
                                     <t t-if="o.employee_id.gender == 'female'">she is residing in</t>
                                     <t t-if="o.employee_id.address_home_id">
                                         <t style="padding-right:5px;"
-                                              t-esc="o.employee_id.address_home_id.street">
+                                           t-esc="o.employee_id.address_home_id.street">
                                         </t>,
                                         <t style="padding-right:5px;"
-                                              t-esc="o.employee_id.address_home_id.street2">
+                                           t-esc="o.employee_id.address_home_id.street2">
                                         </t>,
                                         <t style="padding-right:5px;"
-                                              t-esc="o.employee_id.address_home_id.city">
+                                           t-esc="o.employee_id.address_home_id.city">
                                         </t>,
                                         <t style="padding-right:5px;"
-                                              t-esc="o.employee_id.address_home_id.state_id.name">
+                                           t-esc="o.employee_id.address_home_id.state_id.name">
                                         </t>,
                                         <t style="padding-right:5px;"
-                                              t-esc="o.employee_id.address_home_id.zip">
+                                           t-esc="o.employee_id.address_home_id.zip">
                                         </t>,
                                         <t style="padding-right:5px;"
-                                              t-esc="o.employee_id.address_home_id.country_id.name">,
+                                           t-esc="o.employee_id.address_home_id.country_id.name">,
                                         </t>
                                     </t>
                                 </p>
@@ -177,14 +177,14 @@
                                     <t t-if="o.employee_id.gender == 'male'">his account with</t>
                                     <t t-if="o.employee_id.gender == 'female'">her account with</t>
                                     <t style="padding-right:5px;"
-                                          t-esc="o.addressed_to"/>.
+                                       t-esc="o.addressed_to"/>.
                                     Currently employee End of service amount is QAR
                                     <t style="padding-right:5px;"
-                                          t-esc="o.end_of_service_benefit"/>
+                                       t-esc="o.end_of_service_benefit"/>
                                     <t t-if="o.end_of_service_benefit > 0">/-</t>
                                     <t t-if="o.end_of_service_benefit_word">(
                                         <t style="padding-right:5px;"
-                                              t-esc="o.end_of_service_benefit_word"/>
+                                           t-esc="o.end_of_service_benefit_word"/>
                                         )
                                     </t>
                                 </p>
@@ -196,7 +196,10 @@
                                 <div>
                                     Kind regards,
                                     <br/>
+                                    <br/>
                                     for QSHIELD LLC.,
+                                    <br/>
+                                    <br/>
                                     <br/>
                                     <br/>
                                     <!--                                    <strong>NAME OF SIGNATORY:</strong>-->
