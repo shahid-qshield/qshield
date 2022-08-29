@@ -120,6 +120,7 @@
                     <field name="invoice_due_date"/>
                     <field name="to_invoice"/>
                     <field name="invoice_id" readonly="1"/>
+                    <field name="is_set_res_id_in_attachment" invisible="1"/>
                 </xpath>
                 <xpath expr="//field[@name='expenses_ids']/tree/field[@name='expense_type_id']" position="attributes">
                     <attribute name="options">{'no_create' : True}</attribute>
