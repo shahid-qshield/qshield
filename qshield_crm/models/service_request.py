@@ -128,6 +128,15 @@ class EbsModServiceRequestExpenses(models.Model):
     invoice_id = fields.Many2one('account.move', string="Related Invoice")
     to_invoice = fields.Boolean(string="To Invoice", compute="compute_to_invoice")
     invoice_due_date = fields.Date(string="Invoice Due Date", compute="compute_invoice_due_date", store=True)
+    is_set_res_id_in_attachment = fields.Boolean(compute="compute_is_set_res_id_in_attachment")
+
+    @api.depends()
+    def compute_is_set_res_id_in_attachment(self):
+        for record in self:
+            if record.attachment_ids:
+                for attachment_id in record.attachment_ids:
+                    attachment_id.sudo().write({'res_id': record.id})
+            record.is_set_res_id_in_attachment = True
 
     @api.depends('date')
     def compute_invoice_due_date(self):
