@@ -388,6 +388,31 @@ class ServiceTypeVariants(models.Model):
     service_type = fields.One2many('ebs_mod.service.types', 'variant_id')
     product_id = fields.Many2one('product.product', string='Product')
 
+    def update_service_variant_price(self):
+        file_path = os.path.dirname(os.path.dirname(__file__)) + '/demo/service.type.variants_update_price_revised.xlsx'
+        with open(file_path, 'rb') as f:
+            try:
+                file_data = f.read()
+                workbook = xlrd.open_workbook(file_contents=file_data)
+                worksheet = workbook.sheet_by_index(0)
+                first_row = []
+                for col in range(worksheet.ncols):
+                    first_row.append(worksheet.cell_value(0, col))
+                data = []
+                for row in range(1, worksheet.nrows):
+                    elm = {}
+                    for col in range(worksheet.ncols):
+                        if first_row[col] in ['Variant Name', 'Product/Sales Price']:
+                            elm[first_row[col]] = worksheet.cell_value(row, col)
+                    data.append(elm)
+                for record in data:
+                    service_variant = self.sudo().search([('name', '=', record.get('Variant Name'))])
+                    if service_variant and service_variant.product_id:
+                        service_variant.product_id.sudo().write({'lst_price' : record.get('Product/Sales Price')})
+
+            except Exception as e:
+                print('Something Wrong', e)
+
 
 class EbsModContract(models.Model):
     _inherit = 'ebs_mod.contracts'
