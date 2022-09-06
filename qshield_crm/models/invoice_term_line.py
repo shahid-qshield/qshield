@@ -177,8 +177,8 @@ class InvoiceTermLine(models.Model):
                 elif invoice_term.type == 'regular_invoice':
                     service_request = self.env['ebs_mod.service.request'].sudo().search(
                         [('sale_order_id', '=', invoice_term.sale_id.id)])
-                    if invoice_term.sale_id.state in ['sale', 'done',
-                                                      'submit_client_operation'] and service_request and service_request.end_date:
+                    if invoice_term.sale_id.state in ['sale', 'done','submit_client_operation'] \
+                            and service_request and service_request.end_date:
                         invoiceable_lines = invoice_term.sale_id._get_invoiceable_lines(final=True)
                         if not invoiceable_lines:
                             continue
@@ -210,7 +210,7 @@ class InvoiceTermLine(models.Model):
                         invoice_term_due_date = invoice_term.due_date + relativedelta(days=1)
                         invoice_term.write({'due_date': invoice_term_due_date})
                         if service_request.expenses_ids:
-                            for expense in expenses_ids:
+                            for expense in service_request.expenses_ids:
                                 if expense.invoice_due_date <= datetime.date.today():
                                     expense.write({'is_set_from_cron': True, 'date': invoice_term_due_date})
                                     expenses_ids = expenses_ids - expense
