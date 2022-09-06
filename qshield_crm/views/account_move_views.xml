@@ -160,6 +160,17 @@
                     <field name="service_type_id"/>
                     <field name="service_status"/>
                 </xpath>
+                <xpath expr="//page[@id='invoice_tab']/field[@name='invoice_line_ids']/tree/field[@name='price_unit']"
+                       position="attributes">
+                    <attribute name="widget">float</attribute>
+                    <attribute name="digits">[8,2]</attribute>
+                    <attribute name="force_save">1</attribute>
+                </xpath>
+                <xpath expr="////page[@id='invoice_tab']/field[@name='invoice_line_ids']/tree/field[@name='price_subtotal']"
+                       position="attributes">
+                    <attribute name="widget">float</attribute>
+                     <attribute name="digits">[8,2]</attribute>
+                </xpath>
             </field>
         </record>
 

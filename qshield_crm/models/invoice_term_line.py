@@ -1,10 +1,10 @@
 # -*- coding: utf-8 -*-
 import datetime
 from odoo import models, fields, api, _
-from odoo.exceptions import UserError
-import calendar
+from dateutil.relativedelta import relativedelta
 import time
 import logging
+import calendar
 
 logger = logging.getLogger(__name__)
 
@@ -80,7 +80,7 @@ class InvoiceTermLine(models.Model):
         # last_no_day = calendar.monthrange(datetime.date.today().year, datetime.date.today().month)[1]
         # last_day_month = datetime.date.today().replace(day=last_no_day)
         action = self.env.ref('qshield_crm.action_move_out_invoice_type_custom_action')
-        invoice_term_ids = self.sudo().search([('invoice_id', '=', False),('due_date', '=', datetime.date.today())])
+        invoice_term_ids = self.sudo().search([('invoice_id', '=', False), ('due_date', '=', datetime.date.today())])
         # invoice_term_ids = self.sudo().search(
         #     [('invoice_id', '=', False), ('due_date', '>=', first_day_month), ('due_date', '<=', last_day_month)])
         # expenses_ids = self.env['ebs_mod.service.request.expenses'].sudo().search(
@@ -90,11 +90,17 @@ class InvoiceTermLine(models.Model):
         service_request_ids = expenses_ids.mapped('service_request_id')
         sale_orders = invoice_term_ids.mapped('sale_id')
         partners = invoice_term_ids.mapped('sale_id').mapped('partner_id')
-        for partner in partners:
-            partner_sale_orders = sale_orders.filtered(lambda s: s.partner_id == partner)
+        related_company_partners = partners.filtered(lambda s: s.related_company)
+        without_related_company_partners = partners - related_company_partners
+        all_partners = related_company_partners.mapped('related_company').filtered(
+            lambda s: s.id not in without_related_company_partners.ids) + without_related_company_partners
+        for partner in all_partners:
+            child_partners = related_company_partners.filtered(lambda s: s.related_company == partner)
+            child_partners = child_partners + partner
+            partner_sale_orders = sale_orders.filtered(lambda s: s.partner_id in child_partners)
             partner_invoice_term_ids = partner_sale_orders.mapped('invoice_term_ids').filtered(
                 lambda s: s.id in invoice_term_ids.ids)
-            partner_service_request_ids = service_request_ids.filtered(lambda s: s.partner_id == partner)
+            partner_service_request_ids = service_request_ids.filtered(lambda s: s.partner_id in child_partners)
             invoice_vals = {
                 'type': 'out_invoice',
                 'partner_id': partner.id,
@@ -103,172 +109,248 @@ class InvoiceTermLine(models.Model):
             }
             invoice_line_vals = []
             for invoice_term in partner_invoice_term_ids:
-                service_request = self.env['ebs_mod.service.request'].sudo().search(
-                    [('sale_order_id', '=', invoice_term.sale_id.id)])
                 if invoice_term.type == 'down':
-                    product_id = self.env['ir.config_parameter'].sudo().get_param('sale.default_deposit_product_id')
-                    if product_id:
-                        product_id = self.env['product.product'].sudo().browse(int(product_id))
-                    if not product_id:
-                        vals = {
-                            'name': 'Retainer payment',
-                            'type': 'service',
-                            'invoice_policy': 'order',
-                            'company_id': False,
-                        }
-                        product_id = self.env['product.product'].sudo().create(vals)
-                        self.env['ir.config_parameter'].sudo().set_param('sale.default_deposit_product_id',
-                                                                         product_id.id)
-                    amount, name = self._get_advance_details(invoice_term, invoice_term.sale_id, product_id)
-                    if product_id.invoice_policy != 'order':
-                        continue
-                    if product_id.type != 'service':
-                        continue
-                    taxes = product_id.taxes_id.filtered(
-                        lambda
-                            r: not invoice_term.sale_id.company_id or r.company_id == invoice_term.sale_id.company_id)
-                    if invoice_term.sale_id.fiscal_position_id and taxes:
-                        tax_ids = invoice_term.sale_id.fiscal_position_id.map_tax(taxes, product_id,
-                                                                                  invoice_term.sale_id.partner_shipping_id).ids
+                    service_request = self.env['ebs_mod.service.request'].sudo().search(
+                        [('sale_order_id', '=', invoice_term.sale_id.id)])
+                    if service_request:
+                        if invoice_term.sale_id.state in ['sale', 'done',
+                                                      'submit_client_operation'] and service_request.end_date:
+                            invoice_line_vals = self.get_invoice_line_base_on_invoice_term_of_down(invoice_term,
+                                                                                                   invoice_line_vals)
+                        else:
+                            invoice_term_due_date = invoice_term.due_date + relativedelta(days=1)
+                            invoice_term.write({'due_date': invoice_term_due_date})
+                            if service_request and service_request.expenses_ids:
+                                for expense in service_request.expenses_ids:
+                                    expense.write({'is_set_from_cron': True, 'date': invoice_term_due_date})
+                                    expenses_ids = expenses_ids - expense
+                            partner_invoice_term_ids = partner_invoice_term_ids - invoice_term
+
+                    elif invoice_term.sale_id.state in ['sale', 'done', 'submit_client_operation']:
+                        first_day_month = invoice_term.due_date.replace(day=1)
+                        last_no_day = calendar.monthrange(datetime.date.today().year, datetime.date.today().month)[1]
+                        last_day_month = datetime.date.today().replace(day=last_no_day)
+                        in_scope_service_partners = child_partners.ids
+                        in_scope_service_partners.append(partner.id)
+                        in_scope_services = self.env['ebs_mod.service.request'].sudo().search(
+                            [('partner_id', 'in', in_scope_service_partners), ('end_date', '>=', first_day_month),
+                             ('end_date', '<=', last_day_month), ('is_out_of_scope', '=', False)])
+
+                        in_scope_services = in_scope_services.filtered(
+                            lambda s: s.partner_invoice_type in ['retainer', 'outsourcing'])
+                        if in_scope_services and not service_request:
+                            service_amount = 0.0
+                            if invoice_term.amount > 0.0:
+                                service_amount = invoice_term.amount / len(in_scope_services)
+                            for service in in_scope_services:
+                                invoice_line_vals.append((0, 0, {
+                                    'product_id': service.service_type_id.variant_id.product_id.id,
+                                    'name': service.service_type_id.variant_id.product_id.name,
+                                    'quantity': 1,
+                                    'price_unit': service_amount,
+                                    'description': service.name,
+                                    'service_request_id': service.id
+                                }))
+                        elif service_request and service_request.end_date:
+                            invoice_line_vals = self.get_invoice_line_base_on_invoice_term_of_down(invoice_term,
+                                                                                                   invoice_line_vals)
+                        elif service_request and not service_request.end_date:
+                            invoice_term_due_date = invoice_term.due_date + relativedelta(days=1)
+                            invoice_term.write({'due_date': invoice_term_due_date})
+                            if service_request and service_request.expenses_ids:
+                                for expense in service_request.expenses_ids:
+                                    expense.write({'is_set_from_cron': True, 'date': invoice_term_due_date})
+                                    expenses_ids = expenses_ids - expense
+                            partner_invoice_term_ids = partner_invoice_term_ids - invoice_term
+
+                        else:
+                            invoice_line_vals = self.get_invoice_line_base_on_invoice_term_of_down(invoice_term,
+                                                                                                   invoice_line_vals)
                     else:
-                        tax_ids = taxes.ids
-                    analytic_tag_ids = []
-                    for line in invoice_term.sale_id.order_line:
-                        analytic_tag_ids = [(4, analytic_tag.id, None) for analytic_tag in line.analytic_tag_ids]
-
-                    so_line_values = self._prepare_so_line(invoice_term.sale_id, analytic_tag_ids, tax_ids, amount,
-                                                           product_id)
-                    description = ''
-                    so_line = self.env['sale.order.line'].create(so_line_values)
-                    if invoice_term.sale_id and invoice_term.sale_id.is_agreement == 'is_retainer':
-                        contract = self.env['ebs_mod.contracts'].search(
-                            [('sale_order_id', '=', invoice_term.sale_id.id)], limit=1)
-                        service_request = self.env['ebs_mod.service.request'].search(
-                            [('sale_order_id', '=', invoice_term.sale_id.id)], limit=1)
-                        if contract or service_request:
-                            description = 'Retainer Out of Scope %s' % service_request.name if \
-                                invoice_term.sale_id.is_out_of_scope and service_request else \
-                                'Retainer %s' % contract.name
-                    elif invoice_term.sale_id and invoice_term.sale_id.is_agreement == 'one_time_payment':
-                        service_request = self.env['ebs_mod.service.request'].search(
-                            [('sale_order_id', '=', invoice_term.sale_id.id)], limit=1)
-                        description = 'One Time Payment %s' % service_request.name if service_request else ''
-
-                    invoice_line_vals.append((0, 0, {
-                        'name': product_id.name,
-                        'price_unit': amount,
-                        'quantity': 1.0,
-                        'product_id': product_id.id,
-                        'product_uom_id': so_line.product_uom.id,
-                        'tax_ids': [(6, 0, so_line.tax_id.ids)],
-                        'sale_line_ids': [(6, 0, [so_line.id])],
-                        'description': description,
-                        'analytic_tag_ids': [(6, 0, so_line.analytic_tag_ids.ids)],
-                        'analytic_account_id': invoice_term.sale_id.analytic_account_id.id or False,
-                        'service_request_id': service_request.id if service_request else False
-                    }))
+                        invoice_term_due_date = invoice_term.due_date + relativedelta(days=1)
+                        invoice_term.write({'due_date': invoice_term_due_date})
+                        if service_request and service_request.expenses_ids:
+                            for expense in service_request.expenses_ids:
+                                expense.write({'is_set_from_cron': True, 'date': invoice_term_due_date})
+                                expenses_ids = expenses_ids - expense
+                        partner_invoice_term_ids = partner_invoice_term_ids - invoice_term
                 elif invoice_term.type == 'regular_invoice':
-                    invoiceable_lines = invoice_term.sale_id._get_invoiceable_lines(final=True)
-                    if not invoiceable_lines:
-                        continue
-                    if invoiceable_lines:
-                        for line in invoiceable_lines:
-                            if line.product_id:
-                                vals = line._prepare_invoice_line()
-                                description = ''
-                                if invoice_term.sale_id and invoice_term.sale_id.opportunity_id and invoice_term.sale_id.is_agreement == 'is_retainer':
-                                    contract = self.env['ebs_mod.contracts'].search(
-                                        [('sale_order_id', '=', invoice_term.sale_id.id)], limit=1)
-                                    service_request = self.env['ebs_mod.service.request'].search(
-                                        [('sale_order_id', '=', invoice_term.sale_id.id)], limit=1)
-                                    if contract or service_request:
-                                        description = 'Retainer Out of Scope %s' % service_request.name if \
-                                            invoice_term.sale_id.is_out_of_scope and service_request else \
-                                            'Retainer %s' % contract.name
-                                elif invoice_term.sale_id and invoice_term.sale_id.is_agreement == 'one_time_payment':
-                                    service_request = self.env['ebs_mod.service.request'].search(
-                                        [('sale_order_id', '=', invoice_term.sale_id.id)], limit=1)
-                                    description = 'One Time Payment %s' % service_request.name if service_request else ''
-                                if description:
-                                    vals.update({'description': description})
-                                if service_request:
-                                    vals.update({'service_request_id': service_request.id})
-                                if vals:
-                                    invoice_line_vals.append((0, 0, vals))
+                    service_request = self.env['ebs_mod.service.request'].sudo().search(
+                        [('sale_order_id', '=', invoice_term.sale_id.id)])
+                    if invoice_term.sale_id.state in ['sale', 'done',
+                                                      'submit_client_operation'] and service_request and service_request.end_date:
+                        invoiceable_lines = invoice_term.sale_id._get_invoiceable_lines(final=True)
+                        if not invoiceable_lines:
+                            continue
+                        if invoiceable_lines:
+                            for line in invoiceable_lines:
+                                if line.product_id:
+                                    vals = line._prepare_invoice_line()
+                                    description = ''
+                                    if invoice_term.sale_id and invoice_term.sale_id.opportunity_id and invoice_term.sale_id.is_agreement == 'is_retainer':
+                                        contract = self.env['ebs_mod.contracts'].search(
+                                            [('sale_order_id', '=', invoice_term.sale_id.id)], limit=1)
+                                        service_request = self.env['ebs_mod.service.request'].search(
+                                            [('sale_order_id', '=', invoice_term.sale_id.id)], limit=1)
+                                        if contract or service_request:
+                                            description = 'Retainer Out of Scope %s' % service_request.name if \
+                                                invoice_term.sale_id.is_out_of_scope and service_request else \
+                                                'Retainer %s' % contract.name
+                                    elif invoice_term.sale_id and invoice_term.sale_id.is_agreement == 'one_time_payment':
+                                        service_request = self.env['ebs_mod.service.request'].search(
+                                            [('sale_order_id', '=', invoice_term.sale_id.id)], limit=1)
+                                        description = 'One Time Payment %s' % service_request.name if service_request else ''
+                                    if description:
+                                        vals.update({'description': description})
+                                    if service_request:
+                                        vals.update({'service_request_id': service_request.id})
+                                    if vals:
+                                        invoice_line_vals.append((0, 0, vals))
+                    else:
+                        invoice_term_due_date = invoice_term.due_date + relativedelta(days=1)
+                        invoice_term.write({'due_date': invoice_term_due_date})
+                        if service_request.expenses_ids:
+                            for expense in expenses_ids:
+                                if expense.invoice_due_date <= datetime.date.today():
+                                    expense.write({'is_set_from_cron': True, 'date': invoice_term_due_date})
+                                    expenses_ids = expenses_ids - expense
+                        partner_invoice_term_ids = partner_invoice_term_ids - invoice_term
             for expenses_id in expenses_ids.filtered(lambda s: s.service_request_id in partner_service_request_ids):
-                invoice_line_vals.append((0, 0, {
-                    'product_id': expenses_id.expense_type_id.product_id.id,
-                    'name': expenses_id.desc if expenses_id.desc else expenses_id.expense_type_id.product_id.name,
-                    'quantity': 1,
-                    'price_unit': expenses_id.amount if expenses_id.amount else
-                    expenses_id.expense_type_id.product_id.lst_price,
-                    'description': expenses_id.service_request_id.name,
-                    'service_request_id': expenses_id.service_request_id.id,
-                    'is_government_fees_line': True
-                }))
-
+                if expenses_id.service_request_id.end_date:
+                    invoice_line_vals.append((0, 0, {
+                        'product_id': expenses_id.expense_type_id.product_id.id,
+                        'name': expenses_id.desc if expenses_id.desc else expenses_id.expense_type_id.product_id.name,
+                        'quantity': 1,
+                        'price_unit': expenses_id.amount if expenses_id.amount else
+                        expenses_id.expense_type_id.product_id.lst_price,
+                        'description': expenses_id.service_request_id.name,
+                        'service_request_id': expenses_id.service_request_id.id,
+                        'is_government_fees_line': True
+                    }))
+                else:
+                    expenses_id.write(
+                        {'is_set_from_cron': True, 'date': datetime.date.today() + relativedelta(days=1)})
+                    expenses_ids = expenses_ids - expenses_id
             if invoice_line_vals:
                 invoice_vals.update({'invoice_line_ids': invoice_line_vals})
-            invoice_id = False
-            try:
-                invoice_id = self.env['account.move'].sudo().create(invoice_vals)
-            except Exception as e:
-                logger.info("Something went Wrong", e)
-            if invoice_id:
-                if partner_invoice_term_ids:
-                    partner_invoice_term_ids.write({'invoice_id': invoice_id.id})
-                partner_expense_ids = expenses_ids.filtered(
-                    lambda s: s.service_request_id in partner_service_request_ids)
-                if partner_expense_ids:
-                    partner_expense_ids.write({'invoice_id': invoice_id.id})
-                    partner_attachment_ids = partner_expense_ids.mapped('attachment_ids')
-                    if partner_attachment_ids:
-                        for attachment_id in partner_attachment_ids:
-                            self.env['ir.attachment'].sudo().create(
-                                {
-                                    'name': attachment_id.name,
-                                    'type': attachment_id.type,
-                                    'datas': attachment_id.datas,
-                                    'mimetype': attachment_id.mimetype,
-                                    'res_model': invoice_id._name,
-                                    'res_id': invoice_id.id,
-                                    'res_name': invoice_id.name,
-                                }
-                            )
-                #
-                # if invoice_id.sale_id.is_agreement == 'is_retainer' and invoice_id.sale_id.is_out_of_scope:
-                #     invoice_id.sudo().write({'qshield_invoice_type': 'out_of_scope_retainer'})
-                #
-                # elif invoice_id.sale_id.is_agreement == 'is_retainer' and not invoice_id.sale_id.is_out_of_scope:
-                #     invoice_id.sudo().write({'qshield_invoice_type': 'retainer'})
-                # elif invoice_id.sale_id.is_agreement == 'one_time_payment' and invoice_id.sale_id.is_out_of_scope:
-                #     invoice_id.sudo().write({'qshield_invoice_type': 'out_of_scope_one_time_payment'})
-                # else:
-                #     invoice_id.sudo().write({'qshield_invoice_type': 'one_time_payment'})
-                get_url = str(self.env['ir.config_parameter'].sudo().search(
-                    [('key', '=', 'web.base.url')]).value) + '/web?#id=' + str(
-                    invoice_id.id) + '&view_type=form&model=account.move&action=' + str(
-                    action.id) + ' & menu_id = '
-                prepared_url = '<a href="' + get_url + '" class="btn btn-primary">' + 'View Invoice' + '</a>'
-                template = self.env.ref(
-                    'qshield_crm.email_template_of_create_retainer_invoice',
-                    raise_if_not_found=False)
+                invoice_id = False
+                try:
+                    invoice_id = self.env['account.move'].sudo().create(invoice_vals)
+                except Exception as e:
+                    logger.info("Something went Wrong", e)
+                if invoice_id:
+                    if partner_invoice_term_ids:
+                        partner_invoice_term_ids.write({'invoice_id': invoice_id.id})
+                    partner_expense_ids = expenses_ids.filtered(
+                        lambda s: s.service_request_id in partner_service_request_ids)
+                    if partner_expense_ids:
+                        partner_expense_ids.write({'invoice_id': invoice_id.id})
+                        partner_attachment_ids = partner_expense_ids.mapped('attachment_ids')
+                        if partner_attachment_ids:
+                            for attachment_id in partner_attachment_ids:
+                                self.env['ir.attachment'].sudo().create(
+                                    {
+                                        'name': attachment_id.name,
+                                        'type': attachment_id.type,
+                                        'datas': attachment_id.datas,
+                                        'mimetype': attachment_id.mimetype,
+                                        'res_model': invoice_id._name,
+                                        'res_id': invoice_id.id,
+                                        'res_name': invoice_id.name,
+                                    }
+                                )
+                    get_url = str(self.env['ir.config_parameter'].sudo().search(
+                        [('key', '=', 'web.base.url')]).value) + '/web?#id=' + str(
+                        invoice_id.id) + '&view_type=form&model=account.move&action=' + str(
+                        action.id) + ' & menu_id = '
+                    prepared_url = '<a href="' + get_url + '" class="btn btn-primary">' + 'View Invoice' + '</a>'
+                    template = self.env.ref(
+                        'qshield_crm.email_template_of_create_retainer_invoice',
+                        raise_if_not_found=False)
 
-                finance_user_ids = invoice_id.sale_id.approver_setting_id.finance_user_ids
-                if not finance_user_ids:
-                    approver_setting_id = self.env['sale.order.approver.settings'].sudo().search(
-                        [('finance_user_ids', '!=', False)], limit=1)
-                    finance_user_ids = approver_setting_id.finance_user_ids
-                partner_to = [str(user.partner_id.id) for user in finance_user_ids if finance_user_ids]
-                if partner_to:
-                    template.sudo().with_context(
-                        partner_to=','.join(partner_to), email_from=self.env.user.email,
-                        link=prepared_url).send_mail(
-                        invoice_id.id, force_send=True)
-                for finance_user_id in finance_user_ids:
-                    invoice_id.activity_schedule(
-                        'qshield_crm.mail_activity_generated_invoice',
-                        user_id=finance_user_id.id)
+                    finance_user_ids = invoice_id.sale_id.approver_setting_id.finance_user_ids
+                    if not finance_user_ids:
+                        approver_setting_id = self.env['sale.order.approver.settings'].sudo().search(
+                            [('finance_user_ids', '!=', False)], limit=1)
+                        finance_user_ids = approver_setting_id.finance_user_ids
+                    partner_to = [str(user.partner_id.id) for user in finance_user_ids if finance_user_ids]
+                    if partner_to:
+                        template.sudo().with_context(
+                            partner_to=','.join(partner_to), email_from=self.env.user.email,
+                            link=prepared_url).send_mail(
+                            invoice_id.id, force_send=True)
+                    for finance_user_id in finance_user_ids:
+                        invoice_id.activity_schedule(
+                            'qshield_crm.mail_activity_generated_invoice',
+                            user_id=finance_user_id.id)
+
+        all_partner_service_request_ids = expenses_ids.mapped('service_request_id').filtered(
+            lambda s: s.partner_id.id not in partners.ids)
+        for expenses_id in expenses_ids.filtered(lambda s: s.service_request_id in all_partner_service_request_ids):
+            expenses_id.write({'is_set_from_cron': True, 'date': datetime.date.today() + relativedelta(days=1)})
+
+    def get_invoice_line_base_on_invoice_term_of_down(self, invoice_term, invoice_line_vals):
+        product_id = self.env['ir.config_parameter'].sudo().get_param('sale.default_deposit_product_id')
+        if product_id:
+            product_id = self.env['product.product'].sudo().browse(int(product_id))
+        if not product_id:
+            vals = {
+                'name': 'Retainer payment',
+                'type': 'service',
+                'invoice_policy': 'order',
+                'company_id': False,
+            }
+            product_id = self.env['product.product'].sudo().create(vals)
+            self.env['ir.config_parameter'].sudo().set_param('sale.default_deposit_product_id',
+                                                             product_id.id)
+        amount, name = self._get_advance_details(invoice_term, invoice_term.sale_id, product_id)
+        if product_id.invoice_policy != 'order':
+            return True
+        if product_id.type != 'service':
+            return True
+        taxes = product_id.taxes_id.filtered(
+            lambda
+                r: not invoice_term.sale_id.company_id or r.company_id == invoice_term.sale_id.company_id)
+        if invoice_term.sale_id.fiscal_position_id and taxes:
+            tax_ids = invoice_term.sale_id.fiscal_position_id.map_tax(taxes, product_id,
+                                                                      invoice_term.sale_id.partner_shipping_id).ids
+        else:
+            tax_ids = taxes.ids
+        analytic_tag_ids = []
+        for line in invoice_term.sale_id.order_line:
+            analytic_tag_ids = [(4, analytic_tag.id, None) for analytic_tag in line.analytic_tag_ids]
+
+        so_line_values = self._prepare_so_line(invoice_term.sale_id, analytic_tag_ids, tax_ids, amount,
+                                               product_id)
+        description = ''
+        so_line = self.env['sale.order.line'].create(so_line_values)
+        if invoice_term.sale_id and invoice_term.sale_id.is_agreement == 'is_retainer':
+            contract = self.env['ebs_mod.contracts'].search(
+                [('sale_order_id', '=', invoice_term.sale_id.id)], limit=1)
+            service_request = self.env['ebs_mod.service.request'].search(
+                [('sale_order_id', '=', invoice_term.sale_id.id)], limit=1)
+            if contract or service_request:
+                description = 'Retainer Out of Scope %s' % service_request.name if \
+                    invoice_term.sale_id.is_out_of_scope and service_request else \
+                    'Retainer %s' % contract.name
+        elif invoice_term.sale_id and invoice_term.sale_id.is_agreement == 'one_time_payment':
+            service_request = self.env['ebs_mod.service.request'].search(
+                [('sale_order_id', '=', invoice_term.sale_id.id)], limit=1)
+            description = 'One Time Payment %s' % service_request.name if service_request else ''
+        invoice_line_vals.append((0, 0, {
+            'name': product_id.name,
+            'price_unit': amount,
+            'quantity': 1.0,
+            'product_id': product_id.id,
+            'product_uom_id': so_line.product_uom.id,
+            'tax_ids': [(6, 0, so_line.tax_id.ids)],
+            'sale_line_ids': [(6, 0, [so_line.id])],
+            'description': description,
+            'analytic_tag_ids': [(6, 0, so_line.analytic_tag_ids.ids)],
+            'analytic_account_id': invoice_term.sale_id.analytic_account_id.id or False,
+            'service_request_id': service_request.id if service_request else False
+        }))
+        return invoice_line_vals
 
         # def create_retainer_invoice(self):
         first_day_month = datetime.date.today().replace(day=1)

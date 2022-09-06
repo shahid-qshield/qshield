@@ -502,7 +502,8 @@ class ServiceRequest(models.Model):
             self.send_notification_all_account_manager()
         elif vals.get('status') == 'cancel' and self.status == 'cancel' and is_send_service_notification:
             self.send_notification_all_account_manager()
-        elif vals.get('status') == 'pending_payment' and self.status == 'pending_payment' and is_send_service_notification:
+        elif vals.get(
+                'status') == 'pending_payment' and self.status == 'pending_payment' and is_send_service_notification:
             self.send_notification_all_account_manager()
         return res
 
@@ -592,12 +593,12 @@ class ServiceRequest(models.Model):
 
     @api.onchange('partner_id', 'date')
     def partner_company_onchange(self):
+
         self.contract_id = None
         self.service_type_id = None
         if self.env.context.get('default_partner_id', False):
             self.partner_id = self.env.context.get('default_partner_id')
         if self.date and self.partner_id:
-
             if self.partner_id.person_type == 'company':
                 self.related_company_ro = self.partner_id.id
                 self.related_company = self.partner_id.id
@@ -623,12 +624,14 @@ class ServiceRequest(models.Model):
                         }
                     }
                 else:
+
                     contact_contract_list = self.get_contact_contract_list(self.partner_id, contract_list)
-                    if len(contact_contract_list) == 0:
+                    if len(contact_contract_list) == 0 and self.partner_id.partner_invoice_type in ['retainer',
+                                                                                                    'outsourcing']:
                         return {'warning': {'title': _('Warning'),
                                             'message': _(
                                                 'Selected contact not found in contracts related contacts')}}
-                    else:
+                    elif contact_contract_list:
                         self.contract_id = contact_contract_list[0]
                         return {
                             'domain': {

@@ -1,4 +1,5 @@
 # -*- coding: utf-8 -*-
+import datetime
 
 from odoo import models, fields, api, _
 from odoo.exceptions import ValidationError
@@ -463,5 +464,6 @@ class ContactCustom(models.Model):
             'context': {
                 "search_default_partner_id": self.id,
                 "default_partner_id": self.id,
+                "default_date" : datetime.date.today()
             },
         }

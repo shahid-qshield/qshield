@@ -4,6 +4,7 @@ from odoo import models, fields, api, _
 import calendar
 from datetime import datetime, date
 from odoo.exceptions import ValidationError
+from dateutil.relativedelta import relativedelta
 
 
 class ServiceRequest(models.Model):
@@ -23,8 +24,29 @@ class ServiceRequest(models.Model):
     invoice_term_end_date = fields.Date(string="Invoice Term End Date", default=default_invoice_term_end_date)
     opportunity_id = fields.Many2one('crm.lead', string="Opportunity")
     is_in_scope = fields.Boolean("Is In of Scope", compute="compute_is_in_scope", store=True)
+    is_end_date = fields.Boolean(string="Is End date", compute="compute_is_end_date")
 
-    @api.onchange('partner_id')
+    @api.depends('end_date')
+    def compute_is_end_date(self):
+        for record in self:
+            if record.end_date and record.partner_invoice_type in ['per_transaction',
+                                                                   'partners'] and record.sale_order_id:
+                if record.sale_order_id.invoice_term_ids:
+                    for invoice_term in record.sale_order_id.invoice_term_ids:
+                        invoice_term.due_date = record.end_date.date()
+            elif record.end_date and record.is_one_time_transaction and record.sale_order_id and record.sale_order_id.invoice_term_ids:
+                for invoice_term in record.sale_order_id.invoice_term_ids:
+                    invoice_term.due_date = record.end_date.date()
+            record.is_end_date = True
+
+        # elif self.end_date and self.partner_invoice_type == 'one_time_transaction' and self.sale_order_id:
+        #     if self.sale_order_id.invoice_term_ids:
+        #         for record in self.sale_order_id.invoice_term_ids:
+        #             record.due_date = self.end_date.date()
+        #     else:
+        #         self.sale_order_id.
+
+    @api.onchange('partner_id', 'service_type_id')
     def onchange_partner_partner_invoice_type(self):
         if self.partner_id and self.partner_id.partner_invoice_type in ['per_transaction', 'one_time_transaction',
                                                                         'partners']:
@@ -32,7 +54,7 @@ class ServiceRequest(models.Model):
         else:
             self.is_one_time_transaction = False
 
-    @api.depends('service_type_id')
+    @api.depends('service_type_id', 'contract_id')
     def compute_is_in_scope(self):
         for record in self:
             is_in_scope = False
@@ -40,7 +62,14 @@ class ServiceRequest(models.Model):
                 in_scope_service = record.contract_id.sudo().service_ids.filtered(
                     lambda s: s in record.service_type_id)
                 if in_scope_service:
+                    record.is_one_time_transaction = False
                     is_in_scope = True
+            if record.partner_id and not record.contract_id and record.partner_id.partner_invoice_type in [
+                'per_transaction',
+                'one_time_transaction',
+                'partners']:
+                record.is_one_time_transaction = True
+
             record.is_in_scope = is_in_scope
 
     @api.onchange('partner_id')
@@ -129,6 +158,7 @@ class EbsModServiceRequestExpenses(models.Model):
     to_invoice = fields.Boolean(string="To Invoice", compute="compute_to_invoice")
     invoice_due_date = fields.Date(string="Invoice Due Date", compute="compute_invoice_due_date", store=True)
     is_set_res_id_in_attachment = fields.Boolean(compute="compute_is_set_res_id_in_attachment")
+    is_set_from_cron = fields.Boolean(string="IS set from cron")
 
     @api.depends()
     def compute_is_set_res_id_in_attachment(self):
@@ -141,9 +171,11 @@ class EbsModServiceRequestExpenses(models.Model):
     @api.depends('date')
     def compute_invoice_due_date(self):
         for record in self:
-            if record.date:
+            if record.date and not record.is_set_from_cron:
                 last_day_of_month = calendar.monthrange(record.date.year, record.date.month)[1]
                 record.invoice_due_date = record.date.replace(day=last_day_of_month)
+            elif record.is_set_from_cron and record.date:
+                record.invoice_due_date = record.date
             else:
                 record.invoice_due_date = False
 
