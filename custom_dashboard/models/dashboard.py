@@ -15,7 +15,7 @@ class ServiceRequest(models.Model):
     # governmental_fees = fields.Integer('Governmental Fees Amount')
     is_out_of_scope = fields.Boolean("Is Out of Scope", compute="compute_is_out_scope", store=True)
 
-    @api.depends('service_type_id')
+    @api.depends('service_type_id','contract_id')
     def compute_is_out_scope(self):
         for record in self:
             is_out_of_scope = False

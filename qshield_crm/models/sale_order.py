@@ -446,6 +446,8 @@ class SaleOrder(models.Model):
                 raise_if_not_found=False)
             self.send_notification(template)
             self.write({'state': 'submit_client_operation'})
+            if self.state == 'submit_client_operation' and self.partner_invoice_type in ['retainer', 'outsourcing']:
+                self.create_agreement_of_customer()
 
     def create_refuse_activity(self):
         for approver in self:
@@ -463,8 +465,6 @@ class SaleOrder(models.Model):
         activity = self.env.ref('qshield_crm.mail_activity_data_sale_order').id
         self.sudo()._get_user_approval_activities(user=self.env.user, activity_type_id=activity).action_feedback()
         self.write({'state': 'agreement_submit'})
-        if self.state == 'agreement_submit' and self.partner_invoice_type in ['retainer', 'outsourcing']:
-            self.create_agreement_of_customer()
         if not self.invoice_term_ids:
             self.action_create_invoice_term()
 

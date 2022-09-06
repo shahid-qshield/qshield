@@ -57,10 +57,12 @@
             <field name="inherit_id" ref="ebs_qsheild_mod.service_expenses_tree"/>
             <field name="arch" type="xml">
                 <field name="desc" position="after">
+                    <field name="made_by"/>
                     <field name="invoice_due_date"/>
                     <field name="to_invoice"/>
                     <field name="invoice_id"/>
                 </field>
+
             </field>
         </record>
 
