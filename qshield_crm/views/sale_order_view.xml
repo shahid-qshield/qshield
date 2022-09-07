@@ -281,7 +281,7 @@
                                 <field name="name"/>
                                 <field name="start_term_date"/>
                                 <field name="end_term_date"/>
-                                <field name="due_date" readonly="1"/>
+                                <field name="due_date"/>
                                 <field name="type"/>
                                 <field name="invoice_amount_type"/>
                                 <field name="percentage"

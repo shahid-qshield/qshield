@@ -120,6 +120,7 @@
                     <field name="attachment_ids" widget="many2many_binary" string="Attach a file" class="oe_inline"/>
                     <field name="made_by"/>
                     <field name="invoice_due_date"/>
+                    <field name="is_set_from_cron" string="Set Manually due date"/>
                     <field name="to_invoice"/>
                     <field name="invoice_id" readonly="1"/>
                     <field name="is_set_res_id_in_attachment" invisible="1"/>
