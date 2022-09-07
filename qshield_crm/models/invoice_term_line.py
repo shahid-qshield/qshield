@@ -114,7 +114,7 @@ class InvoiceTermLine(models.Model):
                         [('sale_order_id', '=', invoice_term.sale_id.id)])
                     if service_request:
                         if invoice_term.sale_id.state in ['sale', 'done',
-                                                      'submit_client_operation'] and service_request.end_date:
+                                                          'submit_client_operation'] and service_request.end_date:
                             invoice_line_vals = self.get_invoice_line_base_on_invoice_term_of_down(invoice_term,
                                                                                                    invoice_line_vals)
                         else:
@@ -129,15 +129,25 @@ class InvoiceTermLine(models.Model):
                             partner_invoice_term_ids = partner_invoice_term_ids - invoice_term
 
                     elif invoice_term.sale_id.state in ['sale', 'done', 'submit_client_operation']:
-                        first_day_month = invoice_term.due_date.replace(day=1)
-                        last_no_day = calendar.monthrange(datetime.date.today().year, datetime.date.today().month)[1]
-                        last_day_month = datetime.date.today().replace(day=last_no_day)
+                        # first_day_month = invoice_term.due_date.replace(day=1)
+                        # last_no_day = calendar.monthrange(datetime.date.today().year, datetime.date.today().month)[1]
+                        # last_day_month = datetime.date.today().replace(day=last_no_day)
                         in_scope_service_partners = child_partners.ids
                         in_scope_service_partners.append(partner.id)
+                        # in_scope_services = self.env['ebs_mod.service.request'].sudo().search(
+                        #     [('partner_id', 'in', in_scope_service_partners), ('end_date', '>=', first_day_month),
+                        #      ('end_date', '<=', last_day_month), ('is_out_of_scope', '=', False)])
+                        start_date = invoice_term.start_term_date
+                        if len(invoice_term.sale_id.invoice_term_ids) > 1:
+                            previous_invoice_term = invoice_term.sale_id.invoice_term_ids.filtered(
+                                lambda s: s.due_date < invoice_term.due_date).sorted(key=lambda s: s.due_date,
+                                                                                     reverse=True)[0]
+                            if previous_invoice_term:
+                                start_date = previous_invoice_term.due_date + relativedelta(days=1)
                         in_scope_services = self.env['ebs_mod.service.request'].sudo().search(
-                            [('partner_id', 'in', in_scope_service_partners), ('end_date', '>=', first_day_month),
-                             ('end_date', '<=', last_day_month), ('is_out_of_scope', '=', False)])
-
+                            [('partner_id', 'in', in_scope_service_partners),
+                             ('end_date', '>=', start_date), ('end_date', '<=', invoice_term.due_date),
+                             ('is_out_of_scope', '=', False)])
                         in_scope_services = in_scope_services.filtered(
                             lambda s: s.partner_invoice_type in ['retainer', 'outsourcing'])
                         if in_scope_services and not service_request:
@@ -183,7 +193,7 @@ class InvoiceTermLine(models.Model):
                 elif invoice_term.type == 'regular_invoice':
                     service_request = self.env['ebs_mod.service.request'].sudo().search(
                         [('sale_order_id', '=', invoice_term.sale_id.id)])
-                    if invoice_term.sale_id.state in ['sale', 'done','submit_client_operation'] \
+                    if invoice_term.sale_id.state in ['sale', 'done', 'submit_client_operation'] \
                             and service_request and service_request.end_date:
                         invoiceable_lines = invoice_term.sale_id._get_invoiceable_lines(final=True)
                         if not invoiceable_lines:
