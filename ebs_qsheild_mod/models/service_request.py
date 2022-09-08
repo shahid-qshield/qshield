@@ -632,7 +632,9 @@ class ServiceRequest(models.Model):
                                             'message': _(
                                                 'Selected contact not found in contracts related contacts')}}
                     elif contact_contract_list:
-                        self.contract_id = contact_contract_list[0]
+                        if self.partner_id.partner_invoice_type in ['retainer',
+                                                                 'outsourcing']:
+                            self.contract_id = contact_contract_list[0]
                         return {
                             'domain': {
                                 'contract_id': [('id', 'in', contact_contract_list)]
