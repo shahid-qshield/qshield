@@ -45,7 +45,9 @@
                                     </p>
                                 </div>
                                 <div>
-                                    <p>Dear <t t-esc="o.employee_id.name"/></p>
+                                    <p>Dear
+                                        <t t-esc="o.employee_id.name"/>
+                                    </p>
                                 </div>
                                 <p style="line-height: 2;">
                                     We regret to inform you that your employment with QShield LLC is being terminated,
@@ -81,6 +83,8 @@
                                     Kind regards,
                                     <br/>
                                     for QSHIELD LLC.,
+                                    <br/>
+                                    <br/>
                                     <br/>
                                     <br/>
                                     <!--                                    <strong>NAME OF SIGNATORY:</strong>-->

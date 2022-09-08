@@ -118,6 +118,8 @@
                                     for QSHIELD LLC.,
                                     <br/>
                                     <br/>
+                                    <br/>
+                                    <br/>
                                     <!--                                    <strong>NAME OF SIGNATORY:</strong> -->
                                     <span style="padding-right:5px;" t-field="o.signatory_id.name"/>
                                     <br/>

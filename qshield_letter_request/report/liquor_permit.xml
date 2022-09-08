@@ -16,7 +16,7 @@
                             </style>
                             <body>
                                 <div style="margin-left:70%">
-                                    <p style="  line-height: 2; text-align: justify;">
+                                    <p style="line-height: 2; text-align: justify;">
                                         <strong>Ref. No.
                                             <span style="padding-right:5px;" t-field="o.name"/>
                                             <br/>
@@ -128,6 +128,8 @@
                                     <span>Yours faithfully,</span>
                                     <br/>
                                     <span>QShield, LLC</span>
+                                    <br/>
+                                    <br/>
                                     <br/>
                                     <br/>
                                     <!--                                    <strong>NAME OF SIGNATORY:</strong>-->
