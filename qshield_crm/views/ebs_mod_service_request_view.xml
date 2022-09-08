@@ -135,6 +135,11 @@
                 <xpath expr="//field[@name='service_type_id']" position="attributes">
                     <attribute name="attrs">{'readonly': [('sale_order_id', '!=', False)]}</attribute>
                 </xpath>
+                <xpath expr="//field[@name='contract_id']" position="attributes">
+                    <attribute name="attrs">{'readonly': ['|',('status','!=','draft'),
+                        ('partner_invoice_type','not in',['outsourcing','retainer'])]}
+                    </attribute>
+                </xpath>
                 <xpath expr="//button[@name='request_submit']" position="attributes">
                     <attribute name="attrs">{'invisible': ['|',('status','!=','draft'),
                         ('partner_invoice_type', 'not in',['outsourcing','retainer'])]}
