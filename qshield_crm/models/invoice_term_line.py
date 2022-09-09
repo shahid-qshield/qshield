@@ -75,18 +75,27 @@ class InvoiceTermLine(models.Model):
         del context
         return so_values
 
-    def create_retainer_invoice(self):
+    def create_retainer_invoice(self,start_date=False,end_date=False):
         # first_day_month = datetime.date.today().replace(day=1)
         # last_no_day = calendar.monthrange(datetime.date.today().year, datetime.date.today().month)[1]
         # last_day_month = datetime.date.today().replace(day=last_no_day)
         action = self.env.ref('qshield_crm.action_move_out_invoice_type_custom_action')
-        invoice_term_ids = self.sudo().search([('invoice_id', '=', False), ('due_date', '=', datetime.date.today())])
+        if end_date and start_date:
+            start_date = datetime.datetime.strptime(start_date, '%d/%m/%Y').date()
+            date = datetime.datetime.strptime(end_date, '%d/%m/%Y').date()
+            invoice_term_ids = self.sudo().search([('invoice_id', '=', False),('due_date', '>=', start_date),('due_date', '<=', date)])
+            expenses_ids = self.env['ebs_mod.service.request.expenses'].sudo().search(
+                [('invoice_id', '=', False),('invoice_due_date', '>=', start_date), ('invoice_due_date', '<=', date)])
+        else:
+            date = datetime.date.today()
+            invoice_term_ids = self.sudo().search([('invoice_id', '=', False), ('due_date', '=', date)])
+            expenses_ids = self.env['ebs_mod.service.request.expenses'].sudo().search(
+                [('invoice_id', '=', False), ('invoice_due_date', '=', date)])
         # invoice_term_ids = self.sudo().search(
         #     [('invoice_id', '=', False), ('due_date', '>=', first_day_month), ('due_date', '<=', last_day_month)])
         # expenses_ids = self.env['ebs_mod.service.request.expenses'].sudo().search(
         #     [('invoice_id', '=', False), ('date', '>=', first_day_month), ('date', '<=', last_day_month)])
-        expenses_ids = self.env['ebs_mod.service.request.expenses'].sudo().search(
-            [('invoice_id', '=', False), ('invoice_due_date', '=', datetime.date.today())])
+
         service_request_ids = expenses_ids.mapped('service_request_id')
         sale_orders = invoice_term_ids.mapped('sale_id')
         partners = invoice_term_ids.mapped('sale_id').mapped('partner_id')
@@ -105,7 +114,7 @@ class InvoiceTermLine(models.Model):
                 'type': 'out_invoice',
                 'partner_id': partner.id,
                 'currency_id': partner.currency_id.id if partner.currency_id else self.env.company.currency_id.id,
-                'invoice_date': datetime.date.today()
+                'invoice_date': date
             }
             invoice_line_vals = []
             for invoice_term in partner_invoice_term_ids:
@@ -122,7 +131,7 @@ class InvoiceTermLine(models.Model):
                             invoice_term.write({'due_date': invoice_term_due_date})
                             if service_request.expenses_ids:
                                 for expense in service_request.expenses_ids:
-                                    if expense.invoice_due_date <= datetime.date.today():
+                                    if expense.invoice_due_date <= date:
                                         expense_invoice_due_date = expense.invoice_due_date + relativedelta(months=1)
                                         expense.write({'is_set_from_cron': True, 'date': expense_invoice_due_date})
                                         expenses_ids = expenses_ids - expense
@@ -141,9 +150,9 @@ class InvoiceTermLine(models.Model):
                         if len(invoice_term.sale_id.invoice_term_ids) > 1:
                             previous_invoice_term = invoice_term.sale_id.invoice_term_ids.filtered(
                                 lambda s: s.due_date < invoice_term.due_date).sorted(key=lambda s: s.due_date,
-                                                                                     reverse=True)[0]
+                                                                                     reverse=True)
                             if previous_invoice_term:
-                                start_date = previous_invoice_term.due_date + relativedelta(days=1)
+                                start_date = previous_invoice_term[0].due_date + relativedelta(days=1)
                         in_scope_services = self.env['ebs_mod.service.request'].sudo().search(
                             [('partner_id', 'in', in_scope_service_partners),
                              ('end_date', '>=', start_date), ('end_date', '<=', invoice_term.due_date),
@@ -171,7 +180,7 @@ class InvoiceTermLine(models.Model):
                             invoice_term.write({'due_date': invoice_term_due_date})
                             if service_request.expenses_ids:
                                 for expense in service_request.expenses_ids:
-                                    if expense.invoice_due_date <= datetime.date.today():
+                                    if expense.invoice_due_date <= date:
                                         expense_invoice_due_date = expense.invoice_due_date + relativedelta(months=1)
                                         expense.write({'is_set_from_cron': True, 'date': expense_invoice_due_date})
                                         expenses_ids = expenses_ids - expense
@@ -185,7 +194,7 @@ class InvoiceTermLine(models.Model):
                         invoice_term.write({'due_date': invoice_term_due_date})
                         if service_request.expenses_ids:
                             for expense in service_request.expenses_ids:
-                                if expense.invoice_due_date <= datetime.date.today():
+                                if expense.invoice_due_date <= date:
                                     expense_invoice_due_date = expense.invoice_due_date + relativedelta(months=1)
                                     expense.write({'is_set_from_cron': True, 'date': expense_invoice_due_date})
                                     expenses_ids = expenses_ids - expense
@@ -227,7 +236,7 @@ class InvoiceTermLine(models.Model):
                         invoice_term.write({'due_date': invoice_term_due_date})
                         if service_request.expenses_ids:
                             for expense in service_request.expenses_ids:
-                                if expense.invoice_due_date <= datetime.date.today():
+                                if expense.invoice_due_date <= date:
                                     expense_invoice_due_date = expense.invoice_due_date + relativedelta(months=1)
                                     expense.write({'is_set_from_cron': True, 'date': expense_invoice_due_date})
                                     expenses_ids = expenses_ids - expense
@@ -372,7 +381,7 @@ class InvoiceTermLine(models.Model):
         return invoice_line_vals
 
         # def create_retainer_invoice(self):
-        first_day_month = datetime.date.today().replace(day=1)
+        # first_day_month = datetime.date.today().replace(day=1)
         # last_no_day = calendar.monthrange(datetime.date.today().month, datetime.date.today().year)
         # last_day_month = datetime.date.today().replace(day=last_no_day)
         # invoice_term_ids = self.sudo().search([('invoice_id', '=', False),('due_date', '<=', datetime.date.today())])
