@@ -3,8 +3,7 @@
 from odoo import models, fields, api, _
 import calendar
 from datetime import datetime, date
-from odoo.exceptions import ValidationError
-from dateutil.relativedelta import relativedelta
+from odoo.exceptions import ValidationError, UserError
 
 
 class ServiceRequest(models.Model):
@@ -25,6 +24,169 @@ class ServiceRequest(models.Model):
     opportunity_id = fields.Many2one('crm.lead', string="Opportunity")
     is_in_scope = fields.Boolean("Is In of Scope", compute="compute_is_in_scope", store=True)
     is_end_date = fields.Boolean(string="Is End date", compute="compute_is_end_date")
+    is_included_in_invoice = fields.Boolean(string="Is Included in invoice")
+
+    def generate_invoice_base_on_service_end(self):
+        if self.end_date:
+            if self.is_in_scope:
+                invoice_term = self.contract_id.sale_order_id.invoice_term_ids.filtered(
+                    lambda s: s.start_term_date <= self.end_date.date() <= s.end_term_date)
+                if invoice_term and not invoice_term.invoice_id:
+                    if self.expenses_ids:
+                        for expense in self.expenses_ids:
+                            expense.sudo().write({'is_set_from_cron': True, 'date': self.end_date})
+                    invoice_term.sudo().write({'due_date': self.end_date})
+                    invoice_term.create_retainer_invoice()
+                if invoice_term and invoice_term.invoice_id:
+                    self.update_existing_invoice(invoice_term, invoice_term.invoice_id)
+            elif self.is_out_of_scope and not self.is_one_time_transaction and self.sale_order_id:
+                invoice_term = self.sale_order_id.invoice_term_ids.filtered(
+                    lambda s: s.start_term_date <= self.end_date.date() <= s.end_term_date)
+                if invoice_term:
+                    if invoice_term[0].sale_id.state in ['sale', 'done', 'submit_client_operation']:
+                        if self.expenses_ids:
+                            for expense in self.expenses_ids:
+                                expense.sudo().write({'is_set_from_cron': True, 'date': self.end_date})
+                        invoice_term.sudo().write({'due_date': self.end_date})
+                        invoice_term.create_retainer_invoice()
+                    else:
+                        raise UserError('Sale order flow is incomplete')
+                else:
+                    raise UserError('Invoice term for this service not created')
+            elif self.is_one_time_transaction and self.sale_order_id:
+                invoice_term = self.sale_order_id.invoice_term_ids
+                if invoice_term:
+                    if invoice_term[0].sale_id.state in ['sale', 'done', 'submit_client_operation']:
+                        if self.expenses_ids:
+                            for expense in self.expenses_ids:
+                                expense.sudo().write({'is_set_from_cron': True, 'date': self.end_date})
+                        invoice_term[0].sudo().write({'due_date': self.end_date})
+                        invoice_term[0].create_retainer_invoice()
+                    else:
+                        raise UserError('Sale order flow is incomplete')
+                else:
+                    raise UserError('Invoice term for this service not created')
+
+    def update_existing_invoice(self, invoice_term, invoice_id):
+        invoice_line_without_government_fees = invoice_id.invoice_line_ids.filtered(
+            lambda s: not s.is_government_fees_line)
+        invoice_line_with_government_fees = invoice_id.invoice_line_ids.filtered(
+            lambda s: s.is_government_fees_line)
+        data = [{line.service_request_id: line.price_unit, 'name': line.name, 'product_id': line.product_id.id,
+                 'description': line.description} for line in invoice_line_without_government_fees]
+        old_service_requests = invoice_line_without_government_fees.mapped('service_request_id')
+        old_service_requests = old_service_requests + invoice_line_with_government_fees.mapped(
+            'service_request_id').filtered(lambda s: s not in old_service_requests)
+        if self not in old_service_requests and self.is_in_scope:
+            invoice_amount = invoice_term.amount / (len(old_service_requests.filtered(lambda s: s.is_in_scope)) + 1)
+        else:
+            invoice_amount = invoice_term.amount / (len(old_service_requests.filtered(lambda s: s.is_in_scope)))
+        if invoice_id.line_ids:
+            invoice_id.line_ids.unlink()
+        if invoice_id.invoice_line_ids:
+            invoice_id.invoice_line_ids.unlink()
+        if self not in old_service_requests and self.is_in_scope:
+            invoice_id.sudo().write({
+                'invoice_line_ids': [(0, 0,
+                                      {
+                                          'product_id': self.service_type_id.variant_id.product_id.id,
+                                          'name': self.service_type_id.variant_id.product_id.name,
+                                          'quantity': 1,
+                                          'price_unit': invoice_amount,
+                                          'description': self.name,
+                                          'service_request_id': self.id,
+                                      })]
+            })
+            self.write({'is_included_in_invoice': True})
+        if old_service_requests:
+            for line in old_service_requests:
+                product_id = line.service_type_id.variant_id.product_id.id
+                name = line.service_type_id.variant_id.product_id.name
+                description = line.name
+                if not line.is_in_scope:
+                    filter_data = list(filter(lambda s: s.get(line), data))
+                    if filter_data:
+                        invoice_amount = filter_data[0].get(line)
+                        product_id = filter_data[0].get('product_id')
+                        name = filter_data[0].get('name')
+                        description = filter_data[0].get('description')
+                invoice_id.sudo().write({
+                    'invoice_line_ids': [(0, 0,
+                                          {
+                                              'product_id': product_id,
+                                              'name': name,
+                                              'quantity': 1,
+                                              'price_unit': invoice_amount,
+                                              'description': description,
+                                              'service_request_id': line.id
+                                          })]
+                })
+            if self.is_out_of_scope and not self.is_one_time_transaction:
+                invoice_line_vals = invoice_term.get_invoice_line_base_on_invoice_term_of_down(invoice_term, [])
+                if invoice_line_vals:
+                    invoice_id.sudo().write({'invoice_line_ids': invoice_line_vals})
+            expense_ids = old_service_requests.mapped('expenses_ids')
+            if self not in old_service_requests:
+                other_expenses = self.expenses_ids.filtered(lambda s: s not in expense_ids)
+                expense_ids = expense_ids + other_expenses
+                if other_expenses:
+                    for expense in other_expenses:
+                        if expense.attachment_ids:
+                            for attachment_id in expense.attachment_ids:
+                                self.env['ir.attachment'].sudo().create(
+                                    {
+                                        'name': attachment_id.name,
+                                        'type': attachment_id.type,
+                                        'datas': attachment_id.datas,
+                                        'mimetype': attachment_id.mimetype,
+                                        'res_model': invoice_id._name,
+                                        'res_id': invoice_id.id,
+                                        'res_name': invoice_id.name,
+                                    }
+                                )
+            if expense_ids:
+                for expense in expense_ids:
+                    invoice_id.sudo().write({
+                        'invoice_line_ids': [(0, 0,
+                                              {
+                                                  'product_id': expense.expense_type_id.product_id.id,
+                                                  'name': expense.expense_type_id.product_id.name,
+                                                  'quantity': 1,
+                                                  'price_unit': expense.amount,
+                                                  'description': line.name,
+                                                  'service_request_id': line.id,
+                                                  'is_government_fees_line': True
+                                              })]
+                    })
+                    expense.sudo().write({'invoice_id': invoice_id.id})
+        else:
+            for expense in self.expenses_ids:
+                invoice_id.sudo().write({
+                    'invoice_line_ids': [(0, 0,
+                                          {
+                                              'product_id': expense.expense_type_id.product_id.id,
+                                              'name': expense.expense_type_id.product_id.name,
+                                              'quantity': 1,
+                                              'price_unit': expense.amount,
+                                              'description': self.name,
+                                              'service_request_id': self.id,
+                                              'is_government_fees_line': True
+                                          })]
+                })
+                expense.sudo().write({'invoice_id': invoice_id.id})
+                if expense.attachment_ids:
+                    for attachment_id in expense.attachment_ids:
+                        self.env['ir.attachment'].sudo().create(
+                            {
+                                'name': attachment_id.name,
+                                'type': attachment_id.type,
+                                'datas': attachment_id.datas,
+                                'mimetype': attachment_id.mimetype,
+                                'res_model': invoice_id._name,
+                                'res_id': invoice_id.id,
+                                'res_name': invoice_id.name,
+                            }
+                        )
 
     @api.depends('end_date')
     def compute_is_end_date(self):

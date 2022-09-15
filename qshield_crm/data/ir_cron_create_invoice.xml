@@ -1,6 +1,18 @@
 <?xml version="1.0" encoding="utf-8"?>
 <odoo>
     <data noupdate="0">
+
+        <record id="create_invoice_from_service" model="base.automation">
+            <field name="name">service status is end</field>
+            <field name="model_id" ref="qshield_crm.model_ebs_mod_service_request"/>
+            <field name="trigger">on_write</field>
+            <field name="trigger_field_ids"
+                   eval="[(4,ref('ebs_qsheild_mod.field_ebs_mod_service_request__status'))]"/>
+            <field name="active" eval="True"/>
+            <field name="state">code</field>
+            <field name="code">record.generate_invoice_base_on_service_end()</field>
+        </record>
+
         <record id="create_activity_of_invoice" model="ir.cron">
             <field name="state">code</field>
             <field name="code" eval="'model.create_invoice_activity()'"/>

@@ -75,7 +75,7 @@ class InvoiceTermLine(models.Model):
         del context
         return so_values
 
-    def create_retainer_invoice(self,start_date=False,end_date=False):
+    def create_retainer_invoice(self, start_date=False, end_date=False):
         # first_day_month = datetime.date.today().replace(day=1)
         # last_no_day = calendar.monthrange(datetime.date.today().year, datetime.date.today().month)[1]
         # last_day_month = datetime.date.today().replace(day=last_no_day)
@@ -83,9 +83,10 @@ class InvoiceTermLine(models.Model):
         if end_date and start_date:
             start_date = datetime.datetime.strptime(start_date, '%d/%m/%Y').date()
             date = datetime.datetime.strptime(end_date, '%d/%m/%Y').date()
-            invoice_term_ids = self.sudo().search([('invoice_id', '=', False),('due_date', '>=', start_date),('due_date', '<=', date)])
+            invoice_term_ids = self.sudo().search(
+                [('invoice_id', '=', False), ('due_date', '>=', start_date), ('due_date', '<=', date)])
             expenses_ids = self.env['ebs_mod.service.request.expenses'].sudo().search(
-                [('invoice_id', '=', False),('invoice_due_date', '>=', start_date), ('invoice_due_date', '<=', date)])
+                [('invoice_id', '=', False), ('invoice_due_date', '>=', start_date), ('invoice_due_date', '<=', date)])
         else:
             date = datetime.date.today()
             invoice_term_ids = self.sudo().search([('invoice_id', '=', False), ('due_date', '=', date)])
@@ -138,14 +139,8 @@ class InvoiceTermLine(models.Model):
                             partner_invoice_term_ids = partner_invoice_term_ids - invoice_term
 
                     elif invoice_term.sale_id.state in ['sale', 'done', 'submit_client_operation']:
-                        # first_day_month = invoice_term.due_date.replace(day=1)
-                        # last_no_day = calendar.monthrange(datetime.date.today().year, datetime.date.today().month)[1]
-                        # last_day_month = datetime.date.today().replace(day=last_no_day)
                         in_scope_service_partners = child_partners.ids
                         in_scope_service_partners.append(partner.id)
-                        # in_scope_services = self.env['ebs_mod.service.request'].sudo().search(
-                        #     [('partner_id', 'in', in_scope_service_partners), ('end_date', '>=', first_day_month),
-                        #      ('end_date', '<=', last_day_month), ('is_out_of_scope', '=', False)])
                         start_date = invoice_term.start_term_date
                         if len(invoice_term.sale_id.invoice_term_ids) > 1:
                             previous_invoice_term = invoice_term.sale_id.invoice_term_ids.filtered(
@@ -156,7 +151,8 @@ class InvoiceTermLine(models.Model):
                         in_scope_services = self.env['ebs_mod.service.request'].sudo().search(
                             [('partner_id', 'in', in_scope_service_partners),
                              ('end_date', '>=', start_date), ('end_date', '<=', invoice_term.due_date),
-                             ('is_out_of_scope', '=', False)])
+                             ('is_out_of_scope', '=', False),
+                             ('is_included_in_invoice', '=', False)])
                         in_scope_services = in_scope_services.filtered(
                             lambda s: s.partner_invoice_type in ['retainer', 'outsourcing'])
                         if in_scope_services and not service_request:
@@ -172,6 +168,7 @@ class InvoiceTermLine(models.Model):
                                     'description': service.name,
                                     'service_request_id': service.id
                                 }))
+                                service.sudo().write({'is_included_in_invoice': True})
                         elif service_request and service_request.end_date:
                             invoice_line_vals = self.get_invoice_line_base_on_invoice_term_of_down(invoice_term,
                                                                                                    invoice_line_vals)
@@ -262,7 +259,16 @@ class InvoiceTermLine(models.Model):
                 invoice_vals.update({'invoice_line_ids': invoice_line_vals})
                 invoice_id = False
                 try:
-                    invoice_id = self.env['account.move'].sudo().create(invoice_vals)
+                    first_day_month = datetime.date.today().replace(day=1)
+                    last_no_day = calendar.monthrange(datetime.date.today().year,datetime.date.today().month)
+                    last_day_month = datetime.date.today().replace(day=last_no_day[1])
+                    invoice_id = self.env['account.move'].sudo().search(
+                        [('invoice_date', '>=', first_day_month), ('invoice_date', '<=', last_day_month),
+                         ('partner_id', '=', partner.id),('state','not in',['posted','cancel'])])
+                    if invoice_id:
+                        invoice_id.sudo().write({'invoice_line_ids' : invoice_line_vals})
+                    else:
+                        invoice_id = self.env['account.move'].sudo().create(invoice_vals)
                 except Exception as e:
                     logger.info("Something went Wrong", e)
                 if invoice_id:
