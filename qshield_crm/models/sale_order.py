@@ -118,7 +118,7 @@ class SaleOrder(models.Model):
                 db_manager_link = '<a href="' + db_manager_url + '">' + 'Select Database' + '</a>'
                 partner_to = self.account_manager.work_email if self.account_manager and self.account_manager.work_email else ''
                 notification_approver_emails = self.env['sale.order.approver.settings'].search(
-                    [('approver_notification_email', '!=', False)],limit=1).approver_notification_email
+                    [('approver_notification_email', '!=', False)], limit=1).approver_notification_email
                 if self.approver_setting_id and self.approver_setting_id.approver_notification_email:
                     partner_to = partner_to + ',' + self.approver_setting_id.approver_notification_email
                 elif notification_approver_emails:
@@ -485,7 +485,7 @@ class SaleOrder(models.Model):
                 'end_date': end_date,
                 'contract_type': 'retainer_agreement',
                 'service_ids': service_types.ids,
-                'contact_id': self.partner_id.id,
+                'contact_id': self.partner_id.parent_company_id.id if self.partner_id.parent_company_id else self.partner_id.id,
                 'sale_order_id': self.id,
                 'no_of_employees': self.no_of_employees
             })

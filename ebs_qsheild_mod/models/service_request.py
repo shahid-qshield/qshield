@@ -600,8 +600,12 @@ class ServiceRequest(models.Model):
             self.partner_id = self.env.context.get('default_partner_id')
         if self.date and self.partner_id:
             if self.partner_id.person_type == 'company':
-                self.related_company_ro = self.partner_id.id
-                self.related_company = self.partner_id.id
+                if self.partner_id.parent_company_id:
+                    self.related_company_ro = self.partner_id.parent_company_id.id
+                    self.related_company = self.partner_id.parent_company_id.id
+                else:
+                    self.related_company_ro = self.partner_id.id
+                    self.related_company = self.partner_id.id
             else:
                 self.related_company_ro = self.partner_id.related_company.id
                 self.related_company = self.partner_id.related_company.id

@@ -107,13 +107,16 @@ class InvoiceTermLine(models.Model):
         for partner in all_partners:
             child_partners = related_company_partners.filtered(lambda s: s.related_company == partner)
             child_partners = child_partners + partner
+            child_related_company = self.env['res.partner'].search([('parent_company_id', '=', partner.id)])
+            if child_related_company:
+                child_partners = child_partners + child_related_company
             partner_sale_orders = sale_orders.filtered(lambda s: s.partner_id in child_partners)
             partner_invoice_term_ids = partner_sale_orders.mapped('invoice_term_ids').filtered(
                 lambda s: s.id in invoice_term_ids.ids)
             partner_service_request_ids = service_request_ids.filtered(lambda s: s.partner_id in child_partners)
             invoice_vals = {
                 'type': 'out_invoice',
-                'partner_id': partner.id,
+                'partner_id': partner.parent_company_id.id if partner.parent_company_id else partner.id,
                 'currency_id': partner.currency_id.id if partner.currency_id else self.env.company.currency_id.id,
                 'invoice_date': date
             }
@@ -139,8 +142,13 @@ class InvoiceTermLine(models.Model):
                             partner_invoice_term_ids = partner_invoice_term_ids - invoice_term
 
                     elif invoice_term.sale_id.state in ['sale', 'done', 'submit_client_operation']:
-                        in_scope_service_partners = child_partners.ids
-                        in_scope_service_partners.append(partner.id)
+                        employees_child_partners = child_partners.mapped(
+                            'company_employees').filtered(lambda s: s not in child_partners)
+                        visitors_child_partners = child_partners.mapped('company_visitors').filtered(
+                            lambda s: s not in child_partners)
+                        dependant_child_partners = child_partners.mapped('dependants').filtered(
+                            lambda s: s not in child_partners)
+                        in_scope_service_partners = child_partners + employees_child_partners + visitors_child_partners + dependant_child_partners
                         start_date = invoice_term.start_term_date
                         if len(invoice_term.sale_id.invoice_term_ids) > 1:
                             previous_invoice_term = invoice_term.sale_id.invoice_term_ids.filtered(
@@ -149,7 +157,7 @@ class InvoiceTermLine(models.Model):
                             if previous_invoice_term:
                                 start_date = previous_invoice_term[0].due_date + relativedelta(days=1)
                         in_scope_services = self.env['ebs_mod.service.request'].sudo().search(
-                            [('partner_id', 'in', in_scope_service_partners),
+                            [('partner_id', 'in', in_scope_service_partners.ids),
                              ('end_date', '>=', start_date), ('end_date', '<=', invoice_term.due_date),
                              ('is_out_of_scope', '=', False),
                              ('is_included_in_invoice', '=', False)])
@@ -169,6 +177,11 @@ class InvoiceTermLine(models.Model):
                                     'service_request_id': service.id
                                 }))
                                 service.sudo().write({'is_included_in_invoice': True})
+                                if service not in partner_service_request_ids:
+                                    partner_service_request_ids = partner_service_request_ids + service
+                                in_scope_service_expense = service.expenses_ids.filtered(lambda s:s not in expenses_ids)
+                                if in_scope_service_expense:
+                                    expenses_ids = expenses_ids + in_scope_service_expense
                         elif service_request and service_request.end_date:
                             invoice_line_vals = self.get_invoice_line_base_on_invoice_term_of_down(invoice_term,
                                                                                                    invoice_line_vals)
@@ -259,14 +272,17 @@ class InvoiceTermLine(models.Model):
                 invoice_vals.update({'invoice_line_ids': invoice_line_vals})
                 invoice_id = False
                 try:
+                    invoice_partner = partner
+                    if partner.parent_company_id:
+                        invoice_partner = partner.parent_company_id
                     first_day_month = datetime.date.today().replace(day=1)
-                    last_no_day = calendar.monthrange(datetime.date.today().year,datetime.date.today().month)
+                    last_no_day = calendar.monthrange(datetime.date.today().year, datetime.date.today().month)
                     last_day_month = datetime.date.today().replace(day=last_no_day[1])
                     invoice_id = self.env['account.move'].sudo().search(
                         [('invoice_date', '>=', first_day_month), ('invoice_date', '<=', last_day_month),
-                         ('partner_id', '=', partner.id),('state','not in',['posted','cancel'])])
+                         ('partner_id', '=', invoice_partner.id), ('state', 'not in', ['posted', 'cancel'])])
                     if invoice_id:
-                        invoice_id.sudo().write({'invoice_line_ids' : invoice_line_vals})
+                        invoice_id.sudo().write({'invoice_line_ids': invoice_line_vals})
                     else:
                         invoice_id = self.env['account.move'].sudo().create(invoice_vals)
                 except Exception as e:

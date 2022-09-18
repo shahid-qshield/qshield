@@ -78,9 +78,11 @@ class ServiceRequest(models.Model):
         old_service_requests = old_service_requests + invoice_line_with_government_fees.mapped(
             'service_request_id').filtered(lambda s: s not in old_service_requests)
         if self not in old_service_requests and self.is_in_scope:
-            invoice_amount = invoice_term.amount / (len(old_service_requests.filtered(lambda s: s.is_in_scope)) + 1)
+            invoice_amount = invoice_term.amount / (len(old_service_requests.filtered(
+                lambda s: s.is_in_scope and s.contract_id == self.contract_id)) + 1)
         else:
-            invoice_amount = invoice_term.amount / (len(old_service_requests.filtered(lambda s: s.is_in_scope)))
+            invoice_amount = invoice_term.amount / (
+                len(old_service_requests.filtered(lambda s: s.is_in_scope and s.contract_id == self.contract_id)))
         if invoice_id.line_ids:
             invoice_id.line_ids.unlink()
         if invoice_id.invoice_line_ids:
@@ -103,13 +105,14 @@ class ServiceRequest(models.Model):
                 product_id = line.service_type_id.variant_id.product_id.id
                 name = line.service_type_id.variant_id.product_id.name
                 description = line.name
-                if not line.is_in_scope:
+                if not line.is_in_scope or (line.is_in_scope and line.contract_id != self.contract_id):
                     filter_data = list(filter(lambda s: s.get(line), data))
                     if filter_data:
                         invoice_amount = filter_data[0].get(line)
                         product_id = filter_data[0].get('product_id')
                         name = filter_data[0].get('name')
                         description = filter_data[0].get('description')
+
                 invoice_id.sudo().write({
                     'invoice_line_ids': [(0, 0,
                                           {
@@ -153,8 +156,8 @@ class ServiceRequest(models.Model):
                                                   'name': expense.expense_type_id.product_id.name,
                                                   'quantity': 1,
                                                   'price_unit': expense.amount,
-                                                  'description': line.name,
-                                                  'service_request_id': line.id,
+                                                  'description': expense.service_request_id.name,
+                                                  'service_request_id': expense.service_request_id.id,
                                                   'is_government_fees_line': True
                                               })]
                     })

@@ -29,6 +29,8 @@ class ResPartner(models.Model):
     expense_invoice_count = fields.Integer(compute="compute_expense_invoice_count", string="Expense invoice count")
     iban_number = fields.Char(string="IBAN Number")
     is_editable_partner_invoice_type = fields.Boolean(compute="compute_is_editable_partner_invoice_type")
+    parent_company_id = fields.Many2one('res.partner',string="Related Parent Company")
+
 
     @api.depends()
     def compute_is_editable_partner_invoice_type(self):
@@ -47,6 +49,8 @@ class ResPartner(models.Model):
                 record.person_type = 'company'
             if record.person_type in ['emp', 'visitor', 'child'] and record.related_company:
                 record.partner_invoice_type = record.related_company.partner_invoice_type
+            if record.person_type == 'company' and record.parent_company_id:
+                record.partner_invoice_type = record.parent_company_id.partner_invoice_type
         return res
 
     def write(self, vals):
@@ -64,10 +68,21 @@ class ResPartner(models.Model):
                     vals.update({'partner_invoice_type': related_company.partner_invoice_type})
             elif self.related_company and self.related_company.partner_invoice_type:
                 vals.update({'partner_invoice_type': self.related_company.partner_invoice_type})
+        elif vals.get('person_type') == 'company':
+            if vals.get('parent_company_id'):
+                parent_company_id = self.search([('id', '=', vals.get('parent_company_id'))])
+                if parent_company_id:
+                    vals.update({'partner_invoice_type': parent_company_id.partner_invoice_type})
+            elif self.parent_company_id and self.parent_company_id.partner_invoice_type:
+                vals.update({'partner_invoice_type': self.parent_company_id.partner_invoice_type})
         if vals.get('parent_id') and not vals.get('person_type'):
             related_company = self.search([('id', '=', vals.get('parent_id'))])
             if related_company:
                 vals.update({'partner_invoice_type': related_company.partner_invoice_type})
+        if vals.get('parent_company_id') and not vals.get('person_type'):
+            parent_company_id = self.search([('id', '=', vals.get('parent_company_id'))])
+            if parent_company_id:
+                vals.update({'partner_invoice_type': parent_company_id.partner_invoice_type})
         res = super(ResPartner, self).write(vals)
         return res
 

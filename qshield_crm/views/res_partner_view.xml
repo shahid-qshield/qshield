@@ -8,6 +8,9 @@
             <field name="arch" type="xml">
                 <field name="sponsor" position="after">
                     <field name="is_editable_partner_invoice_type" invisible="1"/>
+                    <field name="parent_company_id"
+                           domain="[('person_type','=','company'),('parent_company_id','=',False)]"
+                           attrs="{'invisible' : [('person_type','!=','company')]}"/>
                     <field name="partner_invoice_type"
                            attrs="{'readonly' : [('is_editable_partner_invoice_type','=',False)]}"/>
                     <field name="iban_number"/>
