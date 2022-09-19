@@ -66,6 +66,7 @@ class AccountMoveLine(models.Model):
     is_government_fees_line = fields.Boolean(string="Is Goverment Fees Line")
     price_unit = fields.Float(string='Unit Price', digits=(12, 8))
     price_subtotal = fields.Float(string='Subtotal', store=True, readonly=True, digits=(12, 8))
+    service_partner_id = fields.Many2one(string="Service Contact",related="service_request_id.partner_id")
 
     @api.model
     def _get_price_total_and_subtotal_model(self, price_unit, quantity, discount, currency, product, partner, taxes,
