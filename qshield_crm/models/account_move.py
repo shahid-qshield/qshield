@@ -24,6 +24,17 @@ class AccountMove(models.Model):
          ('one_time_payment', 'One Time Payment'), ('expense_invoice', 'Expense Invoice')])
     partner_invoice_type = fields.Selection(related="partner_id.partner_invoice_type")
 
+    retainer_amount = fields.Float('Retainer Amount', compute='get_retainer_amount')
+
+    @api.depends('invoice_line_ids')
+    def get_retainer_amount(self):
+        for rec in self:
+            amount = 0.0
+            if rec.invoice_line_ids:
+                amount = sum(rec.invoice_line_ids.filtered(
+                    lambda x: x.service_request_id.is_in_scope and not x.is_government_fees_line).mapped(
+                    'price_subtotal'))
+            rec.retainer_amount = amount
 
     def action_invoice_submit(self):
         self.sudo().write({'state': 'new'})
@@ -56,9 +67,9 @@ class AccountMoveLine(models.Model):
     price_unit = fields.Float(string='Unit Price', digits=(12, 8))
     price_subtotal = fields.Float(string='Subtotal', store=True, readonly=True, digits=(12, 8))
 
-
     @api.model
-    def _get_price_total_and_subtotal_model(self, price_unit, quantity, discount, currency, product, partner, taxes, move_type):
+    def _get_price_total_and_subtotal_model(self, price_unit, quantity, discount, currency, product, partner, taxes,
+                                            move_type):
         ''' This method is used to compute 'price_total' & 'price_subtotal'.
 
         :param price_unit:  The current price unit.
@@ -79,13 +90,15 @@ class AccountMoveLine(models.Model):
 
         # Compute 'price_total'.
         if taxes:
-            taxes_res = taxes._origin.with_context(force_sign=1,custom_context=True).compute_all(price_unit_wo_discount,
-                quantity=quantity, currency=currency, product=product, partner=partner, is_refund=move_type in ('out_refund', 'in_refund'))
+            taxes_res = taxes._origin.with_context(force_sign=1, custom_context=True).compute_all(
+                price_unit_wo_discount,
+                quantity=quantity, currency=currency, product=product, partner=partner,
+                is_refund=move_type in ('out_refund', 'in_refund'))
             res['price_subtotal'] = taxes_res['total_excluded']
             res['price_total'] = taxes_res['total_included']
         else:
             res['price_total'] = res['price_subtotal'] = subtotal
-        #In case of multi currency, round before it's use for computing debit credit
+        # In case of multi currency, round before it's use for computing debit credit
         if currency:
             res = {k: currency.round(v) for k, v in res.items()}
         return res

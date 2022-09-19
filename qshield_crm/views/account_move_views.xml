@@ -123,6 +123,9 @@
                 <xpath expr="//header/field[@name='state']" position="attributes">
                     <attribute name="statusbar_visible">draft,new,approve,posted,cancel</attribute>
                 </xpath>
+                <xpath expr="//field[@name='currency_id']" position="after">
+                   <field name="retainer_amount"/>
+                </xpath>
                 <xpath expr="//header/button[@name='action_post']" position="attributes">
                     <attribute name="attrs">{'invisible' : [('state','!=','approve')]}</attribute>
                     <attribute name="string">Lock</attribute>
