@@ -160,6 +160,7 @@
                        position="after">
                     <field name="description" readonly="1"/>
                     <field name="service_request_id"/>
+                    <field name="service_partner_id"/>
                     <field name="service_type_id"/>
                     <field name="service_status"/>
                 </xpath>
