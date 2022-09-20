@@ -83,10 +83,10 @@ class ServiceRequest(models.Model):
         else:
             invoice_amount = invoice_term.amount / (
                 len(old_service_requests.filtered(lambda s: s.is_in_scope and s.contract_id == self.contract_id)))
-        if invoice_id.line_ids:
-            invoice_id.line_ids.unlink()
-        if invoice_id.invoice_line_ids:
-            invoice_id.invoice_line_ids.unlink()
+        if invoice_id.sudo().line_ids:
+            invoice_id.line_ids.sudo().unlink()
+        if invoice_id.sudo().invoice_line_ids:
+            invoice_id.sudo().invoice_line_ids.unlink()
         if self not in old_service_requests and self.is_in_scope:
             invoice_id.sudo().write({
                 'invoice_line_ids': [(0, 0,
