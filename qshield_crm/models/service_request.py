@@ -28,7 +28,7 @@ class ServiceRequest(models.Model):
 
     def generate_invoice_base_on_service_end(self):
         if self.end_date:
-            if self.is_in_scope:
+            if self.is_in_scope and self.partner_invoice_type in ['retainer','outsourcing']:
                 invoice_term = self.contract_id.sale_order_id.invoice_term_ids.filtered(
                     lambda s: s.start_term_date <= self.end_date.date() <= s.end_term_date)
                 if invoice_term and not invoice_term.invoice_id:
