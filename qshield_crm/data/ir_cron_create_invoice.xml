@@ -39,5 +39,15 @@
             <field name="model_id" ref="qshield_crm.model_invoice_term_line"/>
             <field name="active">True</field>
         </record>
+
+        <record id="action_print_excel_invoice" model="ir.actions.server">
+            <field name="name">Print Excel Invoice Report</field>
+            <field name="model_id" ref="qshield_crm.model_account_move"/>
+            <field name="binding_model_id" ref="account.model_account_move"/>
+            <field name="state">code</field>
+            <field name="code">
+                action = records.print_excel_invoice_report()
+            </field>
+        </record>
     </data>
 </odoo>

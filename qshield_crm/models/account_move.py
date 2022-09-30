@@ -3,6 +3,9 @@
 from odoo import models, fields, api, _
 from odoo.exceptions import UserError
 from odoo.tools.float_utils import float_round as round, float_compare
+import base64
+import xlsxwriter
+import io
 
 
 class AccountMove(models.Model):
@@ -25,6 +28,7 @@ class AccountMove(models.Model):
     partner_invoice_type = fields.Selection(related="partner_id.partner_invoice_type")
 
     retainer_amount = fields.Float('Retainer Amount', compute='get_retainer_amount')
+    binary_data = fields.Binary("File")
 
     @api.depends('invoice_line_ids')
     def get_retainer_amount(self):
@@ -35,6 +39,64 @@ class AccountMove(models.Model):
                     lambda x: x.service_request_id.is_in_scope and not x.is_government_fees_line).mapped(
                     'price_subtotal'))
             rec.retainer_amount = amount
+
+    @api.model
+    def print_excel_invoice_report(self):
+        filename = 'invoice_report.xlsx'
+        output = io.BytesIO()
+        workbook = xlsxwriter.Workbook(output, {'in_memory': True})
+        header_format = workbook.add_format({'bold': True, 'font_size': 12, 'align': 'center'})
+        format1 = workbook.add_format({'font_size': 10, 'align': 'center'})
+        sheet = workbook.add_worksheet('Invoices')
+        sheet.set_column(0, 2, 30)
+        sheet.set_column(4, 5, 30)
+        sheet.set_column(3, 3, 20)
+        sheet.set_column(7, 11, 25)
+        sheet.write(0, 0, 'Company', header_format)
+        sheet.write(0, 1, 'Invoice Number', header_format)
+        sheet.write(0, 2, 'Product', header_format)
+        sheet.write(0, 3, 'Description', header_format)
+        sheet.write(0, 4, 'Service Request', header_format)
+        sheet.write(0, 5, 'Service Request Contact', header_format)
+        sheet.write(0, 6, 'Service Request Type', header_format)
+        sheet.write(0, 7, 'Status', header_format)
+        sheet.write(0, 8, 'Label', header_format)
+        sheet.write(0, 9, 'Government Fees', header_format)
+        sheet.write(0, 10, 'Service Fees', header_format)
+        row = 1
+        for record in self:
+            sheet.write(row, 0, record.partner_id.name, format1)
+            sheet.write(row, 1, record.name, format1)
+            if record.invoice_line_ids:
+                for line in record.invoice_line_ids:
+                    sheet.write(row, 2, line.product_id.name, format1)
+                    sheet.write(row, 3, line.description, format1)
+                    sheet.write(row, 4, line.service_request_id.name if line.service_request_id else '', format1)
+                    sheet.write(row, 5, line.service_partner_id.name if line.service_request_id else '', format1)
+                    sheet.write(row, 6, line.service_type_id.name if line.service_request_id else '', format1)
+                    sheet.write(row, 7, line.service_status if line.service_request_id else '', format1)
+                    sheet.write(row, 8, line.name if line.name else '', format1)
+                    if line.is_government_fees_line:
+                        sheet.write(row, 9, line.price_unit, format1)
+                    else:
+                        sheet.write(row, 9, 0.0, format1)
+                    if not line.is_government_fees_line:
+                        sheet.write(row, 10, line.price_unit, format1)
+                    else:
+                        sheet.write(row, 10, 0.0, format1)
+                    row += 1
+            row += 1
+        workbook.close()
+        output.seek(0)
+        output = base64.encodestring(output.read())
+        temporary_record = self[0]
+        temporary_record.write({'binary_data': output})
+        return {
+            'type': 'ir.actions.act_url',
+            'url': 'web/content/?model=account.move&field=binary_data&download=true&id=%s&filename=%s' % (
+                temporary_record.id, filename),
+            'target': 'new',
+        }
 
     def action_invoice_submit(self):
         self.sudo().write({'state': 'new'})
@@ -66,7 +128,7 @@ class AccountMoveLine(models.Model):
     is_government_fees_line = fields.Boolean(string="Is Goverment Fees Line")
     price_unit = fields.Float(string='Unit Price', digits=(12, 8))
     price_subtotal = fields.Float(string='Subtotal', store=True, readonly=True, digits=(12, 8))
-    service_partner_id = fields.Many2one(string="Service Contact",related="service_request_id.partner_id")
+    service_partner_id = fields.Many2one(string="Service Contact", related="service_request_id.partner_id")
 
     @api.model
     def _get_price_total_and_subtotal_model(self, price_unit, quantity, discount, currency, product, partner, taxes,
