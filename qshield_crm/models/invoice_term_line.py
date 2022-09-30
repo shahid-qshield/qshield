@@ -137,7 +137,7 @@ class InvoiceTermLine(models.Model):
                                 for expense in service_request.expenses_ids:
                                     if expense.invoice_due_date <= date:
                                         expense_invoice_due_date = expense.invoice_due_date + relativedelta(months=1)
-                                        expense.write({'is_set_from_cron': True, 'date': expense_invoice_due_date})
+                                        expense.write({'is_set_from_cron': True, 'invoice_date': expense_invoice_due_date})
                                         expenses_ids = expenses_ids - expense
                             partner_invoice_term_ids = partner_invoice_term_ids - invoice_term
 
@@ -192,7 +192,7 @@ class InvoiceTermLine(models.Model):
                                 for expense in service_request.expenses_ids:
                                     if expense.invoice_due_date <= date:
                                         expense_invoice_due_date = expense.invoice_due_date + relativedelta(months=1)
-                                        expense.write({'is_set_from_cron': True, 'date': expense_invoice_due_date})
+                                        expense.write({'is_set_from_cron': True, 'invoice_date': expense_invoice_due_date})
                                         expenses_ids = expenses_ids - expense
                             partner_invoice_term_ids = partner_invoice_term_ids - invoice_term
 
@@ -206,7 +206,7 @@ class InvoiceTermLine(models.Model):
                             for expense in service_request.expenses_ids:
                                 if expense.invoice_due_date <= date:
                                     expense_invoice_due_date = expense.invoice_due_date + relativedelta(months=1)
-                                    expense.write({'is_set_from_cron': True, 'date': expense_invoice_due_date})
+                                    expense.write({'is_set_from_cron': True, 'invoice_date': expense_invoice_due_date})
                                     expenses_ids = expenses_ids - expense
                         partner_invoice_term_ids = partner_invoice_term_ids - invoice_term
                 elif invoice_term.type == 'regular_invoice':
@@ -248,7 +248,7 @@ class InvoiceTermLine(models.Model):
                             for expense in service_request.expenses_ids:
                                 if expense.invoice_due_date <= date:
                                     expense_invoice_due_date = expense.invoice_due_date + relativedelta(months=1)
-                                    expense.write({'is_set_from_cron': True, 'date': expense_invoice_due_date})
+                                    expense.write({'is_set_from_cron': True, 'invoice_date': expense_invoice_due_date})
                                     expenses_ids = expenses_ids - expense
                         partner_invoice_term_ids = partner_invoice_term_ids - invoice_term
             for expenses_id in expenses_ids.filtered(lambda s: s.service_request_id in partner_service_request_ids):
@@ -266,7 +266,7 @@ class InvoiceTermLine(models.Model):
                 else:
                     expense_invoice_due_date = expenses_id.invoice_due_date + relativedelta(months=1)
                     expenses_id.write(
-                        {'is_set_from_cron': True, 'date': expense_invoice_due_date})
+                        {'is_set_from_cron': True, 'invoice_date': expense_invoice_due_date})
                     expenses_ids = expenses_ids - expenses_id
             if invoice_line_vals:
                 invoice_vals.update({'invoice_line_ids': invoice_line_vals})
@@ -337,7 +337,7 @@ class InvoiceTermLine(models.Model):
             lambda s: s.partner_id.id not in partners.ids)
         for expenses_id in expenses_ids.filtered(lambda s: s.service_request_id in all_partner_service_request_ids):
             expense_invoice_due_date = expenses_id.invoice_due_date + relativedelta(months=1)
-            expenses_id.write({'is_set_from_cron': True, 'date': expense_invoice_due_date})
+            expenses_id.write({'is_set_from_cron': True, 'invoice_date': expense_invoice_due_date})
 
     def get_invoice_line_base_on_invoice_term_of_down(self, invoice_term, invoice_line_vals):
         product_id = self.env['ir.config_parameter'].sudo().get_param('sale.default_deposit_product_id')

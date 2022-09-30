@@ -34,7 +34,7 @@ class ServiceRequest(models.Model):
                 if invoice_term and not invoice_term.invoice_id:
                     if self.expenses_ids:
                         for expense in self.expenses_ids:
-                            expense.sudo().write({'is_set_from_cron': True, 'date': self.end_date})
+                            expense.sudo().write({'is_set_from_cron': True, 'invoice_date': self.end_date})
                     invoice_term.sudo().write({'due_date': self.end_date})
                     invoice_term.create_retainer_invoice()
                 if invoice_term and invoice_term.invoice_id:
@@ -46,7 +46,7 @@ class ServiceRequest(models.Model):
                     if invoice_term[0].sale_id.state in ['sale', 'done', 'submit_client_operation']:
                         if self.expenses_ids:
                             for expense in self.expenses_ids:
-                                expense.sudo().write({'is_set_from_cron': True, 'date': self.end_date})
+                                expense.sudo().write({'is_set_from_cron': True, 'invoice_date': self.end_date})
                         invoice_term.sudo().write({'due_date': self.end_date})
                         invoice_term.create_retainer_invoice()
                     else:
@@ -59,7 +59,7 @@ class ServiceRequest(models.Model):
                     if invoice_term[0].sale_id.state in ['sale', 'done', 'submit_client_operation']:
                         if self.expenses_ids:
                             for expense in self.expenses_ids:
-                                expense.sudo().write({'is_set_from_cron': True, 'date': self.end_date})
+                                expense.sudo().write({'is_set_from_cron': True, 'invoice_date': self.end_date})
                         invoice_term[0].sudo().write({'due_date': self.end_date})
                         invoice_term[0].create_retainer_invoice()
                     else:
@@ -321,9 +321,15 @@ class EbsModServiceRequestExpenses(models.Model):
     attachment_ids = fields.Many2many('ir.attachment', string='Attachment')
     invoice_id = fields.Many2one('account.move', string="Related Invoice")
     to_invoice = fields.Boolean(string="To Invoice", compute="compute_to_invoice")
+    invoice_date = fields.Date(string="Invoice Date")
     invoice_due_date = fields.Date(string="Invoice Due Date", compute="compute_invoice_due_date", store=True)
     is_set_res_id_in_attachment = fields.Boolean(compute="compute_is_set_res_id_in_attachment")
     is_set_from_cron = fields.Boolean(string="IS set from cron")
+
+    @api.onchange('date')
+    def onchange_invoice_date(self):
+        if self.date:
+            self.invoice_date = self.date
 
     @api.depends()
     def compute_is_set_res_id_in_attachment(self):
@@ -333,14 +339,14 @@ class EbsModServiceRequestExpenses(models.Model):
                     attachment_id.sudo().write({'res_id': record.id})
             record.is_set_res_id_in_attachment = True
 
-    @api.depends('date')
+    @api.depends('invoice_date')
     def compute_invoice_due_date(self):
         for record in self:
-            if record.date and not record.is_set_from_cron:
-                last_day_of_month = calendar.monthrange(record.date.year, record.date.month)[1]
-                record.invoice_due_date = record.date.replace(day=last_day_of_month)
-            elif record.is_set_from_cron and record.date:
-                record.invoice_due_date = record.date
+            if record.invoice_date and not record.is_set_from_cron:
+                last_day_of_month = calendar.monthrange(record.invoice_date.year, record.invoice_date.month)[1]
+                record.invoice_due_date = record.invoice_date.replace(day=last_day_of_month)
+            elif record.is_set_from_cron and record.invoice_date:
+                record.invoice_due_date = record.invoice_date
             else:
                 record.invoice_due_date = False
 
