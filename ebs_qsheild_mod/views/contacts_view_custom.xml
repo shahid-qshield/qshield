@@ -327,7 +327,7 @@
                 </xpath>
 
                 <xpath expr="//notebook//page[@name='sales_purchases']" position="attributes">
-                    <attribute name="invisible">1</attribute>
+                    <attribute name="invisible">0</attribute>
                 </xpath>
 
                 <xpath expr="//notebook//page[1]" position="attributes">
