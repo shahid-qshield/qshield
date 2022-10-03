@@ -282,9 +282,9 @@ class InvoiceTermLine(models.Model):
                     first_day_month = datetime.date.today().replace(day=1)
                     last_no_day = calendar.monthrange(datetime.date.today().year, datetime.date.today().month)
                     last_day_month = datetime.date.today().replace(day=last_no_day[1])
-                    if end_date and start_date:
+                    if date and start_date:
                         first_day_month = start_date
-                        last_day_month = end_date
+                        last_day_month = date
                     invoice_id = self.env['account.move'].sudo().search(
                         [('invoice_date', '>=', first_day_month), ('invoice_date', '<=', last_day_month),
                          ('partner_id', '=', invoice_partner.id), ('state', 'not in', ['posted', 'cancel'])])
