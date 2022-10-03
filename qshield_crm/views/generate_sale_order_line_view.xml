@@ -8,19 +8,27 @@
                 <form string="Generate Service Type">
                     <group>
                         <group>
+                            <field name="set_price_type"/>
                             <field name="calculated_total_consolidation_price" invisible="1"/>
-                            <button string="Generate Service Type Variant" class="btn-primary" type="object"
+                            <button string="Generate Service Type Variant" class="btn btn-primary" type="object"
                                     name="generate_service_variant"
                                     attrs="{'invisible' : [('service_type_consolidation_manual_ids','=',False)]}"/>
                         </group>
                         <group>
                             <div>
-                                <label for="total_consolidation_price" force_save="1"/>
-                                <field name="total_consolidation_price" class="oe_inline"/>
-                                <button string="Update Price" type="object" class="ml8"
+                                <label for="total_consolidation_price" force_save="1"
+                                       attrs="{'invisible' : [('set_price_type','=','price_list')]}"/>
+                                <field name="total_consolidation_price" class="oe_inline"
+                                       attrs="{'invisible' : [('set_price_type','=','price_list')]}"/>
+                                <button string="Update Price" type="object" class="btn-primary"
                                         name="update_consolidation_price"
-
-                                        context="{'update_price':True}"/> <!-- attrs="{'invisible' : [('service_type_consolidation_manual_ids','=',False)]}"-->
+                                        attrs="{'invisible' : [('set_price_type','=','price_list')]}"
+                                        context="{'update_price':True}"/>
+                                <button string="Update Price from Price list" type="object" class="btn-primary"
+                                        name="update_price_from_price_list"
+                                        attrs="{'invisible' : [('set_price_type','=','manually')]}"
+                                        context="{'update_price':True}"/>
+                                <!-- attrs="{'invisible' : [('service_type_consolidation_manual_ids','=',False)]}"-->
                             </div>
                         </group>
                         <field name="service_type_consolidation_manual_ids" nolabel="1">
