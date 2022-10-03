@@ -92,7 +92,7 @@ class ServiceRequest(models.Model):
                 'invoice_line_ids': [(0, 0,
                                       {
                                           'product_id': self.service_type_id.variant_id.product_id.id,
-                                          'name': self.service_type_id.variant_id.product_id.name,
+                                          'name': 'In scope service' + ' ' + self.name,
                                           'quantity': 1,
                                           'price_unit': invoice_amount,
                                           'description': self.name,
