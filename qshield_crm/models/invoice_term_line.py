@@ -137,7 +137,8 @@ class InvoiceTermLine(models.Model):
                                 for expense in service_request.expenses_ids:
                                     if expense.invoice_due_date <= date:
                                         expense_invoice_due_date = expense.invoice_due_date + relativedelta(months=1)
-                                        expense.write({'is_set_from_cron': True, 'invoice_date': expense_invoice_due_date})
+                                        expense.write(
+                                            {'is_set_from_cron': True, 'invoice_date': expense_invoice_due_date})
                                         expenses_ids = expenses_ids - expense
                             partner_invoice_term_ids = partner_invoice_term_ids - invoice_term
 
@@ -170,7 +171,7 @@ class InvoiceTermLine(models.Model):
                             for service in in_scope_services:
                                 invoice_line_vals.append((0, 0, {
                                     'product_id': service.service_type_id.variant_id.product_id.id,
-                                    'name': service.service_type_id.variant_id.product_id.name,
+                                    'name': 'In scope service' + ' ' + service.name,
                                     'quantity': 1,
                                     'price_unit': service_amount,
                                     'description': service.name,
@@ -179,7 +180,8 @@ class InvoiceTermLine(models.Model):
                                 service.sudo().write({'is_included_in_invoice': True})
                                 if service not in partner_service_request_ids:
                                     partner_service_request_ids = partner_service_request_ids + service
-                                in_scope_service_expense = service.expenses_ids.filtered(lambda s:s not in expenses_ids)
+                                in_scope_service_expense = service.expenses_ids.filtered(
+                                    lambda s: s not in expenses_ids)
                                 if in_scope_service_expense:
                                     expenses_ids = expenses_ids + in_scope_service_expense
                         elif service_request and service_request.end_date:
@@ -192,7 +194,8 @@ class InvoiceTermLine(models.Model):
                                 for expense in service_request.expenses_ids:
                                     if expense.invoice_due_date <= date:
                                         expense_invoice_due_date = expense.invoice_due_date + relativedelta(months=1)
-                                        expense.write({'is_set_from_cron': True, 'invoice_date': expense_invoice_due_date})
+                                        expense.write(
+                                            {'is_set_from_cron': True, 'invoice_date': expense_invoice_due_date})
                                         expenses_ids = expenses_ids - expense
                             partner_invoice_term_ids = partner_invoice_term_ids - invoice_term
 
@@ -237,6 +240,7 @@ class InvoiceTermLine(models.Model):
                                         description = 'One Time Payment %s' % service_request.name if service_request else ''
                                     if description:
                                         vals.update({'description': description})
+                                        vals.update({'name': description})
                                     if service_request:
                                         vals.update({'service_request_id': service_request.id})
                                     if vals:
@@ -278,6 +282,9 @@ class InvoiceTermLine(models.Model):
                     first_day_month = datetime.date.today().replace(day=1)
                     last_no_day = calendar.monthrange(datetime.date.today().year, datetime.date.today().month)
                     last_day_month = datetime.date.today().replace(day=last_no_day[1])
+                    if end_date and start_date:
+                        first_day_month = start_date
+                        last_day_month = end_date
                     invoice_id = self.env['account.move'].sudo().search(
                         [('invoice_date', '>=', first_day_month), ('invoice_date', '<=', last_day_month),
                          ('partner_id', '=', invoice_partner.id), ('state', 'not in', ['posted', 'cancel'])])
@@ -388,7 +395,7 @@ class InvoiceTermLine(models.Model):
                 [('sale_order_id', '=', invoice_term.sale_id.id)], limit=1)
             description = 'One Time Payment %s' % service_request.name if service_request else ''
         invoice_line_vals.append((0, 0, {
-            'name': product_id.name,
+            'name': description if description else product_id.name,
             'price_unit': amount,
             'quantity': 1.0,
             'product_id': product_id.id,
