@@ -3,18 +3,20 @@
     <template id="salary_certificate_to_bank_template">
         <t t-call="web.html_container">
             <t t-foreach="docs" t-as="o">
-                <t t-call="web.internal_layout">
-                    <div class="page">
-                        <html>
-                            <style>
-                                body{
-                                text-align: justify;
-                                font-size:18px
-                                word-spacing: 10px;
-                                }
-
-                            </style>
-                            <body>
+                <!--                <t t-call="web.internal_layout">-->
+                <div class="page">
+                    <html>
+                        <style>
+                            body{
+                            text-align: justify;
+                            font-size:18px
+                            word-spacing: 10px;
+                            margin-left: 96px !important;
+                            margin-right: 96px !important;
+                            }
+                        </style>
+                        <body>
+                            <div>
                                 <div style="margin-left:70%">
                                     <p style="  line-height: 2; text-align: justify;">
                                         <strong>Ref. No.
@@ -40,13 +42,13 @@
 
                                 <div align="center">
                                     <p style="line-height: 2;">
-                                        <strong>SUBJECT: SALARY CERTIFICATE Of
-                                            <t t-if="o.employee_id.gender == 'male'">MR.</t>
+                                        <strong>Subject: Salary certificate of
+                                            <t t-if="o.employee_id.gender == 'male'">Mr.</t>
                                             <t t-if="o.employee_id.gender == 'female' and o.employee_id.marital == 'single'">
-                                                MISS.
+                                                Miss.
                                             </t>
                                             <t t-if="o.employee_id.gender == 'female' and o.employee_id.marital == 'married'">
-                                                MRS.
+                                                Mrs.
                                             </t>
                                             <span style="padding-right:5px;" t-field="o.employee_id.name"/>
                                         </strong>
@@ -69,9 +71,9 @@
                                           t-field="o.employee_id.name"/>,
                                     holding QID No.
                                     <t style="padding-right:5px;" t-esc="o.employee_id.qid_number"/>
-                                    is confirmed employee of QShield LLC., Commercial Registration No.
-                                    <t style="padding-right:5px;"
-                                       t-esc="o.employee_id.partner_id.cr_number_doc.document_number"/>.
+                                    is confirmed employee of QShield LLC., Commercial Registration No. 43183
+                                    <!--                                    <t style="padding-right:5px;"-->
+                                    <!--                                       t-esc="o.employee_id.partner_id.cr_number_doc.document_number"/>.-->
                                     <t t-if="o.employee_id.gender == 'male'">He joined the company</t>
                                     <t t-if="o.employee_id.gender == 'female'">She joined the company</t>
                                     <t style="padding-right:5px;"
@@ -81,31 +83,44 @@
                                     <t t-if="o.employee_id.gender == 'male'">His present salary is</t>
                                     <t t-if="o.employee_id.gender == 'female'">Her present salary is</t>
                                     <t style="padding-right:5px;" t-esc="o.gross_salary"/>
+                                    <t t-esc="o.currency_id.name"/>
                                     (
                                     <t style="padding-right:5px;" t-esc="o.num_word"/>) per month.
-                                    <t t-if="o.employee_id.gender == 'male'">he</t>
-                                    <t t-if="o.employee_id.gender == 'female'">she</t>
-                                    is also entitled to company accommodation, air ticket and leave salary.
-                                    <t t-if="o.employee_id.gender == 'male'">he is residing in</t>
-                                    <t t-if="o.employee_id.gender == 'female'">she is residing in</t>
+                                    <!--                                    <t t-if="o.employee_id.gender == 'male'">he</t>-->
+                                    <!--                                    <t t-if="o.employee_id.gender == 'female'">she</t>-->
+                                    <!--                                    is also entitled to company accommodation, air ticket and leave salary.-->
+                                    <!--                                    <t t-if="o.employee_id.gender == 'male'">he is residing in</t>-->
+                                    <!--                                    <t t-if="o.employee_id.gender == 'female'">she is residing in</t>-->
                                     <t t-if="o.employee_id.address_home_id">
-                                        <t style="padding-right:5px;"
-                                           t-esc="o.employee_id.address_home_id.street">
-                                        </t>,
-                                        <t style="padding-right:5px;"
-                                           t-esc="o.employee_id.address_home_id.street2">
-                                        </t>,
-                                        <t style="padding-right:5px;"
-                                           t-esc="o.employee_id.address_home_id.city">
-                                        </t>,
-                                        <t style="padding-right:5px;"
-                                           t-esc="o.employee_id.address_home_id.state_id.name">
-                                        </t>,
-                                        <t style="padding-right:5px;"
-                                           t-esc="o.employee_id.address_home_id.zip">
-                                        </t>,
-                                        <t style="padding-right:5px;"
-                                           t-esc="o.employee_id.address_home_id.country_id.name">,
+                                        <t t-if="o.employee_id.address_home_id.street">
+                                            <t style="padding-right:5px;"
+                                               t-esc="o.employee_id.address_home_id.street">
+                                            </t>,
+                                        </t>
+                                        <t t-if="o.employee_id.address_home_id.street2">
+                                            <t style="padding-right:5px;"
+                                               t-esc="o.employee_id.address_home_id.street2">
+                                            </t>,
+                                        </t>
+                                        <t t-if="o.employee_id.address_home_id.city">
+                                            <t style="padding-right:5px;"
+                                               t-esc="o.employee_id.address_home_id.city">
+                                            </t>,
+                                        </t>
+                                        <t t-if="o.employee_id.address_home_id.state_id.name">
+                                            <t style="padding-right:5px;"
+                                               t-esc="o.employee_id.address_home_id.state_id.name">
+                                            </t>,
+                                        </t>
+                                        <t t-if="o.employee_id.address_home_id.zip">
+                                            <t style="padding-right:5px;"
+                                               t-esc="o.employee_id.address_home_id.zip">
+                                            </t>,
+                                        </t>
+                                        <t t-if="o.employee_id.address_home_id.country_id.name">
+                                            <t style="padding-right:5px;"
+                                               t-esc="o.employee_id.address_home_id.country_id.name">,
+                                            </t>
                                         </t>
                                     </t>
                                 </p>
@@ -123,8 +138,8 @@
                                     <t style="padding-right:5px;" t-esc="o.subject_from"/>
                                     <span>
                                         from your bank,
-                                        we confirm that the monthly salary will continue to be paid to employee’s bank
-                                        Account once the account number is availed.
+                                        <!--                                        we confirm that the monthly salary will continue to be paid to employee’s bank-->
+                                        <!--                                        Account once the account number is availed.-->
                                     </span>
                                 </p>
                                 <p>
@@ -152,13 +167,12 @@
                                     that the liabilities have been repaid in full.
                                 </p>
                                 <p>
-                                    If
-                                    <t t-if="o.employee_id.gender == 'male'">Mr.</t>
+                                    <t t-if="o.employee_id.gender == 'male'">If Mr.</t>
                                     <t t-if="o.employee_id.gender == 'female' and o.employee_id.marital == 'single'">
-                                        Miss.
+                                       If Miss.
                                     </t>
                                     <t t-if="o.employee_id.gender == 'female' and o.employee_id.marital == 'married'">
-                                        Mrs.
+                                      If Mrs.
                                     </t>
                                     <t style="padding-right:5px;" t-esc="o.employee_id.name"/>
                                     resigns or terminates
@@ -178,22 +192,13 @@
                                     <t t-if="o.employee_id.gender == 'female'">her account with</t>
                                     <t style="padding-right:5px;"
                                        t-esc="o.addressed_to"/>.
-                                    Currently employee End of service amount is QAR
-                                    <t style="padding-right:5px;"
-                                       t-esc="o.end_of_service_benefit"/>
-                                    <t t-if="o.end_of_service_benefit > 0">/-</t>
-                                    <t t-if="o.end_of_service_benefit_word">(
-                                        <t style="padding-right:5px;"
-                                           t-esc="o.end_of_service_benefit_word"/>
-                                        )
-                                    </t>
                                 </p>
 
                                 <p>The above-named employee fully understands that QShield LLC., does not in any way
                                     hold itself responsible for any debits incurred by the employee and that the opening
                                     and granting of the facilities is the sole discretion of your bank.
                                 </p>
-                                <div>
+                                <div class="mt-5">
                                     Kind regards,
                                     <br/>
                                     <br/>
@@ -208,13 +213,14 @@
                                     <!--                                    <strong>DESIGNATION:</strong>-->
                                     <span style="padding-right:5px;" t-field="o.signatory_id.job_id.name"/>
                                 </div>
-                            </body>
-                        </html>
+                            </div>
+                        </body>
+                    </html>
 
-                    </div>
+                </div>
 
-                </t>
             </t>
+            <!--            </t>-->
         </t>
     </template>
 </odoo>

@@ -3,17 +3,20 @@
     <template id="linquor_permit_template">
         <t t-call="web.html_container">
             <t t-foreach="docs" t-as="o">
-                <t t-call="web.internal_layout">
-                    <div class="page">
-                        <html>
-                            <style>
-                                body{
-                                text-align: justify;
-                                font-size:18px
-                                word-spacing: 10px;
-                                }
+                <!--                <t t-call="web.internal_layout">-->
+                <div class="page">
+                    <html>
+                        <style>
+                            body{
+                            text-align: justify;
+                            font-size:18px
+                            word-spacing: 10px;
+                            margin-left: 96px !important;
+                            margin-right: 96px !important;
+                            }
 
-                            </style>
+                        </style>
+                        <div>
                             <body>
                                 <div style="margin-left:70%">
                                     <p style="line-height: 2; text-align: justify;">
@@ -69,15 +72,16 @@
                                         Mrs.
                                     </t>
                                     <span style="padding-right:5px;" t-field="o.employee_id.name"/>,
-                                    <span style="padding-right:5px;" t-field="o.employee_id.nationality"/>
-                                    Nationality,
+                                    <!--                                    <span style="padding-right:5px;" t-field="o.employee_id.nationality"/>-->
+                                    <!--                                    Nationality,-->
                                     holding a Passport No.
                                     <span style="padding-right:5px;" t-field="o.employee_id.passport_id"/>
                                     and QID No.
                                     <span style="padding-right:5px;" t-field="o.employee_id.qid_number"/>
                                     is a confirmed employee of
                                     <span style="padding-right:5px;"
-                                          t-field="o.employee_id.company_id.partner_id.name"/>, LLC.
+                                          t-field="o.employee_id.company_id.partner_id.name"/>
+                                    LLC.
                                     <t t-if="o.employee_id.gender == 'male'">Mr.</t>
                                     <t t-if="o.employee_id.gender == 'female' and o.employee_id.marital == 'single'">
                                         Miss.
@@ -89,10 +93,8 @@
                                     is employed by our company on
                                     <span style="padding-right:5px;"
                                           t-esc="o.employee_id['joining_date'].strftime('%d-%b-%Y')"/>
-                                    and
-                                    <t t-if="o.employee_id.gender == 'male'">he</t>
-                                    <t t-if="o.employee_id.gender == 'female'">she</t>
-                                    is currently working as
+                                    <t t-if="o.employee_id.gender == 'male'">and he is currently working as</t>
+                                    <t t-if="o.employee_id.gender == 'female'">and she is currently working as</t>
                                     <span style="padding-right:5px;" t-field="o.employee_id.job_id.name"/>.
                                     <t t-if="o.employee_id.gender == 'male'">His</t>
                                     <t t-if="o.employee_id.gender == 'female'">Her</t>
@@ -145,11 +147,12 @@
                                 <!--                                    <strong>DESIGNATION: </strong> <span style="padding-right:5px;" t-field="o.signatory_id.job_id.name"/>-->
                                 <!--                                </div>-->
                             </body>
-                        </html>
+                        </div>
+                    </html>
 
-                    </div>
+                </div>
 
-                </t>
+                <!--                </t>-->
             </t>
         </t>
     </template>

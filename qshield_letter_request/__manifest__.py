@@ -30,6 +30,7 @@
         'views/ebs_hr_letter_request_view.xml',
         'views/hr_employee_custom.xml',
         'data/ir_sequence_data.xml',
+        'report/job_offer.xml',
         'report/form_header.xml',
         'report/report.xml',
         'report/liquor_permit.xml',

@@ -1,0 +1,242 @@
+<odoo>
+
+    <report
+            id="action_job_offer_report"
+            model="ebs.hr.letter.request"
+            string="Job Offer"
+            report_type="qweb-pdf"
+            name="qshield_letter_request.job_offer_report_template"
+            file="qshield_letter_request.job_offer_report_template"
+            menu="False"
+    />
+
+    <template id="job_offer_report_template">
+        <t t-call="web.html_container">
+            <t t-foreach="docs" t-as="o">
+                <!--                <t t-call="web.internal_layout">-->
+                <div class="page">
+                    <html>
+                        <style>
+                            body{
+                            margin-left: 50px !important;
+                            margin-right: 50px !important;
+                            line-height: 1.2em;
+                            }
+                            .custom_table td {
+                            border-bottom: 1px solid black !important;
+                            height :20px !important;
+                            }
+                        </style>
+                        <body>
+                            <div style="padding-top:10px!important;">
+                                <div>
+                                    <center>
+                                        <b>
+                                            <h4 style="text-decoration: underline;">
+                                                <b style="font-size: 23px;">JOB OFFER</b>
+                                            </h4>
+                                        </b>
+                                    </center>
+                                </div>
+                                <div>
+                                    <div>
+                                        <b>Date:
+                                            <t t-esc="context_timestamp(datetime.datetime.now()).strftime('%Y-%m-%d')"/>
+                                        </b>
+                                    </div>
+                                    <div class="row">
+                                        <div class="col-3">
+                                            <b>To:
+                                                <t t-if="o.employee_id.gender == 'male'">
+                                                    <b style="padding-left:100px;">Mr.
+                                                        <t t-esc="o.employee_id.name"/>
+                                                    </b>
+                                                </t>
+                                                <t t-if="o.employee_id.gender == 'female'">
+                                                    <b style="padding-left:100px;">Ms.
+                                                        <t t-esc="o.employee_id.name"/>
+                                                    </b>
+                                                </t>
+                                            </b>
+                                        </div>
+                                    </div>
+                                    <div>
+                                        <b>Nationality:
+                                            <t t-esc="o.employee_id.country_id.name"/>
+                                        </b>
+                                    </div>
+                                </div>
+                                <p class="mt-3">It is with pleasure to extend the following offer of employment.</p>
+                                <table class="table custom_table" width="100%"
+                                       style="border-left: 1px solid black;border-right: 1px solid black;border-top: 1px solid black;">
+                                    <tbody border="0">
+                                        <tr style="border-bottom: 1px solid black;">
+                                            <td style="border-right: 1px solid black; padding-left:10px;" width="40%">
+                                                <b>Job Title</b>
+                                            </td>
+                                            <td style="padding-left:10px;" width="60%">
+                                                <t t-esc="o.job_title"/>
+                                            </td>
+                                        </tr>
+                                        <tr style="border: 1px solid;">
+                                            <td style="border-right: 1px solid black;padding-left:10px;" width="40%">
+                                                <b>Duration of Contract</b>
+                                            </td>
+                                            <td style="padding-left:10px;" width="60%">
+                                                <t t-esc="o.contract_duration"/>
+                                            </td>
+                                        </tr>
+                                        <tr style="border: 1px solid;">
+                                            <td style="border-right: 1px solid black;padding-left:10px;" width="40%">
+                                                <b>Probation Period</b>
+                                            </td>
+                                            <td style="padding-left:10px;" width="60%">
+                                                <t t-esc="o.probation_period"/>
+                                            </td>
+                                        </tr>
+                                        <tr style="border: 1px solid;">
+                                            <td style="border-right: 1px solid black;padding-left:10px;" width="40%">
+                                                <b>Contract Start Date</b>
+                                            </td>
+                                            <td style="padding-left:10px;" width="60%">
+                                                <t t-esc="o.contract_start_date.strftime('%Y-%m-%d')"/>
+                                            </td>
+                                        </tr>
+                                        <tr style="border: 1px solid;">
+                                            <td style="border-right: 1px solid black;padding-left:10px;" width="40%">
+                                                <b>Employment Status</b>
+                                            </td>
+                                            <td style="padding-left:10px;" width="60%">
+                                                <t t-esc="o.employment_status"/>
+                                            </td>
+                                        </tr>
+                                        <tr style="border: 1px solid;">
+                                            <td style="border-right: 1px solid black;padding-left:10px;" width="40%">
+                                                <b>Monthly Basic Salary</b>
+                                            </td>
+                                            <td style="padding-left:10px;" width="60%">
+                                                <t t-esc="o.monthly_basic_salary"/>
+                                            </td>
+                                        </tr>
+                                        <tr style="border: 1px solid;">
+                                            <td style="border-right: 1px solid black;padding-left:10px;" width="40%">
+                                                <b>Monthly Housing Allowance</b>
+                                            </td>
+                                            <td style="padding-left:10px;" width="60%">
+                                                <t t-esc="o.monthly_housing_allowance"/>
+                                            </td>
+                                        </tr>
+                                        <tr style="border: 1px solid;">
+                                            <td style="border-right: 1px solid black;padding-left:10px;" width="40%">
+                                                <b>Monthly Transportation Allowance</b>
+                                            </td>
+                                            <td style="padding-left:10px;" width="60%">
+                                                <t t-esc="o.monthly_transportation_allowance"/>
+                                            </td>
+                                        </tr>
+                                        <tr style="border: 1px solid;">
+                                            <td style="border-right: 1px solid black;padding-left:10px;" width="40%">
+                                                <b>Monthly Other Allowance</b>
+                                            </td>
+                                            <td style="padding-left:10px;" width="60%">
+                                                <t t-esc="o.monthly_other_allowance"/>
+                                            </td>
+                                        </tr>
+                                        <tr style="border: 1px solid;">
+                                            <td style="border-right: 1px solid black;padding-left:10px;" width="40%">
+                                                <b>Monthly Net Salary</b>
+                                            </td>
+                                            <td style="padding-left:10px;" width="60%">
+                                                <t t-esc="o.monthly_net_salary"/>
+                                            </td>
+                                        </tr>
+                                        <tr style="border: 1px solid;">
+                                            <td style="border-right: 1px solid black;padding-left:10px;" width="40%">
+                                                <b>Annual Air Ticket Arrangement</b>
+                                            </td>
+                                            <td style="padding-left:10px;" width="60%">
+                                                <t t-esc="o.annual_air_ticket_management"/>
+                                            </td>
+                                        </tr>
+                                        <tr style="border: 1px solid;">
+                                            <td style="border-right: 1px solid black;padding-left:10px;" width="40%">
+                                                <b>Medical &#38; Life Insurance</b>
+                                            </td>
+                                            <td style="padding-left:10px;" width="60%">
+                                                <t t-esc="o.medical_and_life_insurance"/>
+                                            </td>
+                                        </tr>
+                                        <tr style="border: 1px solid;">
+                                            <td style="border-right: 1px solid black;padding-left:10px;" width="40%">
+                                                <b>Vacation Leave</b>
+                                            </td>
+                                            <td style="padding-left:10px;" width="60%">
+                                                <t t-esc="o.vacation_leave"/>
+                                            </td>
+                                        </tr>
+                                        <tr style="border: 1px solid;">
+                                            <td style="border-right: 1px solid black;padding-left:10px;" width="40%">
+                                                <b>Sick leave</b>
+                                            </td>
+                                            <td style="padding-left:10px;" width="60%">
+                                                <t t-esc="o.sick_leave"/>
+                                            </td>
+                                        </tr>
+                                        <tr style="border: 1px solid;">
+                                            <td style="border-right: 1px solid black;padding-left:10px;" width="40%">
+                                                <b>End of Service Benefits</b>
+                                            </td>
+                                            <td style="padding-left:10px;" width="60%">
+                                                <t t-esc="o.end_of_service_benefit_for_job_offer"/>
+                                            </td>
+                                        </tr>
+                                    </tbody>
+                                </table>
+                                <hr style="background-color:black;"></hr>
+                                <p>
+                                    This position is contingent upon a complete background fingerprint investigation
+                                    and
+                                    reference check prior to employment and is subject to the authorities of State
+                                    of Qatar.
+                                    Anything not mentioned here shall be dealt in accordance with the Qatar Labour
+                                    Law. This
+                                    offer is valid until one (1) Month from the date of receipt.
+                                </p>
+                                <p>
+                                    We are delighted you are joining our company and hope you will find your
+                                    employment with
+                                    QShield to be a rewarding experience. We look forward to having you on our team.
+                                </p>
+                                <table width="100%">
+                                    <tr>
+                                        <td>QShield LLC., Authorized Signatory</td>
+                                    </tr>
+                                    <tr>
+                                        <td width="50%" style="padding-top: 30px;">
+                                            ___________________________________
+                                        </td>
+                                        <td class="ml-2" width="50%" style="padding-top: 30px;">Date:
+                                            _____________________________
+                                        </td>
+                                    </tr>
+                                    <tr>
+                                        <td>Applicant’s Acceptance of Offer:</td>
+                                    </tr>
+                                    <tr>
+                                        <td style="padding-top: 30px;">________________________________</td>
+                                        <td style="padding-top: 30px;">Date: _____________________________</td>
+                                    </tr>
+                                    <tr>
+                                        <td style="padding-top:10px;">Signature</td>
+                                    </tr>
+                                </table>
+                            </div>
+                        </body>
+                    </html>
+                </div>
+                <!--                </t>-->
+            </t>
+        </t>
+    </template>
+
+</odoo>
