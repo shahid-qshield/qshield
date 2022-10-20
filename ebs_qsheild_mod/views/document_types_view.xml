@@ -10,8 +10,11 @@
 
                     <field name="name"/>
                     <field name="notify"/>
-                    <field name="days_before_notifaction"
-                           attrs="{'invisible':[('notify','=',False)],'required':[('notify','=',True)]}"/>
+                    <!--                    <field name="days_before_notifaction"-->
+                    <!--                           attrs="{'invisible':[('notify','=',False)],'required':[('notify','=',True)]}"/>-->
+                    <field name="expiry_configuration_ids"
+                           attrs="{'invisible':[('notify','=',False)],'required':[('notify','=',True)]}"
+                           widget="many2many_tags"/>
                 </tree>
             </field>
         </record>
@@ -28,8 +31,11 @@
                             </group>
                             <group>
                                 <field name="notify"/>
-                                <field name="days_before_notifaction"
-                                       attrs="{'invisible':[('notify','=',False)],'required':[('notify','=',True)]}"/>
+                                <field name="expiry_configuration_ids"
+                                       attrs="{'invisible':[('notify','=',False)],'required':[('notify','=',True)]}"
+                                       widget="many2many_tags"/>
+                                <!--                                <field name="days_before_notifaction"-->
+                                <!--                                       attrs="{'invisible':[('notify','=',False)],'required':[('notify','=',True)]}"/>-->
                             </group>
                         </group>
                     </sheet>
