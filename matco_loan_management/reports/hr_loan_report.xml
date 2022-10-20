@@ -165,7 +165,7 @@
                                                 </td>
 
                                                 <td>
-                                                    <span t-esc="net_balance"/>
+                                                    <span t-esc='"%.2f" % net_balance'/>
                                                 </td>
                                             </tr>
                                         </t>
