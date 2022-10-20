@@ -7,7 +7,6 @@ class DocumentTypes(models.Model):
     _name = 'ebs_mod.document.types'
     _description = "Document Type"
 
-
     _sql_constraints = [
         ('document_type_name_unique', 'unique (name)',
          'Name must be unique !'),
@@ -24,3 +23,16 @@ class DocumentTypes(models.Model):
     days_before_notifaction = fields.Integer(
         string='Days Before Expiry'
     )
+    expiry_configuration_ids = fields.Many2many('document.types.expiry.configuration',
+                                                string="Days Before Expiry Configuration")
+
+
+class DocumentTypesExpiryConfiguration(models.Model):
+    _name = 'document.types.expiry.configuration'
+    _description = "Document Type Expiry Configuration"
+    _rec_name = 'days_before_notification'
+
+    days_before_notification = fields.Integer(
+        string='Days Before Expiry'
+    )
+
