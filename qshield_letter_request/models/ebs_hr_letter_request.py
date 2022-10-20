@@ -9,6 +9,7 @@ _request_type = [
     ('bank_salary_certificate', 'Salary Certificate To The Bank'),
     ('liquor_permit', 'QDC - Application For LIQUOR PERMIT'),
     ('termination_letter', 'Termination Letter'),
+    ('job_offer_letter', 'Job Offer Letter'),
 ]
 AVAILABLE_PRIORITIES = [
     ('0', 'Low'),
@@ -48,7 +49,8 @@ class EBSHRLetterRequest(models.Model):
                                 default=AVAILABLE_PRIORITIES[0][0],
                                 help='The priority of the request, as an integer: 0 means higher priority, 10 means '
                                      'lower priority.')
-    type = fields.Selection(_request_type, required=True, string='Type', tracking=True, readonly=True)
+    type = fields.Selection(_request_type, required=True, string='Type', tracking=True, readonly=True,
+                            default="noc_visa_application")
     addressed_to = fields.Char(string='Addressed To', required=True, copy=False, tracking=True)
     signatory_id = fields.Many2one('hr.employee', string='Signatory', required=True,
                                    domain=[('signatory', '=', True)],
@@ -74,6 +76,26 @@ class EBSHRLetterRequest(models.Model):
     allowances_num_word = fields.Char(string="Allowances In Words:", compute='_compute_amount_in_word', store=True)
     end_of_service_benefit = fields.Float(default=0.0, required=False)
     end_of_service_benefit_word = fields.Char(string="Amount In Words:", compute='_compute_amount_in_word', store=True)
+
+    job_title = fields.Char(string="Job Title")
+    contract_duration = fields.Integer(string="Contract Duration")
+    probation_period = fields.Char(string="Probation Period")
+    contract_start_date = fields.Date(string="Contract Start Date")
+    employment_status = fields.Char(string="Employment status")
+    monthly_basic_salary = fields.Monetary(string="Monthly Basic Salary")
+    monthly_housing_allowance = fields.Monetary(string="Monthly Housing allowance")
+    monthly_transportation_allowance = fields.Monetary(string="Monthly Transportation Allowance")
+    monthly_other_allowance = fields.Monetary(string="Monthly Other allowance")
+    monthly_net_salary = fields.Monetary(string="Monthly Net Salary")
+    annual_air_ticket_management = fields.Text(string="Annual Air Ticket Arrangement",
+                                               default="One (1) Economy Class Tickets to Home of Record:")
+    medical_and_life_insurance = fields.Text(string="Medical & Life Insurance",
+                                             default="Provided Locally as per company policy and Qatari Law -")
+    vacation_leave = fields.Text(string="Vacation Leave", default="Options: 30 Calendar days per year, plus Government Holidays \
+               21 calendar days per year, plus Government Holidays ")
+    sick_leave = fields.Text(string="Sick leave", default="Provided Locally as per company policy and Qatari Law")
+    end_of_service_benefit_for_job_offer = fields.Text(string="End Of Service Benefit",
+                                                       default="As per Qatar Law, 21 days per year of service")
 
     # amount in words
     @api.onchange('gross_salary', 'all_allowances', 'wage_num_word', 'end_of_service_benefit')
@@ -106,9 +128,21 @@ class EBSHRLetterRequest(models.Model):
     def _onchange_helpdesk_move_domain(self):
         return {'domain': {'signatory_id': [('id', '!=', self.employee_id.id), ('signatory', '=', True)]}}
 
+    @api.onchange('type')
+    def onchange_type(self):
+        if self.type == 'job_offer_letter':
+            self.addressed_to = 'test'
+            self.signatory_id = self.env.user.employee_id.id
+
     @api.onchange('employee_id')
     @api.depends('employee_id')
     def get_gross_salary_and_allowances(self):
+        self.monthly_basic_salary = self.employee_id.contract_id.wage
+        self.monthly_transportation_allowance = self.employee_id.contract_id.transport_allowance
+        self.monthly_other_allowance = self.employee_id.contract_id.other_allowance
+        self.monthly_housing_allowance = self.employee_id.contract_id.housing_allowance
+        self.contract_duration = self.employee_id.contract_id.contract_duration
+        self.contract_start_date = self.employee_id.contract_id.date_start
         self.gross_salary = self.employee_id.contract_id.housing_allowance + self.employee_id.contract_id.petrol_allowance + \
                             self.employee_id.contract_id.other_allowance + self.employee_id.contract_id.telephone_allowance + \
                             self.employee_id.contract_id.transport_allowance + self.employee_id.contract_id.wage
@@ -164,6 +198,8 @@ class EBSHRLetterRequest(models.Model):
             return self.env.ref('qshield_letter_request.qdc_linquor_permit').report_action(self)
         elif self.type == 'termination_letter':
             return self.env.ref('qshield_letter_request.termination_letter').report_action(self)
+        elif self.type == 'job_offer_letter':
+            return self.env.ref('qshield_letter_request.action_job_offer_report').report_action(self)
 
     @api.constrains('type', 'state')
     def _check_values(self):
