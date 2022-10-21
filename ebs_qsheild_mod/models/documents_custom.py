@@ -133,6 +133,11 @@ class DocumentsCustom(models.Model):
             domain=[('related_company.account_manager', '!=', False)],
             fields=[],
             groupby=['related_company'])
+        recipient_emails_for_document_expiry = self.env['ir.config_parameter'].sudo().get_param(
+                'ebs_qsheild_mod.recipient_emails_for_document_expiry')
+        email_list = recipient_emails_for_document_expiry.split(',')
+        if not recipient_emails_for_document_expiry:
+            pass
         for company in group_companies:
             if company['related_company'][0] == 7247:
                 print('---------------------------------')
@@ -199,37 +204,38 @@ class DocumentsCustom(models.Model):
                                         # body += '''<th><a href="{url}" target="_blank">{name}</a></th></tr> '''.format(
                                         #     url=doc['Document_url'],
                                         #     name=doc['Employee_Name'])
-                                    mail = self.env['mail.mail'].sudo().create({
-                                        'subject': _('{} - {} - {}'.format(
-                                            company_name, document_type.name,
-                                            configuration_id.days_before_notification)),
-                                        'email_from': self.env.user.partner_id.email,
-                                        'author_id': self.env.user.partner_id.id,
-                                        'email_to': 'crm@qshield.com',
-                                        # 'email_from': self.env.company.email or self.env.user.partner_id.email,
-                                        # 'author_id': self.env.company.partner_id.id,
-                                        # 'email_to': account_manager.user_id.partner_id.email,
-                                        'body_html': "<style>"
-                                                     '''.table_1 {
-                                                     table-layout: fixed;
-                                                     }
-                                                     .table_1 td,.table_1 th {
-                                                     border: 2px solid #454141;
-                                                     text-align: left;
-                                                     padding: 4px;
-                                                     }
-                                                     .table_1 th{
-                                                     width: 250px;
-                                                     }
-                                                     .table_1 td p{
-                                                     width: 99%;
-                                                     }''' + "</style>" +
-                                                     " Dear {}, <br/> ".format(
-                                                         company_name) + '<br/>' +
-                                                     " <strong> Below is the list of document Subject to expiry :  </strong> <br/>" + '<br/>' + body
-                                        ,
-                                    })
-                                    mail.send()
+                                    for email in email_list:
+                                        mail = self.env['mail.mail'].sudo().create({
+                                            'subject': _('{} - {} - {}'.format(
+                                                company_name, document_type.name,
+                                                configuration_id.days_before_notification)),
+                                            'email_from': self.env.user.partner_id.email,
+                                            'author_id': self.env.user.partner_id.id,
+                                            'email_to': email,
+                                            # 'email_from': self.env.company.email or self.env.user.partner_id.email,
+                                            # 'author_id': self.env.company.partner_id.id,
+                                            # 'email_to': account_manager.user_id.partner_id.email,
+                                            'body_html': "<style>"
+                                                         '''.table_1 {
+                                                         table-layout: fixed;
+                                                         }
+                                                         .table_1 td,.table_1 th {
+                                                         border: 2px solid #454141;
+                                                         text-align: left;
+                                                         padding: 4px;
+                                                         }
+                                                         .table_1 th{
+                                                         width: 250px;
+                                                         }
+                                                         .table_1 td p{
+                                                         width: 99%;
+                                                         }''' + "</style>" +
+                                                         " Dear {}, <br/> ".format(
+                                                             company_name) + '<br/>' +
+                                                         " <strong> Below is the list of document Subject to expiry :  </strong> <br/>" + '<br/>' + body
+                                            ,
+                                        })
+                                        mail.send()
                             # if items:
                             #     for doc in items:
                             #         body += " <tr> <th scope='row'>{}</th> ".format(doc['document_number'])
