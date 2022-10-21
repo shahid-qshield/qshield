@@ -86,7 +86,7 @@ class EBSHRLetterRequest(models.Model):
     monthly_housing_allowance = fields.Monetary(string="Monthly Housing allowance")
     monthly_transportation_allowance = fields.Monetary(string="Monthly Transportation Allowance")
     monthly_other_allowance = fields.Monetary(string="Monthly Other allowance")
-    monthly_net_salary = fields.Monetary(string="Monthly Net Salary")
+    monthly_net_salary = fields.Monetary(string="Monthly Net Salary", compute="compute_monthly_net_salary", store=True)
     annual_air_ticket_management = fields.Text(string="Annual Air Ticket Arrangement",
                                                default="One (1) Economy Class Tickets to Home of Record:")
     medical_and_life_insurance = fields.Text(string="Medical & Life Insurance",
@@ -96,6 +96,13 @@ class EBSHRLetterRequest(models.Model):
     sick_leave = fields.Text(string="Sick leave", default="Provided Locally as per company policy and Qatari Law")
     end_of_service_benefit_for_job_offer = fields.Text(string="End Of Service Benefit",
                                                        default="As per Qatar Law, 21 days per year of service")
+
+    @api.depends('monthly_basic_salary', 'monthly_housing_allowance', 'monthly_other_allowance',
+                 'monthly_transportation_allowance')
+    def compute_monthly_net_salary(self):
+        for record in self:
+            record.monthly_net_salary = record.monthly_basic_salary + record.monthly_housing_allowance + \
+                                        record.monthly_other_allowance + record.monthly_transportation_allowance
 
     # amount in words
     @api.onchange('gross_salary', 'all_allowances', 'wage_num_word', 'end_of_service_benefit')
