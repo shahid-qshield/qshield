@@ -18,8 +18,8 @@
                     <html>
                         <style>
                             body{
-                            margin-left: 50px !important;
-                            margin-right: 50px !important;
+                            margin-left: 96px !important;
+                            margin-right: 96px !important;
                             line-height: 1.2em;
                             }
                             .custom_table td {
@@ -83,7 +83,7 @@
                                                 <b>Duration of Contract</b>
                                             </td>
                                             <td style="padding-left:10px;" width="60%">
-                                                <t t-esc="o.contract_duration"/>
+                                                <t t-esc="o.contract_duration"/> Years
                                             </td>
                                         </tr>
                                         <tr style="border: 1px solid;">
