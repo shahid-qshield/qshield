@@ -122,6 +122,9 @@ class ServiceRequestWorkFlow(models.Model):
     is_show_new_status = fields.Boolean('Is Show status', related='service_request_id.is_show_new_status')
     is_edit_status = fields.Boolean('Is Show status', related='service_request_id.is_edit_status')
     is_edit_status_new = fields.Boolean('Is Show status', related='service_request_id.is_edit_status_new')
+    active = fields.Boolean(
+        string='Active', default=True,
+        required=False)
 
     def send_notification(self):
         if self.workflow_id.is_application_submission:
