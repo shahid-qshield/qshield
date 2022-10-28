@@ -13,7 +13,9 @@ class EbsModServiceRequest(models.Model):
 
     def unarchive_services(self):
         for record in self:
-            if record.service_flow_ids:
-                for workflow in record.service_flow_ids:
+            service_flow_ids = self.env['ebs_mod.service.request.workflow'].sudo().search(
+                [('service_request_id', '=', record.id), ('active', '=', False)])
+            if service_flow_ids:
+                for workflow in service_flow_ids:
                     workflow.sudo().write({'active': True})
             record.sudo().write({'active': True})
