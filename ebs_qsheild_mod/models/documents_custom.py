@@ -134,7 +134,7 @@ class DocumentsCustom(models.Model):
             fields=[],
             groupby=['related_company'])
         recipient_emails_for_document_expiry = self.env['ir.config_parameter'].sudo().get_param(
-                'ebs_qsheild_mod.recipient_emails_for_document_expiry')
+            'ebs_qsheild_mod.recipient_emails_for_document_expiry')
         email_list = recipient_emails_for_document_expiry.split(',')
         if not recipient_emails_for_document_expiry:
             pass
@@ -173,10 +173,10 @@ class DocumentsCustom(models.Model):
                                             'expiration_date': document.expiry_date,
                                             'related_contact': document.related_contact.name or '',
                                             'date_stop_renew': document.date_stop_renew or '',
-                                            # 'Document_url': str(
-                                            #     base_url) + '/web#id={id}&action={action_id}&model=documents.document&view_type=form'.format(
-                                            #     id=document.id, action_id=self.env.ref('documents.document_action').id
-                                            # ),
+                                            'Document_url': str(
+                                                base_url) + '/web#id={id}&action={action_id}&model=documents.document&view_type=form'.format(
+                                                id=document.id, action_id=self.env.ref('documents.document_action').id
+                                            ),
                                         }
                                     )
                                 body = ''
@@ -186,8 +186,11 @@ class DocumentsCustom(models.Model):
                                         table_body = ''
                                         table = ''
                                         table += "<table class='table_1'>"
+                                        document_url = '''<a href="{url}" target="_blank">{name}</a>'''.format(
+                                            url=doc['Document_url'],
+                                            name=doc['document_number'])
                                         table_body += "<tr><td>Document Number</td><td>{}</td></tr>".format(
-                                            doc['document_number'])
+                                            document_url)
                                         table_body += "<tr><td>Document Type</td><td>{}</td></tr>".format(
                                             doc['document_type'])
                                         table_body += "<tr><td>Contact</td><td>{}</td></tr>".format(doc['contact'])
@@ -245,9 +248,9 @@ class DocumentsCustom(models.Model):
                             #         body += "<th scope='row'>{}</th>".format(doc['expiration_date'])
                             #         body += "<th scope='row'>{}</th>".format(doc['related_contact'])
                             #         body += "<th scope='row'>{}</th>".format(doc['date_stop_renew'])
-                            #         # body += '''<th><a href="{url}" target="_blank">{name}</a></th></tr> '''.format(
-                            #         #     url=doc['Document_url'],
-                            #         #     name=doc['Employee_Name'])
+                            #         body += '''<th><a href="{url}" target="_blank">{name}</a></th></tr> '''.format(
+                            #             url=doc['Document_url'],
+                            #             name=doc['Employee_Name'])
                             #     mail = self.env['mail.mail'].sudo().create({
                             #         'subject': _('{} - {} - {}'.format(
                             #             company_name,document_type.name,document_days)),
