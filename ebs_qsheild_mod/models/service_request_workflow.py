@@ -100,8 +100,8 @@ class ServiceRequestWorkFlow(models.Model):
                    ('cancel', 'Cancelled'),
                    ('reject', 'Rejected'),
                    ],
-        required=True)
-    status_new = fields.Selection(selection=[('new', 'New')], string="Status")
+        required=True,tracking=True)
+    status_new = fields.Selection(selection=[('new', 'New')], string="Status",tracking=True)
 
     desc = fields.Text(
         string="Description",
