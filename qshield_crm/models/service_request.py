@@ -51,8 +51,8 @@ class ServiceRequest(models.Model):
                         invoice_term.create_retainer_invoice()
                     else:
                         raise UserError('Sale order flow is incomplete')
-                else:
-                    raise UserError('Invoice term for this service not created')
+                # else:
+                #     raise UserError('Invoice term for this service not created')
             elif self.is_one_time_transaction and self.sale_order_id:
                 invoice_term = self.sale_order_id.invoice_term_ids
                 if invoice_term:
@@ -64,8 +64,8 @@ class ServiceRequest(models.Model):
                         invoice_term[0].create_retainer_invoice()
                     else:
                         raise UserError('Sale order flow is incomplete')
-                else:
-                    raise UserError('Invoice term for this service not created')
+                # else:
+                #     raise UserError('Invoice term for this service not created')
 
     def update_existing_invoice(self, invoice_term, invoice_id):
         invoice_line_without_government_fees = invoice_id.invoice_line_ids.filtered(
