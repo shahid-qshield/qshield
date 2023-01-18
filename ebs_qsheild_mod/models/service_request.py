@@ -505,6 +505,15 @@ class ServiceRequest(models.Model):
         elif vals.get(
                 'status') == 'pending_payment' and self.status == 'pending_payment' and is_send_service_notification:
             self.send_notification_all_account_manager()
+        elif vals.get(
+                'status') == 'incomplete' and self.status == 'incomplete' and is_send_service_notification:
+            self.send_notification_all_account_manager()
+        elif vals.get(
+                'status') == 'escalated_incomplete' and self.status == 'escalated_incomplete' and is_send_service_notification:
+            self.send_notification_all_account_manager()
+        elif vals.get(
+                'status') == 'escalated_complete' and self.status == 'escalated_complete' and is_send_service_notification:
+            self.send_notification_all_account_manager()
         return res
 
     def send_notification_all_account_manager(self):
