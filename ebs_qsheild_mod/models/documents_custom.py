@@ -130,7 +130,7 @@ class DocumentsCustom(models.Model):
 
     def notify_expired_document(self):
         group_companies = self.read_group(
-            domain=[('related_company.account_manager', '!=', False)],
+            domain=[('related_company', '!=', False),('partner_id','!=',False)],
             fields=[],
             groupby=['related_company'])
         recipient_emails_for_document_expiry = self.env['ir.config_parameter'].sudo().get_param(
@@ -139,10 +139,10 @@ class DocumentsCustom(models.Model):
         if not recipient_emails_for_document_expiry:
             pass
         for company in group_companies:
-            if company['related_company'][0] == 7247:
-                print('---------------------------------')
-            documents = self.search([('active', '=', 'True'), ('renewed', '=', False), ('notify', '=', True),
-                                     ('related_company', '=', company['related_company'][0]), ])
+            # if company['related_company'] is None:
+            #     print('---------------------------------')
+            documents = self.search([('active', '=', 'True'), ('renewed', '=', False), ('notify', '=', True),'|',
+                                     ('related_company', '=', company['related_company'][0]),('partner_id','=',company['related_company'][0])])
             document_types = documents.mapped('document_type_id')
             if documents and document_types:
                 base_url = self.env['ir.config_parameter'].get_param('web.base.url')
