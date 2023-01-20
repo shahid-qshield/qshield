@@ -157,7 +157,11 @@ class DocumentsCustom(models.Model):
                                 account_manager = None
                                 company_name = None
                                 for document in expired_documents:
-                                    company_name = document.related_company.name
+                                    company_name = False
+                                    if document.related_company:
+                                        company_name = document.related_company.name
+                                    else:
+                                        company_name = document.partner_id.name
                                     account_manager = document.related_company.account_manager
                                     document_days = 0
                                     person_type = ''
