@@ -29,7 +29,8 @@
                     <field name="is_qshield_sponsor"/>
                     <field name="is_address" invisible="1"/>
                     <field name="employee_ids" context="{'get_partner_id' : active_id}"
-                           attrs="{'invisible':[('check_qshield_sponsor','=',False)]}"/>
+                           attrs="{'invisible':[('check_qshield_sponsor','=',False)]}"
+                           readonly="True"/>
                 </xpath>
             </field>
         </record>
