@@ -12,7 +12,8 @@ class ContactCustom(models.Model):
     nearest_land_mark = fields.Char()
     fax_number = fields.Char('Fax No.')
     # employee_id = fields.Many2one('hr.employee', string='Related Employee', index=True)
-    employee_ids = fields.One2many('hr.employee', 'partner_id', string="Related Employee", auto_join=True)
+    employee_ids = fields.One2many('hr.employee', 'partner_id', string="Related Employee", auto_join=True,
+                                   domain="[('active', '=', True and False)]")
     is_qshield_sponsor = fields.Boolean(string='Is Qshield Sponsor')
     check_qshield_sponsor = fields.Boolean(compute="compute_check_qshield_sponsor")
     is_address = fields.Boolean(string="Is Address", default=False)
@@ -80,28 +81,90 @@ class ContactCustom(models.Model):
                 res.create_employee()
             return res
 
-    def create_employee(self):
+    def write(self, vals):
+        if self.person_type == 'company':
+            all_related_partner = self.env['res.partner'].sudo().search(
+                [('sponsor', '=', self.id), ('person_type', '=', 'emp')])
+            for partners in all_related_partner:
+                if not vals.get('is_qshield_sponsor'):
+                    if partners.employee_ids:
+                        partners.employee_ids.write({'active': False})
+                if vals.get('is_qshield_sponsor'):
+                    employee = partners.employee_ids.search([('active', '=', False), ('name', '=', partners.name)],
+                                                            limit=1)
+                    if employee:
+                        employee.write({'active': True})
+                        partners.employee_ids.write({'partner_id': [(4, partners.id)]})
+                    else:
+                        partners.create_employee(partner=partners)
+
+        elif vals.get('sponsor') or vals.get('person_type') == 'emp' or self.person_type == 'emp':
+            new_sponsor = False
+            if not self.employee_ids:
+                employee = self.employee_ids.filtered(lambda a: not a.active)
+                if employee:
+                    employee.write({'active': True})
+                    self.employee_ids.partner_id = self.id
+                else:
+                    if vals.get('sponsor'):
+                        new_sponsor = self.env['res.partner'].sudo().browse(vals.get('sponsor'))
+                    self.create_employee(sponsor=new_sponsor)
+            new_sponsor = self.env['res.partner'].sudo().browse(vals.get('sponsor'))
+            if new_sponsor and not new_sponsor.is_qshield_sponsor:
+                if self.employee_ids:
+                    self.employee_ids.write({'active': False})
+        if self.person_type == 'emp' and vals.get('person_type') in ['company', 'child', 'visitor']:
+            if self.employee_ids:
+                self.employee_ids.write({'active': False})
+        return super(ContactCustom, self).write(vals)
+
+    def create_employee(self, partner=False, sponsor=False):
         for rec in self:
-            if rec.sponsor.is_qshield_sponsor == True:
-                if not rec.employee_ids:
-                    dependants = []
-                    for each_dependant in rec.employee_dependants:
+            dependants = []
+            if partner:
+                if not partner.employee_ids:
+                    for each_dependant in partner.employee_dependants:
                         dependants.append((0, 0, {
                             'name': each_dependant.name,
                             'gender': each_dependant.gender,
                             'dob': each_dependant.date,
                         }))
                     employee = self.env['hr.employee'].create({
-                        'name': rec.name,
-                        'country_id': rec.nationality.id,
-                        'gender': rec.gender,
-                        'birthday': rec.date,
+                        'name': partner.name,
+                        'country_id': partner.nationality.id,
+                        'gender': partner.gender,
+                        'birthday': partner.date,
                         # 'job_id': rec.function,
-                        'work_phone': rec.phone,
-                        'mobile_phone': rec.mobile,
-                        'work_email': rec.email,
+                        'work_phone': partner.phone,
+                        'mobile_phone': partner.mobile,
+                        'work_email': partner.email,
                         'dependant_id': dependants,
-                        'partner_id': rec.id,
-                        'work_in': rec.sponsor.id,
+                        'partner_id': partner.id,
+                        'work_in': partner.sponsor.id,
                     })
+                    print("Create EMP -", employee.name)
+                elif partner.employee_ids[0].active:
+                    partner.employee_ids.update({'partner_id': partner.id})
+            else:
+                if sponsor and sponsor.is_qshield_sponsor or rec.sponsor.is_qshield_sponsor:
+                    if not rec.employee_ids:
+                        for each_dependant in rec.employee_dependants:
+                            dependants.append((0, 0, {
+                                'name': each_dependant.name,
+                                'gender': each_dependant.gender,
+                                'dob': each_dependant.date,
+                            }))
+                        employee = self.env['hr.employee'].create({
+                            'name': rec.name,
+                            'country_id': rec.nationality.id,
+                            'gender': rec.gender,
+                            'birthday': rec.date,
+                            # 'job_id': rec.function,
+                            'work_phone': rec.phone,
+                            'mobile_phone': rec.mobile,
+                            'work_email': rec.email,
+                            'dependant_id': dependants,
+                            'partner_id': rec.id,
+                            'work_in': rec.sponsor.id,
+                        })
                     # rec.employee_id = employee
