@@ -88,26 +88,20 @@ class ContactCustom(models.Model):
                     if partners.employee_ids:
                         partners.employee_ids.write({'active': False})
                 if vals.get('is_qshield_sponsor'):
-                    employee = partners.employee_ids.sudo().filtered(lambda x:x.active == False)
-                    # employee = partners.employee_ids.search([('active', '=', False), ('name', '=', partners.name)], limit=1)
+                    employee = partners.employee_ids.sudo().search([('active', '=', False), ('name', '=', partners.name)], limit=1)
                     if employee:
                         employee.write({'active': True})
-                        # employee.write({'partner_id': partners.id})
-                        partners.employee_ids.write({'partner_id': [(4,partners.id)]})
-                        # partners.write({'employee_ids':[(6, 0, employee.ids)]})
                     else:
                         partners.create_employee(partner=partners)
 
         elif vals.get('sponsor') or vals.get('person_type') == 'emp' or self.person_type == 'emp':
             new_sponsor = False
             if not self.employee_ids:
-                employee = self.employee_ids.search([('active','=',False),('name','=',self.name)],limit=1)
+                employee = self.employee_ids.sudo().search([('active', '=', False), ('name', '=', self.name)], limit=1)
                 if employee:
                     employee.write({'active': True})
                     self.employee_ids.partner_id = self.id
-                    # self.employee_ids = [(6, 0, employee.ids)]
                 else:
-
                     if vals.get('sponsor'):
                         new_sponsor = self.env['res.partner'].sudo().browse(vals.get('sponsor'))
                     self.create_employee(sponsor=new_sponsor)
