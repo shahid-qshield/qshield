@@ -12,8 +12,7 @@ class ContactCustom(models.Model):
     nearest_land_mark = fields.Char()
     fax_number = fields.Char('Fax No.')
     # employee_id = fields.Many2one('hr.employee', string='Related Employee', index=True)
-    employee_ids = fields.One2many('hr.employee', 'partner_id', string="Related Employee", auto_join=True,
-                                   domain="[('active', '=', True and False)]")
+    employee_ids = fields.One2many('hr.employee', 'partner_id', string="Related Employee", auto_join=True)
     is_qshield_sponsor = fields.Boolean(string='Is Qshield Sponsor')
     check_qshield_sponsor = fields.Boolean(compute="compute_check_qshield_sponsor")
     is_address = fields.Boolean(string="Is Address", default=False)
@@ -83,29 +82,32 @@ class ContactCustom(models.Model):
 
     def write(self, vals):
         if self.person_type == 'company':
-            all_related_partner = self.env['res.partner'].sudo().search(
-                [('sponsor', '=', self.id), ('person_type', '=', 'emp')])
+            all_related_partner = self.env['res.partner'].sudo().search([('sponsor', '=', self.id),('person_type','=','emp')])
             for partners in all_related_partner:
                 if not vals.get('is_qshield_sponsor'):
                     if partners.employee_ids:
                         partners.employee_ids.write({'active': False})
                 if vals.get('is_qshield_sponsor'):
-                    employee = partners.employee_ids.search([('active', '=', False), ('name', '=', partners.name)],
-                                                            limit=1)
+                    employee = partners.employee_ids.sudo().filtered(lambda x:x.active == False)
+                    # employee = partners.employee_ids.search([('active', '=', False), ('name', '=', partners.name)], limit=1)
                     if employee:
                         employee.write({'active': True})
-                        partners.employee_ids.write({'partner_id': [(4, partners.id)]})
+                        # employee.write({'partner_id': partners.id})
+                        partners.employee_ids.write({'partner_id': [(4,partners.id)]})
+                        # partners.write({'employee_ids':[(6, 0, employee.ids)]})
                     else:
                         partners.create_employee(partner=partners)
 
         elif vals.get('sponsor') or vals.get('person_type') == 'emp' or self.person_type == 'emp':
             new_sponsor = False
             if not self.employee_ids:
-                employee = self.employee_ids.filtered(lambda a: not a.active)
+                employee = self.employee_ids.search([('active','=',False),('name','=',self.name)],limit=1)
                 if employee:
                     employee.write({'active': True})
                     self.employee_ids.partner_id = self.id
+                    # self.employee_ids = [(6, 0, employee.ids)]
                 else:
+
                     if vals.get('sponsor'):
                         new_sponsor = self.env['res.partner'].sudo().browse(vals.get('sponsor'))
                     self.create_employee(sponsor=new_sponsor)
@@ -113,12 +115,13 @@ class ContactCustom(models.Model):
             if new_sponsor and not new_sponsor.is_qshield_sponsor:
                 if self.employee_ids:
                     self.employee_ids.write({'active': False})
-        if self.person_type == 'emp' and vals.get('person_type') in ['company', 'child', 'visitor']:
+        if self.person_type == 'emp' and vals.get('person_type') in ['company','child','visitor']:
             if self.employee_ids:
                 self.employee_ids.write({'active': False})
-        return super(ContactCustom, self).write(vals)
+        res = super(ContactCustom, self).write(vals)
+        return res
 
-    def create_employee(self, partner=False, sponsor=False):
+    def create_employee(self,partner=False,sponsor=False):
         for rec in self:
             dependants = []
             if partner:
@@ -142,7 +145,7 @@ class ContactCustom(models.Model):
                         'partner_id': partner.id,
                         'work_in': partner.sponsor.id,
                     })
-                    print("Create EMP -", employee.name)
+                    print("Create EMP -",employee.name)
                 elif partner.employee_ids[0].active:
                     partner.employee_ids.update({'partner_id': partner.id})
             else:
@@ -166,5 +169,5 @@ class ContactCustom(models.Model):
                             'dependant_id': dependants,
                             'partner_id': rec.id,
                             'work_in': rec.sponsor.id,
-                        })
+                            })
                     # rec.employee_id = employee
