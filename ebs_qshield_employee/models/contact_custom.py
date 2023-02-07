@@ -12,8 +12,8 @@ class ContactCustom(models.Model):
     nearest_land_mark = fields.Char()
     fax_number = fields.Char('Fax No.')
     # employee_id = fields.Many2one('hr.employee', string='Related Employee', index=True)
-    employee_ids = fields.One2many('hr.employee', 'partner_id', string="Related Employee", auto_join=True)
-    is_qshield_sponsor = fields.Boolean(string='Is Qshield Sponsor')
+    employee_ids = fields.One2many('hr.employee', 'partner_id', string="Related Employee", auto_join=True, tracking=True)
+    is_qshield_sponsor = fields.Boolean(string='Is Qshield Sponsor', tracking=True)
     check_qshield_sponsor = fields.Boolean(compute="compute_check_qshield_sponsor")
     is_address = fields.Boolean(string="Is Address", default=False)
 
