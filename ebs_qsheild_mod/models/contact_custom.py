@@ -43,6 +43,7 @@ class ContactCustom(models.Model):
             ('emp', 'Employee'),
             ('visitor', 'Visitor'),
             ('child', 'Dependent')],
+        tracking=True
     )
     date_join = fields.Date(
         string='join Date',
@@ -245,7 +246,7 @@ class ContactCustom(models.Model):
         readonly=False,
         default=_sponsor_default,
         # compute='_sponsor_compute', store=True,
-        domain=[('person_type', '=', 'company')])
+        domain=[('person_type', '=', 'company')], tracking=True)
 
     @api.depends('parent_id')
     def _get_related_company(self):
