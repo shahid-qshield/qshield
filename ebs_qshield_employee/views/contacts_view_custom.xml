@@ -30,7 +30,7 @@
                     <field name="is_address" invisible="1"/>
                     <field name="employee_ids" context="{'get_partner_id' : active_id}"
                            attrs="{'invisible':[('is_qshield_sponsor','=',False)]}"/>
-                     <field name="is_employee_create"/>
+                     <field name="is_employee_create" invisible="1"/>
                 </xpath>
             </field>
         </record>
