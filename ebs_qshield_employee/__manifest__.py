@@ -13,7 +13,7 @@
     'author': "Maria L Soliman",
     'website': "http://www.ever-bs.com/",
     'category': 'Uncategorized',
-    'version': '0.3',
+    'version': '0.4',
     'depends': ['base', 'contacts', 'hr', 'hr_contract', 'documents', 'helpdesk'],
     'data': [
         'security/ir.model.access.csv',
