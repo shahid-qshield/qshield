@@ -26,10 +26,11 @@
             <field name="arch" type="xml">
                 <xpath expr="//field[@name='parent_id']" position="after">
                     <field name="check_qshield_sponsor" invisible="1"/>
-                    <field name="is_qshield_sponsor"/>
+                    <field name="is_qshield_sponsor" readonly="1" force_save="1"/>
                     <field name="is_address" invisible="1"/>
                     <field name="employee_ids" context="{'get_partner_id' : active_id}"
-                           attrs="{'invisible':[('check_qshield_sponsor','=',False)]}"/>
+                           attrs="{'invisible':[('is_qshield_sponsor','=',False)]}"/>
+                     <field name="is_employee_create"/>
                 </xpath>
             </field>
         </record>

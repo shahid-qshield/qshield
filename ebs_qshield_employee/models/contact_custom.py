@@ -16,6 +16,7 @@ class ContactCustom(models.Model):
     is_qshield_sponsor = fields.Boolean(string='Is Qshield Sponsor')
     check_qshield_sponsor = fields.Boolean(compute="compute_check_qshield_sponsor")
     is_address = fields.Boolean(string="Is Address", default=False)
+    is_employee_create = fields.Boolean(string='Is Employee Create')
 
     def update_invoice_type(self):
         file_path = os.path.dirname(os.path.dirname(__file__)) + '/data/Company Types.xlsx'
@@ -62,6 +63,14 @@ class ContactCustom(models.Model):
             else:
                 rec.check_qshield_sponsor = False
 
+    @api.onchange('sponsor.is_employee_create', 'sponsor','person_type')
+    def _check_qshield_sponsor(self):
+        for rec in self:
+            if rec.sponsor and rec.sponsor.is_employee_create and rec.person_type == 'emp':
+                rec.is_qshield_sponsor = True
+            else:
+                rec.is_qshield_sponsor = False
+
     @api.constrains('employee_ids')
     def _check_employee_length(self):
         for contact in self:
@@ -80,27 +89,62 @@ class ContactCustom(models.Model):
                 res.create_employee()
             return res
 
-    def create_employee(self):
+    def write(self, vals):
+        res = super(ContactCustom, self).write(vals)
+        if res:
+            if self.is_qshield_sponsor and self.person_type == 'emp':
+                employee = self.env['hr.employee'].search([('partner_id', '=', self.id), ('active', '=', False)])
+                if employee:
+                    employee.write({'active': True})
+                else:
+                    self.create_employee()
+            else:
+                employee = self.env['hr.employee'].search([('partner_id', '=', self.id)])
+                if employee:
+                    employee.write({'active': False})
+        return res
+
+    def create_employee(self, partner=False, sponsor=False):
         for rec in self:
-            if not rec.employee_ids:
-                dependants = []
-                for each_dependant in rec.employee_dependants:
-                    dependants.append((0, 0, {
-                        'name': each_dependant.name,
-                        'gender': each_dependant.gender,
-                        'dob': each_dependant.date,
-                    }))
-                employee = self.env['hr.employee'].create({
-                    'name': rec.name,
-                    'country_id': rec.nationality.id,
-                    'gender': rec.gender,
-                    'birthday': rec.date,
-                    # 'job_id': rec.function,
-                    'work_phone': rec.phone,
-                    'mobile_phone': rec.mobile,
-                    'work_email': rec.email,
-                    'dependant_id': dependants,
-                    'partner_id': rec.id,
-                    'work_in': rec.sponsor.id,
-                })
-                # rec.employee_id = employee
+            dependants = []
+            if partner:
+                if not rec.employee_ids:
+                    for each_dependant in rec.employee_dependants:
+                        dependants.append((0, 0, {
+                            'name': each_dependant.name,
+                            'gender': each_dependant.gender,
+                            'dob': each_dependant.date,
+                        }))
+                    employee = self.env['hr.employee'].create({
+                        'name': rec.name,
+                        'country_id': rec.nationality.id,
+                        'gender': rec.gender,
+                        'birthday': rec.date,
+                        'work_phone': rec.phone,
+                        'mobile_phone': rec.mobile,
+                        'work_email': rec.email,
+                        'dependant_id': dependants,
+                        'partner_id': rec.id,
+                        'work_in': rec.sponsor.id,
+                    })
+            else:
+                if sponsor and sponsor.is_employee_create or rec.sponsor.is_employee_create:
+                    if not rec.employee_ids:
+                        for each_dependant in rec.employee_dependants:
+                            dependants.append((0, 0, {
+                                'name': each_dependant.name,
+                                'gender': each_dependant.gender,
+                                'dob': each_dependant.date,
+                            }))
+                        employee = self.env['hr.employee'].create({
+                            'name': rec.name,
+                            'country_id': rec.nationality.id,
+                            'gender': rec.gender,
+                            'birthday': rec.date,
+                            'work_phone': rec.phone,
+                            'mobile_phone': rec.mobile,
+                            'work_email': rec.email,
+                            'dependant_id': dependants,
+                            'partner_id': rec.id,
+                            'work_in': rec.sponsor.id,
+                        })
