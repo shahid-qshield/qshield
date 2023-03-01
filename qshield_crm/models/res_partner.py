@@ -115,20 +115,20 @@ class ResPartner(models.Model):
     def compute_pending_invoice_count(self):
         for rec in self:
             pending_invoice_count = 0
-            sale_order_ids = self.env['sale.order'].search(
+            sale_order_ids = self.env['sale.order'].sudo().search(
                 [('partner_id', '=', rec.id), ('invoice_term_ids', '!=', False)])
             if sale_order_ids:
-                invoice_term_lines = sale_order_ids.mapped('invoice_term_ids')
+                invoice_term_lines = sale_order_ids.sudo().mapped('invoice_term_ids')
                 if invoice_term_lines:
                     pending_invoice_count = len(invoice_term_lines)
             rec.pending_invoice_count = pending_invoice_count
 
     def action_pending_invoice(self):
-        sale_order_ids = self.env['sale.order'].search(
+        sale_order_ids = self.env['sale.order'].sudo().search(
             [('partner_id', '=', self.id), ('invoice_term_ids', '!=', False)])
         invoice_term_line_ids = []
         if sale_order_ids:
-            invoice_term_lines = sale_order_ids.mapped('invoice_term_ids')
+            invoice_term_lines = sale_order_ids.sudo().mapped('invoice_term_ids')
             if invoice_term_lines:
                 invoice_term_line_ids = invoice_term_lines.ids
         return {
