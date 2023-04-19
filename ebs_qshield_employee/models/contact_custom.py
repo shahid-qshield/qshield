@@ -106,29 +106,9 @@ class ContactCustom(models.Model):
 
     def create_employee(self, partner=False, sponsor=False):
         for rec in self:
-            dependants = []
-            if partner:
-                if not rec.employee_ids:
-                    for each_dependant in rec.employee_dependants:
-                        dependants.append((0, 0, {
-                            'name': each_dependant.name,
-                            'gender': each_dependant.gender,
-                            'dob': each_dependant.date,
-                        }))
-                    employee = self.env['hr.employee'].create({
-                        'name': rec.name,
-                        'country_id': rec.nationality.id,
-                        'gender': rec.gender,
-                        'birthday': rec.date,
-                        'work_phone': rec.phone,
-                        'mobile_phone': rec.mobile,
-                        'work_email': rec.email,
-                        'dependant_id': dependants,
-                        'partner_id': rec.id,
-                        'work_in': rec.sponsor.id,
-                    })
-            else:
-                if sponsor and sponsor.is_employee_create or rec.sponsor.is_employee_create:
+            if rec.is_qshield_sponsor:
+                dependants = []
+                if partner:
                     if not rec.employee_ids:
                         for each_dependant in rec.employee_dependants:
                             dependants.append((0, 0, {
@@ -148,3 +128,24 @@ class ContactCustom(models.Model):
                             'partner_id': rec.id,
                             'work_in': rec.sponsor.id,
                         })
+                else:
+                    if sponsor and sponsor.is_employee_create or rec.sponsor.is_employee_create:
+                        if not rec.employee_ids:
+                            for each_dependant in rec.employee_dependants:
+                                dependants.append((0, 0, {
+                                    'name': each_dependant.name,
+                                    'gender': each_dependant.gender,
+                                    'dob': each_dependant.date,
+                                }))
+                            employee = self.env['hr.employee'].create({
+                                'name': rec.name,
+                                'country_id': rec.nationality.id,
+                                'gender': rec.gender,
+                                'birthday': rec.date,
+                                'work_phone': rec.phone,
+                                'mobile_phone': rec.mobile,
+                                'work_email': rec.email,
+                                'dependant_id': dependants,
+                                'partner_id': rec.id,
+                                'work_in': rec.sponsor.id,
+                            })
