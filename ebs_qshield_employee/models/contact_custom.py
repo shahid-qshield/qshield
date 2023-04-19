@@ -63,7 +63,7 @@ class ContactCustom(models.Model):
             else:
                 rec.check_qshield_sponsor = False
 
-    @api.onchange('sponsor.is_employee_create', 'sponsor','person_type')
+    @api.onchange('sponsor.is_employee_create', 'sponsor', 'person_type')
     def _check_qshield_sponsor(self):
         for rec in self:
             if rec.sponsor and rec.sponsor.is_employee_create and rec.person_type == 'emp':
@@ -92,7 +92,18 @@ class ContactCustom(models.Model):
     def write(self, vals):
         res = super(ContactCustom, self).write(vals)
         if res:
-            if self.is_qshield_sponsor and self.person_type == 'emp':
+            if self.is_qshield_sponsor and self.person_type == 'emp' and 'active' in vals:
+                if self.active:
+                    employee = self.env['hr.employee'].search([('partner_id', '=', self.id), ('active', '=', False)])
+                    if employee:
+                        employee.write({'active': True})
+                    else:
+                        self.create_employee()
+                else:
+                    employee = self.env['hr.employee'].search([('partner_id', '=', self.id)])
+                    if employee:
+                        employee.write({'active': False})
+            elif self.is_qshield_sponsor and self.person_type == 'emp':
                 employee = self.env['hr.employee'].search([('partner_id', '=', self.id), ('active', '=', False)])
                 if employee:
                     employee.write({'active': True})

@@ -85,6 +85,14 @@ class EmployeeCustom(models.Model):
     employee_address = fields.Text(string="Address")
     iban_number = fields.Char(string="IBAN Number")
 
+    def  write(self, vals):
+        res = super(EmployeeCustom, self).write(vals)
+        if  'active' in vals:
+            self.partner_id.write({
+                'active': vals.get('active')
+            })
+        return res
+
     def update_first_name_and_last_name_of_employee(self):
         file_path = os.path.dirname(os.path.dirname(__file__)) + '/data/Production Employee-First-lastname.xls'
         with open(file_path, 'rb') as f:
