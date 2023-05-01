@@ -285,7 +285,8 @@
                                 <field name="type" readonly="1"/>
                                 <field name="invoice_amount_type" readonly="1"/>
                                 <field name="percentage"
-                                       attrs="{'invisible' : [('invoice_amount_type','!=','percentage')]}" readonly="1"/>
+                                       attrs="{'invisible' : [('invoice_amount_type','!=','percentage')]}"
+                                       readonly="1"/>
                                 <field name="amount"
                                        attrs="{'invisible' : [('invoice_amount_type','!=','amount')]}" readonly="1"/>
                                 <field name="to_invoice"/>
@@ -337,6 +338,12 @@
             <field name="view_mode">tree,form</field>
             <field name="domain">[('invoice_status','=','to invoice')]</field>
         </record>
+
+        <record model="ir.ui.menu" id="sale.sale_menu_root">
+            <field name="groups_id"
+                   eval="[(6,0,[ref('sales_team.group_sale_salesman_all_leads')])]"/>
+        </record>
+
         <menuitem name="To invoice Sale Order" id="to_invoice_orders" parent="sale.sale_order_menu"
                   action="qshield_crm.action_to_invoice_sale_orders"/>
     </data>

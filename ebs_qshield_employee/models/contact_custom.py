@@ -127,8 +127,15 @@ class ContactCustom(models.Model):
                                 'gender': each_dependant.gender,
                                 'dob': each_dependant.date,
                             }))
+                        partner_name_list = rec.name.split()
+                        first_name = partner_name_list[0]
+                        middle_name = ' '.join(partner_name_list[1:-1]) if len(partner_name_list) > 2 else ''
+                        last_name = partner_name_list[-1] if len(partner_name_list) >= 2 else ''
                         employee = self.env['hr.employee'].create({
                             'name': rec.name,
+                            'first_name': first_name,
+                            'middle_name': middle_name,
+                            'last_name': last_name,
                             'country_id': rec.nationality.id,
                             'gender': rec.gender,
                             'birthday': rec.date,
@@ -138,6 +145,9 @@ class ContactCustom(models.Model):
                             'dependant_id': dependants,
                             'partner_id': rec.id,
                             'work_in': rec.sponsor.id,
+                            'job_title': rec.function,
+                            'iban_number': rec.iban_number,
+                            'joining_date': rec.joining_date,
                         })
                 else:
                     if sponsor and sponsor.is_employee_create or rec.sponsor.is_employee_create:
@@ -148,8 +158,15 @@ class ContactCustom(models.Model):
                                     'gender': each_dependant.gender,
                                     'dob': each_dependant.date,
                                 }))
+                            partner_name_list = rec.name.split()
+                            first_name = partner_name_list[0]
+                            middle_name = ' '.join(partner_name_list[1:-1]) if len(partner_name_list) > 2 else ''
+                            last_name = partner_name_list[-1] if len(partner_name_list) >= 2 else ''
                             employee = self.env['hr.employee'].create({
                                 'name': rec.name,
+                                'first_name': first_name,
+                                'middle_name': middle_name,
+                                'last_name': last_name,
                                 'country_id': rec.nationality.id,
                                 'gender': rec.gender,
                                 'birthday': rec.date,
@@ -159,4 +176,7 @@ class ContactCustom(models.Model):
                                 'dependant_id': dependants,
                                 'partner_id': rec.id,
                                 'work_in': rec.sponsor.id,
+                                'job_title': rec.function,
+                                'iban_number': rec.iban_number,
+                                'joining_date': rec.date_join,
                             })

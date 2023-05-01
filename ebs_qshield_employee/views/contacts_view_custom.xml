@@ -29,7 +29,7 @@
                     <field name="is_qshield_sponsor" readonly="1" force_save="1"/>
                     <field name="is_address" invisible="1"/>
                     <field name="employee_ids" context="{'get_partner_id' : active_id}"
-                           attrs="{'invisible':[('is_qshield_sponsor','=',False)]}"/>
+                           attrs="{'invisible':[('is_qshield_sponsor','=',False)]}" widget="many2many_tags"/>
                      <field name="is_employee_create" invisible="1"/>
                 </xpath>
             </field>
