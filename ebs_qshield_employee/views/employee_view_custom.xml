@@ -65,6 +65,7 @@
                         <field name="middle_name"/>
                         <field name="last_name"/>
                         <field name="is_out_sourced"/>
+                        <field name="related_company_id" attrs="{'invisible': [('is_out_sourced', '=', False)]}"/>
                         <field name="visa"/>
                     </group>
                     <group/>

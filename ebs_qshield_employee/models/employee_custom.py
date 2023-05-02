@@ -38,6 +38,7 @@ class EmployeeCustom(models.Model):
     qid_number = fields.Char('QID Number')
     country_issue = fields.Many2one(comodel_name='res.country', string='Country of Issue')
     partner_id = fields.Many2one('res.partner', string='Related Contact', index=True)
+    related_company_id = fields.Many2one('res.partner', string='Related Company')
     work_in = fields.Many2one('res.partner', string='Work In')
     religion_id = fields.Many2one('hr.religion', string='Religion', index=True)
     religion = fields.Selection(string='Religion',

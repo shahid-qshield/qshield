@@ -17,6 +17,7 @@ class ContactCustom(models.Model):
     check_qshield_sponsor = fields.Boolean(compute="compute_check_qshield_sponsor")
     is_address = fields.Boolean(string="Is Address", default=False)
     is_employee_create = fields.Boolean(string='Is Employee Create')
+    job_id = fields.Many2one(comodel_name="hr.job", string="Job Position", required=False, )
 
     def update_invoice_type(self):
         file_path = os.path.dirname(os.path.dirname(__file__)) + '/data/Company Types.xlsx'
@@ -145,9 +146,14 @@ class ContactCustom(models.Model):
                             'dependant_id': dependants,
                             'partner_id': rec.id,
                             'work_in': rec.sponsor.id,
-                            'job_title': rec.function,
+                            'job_title': rec.job_id.name if rec.job_id else False,
                             'iban_number': rec.iban_number,
                             'joining_date': rec.joining_date,
+                            'is_out_sourced': True if rec.sponsor and rec.parent_id and rec.sponsor != rec.parent_id else False,
+                            'related_company_id': rec.parent_id.id if rec.parent_id else False,
+                            'passport_id': rec.passport_doc.document_number if rec.passport_doc else False,
+                            'qid_number': rec.qatar_id_doc.document_number if rec.qatar_id_doc else False,
+                            'job_id': rec.job_id.id if rec.job_id else False,
                         })
                 else:
                     if sponsor and sponsor.is_employee_create or rec.sponsor.is_employee_create:
@@ -176,7 +182,12 @@ class ContactCustom(models.Model):
                                 'dependant_id': dependants,
                                 'partner_id': rec.id,
                                 'work_in': rec.sponsor.id,
-                                'job_title': rec.function,
+                                'job_title': rec.job_id.name if rec.job_id else False,
                                 'iban_number': rec.iban_number,
                                 'joining_date': rec.date_join,
+                                'is_out_sourced': True if rec.sponsor and rec.parent_id and rec.sponsor != rec.parent_id else False,
+                                'related_company_id': rec.parent_id.id if rec.parent_id else False,
+                                'passport_id': rec.passport_doc.document_number if rec.passport_doc else False,
+                                'qid_number': rec.qatar_id_doc.document_number if rec.qatar_id_doc else False,
+                                'job_id': rec.job_id.id if rec.job_id else False,
                             })
