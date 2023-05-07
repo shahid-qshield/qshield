@@ -33,6 +33,7 @@
         'wizards/refuse_quotation_view.xml',
         'wizards/create_multiple_invoice.xml',
         'wizards/export_service_request_report.xml',
+        'wizards/service_req_create_so.xml',
         'views/generate_sale_order_line_view.xml',
         'views/crm_lead_view.xml',
         'views/sale_order_view.xml',
