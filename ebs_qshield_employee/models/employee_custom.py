@@ -88,7 +88,7 @@ class EmployeeCustom(models.Model):
 
     def  write(self, vals):
         res = super(EmployeeCustom, self).write(vals)
-        if  'active' in vals:
+        if  'active' in vals and self.partner_id.active != vals.get('active'):
             self.partner_id.write({
                 'active': vals.get('active')
             })

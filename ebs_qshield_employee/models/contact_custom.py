@@ -94,13 +94,14 @@ class ContactCustom(models.Model):
         res = super(ContactCustom, self).write(vals)
         if self.is_qshield_sponsor and self.person_type == 'emp':
             employee_update_dict = {}
-            related_employees = self.employee_ids
+            related_employees = self.employee_ids or \
+                                self.env['hr.employee'].search([('partner_id', 'in', self.ids), ('active', '=', False)])
 
             if self.active and not related_employees:
                 self.create_employee()
                 return res
 
-            if vals.get('active'):
+            if vals.get('active') or 'active' in vals:
                 employee_update_dict.update({
                     'active': vals.get('active')
                 })
@@ -246,7 +247,7 @@ class ContactCustom(models.Model):
                             'gender': dependant.gender,
                             'dob': dependant.date,
                             'hr_employee': employee.id,
-                            'related_partner_id': rec.id,
+                            'related_partner_id': dependant.id,
                         })
 
         all_deleted_dependant.unlink()
