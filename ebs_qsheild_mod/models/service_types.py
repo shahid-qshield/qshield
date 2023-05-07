@@ -79,6 +79,8 @@ class ServiceTypes(models.Model):
         required=False,
         default=False)
 
+    active = fields.Boolean(string="", default=False)
+
     @api.model
     def create(self, vals):
         res = super(ServiceTypes, self).create(vals)

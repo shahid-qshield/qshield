@@ -15,6 +15,7 @@
                     <field name="for_visitor"/>
                     <field name="for_dependant"/>
                     <field name="for_miscellaneous"/>
+                    <field name="active" invisible="1"/>
                 </tree>
             </field>
         </record>
@@ -27,6 +28,7 @@
                     <sheet>
                         <group name="group_top">
                             <group name="group_left">
+                                <field name="active" invisible="1"/>
                                 <field name="code"/>
                                 <field name="name"/>
                                 <field name="sla"/>
