@@ -26,10 +26,11 @@
             <field name="arch" type="xml">
                 <xpath expr="//field[@name='parent_id']" position="after">
                     <field name="check_qshield_sponsor" invisible="1"/>
-                    <field name="is_qshield_sponsor" readonly="1" force_save="1"/>
+                    <field name="is_qshield_sponsor"/>
                     <field name="is_address" invisible="1"/>
                     <field name="employee_ids" context="{'get_partner_id' : active_id}"
-                           attrs="{'invisible':[('is_qshield_sponsor','=',False)]}" widget="many2many_tags"/>
+                           attrs="{'invisible':[('is_qshield_sponsor','=',False)]}" widget="many2many_tags"
+                           readonly="True"/>
                     <field name="is_employee_create" invisible="1"/>
                 </xpath>
                 <xpath expr="//field[@name='function']" position="attributes">
@@ -81,6 +82,22 @@
             <field name="code">
                 if records:
                 action = records.create_employee()
+            </field>
+        </record>
+
+        <!-- Inherit Form View to Modify it -->
+        <record id="custom_contacts_view" model="ir.ui.view">
+            <field name="name">custom.contacts.view</field>
+            <field name="model">res.partner</field>
+            <field name="inherit_id" ref="ebs_qsheild_mod.custom_contacts_view"/>
+            <field name="arch" type="xml">
+
+                <xpath expr="//field[@name='date_join']" position="attributes">
+                    <attribute name="attrs">{'invisible':[('person_type','!=','emp')], 'required':
+                        [('person_type','=','emp'), ('is_qshield_sponsor', '=', True)]}
+                    </attribute>
+                </xpath>
+
             </field>
         </record>
     </data>

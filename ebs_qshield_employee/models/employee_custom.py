@@ -866,6 +866,7 @@ class Dependant(models.Model):
                                     ('Child', 'Child')],
                                 store=True)
     hr_employee = fields.Many2one('hr.employee', readonly=True)
+    related_partner_id = fields.Many2one(comodel_name="res.partner", string="Related Partner", ondelete='cascade', )
 
 
 class Emergency(models.Model):

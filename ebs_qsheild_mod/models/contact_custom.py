@@ -395,7 +395,7 @@ class ContactCustom(models.Model):
 
             for doc in rec.document_o2m:
                 doc.unlink()
-            super(ContactCustom, rec).unlink()
+        super(ContactCustom, self).unlink()
 
     @api.onchange('parent_id')
     def onchange_parent_id(self):

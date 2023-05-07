@@ -13,7 +13,7 @@ class ContactCustom(models.Model):
     fax_number = fields.Char('Fax No.')
     # employee_id = fields.Many2one('hr.employee', string='Related Employee', index=True)
     employee_ids = fields.One2many('hr.employee', 'partner_id', string="Related Employee", auto_join=True)
-    is_qshield_sponsor = fields.Boolean(string='Is Qshield Sponsor')
+    is_qshield_sponsor = fields.Boolean(string='Is Qshield Sponsor', compute='_compute_is_qshield_sponsor', store=True)
     check_qshield_sponsor = fields.Boolean(compute="compute_check_qshield_sponsor")
     is_address = fields.Boolean(string="Is Address", default=False)
     is_employee_create = fields.Boolean(string='Is Employee Create')
@@ -64,8 +64,8 @@ class ContactCustom(models.Model):
             else:
                 rec.check_qshield_sponsor = False
 
-    @api.onchange('sponsor.is_employee_create', 'sponsor', 'person_type')
-    def _check_qshield_sponsor(self):
+    @api.depends('sponsor', 'sponsor.is_employee_create', 'person_type')
+    def _compute_is_qshield_sponsor(self):
         for rec in self:
             if rec.sponsor and rec.sponsor.is_employee_create and rec.person_type == 'emp':
                 rec.is_qshield_sponsor = True
@@ -92,102 +92,162 @@ class ContactCustom(models.Model):
 
     def write(self, vals):
         res = super(ContactCustom, self).write(vals)
-        if res:
-            if self.is_qshield_sponsor and self.person_type == 'emp' and 'active' in vals:
-                if self.active:
-                    employee = self.env['hr.employee'].search([('partner_id', '=', self.id), ('active', '=', False)])
-                    if employee:
-                        employee.write({'active': True})
-                    else:
-                        self.create_employee()
-                else:
-                    employee = self.env['hr.employee'].search([('partner_id', '=', self.id)])
-                    if employee:
-                        employee.write({'active': False})
-            elif self.is_qshield_sponsor and self.person_type == 'emp':
-                employee = self.env['hr.employee'].search([('partner_id', '=', self.id), ('active', '=', False)])
-                if employee:
-                    employee.write({'active': True})
-                else:
-                    self.create_employee()
-            else:
-                employee = self.env['hr.employee'].search([('partner_id', '=', self.id)])
-                if employee:
-                    employee.write({'active': False})
+        if self.is_qshield_sponsor and self.person_type == 'emp':
+            employee_update_dict = {}
+            related_employees = self.employee_ids
+
+            if self.active and not related_employees:
+                self.create_employee()
+                return res
+
+            if vals.get('active'):
+                employee_update_dict.update({
+                    'active': vals.get('active')
+                })
+
+            if vals.get('name'):
+                partner_name_list = vals.get('name').split()
+                first_name = partner_name_list[0]
+                middle_name = ' '.join(partner_name_list[1:-1]) if len(partner_name_list) > 2 else ''
+                last_name = partner_name_list[-1] if len(partner_name_list) >= 2 else ''
+                employee_update_dict.update({
+                    'name': vals.get('name'),
+                    'first_name': first_name,
+                    'middle_name': middle_name,
+                    'last_name': last_name})
+
+            if vals.get('nationality'):
+                employee_update_dict.update({
+                    'country_id': vals.get('nationality'),
+                })
+
+            if vals.get('gender'):
+                employee_update_dict.update({
+                    'gender': vals.get('gender'),
+                })
+
+            if vals.get('date'):
+                employee_update_dict.update({
+                    'birthday': vals.get('date'),
+                })
+
+            if vals.get('phone'):
+                employee_update_dict.update({
+                    'work_phone': vals.get('phone'),
+                })
+
+            if vals.get('mobile'):
+                employee_update_dict.update({
+                    'mobile_phone': vals.get('mobile'),
+                })
+
+            if vals.get('email'):
+                employee_update_dict.update({
+                    'work_email': vals.get('email'),
+                })
+
+            if vals.get('sponsor'):
+                employee_update_dict.update({
+                    'work_in': vals.get('sponsor'),
+                })
+
+            if vals.get('iban_number'):
+                employee_update_dict.update({
+                    'iban_number': vals.get('iban_number'),
+                })
+
+            if vals.get('joining_date'):
+                employee_update_dict.update({
+                    'joining_date': vals.get('joining_date'),
+                })
+
+            if vals.get('job_id'):
+                job_id = self.env['hr.job'].browse(int(vals.get('job_id')))
+                employee_update_dict.update({
+                    'job_title': job_id.name,
+                    'job_id': vals.get('job_id'),
+                })
+
+            if vals.get('sponsor') or vals.get('parent_id'):
+                employee_update_dict.update({
+                    'is_out_sourced': True if self.sponsor != self.parent_id else False,
+                })
+
+            if vals.get('parent_id'):
+                employee_update_dict.update({
+                    'related_company_id': vals.get('parent_id'),
+                })
+
+            if vals.get('passport_doc'):
+                passport_document_id = self.env['documents.document'].browse(int(vals.get('passport_doc')))
+                employee_update_dict.update({
+                    'passport_id': passport_document_id.document_number,
+                })
+
+            if vals.get('qatar_id_doc'):
+                qatar_document_id = self.env['documents.document'].browse(int(vals.get('qatar_id_doc')))
+                employee_update_dict.update({
+                    'qid_number': qatar_document_id.document_number,
+                })
+
+            related_employees.update(employee_update_dict)
         return res
 
-    def create_employee(self, partner=False, sponsor=False):
+    def create_employee(self):
         for rec in self:
+            if rec.is_qshield_sponsor and not rec.employee_ids:
+                partner_name_list = rec.name.split()
+                first_name = partner_name_list[0]
+                middle_name = ' '.join(partner_name_list[1:-1]) if len(partner_name_list) > 2 else ''
+                last_name = partner_name_list[-1] if len(partner_name_list) >= 2 else ''
+
+                self.env['hr.employee'].create({
+                    'name': rec.name,
+                    'first_name': first_name,
+                    'middle_name': middle_name,
+                    'last_name': last_name,
+                    'country_id': rec.nationality.id,
+                    'gender': rec.gender,
+                    'birthday': rec.date,
+                    'work_phone': rec.phone,
+                    'mobile_phone': rec.mobile,
+                    'work_email': rec.email,
+                    'partner_id': rec.id,
+                    'work_in': rec.sponsor.id,
+                    'job_title': rec.job_id.name if rec.job_id else False,
+                    'iban_number': rec.iban_number,
+                    'joining_date': rec.date_join,
+                    'is_out_sourced': True if rec.sponsor != rec.parent_id else False,
+                    'related_company_id': rec.parent_id.id if rec.parent_id else False,
+                    'passport_id': rec.passport_doc.document_number if rec.passport_doc else False,
+                    'qid_number': rec.qatar_id_doc.document_number if rec.qatar_id_doc else False,
+                    'job_id': rec.job_id.id if rec.job_id else False,
+                })
+
+    @api.constrains('employee_dependants')
+    def _update_related_employees_dependents(self):
+
+        dependants_list = []
+        all_deleted_dependant = self.env['res.partner']
+
+        for rec in self:
+
             if rec.is_qshield_sponsor:
-                dependants = []
-                if partner:
-                    if not rec.employee_ids:
-                        for each_dependant in rec.employee_dependants:
-                            dependants.append((0, 0, {
-                                'name': each_dependant.name,
-                                'gender': each_dependant.gender,
-                                'dob': each_dependant.date,
-                            }))
-                        partner_name_list = rec.name.split()
-                        first_name = partner_name_list[0]
-                        middle_name = ' '.join(partner_name_list[1:-1]) if len(partner_name_list) > 2 else ''
-                        last_name = partner_name_list[-1] if len(partner_name_list) >= 2 else ''
-                        employee = self.env['hr.employee'].create({
-                            'name': rec.name,
-                            'first_name': first_name,
-                            'middle_name': middle_name,
-                            'last_name': last_name,
-                            'country_id': rec.nationality.id,
-                            'gender': rec.gender,
-                            'birthday': rec.date,
-                            'work_phone': rec.phone,
-                            'mobile_phone': rec.mobile,
-                            'work_email': rec.email,
-                            'dependant_id': dependants,
-                            'partner_id': rec.id,
-                            'work_in': rec.sponsor.id,
-                            'job_title': rec.job_id.name if rec.job_id else False,
-                            'iban_number': rec.iban_number,
-                            'joining_date': rec.joining_date,
-                            'is_out_sourced': True if rec.sponsor and rec.parent_id and rec.sponsor != rec.parent_id else False,
-                            'related_company_id': rec.parent_id.id if rec.parent_id else False,
-                            'passport_id': rec.passport_doc.document_number if rec.passport_doc else False,
-                            'qid_number': rec.qatar_id_doc.document_number if rec.qatar_id_doc else False,
-                            'job_id': rec.job_id.id if rec.job_id else False,
+
+                for employee in rec.employee_ids:
+
+                    new_dependant = rec.employee_dependants - employee.dependant_id.related_partner_id
+                    deleted_dependant = employee.dependant_id.related_partner_id - rec.employee_dependants
+                    all_deleted_dependant += deleted_dependant
+
+                    for dependant in new_dependant:
+                        dependants_list.append({
+                            'name': dependant.name,
+                            'gender': dependant.gender,
+                            'dob': dependant.date,
+                            'hr_employee': employee.id,
+                            'related_partner_id': rec.id,
                         })
-                else:
-                    if sponsor and sponsor.is_employee_create or rec.sponsor.is_employee_create:
-                        if not rec.employee_ids:
-                            for each_dependant in rec.employee_dependants:
-                                dependants.append((0, 0, {
-                                    'name': each_dependant.name,
-                                    'gender': each_dependant.gender,
-                                    'dob': each_dependant.date,
-                                }))
-                            partner_name_list = rec.name.split()
-                            first_name = partner_name_list[0]
-                            middle_name = ' '.join(partner_name_list[1:-1]) if len(partner_name_list) > 2 else ''
-                            last_name = partner_name_list[-1] if len(partner_name_list) >= 2 else ''
-                            employee = self.env['hr.employee'].create({
-                                'name': rec.name,
-                                'first_name': first_name,
-                                'middle_name': middle_name,
-                                'last_name': last_name,
-                                'country_id': rec.nationality.id,
-                                'gender': rec.gender,
-                                'birthday': rec.date,
-                                'work_phone': rec.phone,
-                                'mobile_phone': rec.mobile,
-                                'work_email': rec.email,
-                                'dependant_id': dependants,
-                                'partner_id': rec.id,
-                                'work_in': rec.sponsor.id,
-                                'job_title': rec.job_id.name if rec.job_id else False,
-                                'iban_number': rec.iban_number,
-                                'joining_date': rec.date_join,
-                                'is_out_sourced': True if rec.sponsor and rec.parent_id and rec.sponsor != rec.parent_id else False,
-                                'related_company_id': rec.parent_id.id if rec.parent_id else False,
-                                'passport_id': rec.passport_doc.document_number if rec.passport_doc else False,
-                                'qid_number': rec.qatar_id_doc.document_number if rec.qatar_id_doc else False,
-                                'job_id': rec.job_id.id if rec.job_id else False,
-                            })
+
+        all_deleted_dependant.unlink()
+        self.env['hr.dependant'].create(dependants_list)
