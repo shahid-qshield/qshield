@@ -138,14 +138,13 @@
                                 groups="qshield_crm.qshield_crm_management"/>
 
                         <field name="state" widget="statusbar"
-                               statusbar_visible="draft,sent,sale,submit_client_operation,done,cancel"
-                               attrs="{'invisible': ['|',('is_out_of_scope', '!=', False),('opportunity_id', '!=', False)]}"/>
-                        <field name="qshield_service_state" widget="statusbar"
-                               statusbar_visible="draft,sent,sale,submit_client_operation,done,cancel"
-                               attrs="{'invisible': ['|',('is_out_of_scope', '=', False),('opportunity_id', '!=', False)]}"/>
-                        <field name="qshield_crm_state" widget="statusbar"
-                               statusbar_visible="draft,sent,sale,submit_client_operation,done,cancel"
-                               attrs="{'invisible': [('opportunity_id', '=', False)]}"/>
+                               statusbar_visible="draft,sent,sale,submit_client_operation,done,cancel"/>
+<!--                        <field name="qshield_service_state" widget="statusbar"-->
+<!--                               statusbar_visible="draft,sent,sale,submit_client_operation,done,cancel"-->
+<!--                               attrs="{'invisible': ['|',('is_out_of_scope', '=', False),('opportunity_id', '!=', False)]}"/>-->
+<!--                        <field name="qshield_crm_state" widget="statusbar"-->
+<!--                               statusbar_visible="draft,sent,sale,submit_client_operation,done,cancel"-->
+<!--                               attrs="{'invisible': [('opportunity_id', '=', False)]}"/>-->
                         <!--                        <button name="%(action_create_multiple_invoice)d" string="Create Invoices" type="action"-->
                         <!--                                attrs="{'invisible':['|','|',('invoice_status', '!=', 'to invoice'),('state', '!=', 'submit_client_operation'),'|',('invoice_term_ids','=',False),('opportunity_id','=',False)]}"/>-->
                     </header>
