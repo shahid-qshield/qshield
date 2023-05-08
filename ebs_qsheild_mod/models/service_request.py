@@ -737,8 +737,8 @@ class ServiceRequest(models.Model):
         else:
             code = self.env['ir.sequence'].next_by_code('ebs_mod.service.request')
 
-        year = str(self.date.year)
-        month = self.date.strftime("%B")
+        year = str(self.date.year) or ""
+        month = self.date.strftime("%B") or ""
         comp_ref = self.related_company.ref or ""
         service_red = self.service_type_id.code or ""
         self.code = code

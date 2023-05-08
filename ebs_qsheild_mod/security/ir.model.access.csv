@@ -23,6 +23,8 @@
 "access_ebs_mod_res_partner_admin","base.res_partner","model_res_partner","ebs_qsheild_mod.qshield_contact_admin",1,1,1,1
 "access_ebs_mod_res_partner_user","base.res_partner","model_res_partner","ebs_qsheild_mod.qshield_contact_user",1,1,1,0
 "access_ebs_mod_payment_transaction","ebs_qsheild_mod.ebs_mod_payment_transaction","model_ebs_mod_payment_transaction",,1,1,1,1
+
+crm.access_crm_lead_scoring_frequency_field,access_crm_lead_scoring_frequency_field,crm.model_crm_lead_scoring_frequency_field,base.group_user,1,0,0,0
 ,,,,,,,
 "access_ebs_documents_document","ebs.documents.document","documents.model_documents_document",,1,1,1,0
 "access_excluded_company","excluded.company","model_excluded_company",,1,1,1,1

@@ -130,9 +130,9 @@
                                 attrs="{'invisible' :['|','&amp;',('opportunity_id','=',False),('state','!=','sale'),'&amp;',('opportunity_id','!=',False),('state','!=','submit_client_operation')]}"/>
                         <button name="action_unlock" type="object" string="Unlock" states="done"
                                 groups="ebs_leave_appilcation_request.group_finance_department_user"/>
-                        <button name="%(action_refuse_quotation)d" string="Refuse" type="action"
-                                attrs="{'invisible':[('state','!=','draft')]}"
-                                groups="qshield_crm.qshield_crm_management"/>
+<!--                        <button name="%(action_refuse_quotation)d" string="Refuse" type="action"-->
+<!--                                attrs="{'invisible':[('state','!=','draft')]}"-->
+<!--                                groups="qshield_crm.qshield_crm_management"/>-->
                         <button name="approve_agreement" string="Approve Agreement" type="object"
                                 attrs="{'invisible':['|', ('is_valid_for_agreement','=',False), ('state','!=','sale')]}"
                                 groups="qshield_crm.qshield_crm_management"/>
