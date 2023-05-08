@@ -262,6 +262,12 @@ class EbsModContracts(models.Model):
     sale_order_id = fields.Many2one(comodel_name='sale.order', string="Sale Order", track_visibility='onchange')
     no_of_employees = fields.Integer(string="No Of Employees")
 
+    def add_all_employee(self):
+        for rec in self:
+            if len(rec.employee_list) >= rec.no_of_employees:
+                raise ValidationError(_("No Of Employees Exceed Limit ........"))
+        return super(EbsModContracts,self).add_all_employee()
+
 
 class ExpenseTypes(models.Model):
     _inherit = 'ebs_mod.expense.types'
