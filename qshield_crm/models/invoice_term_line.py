@@ -324,11 +324,9 @@ class InvoiceTermLine(models.Model):
                         'qshield_crm.email_template_of_create_retainer_invoice',
                         raise_if_not_found=False)
 
-                    finance_user_ids = invoice_id.sale_id.approver_setting_id.finance_user_ids
-                    if not finance_user_ids:
-                        approver_setting_id = self.env['sale.order.approver.settings'].sudo().search(
-                            [('finance_user_ids', '!=', False)], limit=1)
-                        finance_user_ids = approver_setting_id.finance_user_ids
+                    approver_setting_id = self.env['sale.order.approver.settings'].sudo().search(
+                        [('finance_user_ids', '!=', False)], limit=1)
+                    finance_user_ids = approver_setting_id.finance_user_ids
                     partner_to = [str(user.partner_id.id) for user in finance_user_ids if finance_user_ids]
                     if partner_to:
                         template.sudo().with_context(

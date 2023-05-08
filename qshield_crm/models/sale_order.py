@@ -21,29 +21,17 @@ class SaleOrder(models.Model):
 
     state = fields.Selection([
         ('draft', 'Quotation'),
-        ('quotation_submit', 'Quotation Submit'),
-        ('quotation_approved', 'Quotation Approved'),
         ('sent', 'Quotation Sent'),
-        ('sale', 'Sales Order'),
-        ('agreement_submit', 'Agreement Submitted'),
+        ('sale', 'Agreement Submitted '),
         ('submit_client_operation', 'Submit Client To operation'),
         ('done', 'Locked'),
         ('cancel', 'Cancelled'),
-    ], string='Status', readonly=True, copy=False, index=True, tracking=3, default='draft')
+    ])
 
     qshield_crm_state = fields.Selection(related="state")
     qshield_service_state = fields.Selection(related="state")
-    approver_setting_id = fields.Many2one("sale.order.approver.settings", compute="compute_approver_settings_id")
-    approver_ids = fields.One2many('sale.order.approver', 'sale_order_id', string="Approvers")
     account_manager = fields.Many2one('hr.employee', string="Account Manager")
     due_date = fields.Date(string="Due Date")
-    user_status = fields.Selection([
-        ('draft', 'Draft'),
-        ('pending', 'To Approve'),
-        ('approved', 'Approved'),
-        ('refused', 'Refused'),
-        ('cancel', 'Cancel')], compute="_compute_user_status")
-    is_approver_user = fields.Boolean(compute="compute_is_approver_user")
     refuse_quotation_reason = fields.Text(string="Refuse Quotation Reason")
     refuse_agreement_reason = fields.Text(string="Refuse Agreement Reason")
     is_valid_for_agreement = fields.Boolean(compute='compute_is_valid_for_agreement')
@@ -95,7 +83,7 @@ class SaleOrder(models.Model):
 
     def action_quotation_send(self):
         action = super(SaleOrder, self).action_quotation_send()
-        if self.opportunity_id and self.state in ['draft', 'quotation_submit', 'quotation_approved', 'sent']:
+        if self.opportunity_id and self.state in ['draft', 'sent']:
             context = action.get('context')
             template_id = self.env['ir.model.data'].xmlid_to_res_id(
                 'qshield_crm.email_template_qshield_proposal_quotation',
@@ -111,29 +99,6 @@ class SaleOrder(models.Model):
             template_id = self.env.ref('qshield_crm.email_template_of_send_notification_to_client')
             context.update({'default_template_id': template_id.id})
             action.update({'context': context})
-            if template_id:
-                db_manager_url = self.env['ir.config_parameter'].get_param('web.base.url') + '/web/database/manager'
-                url = self.env['ir.config_parameter'].get_param('web.base.url') + self.get_portal_url()
-                prepared_url = '<a href="' + url + '">' + 'View Quotation' + '</a>'
-                db_manager_link = '<a href="' + db_manager_url + '">' + 'Select Database' + '</a>'
-                partner_to = self.account_manager.work_email if self.account_manager and self.account_manager.work_email else ''
-                notification_approver_emails = self.env['sale.order.approver.settings'].search(
-                    [('approver_notification_email', '!=', False)], limit=1).approver_notification_email
-                if self.approver_setting_id and self.approver_setting_id.approver_notification_email:
-                    partner_to = partner_to + ',' + self.approver_setting_id.approver_notification_email
-                elif notification_approver_emails:
-                    partner_to = partner_to + ',' + notification_approver_emails
-                if partner_to:
-                    email_list = partner_to.split(',')
-                    for email in email_list:
-                        template_id.sudo().with_context(
-                            email_to=email, email_from=self.env.user.email, link=prepared_url,
-                            db_manager_link=db_manager_link).send_mail(
-                            self.id,
-                            force_send=True)
-                self.write({'state': 'sent'})
-                return True
-                # return True
         return action
 
     def action_create_invoice_term(self):
@@ -225,10 +190,6 @@ class SaleOrder(models.Model):
     @api.model
     def create(self, values):
         order = super(SaleOrder, self).create(values)
-        if order.opportunity_id and not order.approver_setting_id:
-            raise UserError('Please Configure Approval settings')
-        if order.approver_setting_id and len(order.approver_ids) == 0:
-            order.compute_approvers()
         if order.opportunity_id:
             order.get_amount_of_linked_so_with_opportunity()
         return order
@@ -264,7 +225,7 @@ class SaleOrder(models.Model):
     @api.returns('mail.message', lambda value: value.id)
     def message_post(self, **kwargs):
         if self.env.context.get('mark_so_as_sent'):
-            self.filtered(lambda o: o.state in ['draft', 'quotation_approved']).with_context(
+            self.filtered(lambda o: o.state in ['draft']).with_context(
                 tracking_disable=True).write({'state': 'sent'})
             self.env.company.sudo().set_onboarding_step_done('sale_onboarding_sample_quotation_state')
         return super(SaleOrder, self.with_context(mail_post_autofollow=True)).message_post(**kwargs)
@@ -346,59 +307,6 @@ class SaleOrder(models.Model):
             else:
                 record.is_valid_for_agreement = False
 
-    @api.depends('approver_ids')
-    def compute_is_approver_user(self):
-        for record in self:
-            if record.approver_ids:
-                if record.approver_ids.filtered(lambda x: x.user_id == self.env.user):
-                    record.is_approver_user = True
-                else:
-                    record.is_approver_user = False
-            else:
-                record.is_approver_user = False
-
-    @api.depends('approver_ids')
-    def _compute_user_status(self):
-        for order in self:
-            approvers = order.approver_ids.filtered(
-                lambda approver: approver.user_id == self.env.user).filtered(
-                lambda approver: approver.status != 'approved')
-            if len(approvers) > 0:
-                order.user_status = approvers[0].status
-            else:
-                order.user_status = False
-
-    @api.depends('user_id', 'is_out_of_scope')
-    def compute_approver_settings_id(self):
-        for rec in self:
-            if rec.is_out_of_scope:
-                rec.approver_setting_id = self.env['sale.order.approver.settings'].search(
-                    [('type', '=', 'service_approver')], limit=1).id
-            else:
-                rec.approver_setting_id = self.env['sale.order.approver.settings'].search([], limit=1).id
-
-    @api.onchange('approver_setting_id')
-    def compute_approvers(self):
-        current_users = self.approver_ids.mapped('user_id')
-        new_users = self.approver_setting_id.approver_ids
-        for user in new_users - current_users:
-            record = self.env['sale.order.approver'].new({
-                'user_id': user.id,
-                'status': 'draft'})
-            self.approver_ids += record
-
-    def submit_quotation(self):
-        for record in self:
-            for approver in self.mapped('approver_ids').filtered(lambda approver: approver.status == 'refused'):
-                approver.write({'status': 'draft'})
-            approvers = self.mapped('approver_ids').filtered(lambda approver: approver.status == 'draft')
-            if approvers:
-                approvers[0]._create_activity()
-                approvers[0].write({'status': 'pending'})
-            activity = self.env.ref('qshield_crm.mail_activity_data_sale_order').id
-            self.sudo()._get_user_approval_activities(user=self.env.user, activity_type_id=activity).action_feedback()
-            record.write({'state': 'quotation_submit'})
-
     def _get_user_approval_activities(self, user, activity_type_id):
         domain = [
             ('res_model', '=', 'sale.order'),
@@ -409,64 +317,20 @@ class SaleOrder(models.Model):
         activities = self.env['mail.activity'].search(domain)
         return activities
 
-    def approve_quotation(self, approver=None):
-        if not isinstance(approver, models.BaseModel):
-            approver = self.mapped('approver_ids').filtered(
-                lambda approver: approver.user_id == self.env.user
-            ).filtered(
-                lambda approver: approver.status != 'approved')
-        if len(approver) > 0:
-            approver[0].write({'status': 'approved', 'approval_date': datetime.now()})
-        activity = self.env.ref('qshield_crm.mail_activity_data_sale_order').id
-        self.sudo()._get_user_approval_activities(user=self.env.user, activity_type_id=activity).action_feedback()
-        approvers = self.mapped('approver_ids').filtered(lambda approver: approver[0].status == 'draft')
-        if len(approvers) > 0:
-            approvers[0]._create_activity()
-            approvers[0].write({'status': 'pending'})
-        else:
-            self.write({'state': 'quotation_approved'})
-
     def approve_agreement(self, approver=None):
-        if not isinstance(approver, models.BaseModel):
-            approver = self.mapped('approver_ids').filtered(
-                lambda approver: approver.user_id == self.env.user
-            ).filtered(
-                lambda approver: approver.status != 'approved')
-        if len(approver) > 0:
-            approver[0].write({'status': 'approved', 'approval_date': datetime.now()})
-        activity = self.env.ref('qshield_crm.mail_activity_data_sale_order').id
-        self.sudo()._get_user_approval_activities(user=self.env.user, activity_type_id=activity).action_feedback()
-        approvers = self.mapped('approver_ids').filtered(lambda approver: approver[0].status == 'draft')
-        if len(approvers) > 0:
-            approvers[0]._create_activity()
-            approvers[0].write({'status': 'pending'})
-        else:
-            template = self.env.ref(
-                'qshield_crm.email_template_quotation_submit_to_client',
-                raise_if_not_found=False)
-            self.send_notification(template)
-            self.write({'state': 'submit_client_operation'})
-            if self.state == 'submit_client_operation' and self.partner_invoice_type in ['retainer', 'outsourcing']:
-                self.create_agreement_of_customer()
+        template = self.env.ref(
+            'qshield_crm.email_template_quotation_submit_to_client',
+            raise_if_not_found=False)
+        self.send_notification(template)
+        self.write({'state': 'submit_client_operation'})
+        if self.partner_invoice_type in ['retainer', 'outsourcing']:
+            self.create_agreement_of_customer()
 
     def create_refuse_activity(self):
         for approver in self:
             approver.sale_order_id.activity_schedule(
                 'qshield_crm.mail_activity_data_sale_order',
                 user_id=approver.user_id.id)
-
-    def submit_agreement(self):
-        for approver in self.approver_ids:
-            approver.write({'status': 'draft'})
-        approvers = self.mapped('approver_ids').filtered(lambda approver: approver.status == 'draft')
-        if approvers:
-            approvers[0]._create_activity()
-            approvers[0].write({'status': 'pending'})
-        activity = self.env.ref('qshield_crm.mail_activity_data_sale_order').id
-        self.sudo()._get_user_approval_activities(user=self.env.user, activity_type_id=activity).action_feedback()
-        self.write({'state': 'agreement_submit'})
-        if not self.invoice_term_ids:
-            self.action_create_invoice_term()
 
     def create_agreement_of_customer(self):
         product_ids = self.order_line.mapped('product_id').ids
@@ -503,9 +367,6 @@ class SaleOrder(models.Model):
 
     def action_cancel(self):
         res = super(SaleOrder, self).action_cancel()
-        if self.approver_ids:
-            for approver in self.approver_ids:
-                approver.write({'status': 'cancel'})
         if self.is_out_of_scope:
             template = self.env.ref(
                 'qshield_crm.email_template_service_quotation_reject',
@@ -516,9 +377,6 @@ class SaleOrder(models.Model):
     def action_draft(self):
         res = super(SaleOrder, self).action_draft()
         for record in self:
-            if record.approver_ids:
-                for approver in record.approver_ids:
-                    approver.write({'status': 'draft'})
             if record.invoice_term_ids:
                 record.invoice_term_ids.sudo().unlink()
             service_request = self.env['ebs_mod.service.request'].sudo().search([('sale_order_id', '=', record.id)])
