@@ -49,6 +49,14 @@ class SaleOrder(models.Model):
     partner_invoice_type = fields.Selection(related="partner_id.partner_invoice_type")
 
     # is_notification_sent_to_account_manager = fields.Boolean(string="Is Notification Sent To Account Manager")
+    def close_quotation_activity(self):
+        activity = self.env.ref('qshield_crm.mail_activity_quotation').id
+        domain = [
+            ('res_model', '=', 'sale.order'),
+            ('res_id', 'in', self.ids),
+            ('activity_type_id', '=', activity)
+        ]
+        self.env['mail.activity'].search(domain).action_feedback()
 
     @api.onchange('partner_id')
     def onchange_partner_id_custom_method(self):
@@ -399,6 +407,7 @@ class SaleOrder(models.Model):
                     service = rec.send_notification(template)
                     if service and service.status == 'draft':
                         service.sudo().request_submit()
+            self.close_quotation_activity()
         return res
 
     def send_notification(self, template):
