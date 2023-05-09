@@ -28,7 +28,7 @@ class ServiceRequest(models.Model):
 
     def generate_invoice_base_on_service_end(self):
         if self.end_date:
-            if self.is_in_scope and self.partner_invoice_type in ['retainer','outsourcing']:
+            if self.is_in_scope and self.partner_invoice_type in ['retainer', 'outsourcing']:
                 invoice_term = self.contract_id.sale_order_id.invoice_term_ids.filtered(
                     lambda s: s.start_term_date <= self.end_date.date() <= s.end_term_date)
                 if invoice_term and not invoice_term.invoice_id:
@@ -261,12 +261,17 @@ class EbsModContracts(models.Model):
 
     sale_order_id = fields.Many2one(comodel_name='sale.order', string="Sale Order", track_visibility='onchange')
     no_of_employees = fields.Integer(string="No Of Employees")
+    is_employee_exceed = fields.Boolean(string="", compute="_compute_employee_exceed", store=True)
 
     def add_all_employee(self):
         for rec in self:
             if len(rec.employee_list) >= rec.no_of_employees:
-                raise ValidationError(_("No Of Employees Exceed Limit ........"))
-        return super(EbsModContracts,self).add_all_employee()
+                raise ValidationError(_("Number Of Employees Exceed Limit ........"))
+        return super(EbsModContracts, self).add_all_employee()
+    @api.depends('employee_list', 'no_of_employees')
+    def _compute_employee_exceed(self):
+        for rec in self:
+            rec.is_employee_exceed = len(rec.employee_list) >= rec.no_of_employees
 
 
 class ExpenseTypes(models.Model):

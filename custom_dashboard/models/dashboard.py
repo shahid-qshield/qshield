@@ -15,7 +15,7 @@ class ServiceRequest(models.Model):
     # governmental_fees = fields.Integer('Governmental Fees Amount')
     is_out_of_scope = fields.Boolean("Is Out of Scope", compute="compute_is_out_scope", store=True)
 
-    @api.depends('service_type_id','contract_id')
+    @api.depends('service_type_id', 'contract_id')
     def compute_is_out_scope(self):
         for record in self:
             is_out_of_scope = False
@@ -23,6 +23,16 @@ class ServiceRequest(models.Model):
                 in_scope_service = record.contract_id.sudo().service_ids.filtered(
                     lambda s: s in record.service_type_id)
                 if not in_scope_service:
+                    is_out_of_scope = True
+            elif not record.contract_id:
+                contract_list = self.env['ebs_mod.contracts'].search([
+                    ('contact_id', '=', self.related_company.id),
+                    ('start_date', '<=', self.date),
+                    ('end_date', '>=', self.date),
+                ])
+                contact_contract_list = self.get_contact_contract_list(self.partner_id, contract_list)
+                if len(contact_contract_list) == 0 and \
+                        self.partner_id.partner_invoice_type in ['retainer', 'outsourcing']:
                     is_out_of_scope = True
             record.is_out_of_scope = is_out_of_scope
 

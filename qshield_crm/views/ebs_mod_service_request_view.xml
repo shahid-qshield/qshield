@@ -27,6 +27,24 @@
                     <field name="sale_order_id" readonly="True"/>
                     <field name="no_of_employees" readonly="True"/>
                 </field>
+
+                <xpath expr="//page[@name='employee_page']/button[@name='add_all_employee']" position="before">
+                    <field name="is_employee_exceed" invisible="1"/>
+                </xpath>
+
+                <xpath expr="//page[@name='employee_page']/button[@name='add_all_employee']" position="attributes">
+                    <attribute name="attrs">{'invisible':[('is_employee_exceed','=',True)]}</attribute>
+                </xpath>
+
+                <xpath expr="//page[@name='employee_page']/button[@name='remove_all_employee']" position="after">
+                    <span attrs="{'invisible':[('is_employee_exceed','=',False)]}"
+                          class="fa fa-exclamation-triangle text-danger pl-3">
+                    </span>
+                    <span class="text-danger" attrs="{'invisible':[('is_employee_exceed','=',False)]}">
+                        The Number Of Employees Exceed Limit.
+                    </span>
+                </xpath>
+
             </field>
         </record>
 
