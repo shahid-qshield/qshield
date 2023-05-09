@@ -243,9 +243,6 @@ class ContactCustom(models.Model):
 
                     for dependant in new_dependant:
                         dependants_list.append({
-                            'name': dependant.name,
-                            'gender': dependant.gender,
-                            'dob': dependant.date,
                             'hr_employee': employee.id,
                             'related_partner_id': dependant.id,
                         })

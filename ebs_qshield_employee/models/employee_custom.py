@@ -86,9 +86,9 @@ class EmployeeCustom(models.Model):
     employee_address = fields.Text(string="Address")
     iban_number = fields.Char(string="IBAN Number")
 
-    def  write(self, vals):
+    def write(self, vals):
         res = super(EmployeeCustom, self).write(vals)
-        if  'active' in vals and self.partner_id.active != vals.get('active'):
+        if 'active' in vals and self.partner_id.active != vals.get('active'):
             self.partner_id.write({
                 'active': vals.get('active')
             })
@@ -128,7 +128,7 @@ class EmployeeCustom(models.Model):
                             }
                             employee.sudo().write(employee_vals)
                             count += 1
-                print('----------==============---------------------===========',count)
+                print('----------==============---------------------===========', count)
             except Exception as e:
                 print('Something Wrong', e)
 
@@ -852,21 +852,40 @@ class Religion(models.Model):
 class Dependant(models.Model):
     _name = 'hr.dependant'
 
-    name = fields.Char()
+    related_partner_id = fields.Many2one(comodel_name="res.partner", string="Related Partner", ondelete='cascade')
+    name = fields.Char(compute='compute_dependant_name', store=True)
     gender = fields.Selection(string='Sex',
                               selection=[
                                   ('male', 'Male'),
                                   ('female', 'Female')],
+                              compute='compute_dependant_gender',
                               store=True)
-    dob = fields.Date('Date of Birth')
+    dob = fields.Date('Date of Birth',
+                      compute='compute_dependant_dob',
+                      store=True)
     accompany = fields.Boolean('Are they accompanying you?')
     relation = fields.Selection(string='Relationship',
                                 selection=[
                                     ('Spouse', 'Spouse'),
                                     ('Child', 'Child')],
                                 store=True)
+
     hr_employee = fields.Many2one('hr.employee', readonly=True)
-    related_partner_id = fields.Many2one(comodel_name="res.partner", string="Related Partner", ondelete='cascade', )
+
+    @api.depends('related_partner_id', 'related_partner_id.name')
+    def compute_dependant_name(self):
+        for rec in self:
+            rec.name = rec.related_partner_id.name if rec.related_partner_id else False
+
+    @api.depends('related_partner_id', 'related_partner_id.gender')
+    def compute_dependant_gender(self):
+        for rec in self:
+            rec.gender = rec.related_partner_id.gender if rec.related_partner_id else False
+
+    @api.depends('related_partner_id', 'related_partner_id.date')
+    def compute_dependant_dob(self):
+        for rec in self:
+            rec.dob = rec.related_partner_id.date if rec.related_partner_id else False
 
 
 class Emergency(models.Model):
