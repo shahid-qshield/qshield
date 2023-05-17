@@ -138,7 +138,7 @@
                                 groups="qshield_crm.qshield_crm_management"/>
 
                         <field name="state" widget="statusbar"
-                               statusbar_visible="draft,sent,sale,submit_client_operation,done,cancel"/>
+                               statusbar_visible="draft,sale,submit_client_operation,done,cancel"/>
 <!--                        <field name="qshield_service_state" widget="statusbar"-->
 <!--                               statusbar_visible="draft,sent,sale,submit_client_operation,done,cancel"-->
 <!--                               attrs="{'invisible': ['|',('is_out_of_scope', '=', False),('opportunity_id', '!=', False)]}"/>-->

@@ -8,7 +8,7 @@
             <form string="Create Sale Order">
                 <group>
                     <group>
-                        <field name="recommended_price"/>
+                        <field name="service_price"/>
                     </group>
                 </group>
                 <footer>

@@ -79,7 +79,7 @@ class EmployeeCustom(models.Model):
         domain="['|', ('company_id', '=', False), ('company_id', '=', company_id)]")
     is_out_sourced = fields.Boolean(string="Out source ?", default=False)
 
-    joining_date = fields.Date(string="Joining Date", default=lambda self: fields.Datetime.now(), required=True)
+    joining_date = fields.Date(string="Joining Date", default=lambda self: fields.Datetime.now(), required=False)
     visa = fields.Many2one(comodel_name="visa.status", string="Visa Status", required=False, )
     custom_document_count = fields.Integer(compute="_compute_document_count", store=False)
     nationality = fields.Selection(selection_item, string="Nationality")
@@ -841,6 +841,23 @@ class EmployeeCustom(models.Model):
 
     def employee_information_form(self):
         return self.env.ref('ebs_qshield_employee.action_employee_information_form').report_action(self)
+
+    # @api.model
+    # def check_correct_employees(self):
+    #     all_employees = self.env['hr.employee'].sudo().search([('active', '=', True)])
+    #     employees_to_delete = all_employees.filtered(lambda employee: not employee.partner_id)
+    #     employee_partners = all_employees.mapped('partner_id')
+    #     donot_matched_partner = employee_partners.filtered(lambda partner: partner.sponsor.is_employee_create == False)
+    #     employees_to_delete += all_employees.filtered(lambda employee: employee.partner_id in donot_matched_partner)
+    #     employees_have_payslips = self.env['qshield.payslip'].search([]).mapped('employee_id')
+    #     employees_to_delete -= employees_have_payslips
+    #     employees_have_letters = self.env['ebs.hr.letter.request'].search([]).mapped('employee_id')
+    #     employees_to_delete -= employees_have_letters
+    #     employees_have_appraisal = self.env['hr.appraisal'].search([]).mapped('employee_id')
+    #     employees_to_delete -= employees_have_appraisal
+    #     employees_have_appraisal = self.env['hr.leave.allocation'].search([]).mapped('employee_id')
+    #     employees_to_delete -= employees_have_appraisal
+    #     employees_to_delete.unlink()
 
 
 class Religion(models.Model):

@@ -109,6 +109,17 @@ class SaleOrder(models.Model):
             action.update({'context': context})
         return action
 
+    def action_quotation_sent(self):
+        res = super().action_quotation_sent()
+        self.write({'state': 'draft'})
+        return res
+
+    @api.returns('mail.message', lambda value: value.id)
+    def message_post(self, **kwargs):
+        res = super(models.Model, self.with_context(mail_post_autofollow=True)).message_post(**kwargs)
+        if self.env.context.get('mark_so_as_sent'):
+            self.env.company.sudo().set_onboarding_step_done('sale_onboarding_sample_quotation_state')
+        return res
     def action_create_invoice_term(self):
         if self.invoice_term_ids:
             self.sudo().invoice_term_ids.unlink()
@@ -230,13 +241,13 @@ class SaleOrder(models.Model):
                 'amount_total': amount_untaxed + amount_tax,
             })
 
-    @api.returns('mail.message', lambda value: value.id)
-    def message_post(self, **kwargs):
-        if self.env.context.get('mark_so_as_sent'):
-            self.filtered(lambda o: o.state in ['draft']).with_context(
-                tracking_disable=True).write({'state': 'sent'})
-            self.env.company.sudo().set_onboarding_step_done('sale_onboarding_sample_quotation_state')
-        return super(SaleOrder, self.with_context(mail_post_autofollow=True)).message_post(**kwargs)
+    # @api.returns('mail.message', lambda value: value.id)
+    # def message_post(self, **kwargs):
+    #     if self.env.context.get('mark_so_as_sent'):
+    #         self.filtered(lambda o: o.state in ['draft']).with_context(
+    #             tracking_disable=True).write({'state': 'draft'})
+    #         self.env.company.sudo().set_onboarding_step_done('sale_onboarding_sample_quotation_state')
+    #     return super(SaleOrder, self.with_context(mail_post_autofollow=True)).message_post(**kwargs)
 
     @api.model
     def create_invoice_from_server_action(self):

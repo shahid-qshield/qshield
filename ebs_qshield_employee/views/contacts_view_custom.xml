@@ -31,7 +31,8 @@
                     <field name="employee_ids" context="{'get_partner_id' : active_id}"
                            attrs="{'invisible':[('is_qshield_sponsor','=',False)]}" widget="many2many_tags"
                            readonly="True"/>
-                    <field name="is_employee_create" invisible="1"/>
+                    <field name="is_employee_create" widget="boolean_toggle"
+                           attrs="{'invisible':[('person_type','not in', ('company'))]}"/>
                 </xpath>
                 <xpath expr="//field[@name='function']" position="attributes">
                     <attribute name="invisible">1</attribute>
