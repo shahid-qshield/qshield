@@ -855,8 +855,12 @@ class EmployeeCustom(models.Model):
     #     employees_to_delete -= employees_have_letters
     #     employees_have_appraisal = self.env['hr.appraisal'].search([]).mapped('employee_id')
     #     employees_to_delete -= employees_have_appraisal
-    #     employees_have_appraisal = self.env['hr.leave.allocation'].search([]).mapped('employee_id')
-    #     employees_to_delete -= employees_have_appraisal
+    #     employees_have_leave_allocation = self.env['hr.leave.allocation'].search([]).mapped('employee_id')
+    #     employees_to_delete -= employees_have_leave_allocation
+    #     employees_have_leave = self.env['hr.leave'].search([]).mapped('employee_id')
+    #     employees_to_delete -= employees_have_leave
+    #     employees_have_loan = self.env['hr.loan'].search([]).mapped('employee_id')
+    #     employees_to_delete -= employees_have_loan
     #     employees_to_delete.unlink()
 
 
