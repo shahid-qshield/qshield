@@ -241,14 +241,6 @@ class SaleOrder(models.Model):
                 'amount_total': amount_untaxed + amount_tax,
             })
 
-    # @api.returns('mail.message', lambda value: value.id)
-    # def message_post(self, **kwargs):
-    #     if self.env.context.get('mark_so_as_sent'):
-    #         self.filtered(lambda o: o.state in ['draft']).with_context(
-    #             tracking_disable=True).write({'state': 'draft'})
-    #         self.env.company.sudo().set_onboarding_step_done('sale_onboarding_sample_quotation_state')
-    #     return super(SaleOrder, self.with_context(mail_post_autofollow=True)).message_post(**kwargs)
-
     @api.model
     def create_invoice_from_server_action(self):
         invoice_ids = []
@@ -418,7 +410,7 @@ class SaleOrder(models.Model):
                     service = rec.send_notification(template)
                     if service and service.status == 'draft':
                         service.sudo().request_submit()
-            self.close_quotation_activity()
+            # self.close_quotation_activity()
         return res
 
     def send_notification(self, template):
