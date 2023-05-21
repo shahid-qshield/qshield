@@ -88,7 +88,7 @@
                                 attrs="{'invisible':[('status','not in',['pending_payment','pending','hold','progress'])]}"
                                 groups="ebs_qsheild_mod.qshield_operational_manager"/>
 
-                        <button name="request_incomplete" string="Incomplete" type="object"
+                        <button name="request_incomplete" string="Incomplete (Government)" type="object"
                                 attrs="{'invisible':[('status','not in',['pending_payment','hold','progress'])]}"
                                 groups="ebs_qsheild_mod.qshield_operational_manager"/>
 
@@ -530,7 +530,7 @@
                                 attrs="{'invisible':[('status','not in',['pending_payment','pending','hold','progress'])]}"
                                 groups="ebs_qsheild_mod.qshield_operational_manager"/>
 
-                        <button name="request_incomplete" string="Incomplete" type="object"
+                        <button name="request_incomplete" string="Incomplete (Government)" type="object"
                                 attrs="{'invisible':[('status','not in',['pending_payment','hold','progress'])]}"
                                 groups="ebs_qsheild_mod.qshield_operational_manager"/>
 

@@ -28,7 +28,7 @@ class ServiceRequest(models.Model):
 
     def generate_invoice_base_on_service_end(self):
         if self.end_date:
-            if self.is_in_scope and self.partner_invoice_type in ['retainer','outsourcing']:
+            if self.is_in_scope and self.partner_invoice_type in ['retainer', 'outsourcing']:
                 invoice_term = self.contract_id.sale_order_id.invoice_term_ids.filtered(
                     lambda s: s.start_term_date <= self.end_date.date() <= s.end_term_date)
                 if invoice_term and not invoice_term.invoice_id:
@@ -253,50 +253,7 @@ class ServiceRequest(models.Model):
         return res
 
     def generate_sale_order(self):
-        if self.is_out_of_scope or self.is_one_time_transaction:
-            order_id = self.env['sale.order'].sudo().create({
-                'partner_id': self.partner_id.id,
-                'account_manager': self.partner_id.account_manager.id if self.partner_id.account_manager else False,
-                'is_out_of_scope': True,
-                'generate_order_line': 'from_consolidation',
-                'is_agreement': 'one_time_payment' if self.is_one_time_transaction else 'is_retainer',
-                # 'order_line': [(0, 0, {
-                #     'product_id': self.service_type_id.variant_id.product_id.id,
-                #     'name': self.service_type_id.variant_id.product_id.name,
-                #     'product_uom_qty': 1,
-                #     'price_unit': self.service_type_id.variant_id.product_id.lst_price,
-                # })]
-            })
-            if order_id:
-                self.write({'sale_order_id': order_id.id})
-                order_id.sudo().write({'order_line': [(0, 0, {
-                    'display_type': 'line_section',
-                    'name': self.service_type_id and self.service_type_id.variant_id and self.service_type_id.variant_id.consolidation_id.name
-                })]})
-                order_id.sudo().write({'order_line': [(0, 0, {
-                    'product_id': self.service_type_id.variant_id.product_id.id,
-                    'name': self.service_type_id.variant_id.product_id.name,
-                    'product_uom_qty': 1,
-                    'price_unit': self.service_type_id.variant_id.product_id.lst_price,
-                })]})
-                if self.partner_invoice_type in ['partners', 'per_transaction']:
-                    payment_term_id = self.env.ref('account.account_payment_term_immediate').id
-                    approvers = order_id.mapped('approver_ids').filtered(
-                        lambda approver: approver.status != 'approved')
-                    if len(approvers) > 0:
-                        for approver in approvers:
-                            approver.sudo().write({'status': 'approved', 'approval_date': datetime.now()})
-                    order_id.sudo().write({'state': 'sale', 'payment_term_id': payment_term_id})
-                    if order_id.opportunity_id:
-                        order_id.sudo().write({'state': 'submit_client_operation'})
-                        order_id.opportunity_id.action_set_won_rainbowman()
-                        msg = (_('Opportunity Won {}'.format(order_id.opportunity_id.name)))
-                        order_id.message_post(body=msg)
-                    self.request_submit()
-                    if self.invoice_term_start_date and self.invoice_term_end_date:
-                        order_id.sudo().write(
-                            {'start_date': self.invoice_term_start_date, 'end_date': self.invoice_term_end_date})
-                        order_id.sudo().action_create_invoice_term()
+        pass
 
 
 class EbsModContracts(models.Model):
@@ -304,6 +261,17 @@ class EbsModContracts(models.Model):
 
     sale_order_id = fields.Many2one(comodel_name='sale.order', string="Sale Order", track_visibility='onchange')
     no_of_employees = fields.Integer(string="No Of Employees")
+    is_employee_exceed = fields.Boolean(string="", compute="_compute_employee_exceed", store=True)
+
+    def add_all_employee(self):
+        for rec in self:
+            if len(rec.employee_list) >= rec.no_of_employees:
+                raise ValidationError(_("Number Of Employees Exceed Limit ........"))
+        return super(EbsModContracts, self).add_all_employee()
+    @api.depends('employee_list', 'no_of_employees')
+    def _compute_employee_exceed(self):
+        for rec in self:
+            rec.is_employee_exceed = len(rec.employee_list) >= rec.no_of_employees
 
 
 class ExpenseTypes(models.Model):

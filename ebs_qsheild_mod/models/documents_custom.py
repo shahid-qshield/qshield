@@ -103,6 +103,8 @@ class DocumentsCustom(models.Model):
 
     archive_from_contact = fields.Boolean()
     expiration_days = fields.Integer(string="Expiration Days", compute="compute_expiration_days")
+    related_document_type = fields.Selection(compute="_compute_related_document_type", store=True,
+                                             selection=[('passport', 'Passport'), ('qatar_id', 'Qatar ID')])
 
     @api.depends()
     def compute_expiration_days(self):
@@ -119,6 +121,12 @@ class DocumentsCustom(models.Model):
                     [('document_number', '=', rec.document_number), ('active', '=', True), ('id', '!=', rec.id)])) != 0:
                 raise ValidationError(_("Document Number and Document Type Combination must be unique !"))
 
+    @api.depends('document_type_id', 'document_type_id.type')
+    def _compute_related_document_type(self):
+        for rec in self:
+            if rec.document_type_id:
+                rec.related_document_type = rec.document_type_id.type
+
     def get_date_difference(self, start, end, ):
         count = 0
         fmt = '%Y-%m-%d'
@@ -130,7 +138,7 @@ class DocumentsCustom(models.Model):
 
     def notify_expired_document(self):
         group_companies = self.read_group(
-            domain=[('related_company', '!=', False),('partner_id','!=',False)],
+            domain=[('related_company', '!=', False), ('partner_id', '!=', False)],
             fields=[],
             groupby=['related_company'])
         recipient_emails_for_document_expiry = self.env['ir.config_parameter'].sudo().get_param(
@@ -141,8 +149,9 @@ class DocumentsCustom(models.Model):
         for company in group_companies:
             # if company['related_company'] is None:
             #     print('---------------------------------')
-            documents = self.search([('active', '=', 'True'), ('renewed', '=', False), ('notify', '=', True),'|',
-                                     ('related_company', '=', company['related_company'][0]),('partner_id','=',company['related_company'][0])])
+            documents = self.search([('active', '=', 'True'), ('renewed', '=', False), ('notify', '=', True), '|',
+                                     ('related_company', '=', company['related_company'][0]),
+                                     ('partner_id', '=', company['related_company'][0])])
             document_types = documents.mapped('document_type_id')
             if documents and document_types:
                 base_url = self.env['ir.config_parameter'].get_param('web.base.url')

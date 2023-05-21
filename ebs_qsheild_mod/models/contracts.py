@@ -190,4 +190,4 @@ class Contracts(models.Model):
             rec.write({'employee_list': [(6, 0, [])]})
             rec.write({'dependant_list': [(6, 0, [])]})
             rec.write({'visitor_list': [(6, 0, [])]})
-            return super(Contracts, rec).unlink()
+        return super(Contracts, self).unlink()

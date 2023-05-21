@@ -25,6 +25,7 @@ class DocumentTypes(models.Model):
     )
     expiry_configuration_ids = fields.Many2many('document.types.expiry.configuration',
                                                 string="Days Before Expiry Configuration")
+    type = fields.Selection(string="Type", selection=[('passport', 'Passport'), ('qatar_id', 'Qatar ID')])
 
 
 class DocumentTypesExpiryConfiguration(models.Model):

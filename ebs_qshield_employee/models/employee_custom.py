@@ -4,6 +4,10 @@ from odoo.exceptions import ValidationError, UserError
 import os
 import xlrd
 import datetime
+import base64
+import io
+import xlsxwriter
+from werkzeug import url_encode
 
 selection_item = [('Sri Lankan', 'Sri Lankan'),
                   ('Syrian', 'Syrian'),
@@ -38,6 +42,7 @@ class EmployeeCustom(models.Model):
     qid_number = fields.Char('QID Number')
     country_issue = fields.Many2one(comodel_name='res.country', string='Country of Issue')
     partner_id = fields.Many2one('res.partner', string='Related Contact', index=True)
+    related_company_id = fields.Many2one('res.partner', string='Related Company')
     work_in = fields.Many2one('res.partner', string='Work In')
     religion_id = fields.Many2one('hr.religion', string='Religion', index=True)
     religion = fields.Selection(string='Religion',
@@ -77,13 +82,20 @@ class EmployeeCustom(models.Model):
         groups="hr.group_hr_user", tracking=True,
         domain="['|', ('company_id', '=', False), ('company_id', '=', company_id)]")
     is_out_sourced = fields.Boolean(string="Out source ?", default=False)
-
-    joining_date = fields.Date(string="Joining Date", default=lambda self: fields.Datetime.now(), required=True)
+    joining_date = fields.Date(string="Joining Date", default=lambda self: fields.Datetime.now(), required=False)
     visa = fields.Many2one(comodel_name="visa.status", string="Visa Status", required=False, )
     custom_document_count = fields.Integer(compute="_compute_document_count", store=False)
     nationality = fields.Selection(selection_item, string="Nationality")
     employee_address = fields.Text(string="Address")
     iban_number = fields.Char(string="IBAN Number")
+
+    # def write(self, vals):
+    #     res = super(EmployeeCustom, self).write(vals)
+    #     if 'active' in vals and self.partner_id.active != vals.get('active'):
+    #         self.partner_id.write({
+    #             'active': vals.get('active')
+    #         })
+    #     return res
 
     def update_first_name_and_last_name_of_employee(self):
         file_path = os.path.dirname(os.path.dirname(__file__)) + '/data/Production Employee-First-lastname.xls'
@@ -119,7 +131,7 @@ class EmployeeCustom(models.Model):
                             }
                             employee.sudo().write(employee_vals)
                             count += 1
-                print('----------==============---------------------===========',count)
+                print('----------==============---------------------===========', count)
             except Exception as e:
                 print('Something Wrong', e)
 
@@ -833,6 +845,123 @@ class EmployeeCustom(models.Model):
     def employee_information_form(self):
         return self.env.ref('ebs_qshield_employee.action_employee_information_form').report_action(self)
 
+    def get_xlsx(self, report_dict):
+        output = io.BytesIO()
+        workbook = xlsxwriter.Workbook(output, {
+            'in_memory': True,
+            'strings_to_formulas': False,
+        })
+        header_row_style = workbook.add_format({'bold': True, 'align': 'center', 'border': True})
+        cell = workbook.add_format({'align': 'center'})
+        for sheet_name, employees in report_dict.items():
+            sheet = workbook.add_worksheet(sheet_name)
+
+            sheet.set_column('A:A', 15)
+            sheet.set_column('B:B', 40)
+
+            # Header Cells
+            row = 1
+            col = 0
+            sheet.write(0, 0, 'ID', header_row_style)
+            sheet.write(0, 1, 'Employee Name', header_row_style)
+            for employee in employees:
+                # Body Cells
+                sheet.write(row, col, employee.id, cell)
+                sheet.write(row, col + 1, employee.name, cell)
+
+                row += 1
+
+        workbook.close()
+        output.seek(0)
+        generated_file = output.read()
+        output.close()
+
+        return generated_file
+
+    def find_duplicates_qid(self, employees):
+        counts = {}
+        duplicates = []
+
+        for qid in employees.mapped('qid_number'):
+            if qid in counts:
+                counts[qid] += 1
+            else:
+                counts[qid] = 1
+
+        for qid, count in counts.items():
+            if count > 1:
+                duplicates.append(employees.filtered(lambda employee: employee.qid_number == qid)[0])
+
+        return duplicates
+
+    @api.model
+    def check_correct_employees(self):
+        report_dict = {}
+        all_employees = self.env['hr.employee'].sudo().search([('active', '=', True)])
+        contact_can_create_employee = self.env['res.partner'].search(
+            [('active', '=', True), ('is_qshield_sponsor', '=', True)])
+        employees_to_delete = all_employees.filtered(
+            lambda employee: employee.partner_id not in contact_can_create_employee)
+
+        # employees_have_no_contact = employees_to_delete.filtered(lambda employee: not employee.partner_id)
+        # # if employees_have_no_contact:
+        # #     report_dict.update({'Employees Have No Contact': employees_have_no_contact})
+        #
+        # employees_have_archives_contact = employees_to_delete.filtered(
+        #     lambda employee: employee.partner_id and not employee.partner_id.active)
+        # # if employees_have_archives_contact:
+        # #     report_dict.update({'Employees Have Archived Contact': employees_have_archives_contact})
+
+        employees_have_payslips = self.env['qshield.payslip'].search(
+            [('employee_id', 'in', employees_to_delete.ids)]).mapped('employee_id')
+        if employees_have_payslips:
+            report_dict.update({'Employees Have Related Payslips': employees_have_payslips})
+
+        employees_have_letters = self.env['ebs.hr.letter.request'].search(
+            [('employee_id', 'in', employees_to_delete.ids)]).mapped('employee_id')
+        if employees_have_letters:
+            report_dict.update({'Employees Have Letter Request': employees_have_payslips})
+
+        employees_have_appraisal = self.env['hr.appraisal'].search(
+            [('employee_id', 'in', employees_to_delete.ids)]).mapped(
+            'employee_id')
+        if employees_have_appraisal:
+            report_dict.update({'Employees Have Appraisal': employees_have_appraisal})
+
+        employees_have_leave_allocation = self.env['hr.leave.allocation'].search(
+            [('employee_id', 'in', employees_to_delete.ids)]).mapped('employee_id')
+        if employees_have_leave_allocation:
+            report_dict.update({'Employees Have Leave Allocations': employees_have_leave_allocation})
+
+        employees_have_leave = self.env['hr.leave'].search([('employee_id', 'in', employees_to_delete.ids)]).mapped(
+            'employee_id')
+        if employees_have_leave:
+            report_dict.update({'Employees Have Leave': employees_have_leave})
+
+        employees_have_loan = self.env['hr.loan'].search([('employee_id', 'in', employees_to_delete.ids)]).mapped(
+            'employee_id')
+        if employees_have_loan:
+            report_dict.update({'Employees Have Loan': employees_have_loan})
+
+        employees_have_duplicated_qid = self.find_duplicates_qid(
+            all_employees.filtered(lambda employee: employee.qid_number))
+        if employees_have_duplicated_qid:
+            report_dict.update({'Employees Have Duplicated QID': employees_have_duplicated_qid})
+
+        file = self.get_xlsx(report_dict)
+        report = base64.encodebytes(file)
+
+        attachment = self.env['ir.attachment'].create({
+            'name': "Employee Status" + datetime.date.today().strftime("%Y-%m-%d"),
+            'datas': report,
+            'res_model': 'hr.employee',
+        })
+        return {
+            'target': 'new',
+            'type': 'ir.actions.act_url',
+            'url': '/web/content/%s?download=1' % attachment.id
+        }
+
 
 class Religion(models.Model):
     _name = 'hr.religion'
@@ -843,20 +972,40 @@ class Religion(models.Model):
 class Dependant(models.Model):
     _name = 'hr.dependant'
 
-    name = fields.Char()
+    related_partner_id = fields.Many2one(comodel_name="res.partner", string="Related Partner", ondelete='cascade')
+    name = fields.Char(compute='compute_dependant_name', store=True)
     gender = fields.Selection(string='Sex',
                               selection=[
                                   ('male', 'Male'),
                                   ('female', 'Female')],
+                              compute='compute_dependant_gender',
                               store=True)
-    dob = fields.Date('Date of Birth')
+    dob = fields.Date('Date of Birth',
+                      compute='compute_dependant_dob',
+                      store=True)
     accompany = fields.Boolean('Are they accompanying you?')
     relation = fields.Selection(string='Relationship',
                                 selection=[
                                     ('Spouse', 'Spouse'),
                                     ('Child', 'Child')],
                                 store=True)
+
     hr_employee = fields.Many2one('hr.employee', readonly=True)
+
+    @api.depends('related_partner_id', 'related_partner_id.name')
+    def compute_dependant_name(self):
+        for rec in self:
+            rec.name = rec.related_partner_id.name if rec.related_partner_id else False
+
+    @api.depends('related_partner_id', 'related_partner_id.gender')
+    def compute_dependant_gender(self):
+        for rec in self:
+            rec.gender = rec.related_partner_id.gender if rec.related_partner_id else False
+
+    @api.depends('related_partner_id', 'related_partner_id.date')
+    def compute_dependant_dob(self):
+        for rec in self:
+            rec.dob = rec.related_partner_id.date if rec.related_partner_id else False
 
 
 class Emergency(models.Model):

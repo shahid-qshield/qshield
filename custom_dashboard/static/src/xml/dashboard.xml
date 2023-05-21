@@ -148,7 +148,7 @@
                         <div class="oh-card-body" style="background-color: #efefef;">
                             <div class="stat-icon request_incomplete"><p><t t-esc="widget.progress['incomplete']"/></p></div>
                             <div class="stat-content">
-                                    <div class="stat-text">Incomplete</div>
+                                    <div class="stat-text">Incomplete (Government)</div>
                                 <div class="stat-digit"></div>
                             </div>
                         </div>

@@ -24,7 +24,7 @@ class ContactCustom(models.Model):
          'The combination of Type, Related Contact and Name must be unique !'),
     ]
 
-    parent_id = fields.Many2one('res.partner', string='Related Contact', index=True)
+    parent_id = fields.Many2one('res.partner', string='Related Company', index=True)
     date_stop_renew = fields.Date(
         string='Do Not Renew After',
         required=False)
@@ -395,7 +395,7 @@ class ContactCustom(models.Model):
 
             for doc in rec.document_o2m:
                 doc.unlink()
-            super(ContactCustom, rec).unlink()
+        super(ContactCustom, self).unlink()
 
     @api.onchange('parent_id')
     def onchange_parent_id(self):

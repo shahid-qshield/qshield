@@ -169,7 +169,7 @@ class ServiceRequest(models.Model):
                    ('escalated', 'Escalated'),
                    ('reject', 'Rejected'),
                    ('complete', 'Completed'),
-                   ('incomplete', 'Incomplete'),
+                   ('incomplete', 'Incomplete (Government)'),
                    ('escalated_progress', 'Escalated In Progress'),
                    ('escalated_incomplete', 'Escalated Incomplete'),
                    ('escalated_complete', 'Escalated Completed'),
@@ -184,7 +184,7 @@ class ServiceRequest(models.Model):
         'pending': 'Pending from Gov',
         'pending_payment': 'Pending Payment',
         'escalated': 'Escalated',
-        'incomplete': 'Incomplete',
+        'incomplete': 'Incomplete (Government)',
         'escalated_incomplete': 'Escalated Incomplete',
         'escalated_progress': 'Escalated In Progress',
         'escalated_complete': 'Escalated Completed',
@@ -737,8 +737,8 @@ class ServiceRequest(models.Model):
         else:
             code = self.env['ir.sequence'].next_by_code('ebs_mod.service.request')
 
-        year = str(self.date.year)
-        month = self.date.strftime("%B")
+        year = str(self.date.year) or ""
+        month = self.date.strftime("%B") or ""
         comp_ref = self.related_company.ref or ""
         service_red = self.service_type_id.code or ""
         self.code = code

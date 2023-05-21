@@ -24,12 +24,69 @@
             <field name="model">res.partner</field>
             <field name="inherit_id" ref="base.view_partner_form"/>
             <field name="arch" type="xml">
+                <xpath expr="//sheet" position="before">
+                    <field name="no_longer_sponsored" invisible="1"/>
+                    <div class="alert alert-danger" role="alert"
+                         style="margin-bottom:0px;text-align:center;font-weight-bold;"
+                         attrs="{'invisible': [('no_longer_sponsored','=',False)]}">
+
+                        Please validate and update the related employee record
+                        <br/>
+                        As this contact is no longer Q-Shield sponsored
+
+                    </div>
+                </xpath>
                 <xpath expr="//field[@name='parent_id']" position="after">
                     <field name="check_qshield_sponsor" invisible="1"/>
                     <field name="is_qshield_sponsor"/>
                     <field name="is_address" invisible="1"/>
                     <field name="employee_ids" context="{'get_partner_id' : active_id}"
-                           attrs="{'invisible':[('check_qshield_sponsor','=',False)]}"/>
+                           attrs="{'invisible':[('is_qshield_sponsor','=',False)]}" widget="many2many_tags"
+                           readonly="True"/>
+                    <field name="is_employee_create" widget="boolean_toggle"
+                           attrs="{'invisible':[('person_type','not in', ('company'))]}"
+                           invisible="1"/>
+                    <field name="is_work_permit" widget="boolean_toggle"
+                           attrs="{'invisible':[('person_type','not in', ('company'))]}"
+                           invisible="1"/>
+                </xpath>
+                <xpath expr="//field[@name='function']" position="attributes">
+                    <attribute name="invisible">1</attribute>
+                </xpath>
+                <xpath expr="//field[@name='function']" position="before">
+                    <field name="job_id" attrs="{'invisible':[('person_type','in', ('company','child'))]}"/>
+                </xpath>
+            </field>
+        </record>
+
+        <record id="view_partner_short_form" model="ir.ui.view">
+            <field name="name">res.partner</field>
+            <field name="model">res.partner</field>
+            <field name="inherit_id" ref="base.view_partner_short_form"/>
+            <field name="arch" type="xml">
+
+                <xpath expr="//field[@name='function']" position="attributes">
+                    <attribute name="invisible">1</attribute>
+                </xpath>
+                <xpath expr="//field[@name='function']" position="before">
+                    <field name="person_type" invisible="1"/>
+                    <field name="job_id" attrs="{'invisible':[('person_type','in', ('company','child'))]}"/>
+                </xpath>
+            </field>
+        </record>
+
+        <record id="view_partner_simple_form" model="ir.ui.view">
+            <field name="name">res.partner</field>
+            <field name="model">res.partner</field>
+            <field name="inherit_id" ref="base.view_partner_simple_form"/>
+            <field name="arch" type="xml">
+
+                <xpath expr="//field[@name='function']" position="attributes">
+                    <attribute name="invisible">1</attribute>
+                </xpath>
+                <xpath expr="//field[@name='function']" position="before">
+                    <field name="person_type" invisible="1"/>
+                    <field name="job_id" attrs="{'invisible':[('person_type','in', ('company','child'))]}"/>
                 </xpath>
             </field>
         </record>
@@ -42,6 +99,22 @@
             <field name="code">
                 if records:
                 action = records.create_employee()
+            </field>
+        </record>
+
+        <!-- Inherit Form View to Modify it -->
+        <record id="custom_contacts_view" model="ir.ui.view">
+            <field name="name">custom.contacts.view</field>
+            <field name="model">res.partner</field>
+            <field name="inherit_id" ref="ebs_qsheild_mod.custom_contacts_view"/>
+            <field name="arch" type="xml">
+
+                <xpath expr="//field[@name='date_join']" position="attributes">
+                    <attribute name="attrs">{'invisible':[('person_type','!=','emp')], 'required':
+                        [('person_type','=','emp'), ('is_qshield_sponsor', '=', True)]}
+                    </attribute>
+                </xpath>
+
             </field>
         </record>
     </data>

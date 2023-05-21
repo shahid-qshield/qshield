@@ -248,7 +248,7 @@
                         <field name="type" invisible="1"/>
                         <field name="is_miscellaneous"/>
                         <field name="parent_id" readonly="context.get('readonly_parent_id', False)"
-                               string="Related Contact"
+                               string="Related Company"
                                options="{'no_create': True, 'no_create_edit':True}"
                                attrs="{'invisible':[('person_type','=','company')]}"
                                domain="[('person_type','=', (
@@ -268,13 +268,14 @@
 
                         <field name="passport_doc" options="{'no_create': True, 'no_create_edit':True}"
                                attrs="{'invisible':[('person_type','=', 'company')]}"
-                               domain="[('partner_id','=',id)]"
+                               domain="[('partner_id','=',id), ('document_type_id.type', '=', 'passport')]"
 
                         />
                         <field name="passport_exp_date" attrs="{'invisible':[('passport_doc','=', False)]}"/>
 
 
-                        <field name="qatar_id_doc" domain="[('partner_id','=',id)]"
+                        <field name="qatar_id_doc"
+                               domain="[('partner_id','=',id), ('document_type_id.type', '=', 'qatar_id')]"
                                options="{'no_create': True, 'no_create_edit':True}"
                                attrs="{'invisible':[('person_type','in', ('company','visitor'))]}"/>
 
@@ -411,7 +412,7 @@
                 <xpath expr="//field[@name='parent_id']" position="replace">
                     <field name="related_company" domain="[('person_type', '=', 'company')]" string="Related Company"
                            operator="child_of"/>
-                    <field name="parent_id" domain="[('person_type', '=', 'emp')]" string="Related Contact"
+                    <field name="parent_id" domain="[('person_type', '=', 'emp')]" string="Related Company"
                            operator="child_of"/>
                 </xpath>
 

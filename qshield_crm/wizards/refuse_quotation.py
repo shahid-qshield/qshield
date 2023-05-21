@@ -23,16 +23,16 @@ class RefuseQuotation(models.TransientModel):
                     reason = sale_order.refuse_quotation_reason + '\n' + '=>' + ' ' + self.reason + " Refused by " + self.env.user.name + " " + reason_date
                 else:
                     reason = '=>' + ' ' + self.reason + " Refused by " + self.env.user.name + " " + reason_date
-                approvers = sale_order.mapped('approver_ids').filtered(lambda approver: approver.status != 'refused')
-                for approver in approvers:
-                    approver.write({'status': 'refused'})
+                # approvers = sale_order.mapped('approver_ids').filtered(lambda approver: approver.status != 'refused')
+                # for approver in approvers:
+                #     approver.write({'status': 'refused'})
                 sale_order.write({'state': 'draft', 'refuse_quotation_reason': reason})
             elif sale_order.state == 'agreement_submit':
                 if self.reason and sale_order.refuse_agreement_reason:
                     reason = sale_order.refuse_agreement_reason + '\n' + '=>' + ' ' + self.reason + " Refused by " + self.env.user.name + " " + reason_date
                 else:
                     reason = '=>' + ' ' + self.reason + " Refused by " + self.env.user.name + " " + reason_date
-                approvers = sale_order.mapped('approver_ids').filtered(lambda approver: approver.status != 'refused')
-                for approver in approvers:
-                    approver.write({'status': 'refused'})
+                # approvers = sale_order.mapped('approver_ids').filtered(lambda approver: approver.status != 'refused')
+                # for approver in approvers:
+                #     approver.write({'status': 'refused'})
                 sale_order.write({'state': 'sale', 'refuse_agreement_reason': reason})

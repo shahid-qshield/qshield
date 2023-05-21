@@ -278,7 +278,7 @@
                                                         </t>
                                                         <t t-set="sale_order"
                                                            t-value="line.sale_line_ids.mapped('order_id')"/>
-                                                        <t t-if="sale_order.is_agreement == 'is_retainer' and sale_order.approver_setting_id.type =='crm_approver'">
+                                                        <t t-if="sale_order.is_agreement == 'is_retainer'">
                                                             <t t-set="contract_id"
                                                                t-value="o.env['ebs_mod.contracts'].search([('sale_order_id','=',sale_order.id)],limit=1)"/>
                                                             <span>Retainer</span>

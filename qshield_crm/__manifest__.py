@@ -18,7 +18,7 @@
     'version': '1.0.7',
 
     # any module necessary for this one to work correctly
-    'depends': ['base', 'crm', 'sale_crm', 'ebs_qsheild_mod', 'sale_management', 'custom_dashboard'],
+    'depends': ['base', 'crm', 'sale_crm', 'ebs_qsheild_mod', 'sale_management', 'custom_dashboard', 'sales_team', 'ebs_leave_appilcation_request'],
 
     # always loaded
     'data': [
@@ -33,6 +33,7 @@
         'wizards/refuse_quotation_view.xml',
         'wizards/create_multiple_invoice.xml',
         'wizards/export_service_request_report.xml',
+        'wizards/service_req_create_so.xml',
         'views/generate_sale_order_line_view.xml',
         'views/crm_lead_view.xml',
         'views/sale_order_view.xml',

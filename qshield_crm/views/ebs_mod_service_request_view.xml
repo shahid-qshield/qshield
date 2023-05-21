@@ -24,9 +24,45 @@
             <field name="inherit_id" ref="ebs_qsheild_mod.contracts_form"/>
             <field name="arch" type="xml">
                 <field name="related_company_ids" position="after">
-                    <field name="sale_order_id"/>
-                    <field name="no_of_employees"/>
+                    <field name="sale_order_id" readonly="True"/>
+                    <field name="no_of_employees" readonly="True"/>
                 </field>
+
+                <xpath expr="//page[@name='employee_page']/button[@name='add_all_employee']" position="before">
+                    <field name="is_employee_exceed" invisible="1"/>
+                </xpath>
+
+                <xpath expr="//page[@name='employee_page']/button[@name='add_all_employee']" position="attributes">
+                    <attribute name="attrs">{'invisible':[('is_employee_exceed','=',True)]}</attribute>
+                </xpath>
+
+                <xpath expr="//page[@name='employee_page']/button[@name='remove_all_employee']" position="after">
+                    <span attrs="{'invisible':[('is_employee_exceed','=',False)]}"
+                          class="fa fa-exclamation-triangle text-danger pl-3">
+                    </span>
+                    <span class="text-danger" attrs="{'invisible':[('is_employee_exceed','=',False)]}">
+                        The Number Of Employees Exceed Limit.
+                    </span>
+                </xpath>
+
+            </field>
+        </record>
+
+        <record id="contracts_form_custom_allow_edit" model="ir.ui.view">
+            <field name="name">contracts.form.custom.allow.edit</field>
+            <field name="model">ebs_mod.contracts</field>
+            <field name="inherit_id" ref="contracts_form_custom_inherit"/>
+            <field name="groups_id"
+                   eval="[(6,0,[ref('sales_team.group_sale_salesman')])]"/>
+
+            <field name="arch" type="xml">
+                <xpath expr="//field[@name='sale_order_id']" position="attributes">
+                    <attribute name="readonly">0</attribute>
+                </xpath>
+                <xpath expr="//field[@name='no_of_employees']" position="attributes">
+                    <attribute name="readonly">0</attribute>
+                </xpath>
+
             </field>
         </record>
 
@@ -101,9 +137,10 @@
             <field name="inherit_id" ref="ebs_qsheild_mod.service_request_form"/>
             <field name="arch" type="xml">
                 <xpath expr="//header" position="inside">
-                    <button name="generate_sale_order" string="Generate Sale Order" class="btn btn-primary"
-                            attrs="{'invisible': ['|',('partner_invoice_type','in',['partners', 'per_transaction']),'|',('sale_order_id', '!=', False),'&amp;',('is_one_time_transaction', '=', False),('is_out_of_scope', '=', False)]}"
-                            type="object"/>
+                    <button name="%(qshield_crm.action_create_service_so)d" string="Generate Sale Order"
+                            class="btn btn-primary"
+                            attrs="{'invisible': ['|',('partner_invoice_type','in',['partners', 'per_transaction']),'|',('sale_order_id', '!=', False), '|',('status', '=', 'complete'),'&amp;',('is_one_time_transaction', '=', False),('is_out_of_scope', '=', False)]}"
+                            type="action"/>
                 </xpath>
                 <xpath expr="//field[@name='service_type_id']" position="after">
                     <field name="sale_order_id"
@@ -136,6 +173,7 @@
                 </xpath>
                 <xpath expr="//field[@name='service_type_id']" position="attributes">
                     <attribute name="attrs">{'readonly': [('sale_order_id', '!=', False)]}</attribute>
+                    <attribute name="domain">[('for_miscellaneous', '!=', True)]</attribute>
                 </xpath>
                 <xpath expr="//field[@name='contract_id']" position="attributes">
                     <attribute name="attrs">{'readonly': ['|',('status','!=','draft'),
@@ -143,8 +181,11 @@
                     </attribute>
                 </xpath>
                 <xpath expr="//button[@name='request_submit']" position="attributes">
-                    <attribute name="attrs">{'invisible': ['|',('status','!=','draft'),
-                        ('partner_invoice_type', 'not in',['outsourcing','retainer'])]}
+                    <attribute name="attrs">{'invisible': [
+                        '|', '|',('status','!=','draft'),
+                        ('partner_invoice_type', 'not in',['outsourcing','retainer']),
+                        ('is_out_of_scope', '=', True), ('sale_order_id', '=', False)
+                        ]}
                     </attribute>
                 </xpath>
             </field>
