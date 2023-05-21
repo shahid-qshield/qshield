@@ -18,6 +18,8 @@ class ContactCustom(models.Model):
     is_address = fields.Boolean(string="Is Address", default=False)
     is_employee_create = fields.Boolean(string='Is Employee Create')
     job_id = fields.Many2one(comodel_name="hr.job", string="Job Position", required=False, )
+    is_work_permit = fields.Boolean(string="Work Permit")
+    no_longer_sponsored = fields.Boolean(compute='_compute_no_longer_sponsored')
 
     def update_invoice_type(self):
         file_path = os.path.dirname(os.path.dirname(__file__)) + '/data/Company Types.xlsx'
@@ -64,10 +66,28 @@ class ContactCustom(models.Model):
             else:
                 rec.check_qshield_sponsor = False
 
-    @api.depends('sponsor', 'sponsor.is_employee_create', 'person_type')
+    @api.depends('employee_ids', 'is_qshield_sponsor')
+    def _compute_no_longer_sponsored(self):
+        for rec in self:
+            rec.no_longer_sponsored = True if rec.employee_ids and not rec.is_qshield_sponsor else False
+
+    @api.onchange('sponsor')
+    def _check_contact_employee_validation(self):
+        for rec in self:
+            if not rec.is_qshield_sponsor and rec.employee_ids:
+                warning = {
+                    'title': "Warning",
+                    'message': "Please validate and update the related employee record accordingly",
+                }
+                return {'warning': warning}
+
+    @api.depends('sponsor', 'sponsor.is_employee_create', 'sponsor.is_work_permit', 'parent_id',
+                 'parent_id.is_employee_create', 'person_type')
     def _compute_is_qshield_sponsor(self):
         for rec in self:
-            if rec.sponsor and rec.sponsor.is_employee_create and rec.person_type == 'emp':
+            if rec.person_type == 'emp' and rec.sponsor and (rec.sponsor.is_employee_create or \
+                                                             (rec.sponsor.is_work_permit and \
+                                                              rec.parent_id and rec.parent_id.is_employee_create)):
                 rec.is_qshield_sponsor = True
             else:
                 rec.is_qshield_sponsor = False
@@ -101,9 +121,10 @@ class ContactCustom(models.Model):
                 self.create_employee()
                 return res
 
-            if vals.get('active') or 'active' in vals:
+            if vals.get('active') or 'active' in vals or False in related_employees.mapped('active'):
                 employee_update_dict.update({
-                    'active': vals.get('active')
+                    'active': True if False in related_employees.mapped('active') and \
+                                      not vals.get('active') else vals.get('active')
                 })
 
             if vals.get('name'):
@@ -171,7 +192,8 @@ class ContactCustom(models.Model):
 
             if vals.get('sponsor') or vals.get('parent_id'):
                 employee_update_dict.update({
-                    'is_out_sourced': True if self.sponsor != self.parent_id else False,
+                    'is_out_sourced': True if (
+                                self.sponsor != self.parent_id and not self.sponsor.is_work_permit) else False,
                 })
 
             if vals.get('parent_id'):
