@@ -174,7 +174,6 @@
                 </xpath>
                 <xpath expr="//field[@name='service_type_id']" position="attributes">
                     <attribute name="attrs">{'readonly': [('sale_order_id', '!=', False)]}</attribute>
-                    <attribute name="domain">[('for_miscellaneous', '!=', True)]</attribute>
                 </xpath>
                 <xpath expr="//field[@name='contract_id']" position="attributes">
                     <attribute name="attrs">{'readonly': ['|',('status','!=','draft'),
