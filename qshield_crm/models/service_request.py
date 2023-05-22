@@ -25,6 +25,19 @@ class ServiceRequest(models.Model):
     is_in_scope = fields.Boolean("Is In of Scope", compute="compute_is_in_scope", store=True)
     is_end_date = fields.Boolean(string="Is End date", compute="compute_is_end_date")
     is_included_in_invoice = fields.Boolean(string="Is Included in invoice")
+    is_submit_invisible = fields.Boolean(compute='compute_is_submit_invisible')
+
+    @api.depends('status', 'partner_invoice_type', 'is_out_of_scope', 'sale_order_id')
+    def compute_is_submit_invisible(self):
+        for rec in self:
+            is_submit_invisible = True
+            if rec.status == 'draft':
+                if rec.partner_invoice_type not in ['outsourcing', 'retainer']:
+                    is_submit_invisible = False
+                elif rec.partner_invoice_type in ['outsourcing', 'retainer'] and \
+                        (not rec.is_out_of_scope or (rec.is_out_of_scope and rec.sale_order_id)):
+                    is_submit_invisible = False
+            rec.is_submit_invisible = is_submit_invisible
 
     def generate_invoice_base_on_service_end(self):
         if self.end_date:
@@ -261,17 +274,19 @@ class EbsModContracts(models.Model):
 
     sale_order_id = fields.Many2one(comodel_name='sale.order', string="Sale Order", track_visibility='onchange')
     no_of_employees = fields.Integer(string="No Of Employees")
-    is_employee_exceed = fields.Boolean(string="", compute="_compute_employee_exceed", store=True)
+    is_employee_exceed = fields.Boolean(string="Employee Exceed", compute="_compute_employee_exceed", store=True)
 
     def add_all_employee(self):
         for rec in self:
             if len(rec.employee_list) >= rec.no_of_employees:
                 raise ValidationError(_("Number Of Employees Exceed Limit ........"))
         return super(EbsModContracts, self).add_all_employee()
-    @api.depends('employee_list', 'no_of_employees')
+
+    @api.depends('employee_list', 'no_of_employees', 'contact_id', 'contact_id.partner_invoice_type')
     def _compute_employee_exceed(self):
         for rec in self:
-            rec.is_employee_exceed = len(rec.employee_list) >= rec.no_of_employees
+            rec.is_employee_exceed = len(rec.employee_list) >= rec.no_of_employees and \
+                                     rec.contact_id.partner_invoice_type == 'retainer'
 
 
 class ExpenseTypes(models.Model):

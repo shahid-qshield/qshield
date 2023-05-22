@@ -69,7 +69,8 @@ class ContactCustom(models.Model):
     @api.depends('employee_ids', 'is_qshield_sponsor')
     def _compute_no_longer_sponsored(self):
         for rec in self:
-            rec.no_longer_sponsored = True if rec.employee_ids and not rec.is_qshield_sponsor else False
+            rec.no_longer_sponsored = True if rec.employee_ids and not rec.is_qshield_sponsor and rec.person_type == 'emp' \
+                else False
 
     @api.onchange('sponsor')
     def _check_contact_employee_validation(self):
@@ -109,6 +110,7 @@ class ContactCustom(models.Model):
             if res.person_type == 'emp':
                 res.create_employee()
             return res
+
     def write(self, vals):
         res = super(ContactCustom, self).write(vals)
         if self.is_qshield_sponsor and self.person_type == 'emp':
@@ -192,7 +194,7 @@ class ContactCustom(models.Model):
             if vals.get('sponsor') or vals.get('parent_id'):
                 employee_update_dict.update({
                     'is_out_sourced': True if (
-                                self.sponsor != self.parent_id and not self.sponsor.is_work_permit) else False,
+                            self.sponsor != self.parent_id and not self.sponsor.is_work_permit) else False,
                 })
 
             if vals.get('parent_id'):
