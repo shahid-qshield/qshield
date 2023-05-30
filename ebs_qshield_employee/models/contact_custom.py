@@ -217,15 +217,14 @@ class ContactCustom(models.Model):
             related_employees.update(employee_update_dict)
         return res
 
-    def create_employee(self):
+    def create_update_employee(self):
         for rec in self:
-            if rec.is_qshield_sponsor and not rec.employee_ids:
+            if rec.is_qshield_sponsor:
                 partner_name_list = rec.name.split()
                 first_name = partner_name_list[0]
                 middle_name = ' '.join(partner_name_list[1:-1]) if len(partner_name_list) > 2 else ''
                 last_name = partner_name_list[-1] if len(partner_name_list) >= 2 else ''
-
-                self.env['hr.employee'].create({
+                vals = {
                     'name': rec.name,
                     'first_name': first_name,
                     'middle_name': middle_name,
@@ -241,12 +240,16 @@ class ContactCustom(models.Model):
                     'job_title': rec.job_id.name if rec.job_id else False,
                     'iban_number': rec.iban_number,
                     'joining_date': rec.date_join,
-                    'is_out_sourced': True if rec.sponsor != rec.parent_id else False,
+                    'is_out_sourced': True if rec.sponsor != rec.parent_id and not rec.sponsor.is_work_permit else False,
                     'related_company_id': rec.parent_id.id if rec.parent_id else False,
                     'passport_id': rec.passport_doc.document_number if rec.passport_doc else False,
                     'qid_number': rec.qatar_id_doc.document_number if rec.qatar_id_doc else False,
                     'job_id': rec.job_id.id if rec.job_id else False,
-                })
+                }
+                if not rec.employee_ids:
+                    self.env['hr.employee'].create(vals)
+                else:
+                    rec.employee_ids.update(vals)
 
     @api.constrains('employee_dependants')
     def _update_related_employees_dependents(self):

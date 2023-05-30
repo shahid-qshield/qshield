@@ -92,13 +92,13 @@
         </record>
 
         <record model="ir.actions.server" id="action_partner_to_employee">
-            <field name="name">Create Employee</field>
+            <field name="name">Create / Update Employee</field>
             <field name="model_id" ref="model_res_partner"/>
             <field name="binding_model_id" ref="model_res_partner"/>
             <field name="state">code</field>
             <field name="code">
                 if records:
-                action = records.create_employee()
+                action = records.create_update_employee()
             </field>
         </record>
 
