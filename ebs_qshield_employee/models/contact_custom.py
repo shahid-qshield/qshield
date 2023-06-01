@@ -108,7 +108,7 @@ class ContactCustom(models.Model):
             return res
         else:
             if res.person_type == 'emp':
-                res.create_employee()
+                res.create_update_employee()
             return res
 
     def write(self, vals):
@@ -119,7 +119,7 @@ class ContactCustom(models.Model):
                                 self.env['hr.employee'].search([('partner_id', 'in', self.ids), ('active', '=', False)])
 
             if self.active and not related_employees:
-                self.create_employee()
+                self.create_update_employee()
                 return res
 
             if vals.get('active') or 'active' in vals or False in related_employees.mapped('active'):
