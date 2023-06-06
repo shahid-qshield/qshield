@@ -20,6 +20,7 @@ class ContactCustom(models.Model):
     job_id = fields.Many2one(comodel_name="hr.job", string="Job Position", required=False, )
     is_work_permit = fields.Boolean(string="Work Permit")
     no_longer_sponsored = fields.Boolean(compute='_compute_no_longer_sponsored')
+    employee_count = fields.Integer(string="Employee Count", compute='_compute_employee_count', store=True)
 
     def update_invoice_type(self):
         file_path = os.path.dirname(os.path.dirname(__file__)) + '/data/Company Types.xlsx'
@@ -169,11 +170,6 @@ class ContactCustom(models.Model):
                     'work_email': vals.get('email'),
                 })
 
-            if vals.get('sponsor'):
-                employee_update_dict.update({
-                    'work_in': vals.get('sponsor'),
-                })
-
             if vals.get('iban_number'):
                 employee_update_dict.update({
                     'iban_number': vals.get('iban_number'),
@@ -184,11 +180,24 @@ class ContactCustom(models.Model):
                     'joining_date': vals.get('joining_date'),
                 })
 
-            if vals.get('job_id'):
-                job_id = self.env['hr.job'].browse(int(vals.get('job_id')))
+            if vals.get('title'):
                 employee_update_dict.update({
-                    'job_title': job_id.name,
+                    'job_title': vals.get('title'),
+                })
+
+            if vals.get('job_id'):
+                employee_update_dict.update({
                     'job_id': vals.get('job_id'),
+                })
+
+            if vals.get('visa'):
+                employee_update_dict.update({
+                    'visa': vals.get('visa'),
+                })
+
+            if vals.get('identification_id'):
+                employee_update_dict.update({
+                    'identification_id': vals.get('identification_id'),
                 })
 
             if vals.get('sponsor') or vals.get('parent_id'):
@@ -200,6 +209,8 @@ class ContactCustom(models.Model):
             if vals.get('parent_id'):
                 employee_update_dict.update({
                     'related_company_id': vals.get('parent_id'),
+                    'work_in': vals.get('parent_id'),
+                    'address_id': vals.get('parent_id'),
                 })
 
             if vals.get('passport_doc'):
@@ -236,20 +247,25 @@ class ContactCustom(models.Model):
                     'mobile_phone': rec.mobile,
                     'work_email': rec.email,
                     'partner_id': rec.id,
-                    'work_in': rec.sponsor.id,
-                    'job_title': rec.job_id.name if rec.job_id else False,
+                    'job_title': rec.title,
                     'iban_number': rec.iban_number,
                     'joining_date': rec.date_join,
                     'is_out_sourced': True if rec.sponsor != rec.parent_id and not rec.sponsor.is_work_permit else False,
                     'related_company_id': rec.parent_id.id if rec.parent_id else False,
+                    'address_id': rec.parent_id.id if rec.parent_id else False,
+                    'work_in': rec.parent_id.id if rec.parent_id else False,
                     'passport_id': rec.passport_doc.document_number if rec.passport_doc else False,
                     'qid_number': rec.qatar_id_doc.document_number if rec.qatar_id_doc else False,
                     'job_id': rec.job_id.id if rec.job_id else False,
+                    'visa': rec.visa.id if rec.visa else False,
+                    'identification_id': rec.identification_id,
                 }
                 if not rec.employee_ids:
                     self.env['hr.employee'].create(vals)
                 else:
                     rec.employee_ids.update(vals)
+            else:
+                raise ValidationError(_('You can\'t Create Employee For Contact %s') % rec.name)
 
     @api.constrains('employee_dependants')
     def _update_related_employees_dependents(self):
@@ -275,3 +291,23 @@ class ContactCustom(models.Model):
 
         all_deleted_dependant.unlink()
         self.env['hr.dependant'].create(dependants_list)
+
+    @api.depends('employee_ids')
+    def _compute_employee_count(self):
+        for rec in self:
+            rec.employee_count = len(rec.employee_ids)
+
+    def view_related_employee(self):
+        self.ensure_one()
+        if self.env.user.has_group('hr.group_hr_user'):
+            model = 'hr.employee'
+        else:
+            model = 'hr.employee.public'
+        return {
+            'type': 'ir.actions.act_window',
+            'name': 'Related Employee',
+            'view_mode': 'tree,form',
+            'res_model': model,
+            'domain': [('id', 'in', self.employee_ids.ids)],
+            'context': "{'create': False}"
+        }

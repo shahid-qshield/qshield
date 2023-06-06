@@ -7,34 +7,11 @@ import datetime
 import base64
 import io
 import xlsxwriter
-from werkzeug import url_encode
-
-selection_item = [('Sri Lankan', 'Sri Lankan'),
-                  ('Syrian', 'Syrian'),
-                  ('Egyptian', 'Egyptian'),
-                  ('Yemeni', 'Yemeni'),
-                  ('Indian', 'Indian'),
-                  ('Jordanian', 'Jordanian'),
-                  ('Sudanese', 'Sudanese'),
-                  ('Filippino', 'Filipino'),
-                  ('Lebanese', 'Lebanese'),
-                  ('American', 'American'),
-                  ('Moroccan', 'Moroccan'),
-                  ('Mozambican', 'Mozambican'),
-                  ('Tunisian', 'Tunisian'),
-                  ('Pakistani', 'Pakistani'),
-                  ('Norwegian', 'Norwegian'),
-                  ('Kenyan', 'Kenyan'),
-                  ('British', 'British'),
-                  ('Indonesian', 'Indonesian'),
-                  ('Swedish', 'Swedish'),
-                  ('Palestinian', 'Palestinian'),
-                  ('Turkish', 'Turkish')]
 
 
 class EmployeeBaseCustom(models.AbstractModel):
     _inherit = 'hr.employee.base'
-
+    country_id = fields.Many2one('res.country', 'Nationality (Country)')
     first_name = fields.Char()
     middle_name = fields.Char()
     last_name = fields.Char()
@@ -85,17 +62,15 @@ class EmployeeBaseCustom(models.AbstractModel):
     joining_date = fields.Date(string="Joining Date", default=lambda self: fields.Datetime.now(), required=False)
     visa = fields.Many2one(comodel_name="visa.status", string="Visa Status", required=False, )
     custom_document_count = fields.Integer(compute="_compute_document_count", store=False)
-    nationality = fields.Selection(selection_item, string="Nationality")
+    nationality = fields.Char(string="Nationality", compute='_compute_employee_nationality', store=True)
     employee_address = fields.Text(string="Address")
     iban_number = fields.Char(string="IBAN Number")
+    identification_id = fields.Char(string='Identification No', tracking=True)
 
-    # def write(self, vals):
-    #     res = super(EmployeeCustom, self).write(vals)
-    #     if 'active' in vals and self.partner_id.active != vals.get('active'):
-    #         self.partner_id.write({
-    #             'active': vals.get('active')
-    #         })
-    #     return res
+    @api.depends('country_id', 'country_id.nationality')
+    def _compute_employee_nationality(self):
+        for rec in self:
+            rec.nationality = rec.country_id.nationality
 
     def update_first_name_and_last_name_of_employee(self):
         file_path = os.path.dirname(os.path.dirname(__file__)) + '/data/Production Employee-First-lastname.xls'

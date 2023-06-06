@@ -182,6 +182,9 @@ class ContactCustom(models.Model):
         required=False,
         compute="_get_service_count")
 
+    visa = fields.Many2one(comodel_name="visa.status", string="Visa Status", required=False, )
+    identification_id = fields.Char(string='Identification No', tracking=True)
+
     # document_o2m_archived = fields.One2many(
     #     comodel_name='documents.document',
     #     inverse_name='partner_id',
@@ -464,6 +467,6 @@ class ContactCustom(models.Model):
             'context': {
                 "search_default_partner_id": self.id,
                 "default_partner_id": self.id,
-                "default_date" : datetime.date.today()
+                "default_date": datetime.date.today()
             },
         }

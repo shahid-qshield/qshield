@@ -18,6 +18,7 @@
     'data': [
         'security/ir.model.access.csv',
         'security/security.xml',
+        'views/res_country.xml',
         'views/employee_view_custom.xml',
         'views/contracts_view_custom.xml',
         'views/contacts_view_custom.xml',

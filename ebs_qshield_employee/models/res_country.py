@@ -1,0 +1,1 @@
+# -*- coding: utf-8 -*-from odoo import models, fieldsclass ResCountry(models.Model):    _inherit = 'res.country'    nationality = fields.Char(string="Nationality")

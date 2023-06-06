@@ -265,6 +265,8 @@
                         <field name="date_join" attrs="{'invisible':[('person_type','!=','emp')]}"/>
                         <field name="date_stop_renew"/>
                         <field name="date_termination" attrs="{'invisible':[('person_type','!=','emp')]}"/>
+                        <field name="visa" attrs="{'invisible':[('person_type','!=','emp')]}"/>
+                        <field name="identification_id" attrs="{'invisible':[('person_type','!=','emp')]}"/>
 
                         <field name="passport_doc" options="{'no_create': True, 'no_create_edit':True}"
                                attrs="{'invisible':[('person_type','=', 'company')]}"
