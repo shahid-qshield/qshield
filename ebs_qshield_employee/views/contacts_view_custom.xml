@@ -17,11 +17,12 @@
                     <field name="fax_number"/>
                 </xpath>
             </field>
+        </record>
 
-        <record id="res_partner_view_form_custom" model="ir.ui.view">
-            <field name="name">res.partner.view.form.custom</field>
+        <record id="res_partner_view_related_employee_form" model="ir.ui.view">
+            <field name="name">res.partner.view.related.employee</field>
             <field name="model">res.partner</field>
-            <field name="inherit_id" ref="base.view_partner_form"/>
+            <field name="inherit_id" ref="documents.documents_document_res_partner_view"/>
             <field name="arch" type="xml">
                 <xpath expr="//div[@name='button_box']/button[@name='action_see_documents']" position="after">
                     <button name="view_related_employee" type="object" class="oe_stat_button" icon="fa-users"
@@ -34,7 +35,13 @@
                         </div>
                     </button>
                 </xpath>
-
+            </field>
+        </record>
+        <record id="res_partner_view_form_custom" model="ir.ui.view">
+            <field name="name">res.partner.view.form.custom</field>
+            <field name="model">res.partner</field>
+            <field name="inherit_id" ref="base.view_partner_form"/>
+            <field name="arch" type="xml">
                 <xpath expr="//sheet" position="before">
                     <field name="no_longer_sponsored" invisible="1"/>
                     <div class="alert alert-danger" role="alert"
