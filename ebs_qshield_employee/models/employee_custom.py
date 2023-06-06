@@ -32,8 +32,8 @@ selection_item = [('Sri Lankan', 'Sri Lankan'),
                   ('Turkish', 'Turkish')]
 
 
-class EmployeeCustom(models.Model):
-    _inherit = 'hr.employee'
+class EmployeeBaseCustom(models.AbstractModel):
+    _inherit = 'hr.employee.base'
 
     first_name = fields.Char()
     middle_name = fields.Char()

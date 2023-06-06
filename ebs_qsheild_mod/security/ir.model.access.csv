@@ -1,4 +1,5 @@
 "id","name","model_id:id","group_id:id","perm_read","perm_write","perm_create","perm_unlink"
+"access_sale_order_internal_user","sale.order.internal.user","sale.model_sale_order","base.group_user",1,0,0,0
 "access_ebs_qsheild_mod_ebs_mod_contracts","ebs_qsheild_mod.ebs_mod_contracts","model_ebs_mod_contracts","ebs_qsheild_mod.qshield_admin",1,1,1,1
 "access_ebs_qsheild_mod_ebs_mod_contact_relation_type","ebs_qsheild_mod.ebs_mod_contact_relation_type","model_ebs_mod_contact_relation_type","ebs_qsheild_mod.qshield_admin",1,1,1,1
 "access_ebs_qsheild_mod_ebs_mod_document_types","ebs_qsheild_mod.ebs_mod_document_types","model_ebs_mod_document_types","ebs_qsheild_mod.qshield_admin",1,1,1,1

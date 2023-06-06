@@ -1,8 +1,8 @@
 from odoo import models, fields, api
 
 
-class HREmployeeCustom(models.Model):
-    _inherit = "hr.employee"
+class EmployeeBaseCustom(models.AbstractModel):
+    _inherit = 'hr.employee.base'
 
     signatory = fields.Boolean(string='Signatory')
     letter_ids = fields.One2many('ebs.hr.letter.request', 'employee_id', string='Letter Requests', readonly=True)
@@ -12,4 +12,3 @@ class HREmployeeCustom(models.Model):
     def _compute_letter_count(self):
         for employee in self:
             employee.letter_count = len(employee.letter_ids)
-
