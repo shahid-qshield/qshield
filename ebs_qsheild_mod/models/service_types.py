@@ -79,7 +79,7 @@ class ServiceTypes(models.Model):
         required=False,
         default=False)
 
-    active = fields.Boolean(string="", default=False)
+    active = fields.Boolean(string="", default=True)
 
     @api.model
     def create(self, vals):
