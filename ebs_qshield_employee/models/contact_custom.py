@@ -20,7 +20,7 @@ class ContactCustom(models.Model):
     job_id = fields.Many2one(comodel_name="hr.job", string="Job Position", required=False, )
     is_work_permit = fields.Boolean(string="Work Permit")
     no_longer_sponsored = fields.Boolean(compute='_compute_no_longer_sponsored')
-    employee_count = fields.Integer(string="Employee Count", compute='_compute_employee_count', store=True)
+    employee_count = fields.Integer(string="Employee Count", compute='_compute_employee_count')
 
     def update_invoice_type(self):
         file_path = os.path.dirname(os.path.dirname(__file__)) + '/data/Company Types.xlsx'
@@ -186,8 +186,10 @@ class ContactCustom(models.Model):
                 })
 
             if vals.get('job_id'):
+                job_id = self.en['hr.job'].browse(vals.get('job_id'))
                 employee_update_dict.update({
                     'job_id': vals.get('job_id'),
+                     'job_title': job_id.name
                 })
 
             if vals.get('visa'):
@@ -231,6 +233,11 @@ class ContactCustom(models.Model):
     def create_update_employee(self):
         for rec in self:
             if rec.is_qshield_sponsor:
+                dependant_list = []
+                if rec.employee_dependants != rec.employee_ids.dependant_id.related_partner_id:
+                    for dependant in rec.employee_dependants.filtered(lambda dep: dep.id \
+                                                                                  not in rec.employee_ids.dependant_id.related_partner_id.ids):
+                        dependant_list.append((0, 0, {'related_partner_id': dependant.id}))
                 partner_name_list = rec.name.split()
                 first_name = partner_name_list[0]
                 middle_name = ' '.join(partner_name_list[1:-1]) if len(partner_name_list) > 2 else ''
@@ -247,7 +254,6 @@ class ContactCustom(models.Model):
                     'mobile_phone': rec.mobile,
                     'work_email': rec.email,
                     'partner_id': rec.id,
-                    'job_title': rec.title,
                     'iban_number': rec.iban_number,
                     'joining_date': rec.date_join,
                     'is_out_sourced': True if rec.sponsor != rec.parent_id and not rec.sponsor.is_work_permit else False,
@@ -257,22 +263,33 @@ class ContactCustom(models.Model):
                     'passport_id': rec.passport_doc.document_number if rec.passport_doc else False,
                     'qid_number': rec.qatar_id_doc.document_number if rec.qatar_id_doc else False,
                     'job_id': rec.job_id.id if rec.job_id else False,
-                    'visa': rec.visa.id if rec.visa else False,
-                    'identification_id': rec.identification_id,
                 }
+                if rec.visa:
+                    vals.update({
+                        'visa': rec.visa.id if rec.visa else False,
+                    })
+                if rec.identification_id:
+                    vals.update({
+                        'identification_id': rec.identification_id,
+                    })
+                if rec.job_id:
+                    vals.update({
+                        'job_title': rec.job_id.name
+                    })
+                if dependant_list:
+                    vals.update({
+                        'dependant_id': dependant_list,
+                    })
                 if not rec.employee_ids:
                     self.env['hr.employee'].create(vals)
                 else:
                     rec.employee_ids.update(vals)
-            else:
-                raise ValidationError(_('You can\'t Create Employee For Contact %s') % rec.name)
 
     @api.constrains('employee_dependants')
     def _update_related_employees_dependents(self):
 
         dependants_list = []
-        all_deleted_dependant = self.env['res.partner']
-
+        
         for rec in self:
 
             if rec.is_qshield_sponsor:
@@ -280,8 +297,6 @@ class ContactCustom(models.Model):
                 for employee in rec.employee_ids:
 
                     new_dependant = rec.employee_dependants - employee.dependant_id.related_partner_id
-                    deleted_dependant = employee.dependant_id.related_partner_id - rec.employee_dependants
-                    all_deleted_dependant += deleted_dependant
 
                     for dependant in new_dependant:
                         dependants_list.append({
@@ -289,7 +304,6 @@ class ContactCustom(models.Model):
                             'related_partner_id': dependant.id,
                         })
 
-        all_deleted_dependant.unlink()
         self.env['hr.dependant'].create(dependants_list)
 
     @api.depends('employee_ids')

@@ -965,7 +965,7 @@ class Dependant(models.Model):
                                     ('Child', 'Child')],
                                 store=True)
 
-    hr_employee = fields.Many2one('hr.employee', readonly=True)
+    hr_employee = fields.Many2one('hr.employee', readonly=True, ondelete='cascade')
 
     @api.depends('related_partner_id', 'related_partner_id.name')
     def compute_dependant_name(self):

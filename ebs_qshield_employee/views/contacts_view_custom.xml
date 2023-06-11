@@ -26,7 +26,7 @@
             <field name="arch" type="xml">
                 <xpath expr="//div[@name='button_box']/button[@name='action_see_documents']" position="after">
                     <button name="view_related_employee" type="object" class="oe_stat_button" icon="fa-users"
-                            attrs="{'invisible': [('employee_count', '=', 0)]}">
+                            attrs="{'invisible': [('employee_count', '=', 0)]}" groups="hr.group_hr_user">
                         <div class="o_field_widget o_stat_info">
                             <span class="o_stat_value">
                                 <field name="employee_count"/>

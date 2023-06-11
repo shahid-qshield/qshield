@@ -308,17 +308,17 @@
                 </xpath>
                 <xpath expr="//field[@name='function']" position="before">
 
-                    <field name="nationality" attrs="{'invisible':[('company_type','=', 'company')]}"/>
-                    <field name="gender" attrs="{'invisible':[('company_type','=', 'company')]}"/>
+                    <field name="nationality" attrs="{'invisible':[('person_type','=', 'company')]}"/>
+                    <field name="gender" attrs="{'invisible':[('person_type','=', 'company')]}"/>
                     <field name="date" string="Date of Birth"
-                           attrs="{'invisible':[('company_type','=', 'company')]}"/>
+                           attrs="{'invisible':[('person_type','=', 'company')]}"/>
                 </xpath>
                 <xpath expr="//sheet//notebook//page[1]" position="attributes">
-                    <attribute name="attrs">{'invisible':[('company_type','!=', 'company')]}</attribute>
+                    <attribute name="attrs">{'invisible':[('person_type','!=', 'company')]}</attribute>
                 </xpath>
 
                 <xpath expr="//field[@name='website']" position="attributes">
-                    <attribute name="attrs">{'invisible':[('company_type','!=', 'company')]}</attribute>
+                    <attribute name="attrs">{'invisible':[('person_type','!=', 'company')]}</attribute>
                 </xpath>
 
 
