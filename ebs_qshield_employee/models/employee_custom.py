@@ -786,7 +786,7 @@ class EmployeeBaseCustom(models.AbstractModel):
 
     @api.model
     def create(self, values):
-        res = super(EmployeeCustom, self).create(values)
+        res = super(EmployeeBaseCustom, self).create(values)
         if not res.partner_id:
             dependants = []
             if res.dependant_id:
