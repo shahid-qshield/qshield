@@ -937,6 +937,10 @@ class EmployeeBaseCustom(models.AbstractModel):
             'url': '/web/content/%s?download=1' % attachment.id
         }
 
+    def update_employee_titles(self):
+        for rec in self.filtered(lambda emp: emp.job_id):
+            rec.job_title = rec.job_id.name
+
 
 class Religion(models.Model):
     _name = 'hr.religion'
