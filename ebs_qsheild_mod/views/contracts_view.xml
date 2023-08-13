@@ -80,6 +80,9 @@
                                         class="btn btn-primary" style="margin-right:10px"/>
                                 <button name="remove_all_employee" type="object" string="Remove Employees"
                                         class="btn btn-secondary"/>
+
+                                <field name="generated_by_sale_order" invisible="0"/>
+
                                 <field name="employee_list"
                                        options="{'no_create': True, 'no_create_edit':True}"
                                        domain="[
