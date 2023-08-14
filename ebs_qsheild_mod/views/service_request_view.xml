@@ -146,7 +146,7 @@
                             </button>
                         </div>
                         <h1>
-                            <field name="name" attrs="{'invisible':[('name','=','/')]}" placeholder="Name ..."/>
+                            <field name="name" attrs="{'invisible':[('name','=','/')], 'readonly': [('status', '=', 'new')]}" placeholder="Name ..."/>
                         </h1>
                         <group name="group_top">
                             <group name="group_left">
