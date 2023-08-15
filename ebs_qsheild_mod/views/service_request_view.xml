@@ -146,7 +146,7 @@
                             </button>
                         </div>
                         <h1>
-                            <field name="name" attrs="{'invisible':[('name','=','/')]}" placeholder="Name ..."/>
+                            <field name="name" attrs="{'invisible':[('name','=','/')], 'readonly': [('status', '!=', 'draft')]}" placeholder="Name ..."/>
                         </h1>
                         <group name="group_top">
                             <group name="group_left">
@@ -181,7 +181,7 @@
                                 <field name="contract_id"
                                        options="{'no_create': True, 'no_create_edit':True}"
                                        attrs="{'readonly':[('status','!=','draft')]}"
-                                       domain="[('contact_id','=',partner_id),('start_date','&gt;=',date),('end_date','&lt;=',date)]"
+                                       domain="[('contact_id','=',partner_id),('start_date','&gt;=',date),('end_date','&lt;=',date), ('generated_by_sale_order', '=', False)]"
                                 />
                                 <field name="service_type_id"
                                        options="{'no_create': True, 'no_create_edit':True}"

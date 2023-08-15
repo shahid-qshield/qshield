@@ -363,7 +363,8 @@ class SaleOrder(models.Model):
                 'service_ids': service_types.ids,
                 'contact_id': self.partner_id.parent_company_id.id if self.partner_id.parent_company_id else self.partner_id.id,
                 'sale_order_id': self.id,
-                'no_of_employees': self.no_of_employees
+                'no_of_employees': self.no_of_employees,
+                'generated_by_sale_order': True,
             })
         else:
             contract.write({
@@ -374,7 +375,8 @@ class SaleOrder(models.Model):
                 'service_ids': service_types.ids,
                 'contact_id': self.partner_id.id,
                 'sale_order_id': self.id,
-                'no_of_employees': self.no_of_employees
+                'no_of_employees': self.no_of_employees,
+                'generated_by_sale_order': True,
             })
 
     def action_cancel(self):
