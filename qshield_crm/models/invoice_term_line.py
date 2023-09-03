@@ -47,6 +47,8 @@ class InvoiceTermLine(models.Model):
         }
 
     def _get_advance_details(self, invoice_term, order, product_id):
+        amount = 0.0
+        name = ''
         if invoice_term.percentage > 0:
             if all(product_id.taxes_id.mapped('price_include')):
                 amount = order.amount_total * invoice_term.percentage / 100
