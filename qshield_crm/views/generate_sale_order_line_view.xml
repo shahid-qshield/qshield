@@ -10,8 +10,8 @@
                         <group>
                             <field name="set_price_type"/>
                             <field name="calculated_total_consolidation_price" invisible="1"/>
-                            <button string="Generate Service Type Variant" class="btn btn-primary" type="object"
-                                    name="generate_service_variant"
+                            <button string="Generate Service Type" class="btn btn-primary" type="object"
+                                    name="generate_service_type"
                                     attrs="{'invisible' : [('service_type_consolidation_manual_ids','=',False)]}"/>
                         </group>
                         <group>
@@ -39,11 +39,16 @@
                                 <field name="is_set_automatic" invisible="1" string="Is Set Price Automatic"/>
                             </tree>
                         </field>
-                        <field name="generate_service_type_variant_ids" force_save="1" nolabel="1">
+<!--                        <field name="generate_service_type_variant_ids" force_save="1" nolabel="1">-->
+<!--                            <tree create="0">-->
+<!--                                <field name="variant_id"/>-->
+<!--                                &lt;!&ndash;                                <field name="price"/>&ndash;&gt;-->
+<!--                                &lt;!&ndash;                                <field name="quantity"/>&ndash;&gt;-->
+<!--                            </tree>-->
+<!--                        </field>-->
+                        <field name="generate_service_type_ids" force_save="1" nolabel="1">
                             <tree create="0">
-                                <field name="variant_id"/>
-                                <!--                                <field name="price"/>-->
-                                <!--                                <field name="quantity"/>-->
+                                <field name="service_type_id"/>
                             </tree>
                         </field>
                     </group>
