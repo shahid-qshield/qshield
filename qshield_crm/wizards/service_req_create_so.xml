@@ -12,7 +12,10 @@
                         <field name="service_price"
                                attrs="{'invisible' : [('set_price_from','!=','manually')],'required' :  [('set_price_from','=','manually')]}"/>
                         <field name="pricelist_id"
-                               attrs="{'invisible' : [('set_price_from','!=','pricelist')],'required' :  [('set_price_from','=','pricelist')]}"/>
+                               attrs="{'invisible' : [('set_price_from','!=','pricelist')],'required' :  [('set_price_from','=','pricelist')]}"
+                               />
+                        <field name="service_product_price"
+                               attrs="{'invisible' : [('set_price_from','!=','pricelist')]}"/>
                     </group>
                 </group>
                 <footer>

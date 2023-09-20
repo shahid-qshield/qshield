@@ -266,7 +266,57 @@ class ServiceRequest(models.Model):
         return res
 
     def generate_sale_order(self):
-        pass
+        if not self.related_company.property_product_pricelist:
+            raise UserError('please set price list in related company')
+        if not self.service_type_id.product_id:
+            raise UserError('Product is not linked with service type')
+        if self.is_out_of_scope or self.is_one_time_transaction:
+            order_id = self.env['sale.order'].sudo().create({
+                'partner_id': self.partner_id.id,
+                'account_manager': self.partner_id.account_manager.id if self.partner_id.account_manager else False,
+                'is_out_of_scope': True,
+                'generate_order_line': 'from_consolidation',
+                'is_agreement': 'one_time_payment' if self.is_one_time_transaction else 'is_retainer',
+                # 'order_line': [(0, 0, {
+                #     'product_id': self.service_type_id.variant_id.product_id.id,
+                #     'name': self.service_type_id.variant_id.product_id.name,
+                #     'product_uom_qty': 1,
+                #     'price_unit': self.service_type_id.variant_id.product_id.lst_price,
+                # })]
+            })
+            if order_id:
+                self.write({'sale_order_id': order_id.id})
+                order_id.sudo().write({'order_line': [(0, 0, {
+                    'display_type': 'line_section',
+                    'name': self.service_type_id and self.service_type_id.variant_id and self.service_type_id.variant_id.consolidation_id.name
+                })]})
+                service_product_price = 0.0
+                pricelist = self.related_company.property_product_pricelist
+                if pricelist:
+                    pricelist = pricelist[0]
+                    product = self.service_type_id.product_id
+                    if product:
+                        pricelist_dict = pricelist.get_products_price(product, [1.0], [self.related_company])
+                        service_product_price = pricelist_dict.get(product.id)
+
+                order_id.sudo().write({'order_line': [(0, 0, {
+                    'product_id': self.service_type_id.product_id.id,
+                    'name': self.service_type_id.product_id.name,
+                    'product_uom_qty': 1,
+                    'price_unit': service_product_price,
+                })]})
+                payment_term_id = self.env.ref('account.account_payment_term_immediate').id
+                order_id.sudo().write({'state': 'sale', 'payment_term_id': payment_term_id})
+                if order_id.opportunity_id:
+                    order_id.sudo().write({'state': 'submit_client_operation'})
+                    order_id.opportunity_id.action_set_won_rainbowman()
+                    msg = (_('Opportunity Won {}'.format(order_id.opportunity_id.name)))
+                    order_id.message_post(body=msg)
+                self.request_submit()
+                if self.invoice_term_start_date and self.invoice_term_end_date:
+                    order_id.sudo().write(
+                        {'start_date': self.invoice_term_start_date, 'end_date': self.invoice_term_end_date})
+                    order_id.sudo().action_create_invoice_term()
 
 
 class EbsModContracts(models.Model):
