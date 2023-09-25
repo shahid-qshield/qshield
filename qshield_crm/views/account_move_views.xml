@@ -1,5 +1,8 @@
 <odoo>
     <data>
+        <record id="account.email_template_edi_invoice" model="mail.template">
+            <field name="report_template" ref="qshield_crm.account_expense_invoices"></field>
+        </record>
         <record id="view_partner_property_form_inherit" model="ir.ui.view">
             <field name="name">view.move.form.custom.inherit</field>
             <field name="model">res.partner</field>
@@ -124,7 +127,7 @@
                     <attribute name="statusbar_visible">draft,new,approve,posted,cancel</attribute>
                 </xpath>
                 <xpath expr="//field[@name='currency_id']" position="after">
-                   <field name="retainer_amount"/>
+                    <field name="retainer_amount"/>
                 </xpath>
                 <xpath expr="//header/button[@name='action_post']" position="attributes">
                     <attribute name="attrs">{'invisible' : [('state','!=','approve')]}</attribute>
@@ -173,7 +176,7 @@
                 <xpath expr="////page[@id='invoice_tab']/field[@name='invoice_line_ids']/tree/field[@name='price_subtotal']"
                        position="attributes">
                     <attribute name="widget">float</attribute>
-                     <attribute name="digits">[8,2]</attribute>
+                    <attribute name="digits">[8,2]</attribute>
                 </xpath>
             </field>
         </record>

@@ -6,6 +6,7 @@ from odoo.tools.float_utils import float_round as round, float_compare
 import base64
 import xlsxwriter
 import io
+from itertools import groupby
 
 
 class AccountMove(models.Model):
@@ -68,7 +69,39 @@ class AccountMove(models.Model):
             sheet.write(row, 0, record.partner_id.name, format1)
             sheet.write(row, 1, record.name, format1)
             if record.invoice_line_ids:
-                for line in record.invoice_line_ids:
+                in_scope_service = record.invoice_line_ids.mapped('service_request_id').filtered(
+                    lambda s: s.is_in_scope)
+                in_scope_invoice_line_ids = self.env['account.move.line']
+                for contract, contract_in_scope_services in groupby(in_scope_service, key=lambda s: s.contract_id):
+                    amount = 0.0
+                    service_requests = list(contract_in_scope_services)
+                    move_lines = record.invoice_line_ids.filtered(
+                        lambda s: s.service_request_id in service_requests and not s.is_government_fees_line)
+                    in_scope_invoice_line_ids += move_lines
+                    amount += sum(move_lines.mapped('price_subtotal'))
+                    sheet.write(row, 2, 'Retainer'+contract.name, format1)
+                    sheet.write(row, 3, 'Retainer'+contract.name, format1)
+                    sheet.write(row, 4, '', format1)
+                    sheet.write(row, 5, contract.contact_id.name if contract.contact_id else '', format1)
+                    sheet.write(row, 6, '', format1)
+                    sheet.write(row, 7, '', format1)
+                    sheet.write(row, 8, '', format1)
+                    sheet.write(row, 9, 0.0, format1)
+                    sheet.write(row, 10,amount, format1)
+                    row += 1
+                    for move_line in move_lines:
+                        sheet.write(row, 2, move_line.product_id.name, format1)
+                        sheet.write(row, 3, move_line.description, format1)
+                        sheet.write(row, 4, move_line.service_request_id.name if move_line.service_request_id else '', format1)
+                        sheet.write(row, 5, move_line.service_partner_id.name if move_line.service_request_id else '', format1)
+                        sheet.write(row, 6, move_line.service_type_id.name if move_line.service_request_id else '', format1)
+                        sheet.write(row, 7, move_line.service_status if move_line.service_request_id else '', format1)
+                        sheet.write(row, 8, move_line.name if move_line.name else '', format1)
+                        sheet.write(row, 9, '', format1)
+                        sheet.write(row, 10, '', format1)
+                        row += 1
+
+                for line in record.invoice_line_ids.filtered(lambda s: s not in in_scope_invoice_line_ids):
                     sheet.write(row, 2, line.product_id.name, format1)
                     sheet.write(row, 3, line.description, format1)
                     sheet.write(row, 4, line.service_request_id.name if line.service_request_id else '', format1)
@@ -77,11 +110,11 @@ class AccountMove(models.Model):
                     sheet.write(row, 7, line.service_status if line.service_request_id else '', format1)
                     sheet.write(row, 8, line.name if line.name else '', format1)
                     if line.is_government_fees_line:
-                        sheet.write(row, 9, line.price_unit, format1)
+                        sheet.write(row, 9, line.price_subtotal, format1)
                     else:
                         sheet.write(row, 9, 0.0, format1)
                     if not line.is_government_fees_line:
-                        sheet.write(row, 10, line.price_unit, format1)
+                        sheet.write(row, 10, line.price_subtotal, format1)
                     else:
                         sheet.write(row, 10, 0.0, format1)
                     row += 1

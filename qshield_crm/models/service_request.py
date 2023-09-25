@@ -104,7 +104,7 @@ class ServiceRequest(models.Model):
             invoice_id.sudo().write({
                 'invoice_line_ids': [(0, 0,
                                       {
-                                          'product_id': self.service_type_id.variant_id.product_id.id,
+                                          'product_id': self.service_type_id.product_id.id,
                                           'name': 'In scope service' + ' ' + self.name,
                                           'quantity': 1,
                                           'price_unit': invoice_amount,
@@ -115,8 +115,8 @@ class ServiceRequest(models.Model):
             self.write({'is_included_in_invoice': True})
         if old_service_requests:
             for line in old_service_requests:
-                product_id = line.service_type_id.variant_id.product_id.id
-                name = line.service_type_id.variant_id.product_id.name
+                product_id = line.service_type_id.product_id.id
+                name = line.service_type_id.product_id.name
                 description = line.name
                 if not line.is_in_scope or (line.is_in_scope and line.contract_id != self.contract_id):
                     filter_data = list(filter(lambda s: s.get(line), data))
@@ -125,18 +125,18 @@ class ServiceRequest(models.Model):
                         product_id = filter_data[0].get('product_id')
                         name = filter_data[0].get('name')
                         description = filter_data[0].get('description')
-
-                invoice_id.sudo().write({
-                    'invoice_line_ids': [(0, 0,
-                                          {
-                                              'product_id': product_id,
-                                              'name': name,
-                                              'quantity': 1,
-                                              'price_unit': invoice_amount,
-                                              'description': description,
-                                              'service_request_id': line.id
-                                          })]
-                })
+                if line.sale_order_id != invoice_term.sale_id:
+                    invoice_id.sudo().write({
+                        'invoice_line_ids': [(0, 0,
+                                              {
+                                                  'product_id': product_id,
+                                                  'name': name,
+                                                  'quantity': 1,
+                                                  'price_unit': invoice_amount,
+                                                  'description': description,
+                                                  'service_request_id': line.id
+                                              })]
+                    })
             if self.is_out_of_scope and not self.is_one_time_transaction:
                 invoice_line_vals = invoice_term.get_invoice_line_base_on_invoice_term_of_down(invoice_term, [])
                 if invoice_line_vals:
