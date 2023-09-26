@@ -17,6 +17,7 @@ class QshieldProposalReport(models.AbstractModel):
         for doc in docs:
             in_scope_service = doc.invoice_line_ids.mapped('service_request_id').filtered(lambda s: s.is_in_scope)
             retainer_line_amount = []
+            total_retainer_amount = 0.0
             if in_scope_service:
                 for contract, contract_in_scope_services in groupby(in_scope_service, key=lambda s: s.contract_id):
                     amount = 0.0
@@ -30,6 +31,7 @@ class QshieldProposalReport(models.AbstractModel):
                             'service_requests': list(service_requests),
                             'contact_name': doc.partner_id.name,
                             'amount': amount}
+                    total_retainer_amount += amount
                     retainer_line_amount.append(line)
                 retainer_doc_dict.update({doc: retainer_line_amount})
             # contract_ids = in_scope_service.mapped('contract_id')
@@ -43,5 +45,6 @@ class QshieldProposalReport(models.AbstractModel):
             'docs': docs,
             'proforma': True,
             'consolidation_list': consolidation_list,
-            'retainer_doc_dict': retainer_doc_dict
+            'retainer_doc_dict': retainer_doc_dict,
+            'total_retainer_amount' : total_retainer_amount
         }

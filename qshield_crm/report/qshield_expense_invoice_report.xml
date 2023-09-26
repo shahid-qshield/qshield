@@ -304,7 +304,12 @@
                                                                 <span>-</span>
                                                             </td>
                                                             <td class="text-left">
-                                                                <span><t t-esc="contract_line.get('amount')"/>0.0
+                                                                <span>
+                                                                    <t t-esc="o.currency_id.symbol"/>
+                                                                </span>
+                                                                <span>
+                                                                    <t t-esc="contract_line.get('amount')"
+                                                                       t-esc-options='{"widget": "monetary", "display_currency": o.company_id.currency_id}'/>
                                                                 </span>
                                                             </td>
                                                         </tr>
@@ -462,8 +467,20 @@
                                                     <td colspan="8"></td>
                                                 </tr>
                                                 <tr>
-                                                    <td class="text-left" colspan="6">
-                                                        <strong>Sub Total in [QAR/USD]</strong>
+                                                    <td colspan="7" class="text-right">
+                                                        <strong>Retainer Total in [QAR/USD]</strong>
+                                                    </td>
+                                                    <td class="text-left">
+                                                        <span>
+                                                            <t t-esc="o.currency_id.symbol"/>
+                                                        </span>
+                                                        <span t-esc="total_retainer_amount"
+                                                              t-esc-options='{"widget": "monetary", "display_currency": o.company_id.currency_id}'/>
+                                                    </td>
+                                                </tr>
+                                                <tr>
+                                                    <td class="text-right" colspan="7">
+                                                        <strong>Government Fees Total in [QAR/USD]</strong>
                                                     </td>
                                                     <td class="text-left">
                                                         <span>
@@ -471,6 +488,11 @@
                                                         </span>
                                                         <span t-esc="total_government"
                                                               t-esc-options='{"widget": "monetary", "display_currency": o.company_id.currency_id}'/>
+                                                    </td>
+                                                </tr>
+                                                <tr>
+                                                    <td class="text-right" colspan="7">
+                                                        <strong>Out of scope Total in [QAR/USD]</strong>
                                                     </td>
                                                     <td class="text-left">
                                                         <span>
@@ -490,17 +512,15 @@
                                                     <td colspan="8"></td>
                                                 </tr>
                                                 <tr>
-                                                    <td class="text-left" colspan="6">
+                                                    <td class="text-right" colspan="7">
                                                         <strong>End Total</strong>
                                                     </td>
                                                     <td class="text-left">
                                                         <span>
                                                             <t t-esc="o.currency_id.symbol"/>
                                                         </span>
-                                                        <span t-esc="total_government + total_service_amount"
+                                                        <span t-esc="total_retainer_amount +total_government + total_service_amount"
                                                               t-esc-options='{"widget": "monetary", "display_currency": o.company_id.currency_id}'/>
-                                                    </td>
-                                                    <td class="text-left">
                                                     </td>
                                                 </tr>
                                                 <tr>

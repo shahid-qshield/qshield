@@ -72,6 +72,7 @@ class AccountMove(models.Model):
                 in_scope_service = record.invoice_line_ids.mapped('service_request_id').filtered(
                     lambda s: s.is_in_scope)
                 in_scope_invoice_line_ids = self.env['account.move.line']
+                total_retainer_amount = 0.0
                 for contract, contract_in_scope_services in groupby(in_scope_service, key=lambda s: s.contract_id):
                     amount = 0.0
                     service_requests = list(contract_in_scope_services)
@@ -79,28 +80,33 @@ class AccountMove(models.Model):
                         lambda s: s.service_request_id in service_requests and not s.is_government_fees_line)
                     in_scope_invoice_line_ids += move_lines
                     amount += sum(move_lines.mapped('price_subtotal'))
-                    sheet.write(row, 2, 'Retainer'+contract.name, format1)
-                    sheet.write(row, 3, 'Retainer'+contract.name, format1)
+                    total_retainer_amount += amount
+                    sheet.write(row, 2, 'Retainer' + contract.name, format1)
+                    sheet.write(row, 3, 'Retainer' + contract.name, format1)
                     sheet.write(row, 4, '', format1)
                     sheet.write(row, 5, contract.contact_id.name if contract.contact_id else '', format1)
                     sheet.write(row, 6, '', format1)
                     sheet.write(row, 7, '', format1)
                     sheet.write(row, 8, '', format1)
                     sheet.write(row, 9, 0.0, format1)
-                    sheet.write(row, 10,amount, format1)
+                    sheet.write(row, 10, round(amount, 2), format1)
                     row += 1
                     for move_line in move_lines:
                         sheet.write(row, 2, move_line.product_id.name, format1)
                         sheet.write(row, 3, move_line.description, format1)
-                        sheet.write(row, 4, move_line.service_request_id.name if move_line.service_request_id else '', format1)
-                        sheet.write(row, 5, move_line.service_partner_id.name if move_line.service_request_id else '', format1)
-                        sheet.write(row, 6, move_line.service_type_id.name if move_line.service_request_id else '', format1)
+                        sheet.write(row, 4, move_line.service_request_id.name if move_line.service_request_id else '',
+                                    format1)
+                        sheet.write(row, 5, move_line.service_partner_id.name if move_line.service_request_id else '',
+                                    format1)
+                        sheet.write(row, 6, move_line.service_type_id.name if move_line.service_request_id else '',
+                                    format1)
                         sheet.write(row, 7, move_line.service_status if move_line.service_request_id else '', format1)
                         sheet.write(row, 8, move_line.name if move_line.name else '', format1)
                         sheet.write(row, 9, '', format1)
                         sheet.write(row, 10, '', format1)
                         row += 1
-
+                total_government_fees = 0.0
+                total_out_scope_amount = 0.0
                 for line in record.invoice_line_ids.filtered(lambda s: s not in in_scope_invoice_line_ids):
                     sheet.write(row, 2, line.product_id.name, format1)
                     sheet.write(row, 3, line.description, format1)
@@ -110,14 +116,35 @@ class AccountMove(models.Model):
                     sheet.write(row, 7, line.service_status if line.service_request_id else '', format1)
                     sheet.write(row, 8, line.name if line.name else '', format1)
                     if line.is_government_fees_line:
+                        total_government_fees += line.price_subtotal
                         sheet.write(row, 9, line.price_subtotal, format1)
                     else:
                         sheet.write(row, 9, 0.0, format1)
                     if not line.is_government_fees_line:
                         sheet.write(row, 10, line.price_subtotal, format1)
+                        total_out_scope_amount += line.price_subtotal
                     else:
                         sheet.write(row, 10, 0.0, format1)
                     row += 1
+                row += 1
+                style_highlight = workbook.add_format(
+                    {'bold': True, 'pattern': 1, 'bg_color': '#E0E0E0', 'align': 'center'})
+                merge_string = 'A' + str(row) + ':K' + str(row)
+                retainer_string = 'Total Retainer Amount:- ' + str(total_retainer_amount)
+                sheet.merge_range(merge_string, retainer_string, style_highlight)
+                row += 1
+                merge_string = 'A' + str(row) + ':K' + str(row)
+                government_string = 'Total Government Fees :- ' + str(total_government_fees)
+                sheet.merge_range(merge_string, government_string, style_highlight)
+                row += 1
+                merge_string = 'A' + str(row) + ':K' + str(row)
+                out_of_scope_string = 'Total Out of scope :- ' + str(total_out_scope_amount)
+                sheet.merge_range(merge_string, out_of_scope_string, style_highlight)
+                row += 1
+                merge_string = 'A' + str(row) + ':K' + str(row)
+                total_string = 'Total :- ' + str(total_out_scope_amount+total_retainer_amount+total_government_fees)
+                sheet.merge_range(merge_string, total_string, style_highlight)
+                row += 1
             row += 1
         workbook.close()
         output.seek(0)
