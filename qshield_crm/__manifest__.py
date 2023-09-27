@@ -43,4 +43,5 @@
         'views/sale_order_template_inherit.xml',
         'views/res_partner_view.xml',
     ],
+    
 }
