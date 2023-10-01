@@ -2,7 +2,7 @@ from odoo import models, fields, api, _
 import base64
 import csv
 import xlrd
-
+from odoo.exceptions import ValidationError
 
 class ImportPricelist(models.TransientModel):
     _name = 'import.pricelist'
@@ -36,11 +36,17 @@ class ImportPricelist(models.TransientModel):
             product_name = row.get('Product')
             price = row.get('Price')
             if pricelist_name and product_name and price:
+                if not isinstance(pricelist_name,str):
+                    raise ValidationError(_("Price list column must be string"))
+                if not isinstance(product_name,str):
+                    raise ValidationError(_("Product column must be string"))
+                if not isinstance(price,float) or not isinstance(price,int):
+                    raise ValidationError(_("Price column must be Float or integer"))
                 if isinstance(price,str):
                     price = float(price)
                 product = self.env['product.product'].sudo().search([('name', '=', product_name)], limit=1)
                 if not product:
-                    successful_import = False
+                    successful_import = True
                     continue
                 pricelist = self.env['product.pricelist'].sudo().search([('name', '=', pricelist_name)], limit=1)
                 if not pricelist:
@@ -69,7 +75,7 @@ class ImportPricelist(models.TransientModel):
                             'compute_price': "fixed",
                         })
             else:
-                successful_import = False
+                successful_import = True
         if successful_import:
             message = "Import successful"
         else:

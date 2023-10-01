@@ -352,16 +352,16 @@ class ContactCustom(models.Model):
                 for rec in record.employee_dependants:
                     rec.related_company = new_res.id
                     rec.sponsor = new_res.sponsor.id
-                self.message_post(
+                record.message_post(
                     body="Related contact changed from '" + 'fefes' + "' to '" + new_res.name + "'")
 
-            res = super(ContactCustom, self).write(vals)
-            active_after = record.active
-            if active_after != active_before:
-                record.contact_archive_onchange(active_after)
+            res = super(ContactCustom, record).write(vals)
             counter += 1
             if counter == len(self):
-                return res
+                active_after = record.active
+                if active_after != active_before:
+                    record.contact_archive_onchange(active_after)
+            return res
 
     def contact_archive_onchange(self, active):
         self.contact_document_archive(active)

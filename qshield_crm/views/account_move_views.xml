@@ -1,7 +1,7 @@
 <odoo>
     <data>
         <record id="account.email_template_edi_invoice" model="mail.template">
-            <field name="report_template" ref="qshield_crm.account_expense_invoices"></field>
+            <field name="report_template" ref="qshield_crm.account_expense_invoices_custom"></field>
         </record>
         <record id="view_partner_property_form_inherit" model="ir.ui.view">
             <field name="name">view.move.form.custom.inherit</field>

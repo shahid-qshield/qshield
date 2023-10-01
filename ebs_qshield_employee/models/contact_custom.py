@@ -114,120 +114,121 @@ class ContactCustom(models.Model):
 
     def write(self, vals):
         res = super(ContactCustom, self).write(vals)
-        if self.is_qshield_sponsor and self.person_type == 'emp':
-            employee_update_dict = {}
-            related_employees = self.employee_ids or \
-                                self.env['hr.employee'].search([('partner_id', 'in', self.ids), ('active', '=', False)])
+        for record in self:
+            if record.is_qshield_sponsor and record.person_type == 'emp':
+                employee_update_dict = {}
+                related_employees = record.employee_ids or \
+                                    self.env['hr.employee'].search([('partner_id', 'in', record.ids), ('active', '=', False)])
 
-            if self.active and not related_employees:
-                self.create_update_employee()
-                return res
+                if record.active and not related_employees:
+                    record.create_update_employee()
+                    return res
 
-            if vals.get('active') or 'active' in vals or False in related_employees.mapped('active'):
-                employee_update_dict.update({
-                    'active': True if False in related_employees.mapped('active') and \
-                                      not vals.get('active') else vals.get('active')
-                })
+                if vals.get('active') or 'active' in vals or False in related_employees.mapped('active'):
+                    employee_update_dict.update({
+                        'active': True if False in related_employees.mapped('active') and \
+                                          not vals.get('active') else vals.get('active')
+                    })
 
-            if vals.get('name'):
-                partner_name_list = vals.get('name').split()
-                first_name = partner_name_list[0]
-                middle_name = ' '.join(partner_name_list[1:-1]) if len(partner_name_list) > 2 else ''
-                last_name = partner_name_list[-1] if len(partner_name_list) >= 2 else ''
-                employee_update_dict.update({
-                    'name': vals.get('name'),
-                    'first_name': first_name,
-                    'middle_name': middle_name,
-                    'last_name': last_name})
+                if vals.get('name'):
+                    partner_name_list = vals.get('name').split()
+                    first_name = partner_name_list[0]
+                    middle_name = ' '.join(partner_name_list[1:-1]) if len(partner_name_list) > 2 else ''
+                    last_name = partner_name_list[-1] if len(partner_name_list) >= 2 else ''
+                    employee_update_dict.update({
+                        'name': vals.get('name'),
+                        'first_name': first_name,
+                        'middle_name': middle_name,
+                        'last_name': last_name})
 
-            if vals.get('nationality'):
-                employee_update_dict.update({
-                    'country_id': vals.get('nationality'),
-                })
+                if vals.get('nationality'):
+                    employee_update_dict.update({
+                        'country_id': vals.get('nationality'),
+                    })
 
-            if vals.get('gender'):
-                employee_update_dict.update({
-                    'gender': vals.get('gender'),
-                })
+                if vals.get('gender'):
+                    employee_update_dict.update({
+                        'gender': vals.get('gender'),
+                    })
 
-            if vals.get('date'):
-                employee_update_dict.update({
-                    'birthday': vals.get('date'),
-                })
+                if vals.get('date'):
+                    employee_update_dict.update({
+                        'birthday': vals.get('date'),
+                    })
 
-            if vals.get('phone'):
-                employee_update_dict.update({
-                    'work_phone': vals.get('phone'),
-                })
+                if vals.get('phone'):
+                    employee_update_dict.update({
+                        'work_phone': vals.get('phone'),
+                    })
 
-            if vals.get('mobile'):
-                employee_update_dict.update({
-                    'mobile_phone': vals.get('mobile'),
-                })
+                if vals.get('mobile'):
+                    employee_update_dict.update({
+                        'mobile_phone': vals.get('mobile'),
+                    })
 
-            if vals.get('email'):
-                employee_update_dict.update({
-                    'work_email': vals.get('email'),
-                })
+                if vals.get('email'):
+                    employee_update_dict.update({
+                        'work_email': vals.get('email'),
+                    })
 
-            if vals.get('iban_number'):
-                employee_update_dict.update({
-                    'iban_number': vals.get('iban_number'),
-                })
+                if vals.get('iban_number'):
+                    employee_update_dict.update({
+                        'iban_number': vals.get('iban_number'),
+                    })
 
-            if vals.get('joining_date'):
-                employee_update_dict.update({
-                    'joining_date': vals.get('joining_date'),
-                })
+                if vals.get('joining_date'):
+                    employee_update_dict.update({
+                        'joining_date': vals.get('joining_date'),
+                    })
 
-            if vals.get('title'):
-                employee_update_dict.update({
-                    'job_title': vals.get('title'),
-                })
+                if vals.get('title'):
+                    employee_update_dict.update({
+                        'job_title': vals.get('title'),
+                    })
 
-            if vals.get('job_id'):
-                job_id = self.en['hr.job'].browse(vals.get('job_id'))
-                employee_update_dict.update({
-                    'job_id': vals.get('job_id'),
-                     'job_title': job_id.name
-                })
+                if vals.get('job_id'):
+                    job_id = self.en['hr.job'].browse(vals.get('job_id'))
+                    employee_update_dict.update({
+                        'job_id': vals.get('job_id'),
+                         'job_title': job_id.name
+                    })
 
-            if vals.get('visa'):
-                employee_update_dict.update({
-                    'visa': vals.get('visa'),
-                })
+                if vals.get('visa'):
+                    employee_update_dict.update({
+                        'visa': vals.get('visa'),
+                    })
 
-            if vals.get('identification_id'):
-                employee_update_dict.update({
-                    'identification_id': vals.get('identification_id'),
-                })
+                if vals.get('identification_id'):
+                    employee_update_dict.update({
+                        'identification_id': vals.get('identification_id'),
+                    })
 
-            if vals.get('sponsor') or vals.get('parent_id'):
-                employee_update_dict.update({
-                    'is_out_sourced': True if (
-                            self.sponsor != self.parent_id and not self.sponsor.is_work_permit) else False,
-                })
+                if vals.get('sponsor') or vals.get('parent_id'):
+                    employee_update_dict.update({
+                        'is_out_sourced': True if (
+                                record.sponsor != record.parent_id and not record.sponsor.is_work_permit) else False,
+                    })
 
-            if vals.get('parent_id'):
-                employee_update_dict.update({
-                    'related_company_id': vals.get('parent_id'),
-                    'work_in': vals.get('parent_id'),
-                    'address_id': vals.get('parent_id'),
-                })
+                if vals.get('parent_id'):
+                    employee_update_dict.update({
+                        'related_company_id': vals.get('parent_id'),
+                        'work_in': vals.get('parent_id'),
+                        'address_id': vals.get('parent_id'),
+                    })
 
-            if vals.get('passport_doc'):
-                passport_document_id = self.env['documents.document'].browse(int(vals.get('passport_doc')))
-                employee_update_dict.update({
-                    'passport_id': passport_document_id.document_number,
-                })
+                if vals.get('passport_doc'):
+                    passport_document_id = self.env['documents.document'].browse(int(vals.get('passport_doc')))
+                    employee_update_dict.update({
+                        'passport_id': passport_document_id.document_number,
+                    })
 
-            if vals.get('qatar_id_doc'):
-                qatar_document_id = self.env['documents.document'].browse(int(vals.get('qatar_id_doc')))
-                employee_update_dict.update({
-                    'qid_number': qatar_document_id.document_number,
-                })
+                if vals.get('qatar_id_doc'):
+                    qatar_document_id = self.env['documents.document'].browse(int(vals.get('qatar_id_doc')))
+                    employee_update_dict.update({
+                        'qid_number': qatar_document_id.document_number,
+                    })
 
-            related_employees.update(employee_update_dict)
+                related_employees.update(employee_update_dict)
         return res
 
     def create_update_employee(self):

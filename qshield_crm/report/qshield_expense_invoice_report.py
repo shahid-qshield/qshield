@@ -25,7 +25,7 @@ class QshieldProposalReport(models.AbstractModel):
                     for service_request in service_requests:
                         move_line = doc.invoice_line_ids.filtered(
                             lambda s: s.service_request_id == service_request and not s.is_government_fees_line)
-                        amount += sum(move_line.mapped('price_subtotal'))
+                        amount += round(sum(move_line.mapped('price_subtotal')),2)
                     line = {'contract_name': contract.name,
                             'contract': contract,
                             'service_requests': list(service_requests),

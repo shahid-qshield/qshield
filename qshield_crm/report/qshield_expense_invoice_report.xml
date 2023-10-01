@@ -52,17 +52,27 @@
             <field name="header_spacing">20</field>
             <field name="dpi">90</field>
         </record>
-
-        <report
-                id="account_expense_invoices"
-                model="account.move"
-                string="Expense Invoices"
-                report_type="qweb-pdf"
-                name="qshield_crm.report_qshield_expense_invoice"
-                file="qshield_crm.report_qshield_expense_invoice"
-                print_report_name="(object._get_report_base_filename())"
-                paperformat="qshield_crm.report_expense_invoice_paperformat"
-        />
+        <record id="account_expense_invoices_custom" model="ir.actions.report">
+            <field name="name">Expense Invoices</field>
+            <field name="model">account.move</field>
+            <field name="binding_model_id" ref="account.model_account_move"/>
+            <field name="report_type">qweb-pdf</field>
+            <field name="report_name">qshield_crm.report_qshield_expense_invoice</field>
+            <field name="report_file">qshield_crm.report_qshield_expense_invoice</field>
+            <field name="paperformat_id" ref="qshield_crm.report_expense_invoice_paperformat"/>
+            <field name="binding_view_types">form</field>
+            <field name="print_report_name">object._get_expense_report_file_name()</field>
+        </record>
+<!--        <report-->
+<!--                id="account_expense_invoices"-->
+<!--                model="account.move"-->
+<!--                string="Expense Invoices"-->
+<!--                report_type="qweb-pdf"-->
+<!--                name="qshield_crm.report_qshield_expense_invoice"-->
+<!--                file="qshield_crm.report_qshield_expense_invoice"-->
+<!--                print_report_name="(object._get_report_base_filename())"-->
+<!--                paperformat="qshield_crm.report_expense_invoice_paperformat"-->
+<!--        />-->
         <template id="report_qshield_expense_invoice">
             <t t-call="web.html_container">
                 <t t-foreach="docs" t-as="o">
@@ -308,7 +318,7 @@
                                                                     <t t-esc="o.currency_id.symbol"/>
                                                                 </span>
                                                                 <span>
-                                                                    <t t-esc="contract_line.get('amount')"
+                                                                    <t t-esc="round(contract_line.get('amount'),2)"
                                                                        t-esc-options='{"widget": "monetary", "display_currency": o.company_id.currency_id}'/>
                                                                 </span>
                                                             </td>
@@ -433,7 +443,7 @@
                                                             <span>
                                                                 <t t-esc="o.currency_id.symbol"/>
                                                             </span>
-                                                            <span t-esc="line.price_subtotal"
+                                                            <span t-esc="round(line.price_subtotal,2)"
                                                                   t-esc-options='{"widget": "monetary", "display_currency": o.company_id.currency_id}'/>
                                                         </t>
                                                         <t t-else="">
@@ -448,7 +458,7 @@
                                                             <span>
                                                                 <t t-esc="o.currency_id.symbol"/>
                                                             </span>
-                                                            <span t-esc="line.price_subtotal"
+                                                            <span t-esc="round(line.price_subtotal,2)"
                                                                   t-esc-options='{"widget": "monetary", "display_currency": o.company_id.currency_id}'/>
                                                         </t>
                                                         <t t-else="">
@@ -486,7 +496,7 @@
                                                         <span>
                                                             <t t-esc="o.currency_id.symbol"/>
                                                         </span>
-                                                        <span t-esc="total_government"
+                                                        <span t-esc="round(total_government,2)"
                                                               t-esc-options='{"widget": "monetary", "display_currency": o.company_id.currency_id}'/>
                                                     </td>
                                                 </tr>
@@ -498,7 +508,7 @@
                                                         <span>
                                                             <t t-esc="o.currency_id.symbol"/>
                                                         </span>
-                                                        <span t-esc="total_service_amount"
+                                                        <span t-esc="round(total_service_amount,2)"
                                                               t-esc-options='{"widget": "monetary", "display_currency": o.company_id.currency_id}'/>
                                                     </td>
                                                 </tr>
@@ -519,7 +529,7 @@
                                                         <span>
                                                             <t t-esc="o.currency_id.symbol"/>
                                                         </span>
-                                                        <span t-esc="total_retainer_amount +total_government + total_service_amount"
+                                                        <span t-esc="round((total_retainer_amount +total_government + total_service_amount),2)"
                                                               t-esc-options='{"widget": "monetary", "display_currency": o.company_id.currency_id}'/>
                                                     </td>
                                                 </tr>

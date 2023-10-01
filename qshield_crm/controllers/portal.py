@@ -105,7 +105,7 @@ class PortalAccount(PortalAccount):
 
         if report_type in ('html', 'pdf', 'text'):
             return self._show_report(model=invoice_sudo, report_type=report_type,
-                                     report_ref='qshield_crm.account_expense_invoices',
+                                     report_ref='qshield_crm.account_expense_invoices_custom',
                                      download=download)
 
         values = self._invoice_get_page_view_values(invoice_sudo, access_token, **kw)
