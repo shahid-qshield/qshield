@@ -36,7 +36,22 @@
             </field>
         </record>
 
-
+        <!-- Inherit Form View to Modify it -->
+        <record id="view_partner_property_form_inherit_custom" model="ir.ui.view">
+            <field name="name">view_partner_property_form_inherit_custom</field>
+            <field name="model">res.partner</field>
+            <field name="inherit_id" ref="product.view_partner_property_form"/>
+            <field name="arch" type="xml">
+                <xpath expr="//field[@name='property_product_pricelist']" position="before">
+                    <field name="is_editable_pricelist" invisible="1"/>
+                </xpath>
+                <xpath expr="//field[@name='property_product_pricelist']" position="attributes">
+                    <attribute name="attrs">{'readonly': [('is_editable_pricelist', '=',False)],'invisible':
+                        [('is_company','=',False),('parent_id','!=',False)]}
+                    </attribute>
+                </xpath>
+            </field>
+        </record>
         <record id="view_partner_bank_form_inherit" model="ir.ui.view">
             <field name="name">view.partner.bank.form.inherit</field>
             <field name="model">res.partner.bank</field>

@@ -1,5 +1,15 @@
 <odoo>
     <data>
+        <record id="view_account_invoice_filter_inherit_search" model="ir.ui.view">
+            <field name="name">view_account_invoice_filter.inherit.custom</field>
+            <field name="model">account.move</field>
+            <field name="inherit_id" ref="account.view_account_invoice_filter"/>
+            <field name="arch" type="xml">
+                <xpath expr="//filter[@name='partner']" position="attributes">
+                    <attribute name="string">Related Company</attribute>
+                </xpath>
+            </field>
+        </record>
         <record id="account.email_template_edi_invoice" model="mail.template">
             <field name="report_template" ref="qshield_crm.account_expense_invoices_custom"></field>
         </record>

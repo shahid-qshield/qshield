@@ -29,6 +29,7 @@ class ResPartner(models.Model):
     expense_invoice_count = fields.Integer(compute="compute_expense_invoice_count", string="Expense invoice count")
     iban_number = fields.Char(string="IBAN Number")
     is_editable_partner_invoice_type = fields.Boolean(compute="compute_is_editable_partner_invoice_type")
+    is_editable_pricelist = fields.Boolean(compute="compute_is_editable_partner_invoice_type")
     parent_company_id = fields.Many2one('res.partner',string="Related Parent Company")
 
 
@@ -36,9 +37,13 @@ class ResPartner(models.Model):
     def compute_is_editable_partner_invoice_type(self):
         for record in self:
             is_editable_partner_invoice_type = False
+            is_editable_pricelist = False
             if self.env.user.has_group('qshield_crm.editable_partner_invoice_type'):
                 is_editable_partner_invoice_type = True
+            if self.env.user.has_group('base.group_system'):
+                is_editable_pricelist = True
             record.is_editable_partner_invoice_type = is_editable_partner_invoice_type
+            record.is_editable_pricelist = is_editable_pricelist
 
     @api.model
     def create(self, values):
@@ -46,6 +51,9 @@ class ResPartner(models.Model):
         for record in res:
             if self._context.get('partner_invoice_type'):
                 record.partner_invoice_type = self._context.get('partner_invoice_type')
+                record.person_type = 'company'
+            if self._context.get('parent_company_id'):
+                record.parent_company_id = self._context.get('parent_company_id')
                 record.person_type = 'company'
             if record.person_type in ['emp', 'visitor', 'child'] and record.related_company:
                 record.partner_invoice_type = record.related_company.partner_invoice_type
