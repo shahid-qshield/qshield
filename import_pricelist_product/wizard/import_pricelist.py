@@ -40,7 +40,7 @@ class ImportPricelist(models.TransientModel):
                     raise ValidationError(_("Price list column must be string"))
                 if not isinstance(product_name,str):
                     raise ValidationError(_("Product column must be string"))
-                if not isinstance(price,float) or not isinstance(price,int):
+                if not isinstance(price,float) and not isinstance(price,int):
                     raise ValidationError(_("Price column must be Float or integer"))
                 if isinstance(price,str):
                     price = float(price)
