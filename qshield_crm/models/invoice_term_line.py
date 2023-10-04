@@ -357,6 +357,8 @@ class InvoiceTermLine(models.Model):
                 'company_id': False,
             }
             product_id = self.env['product.product'].sudo().create(vals)
+            if product_id.supplier_taxes_id or product_id.taxes_id:
+                product_id.sudo().write({'taxes_id': False, 'supplier_taxes_id': False})
             self.env['ir.config_parameter'].sudo().set_param('sale.default_deposit_product_id',
                                                              product_id.id)
         amount, name = self._get_advance_details(invoice_term, invoice_term.sale_id, product_id)

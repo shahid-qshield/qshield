@@ -37,12 +37,14 @@ class CreateMultipleInvoice(models.TransientModel):
                     if not self.product_id:
                         vals = self._prepare_deposit_product()
                         self.product_id = self.env['product.product'].sudo().create(vals)
+                        if self.product_id.taxes_id or self.supplier_taxes_id:
+                            self.product_id.sudo().write({'taxes_id': False, 'supplier_taxes_id': False})
                         self.env['ir.config_parameter'].sudo().set_param('sale.default_deposit_product_id',
-                                                                         self.product_id.id)
-                    amount, name = self._get_advance_details(invoice_term, order)
-                    if self.product_id.invoice_policy != 'order':
-                        raise UserError(
-                            _('The product used to invoice a down payment should have an invoice policy set to "Ordered quantities". Please update your deposit product to be able to create a deposit invoice.'))
+                        self.product_id.id)
+                        amount, name = self._get_advance_details(invoice_term, order)
+                        if self.product_id.invoice_policy != 'order':
+                            raise UserError(
+                                _('The product used to invoice a down payment should have an invoice policy set to "Ordered quantities". Please update your deposit product to be able to create a deposit invoice.'))
                     if self.product_id.type != 'service':
                         raise UserError(
                             _("The product used to invoice a down payment should be of type 'Service'. Please use another product or update this product."))
