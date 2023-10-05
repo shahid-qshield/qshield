@@ -1,0 +1,37 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data>
+        <record id="import_price_list_wizard_view_form" model="ir.ui.view">
+            <field name="name">Import Price list form</field>
+            <field name="model">import.pricelist</field>
+            <field name="arch" type="xml">
+                <form string="Import Price List">
+                    <group>
+                        <group>
+                            <field name="file_name" invisible="1"/>
+                            <field name="attachment" widget="binary" filename="file_name" string="Upload file"
+                                   force_save="1"/>
+                        </group>
+                    </group>
+                    <p>The format of the csv or excel file will be as follows(Pricelist,Product, Price)</p>
+                    <footer>
+                        <button name="action_submit" string="Submit" type="object" class="btn-primary"/>
+                        <button string="Close" class="btn-secondary" special="cancel"/>
+                    </footer>
+                </form>
+            </field>
+        </record>
+
+        <record id="action_import_price_list_wizard" model="ir.actions.act_window">
+            <field name="name">Import Price List Wizard</field>
+            <field name="type">ir.actions.act_window</field>
+            <field name="res_model">import.pricelist</field>
+            <field name="view_mode">form</field>
+            <field name="target">new</field>
+        </record>
+        <menuitem name="Import Price list" id="import_price_list_sub_menu" parent="sale.menu_sale_config"
+                  action="action_import_price_list_wizard"
+        />
+
+    </data>
+</odoo>
