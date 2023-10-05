@@ -633,8 +633,8 @@ class ServiceRequest(models.Model):
                         'domain': {
                             'contract_id': [('contact_id', '=', self.related_company.id),
                                             ('start_date', '<=', self.date),
-                                            ('end_date', '>=', self.date),
-                                            ('generated_by_sale_order', '=', False)]
+                                            ('end_date', '>=', self.date)]
+                                            # ('generated_by_sale_order', '=', False)]
                         }
                     }
                 else:
@@ -650,9 +650,12 @@ class ServiceRequest(models.Model):
                                                                  'outsourcing']:
                             self.contract_id = contact_contract_list[0]
                         return {
+                            # 'domain': {
+                            #     'contract_id': [('id', 'in', contact_contract_list),
+                            #                     ('generated_by_sale_order', '=', False)]
+                            # }
                             'domain': {
-                                'contract_id': [('id', 'in', contact_contract_list),
-                                                ('generated_by_sale_order', '=', False)]
+                                'contract_id': [('id', 'in', contact_contract_list)]
                             }
                         }
 

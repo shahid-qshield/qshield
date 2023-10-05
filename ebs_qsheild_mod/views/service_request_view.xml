@@ -181,7 +181,7 @@
                                 <field name="contract_id"
                                        options="{'no_create': True, 'no_create_edit':True}"
                                        attrs="{'readonly':[('status','!=','draft')]}"
-                                       domain="[('contact_id','=',partner_id),('start_date','&gt;=',date),('end_date','&lt;=',date), ('generated_by_sale_order', '=', False)]"
+                                       domain="[('contact_id','=',partner_id),('start_date','&gt;=',date),('end_date','&lt;=',date)]"
                                 />
                                 <field name="service_type_id"
                                        options="{'no_create': True, 'no_create_edit':True}"
