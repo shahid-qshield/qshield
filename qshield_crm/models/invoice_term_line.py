@@ -172,7 +172,7 @@ class InvoiceTermLine(models.Model):
                                 service_amount = invoice_term.amount / len(in_scope_services)
                             for service in in_scope_services:
                                 invoice_line_vals.append((0, 0, {
-                                    'product_id': service.service_type_id.variant_id.product_id.id,
+                                    'product_id': service.service_type_id.product_id.id,
                                     'name': 'In scope service' + ' ' + service.name,
                                     'quantity': 1,
                                     'price_unit': service_amount,
@@ -357,6 +357,8 @@ class InvoiceTermLine(models.Model):
                 'company_id': False,
             }
             product_id = self.env['product.product'].sudo().create(vals)
+            if product_id.supplier_taxes_id or product_id.taxes_id:
+                product_id.sudo().write({'taxes_id': False, 'supplier_taxes_id': False})
             self.env['ir.config_parameter'].sudo().set_param('sale.default_deposit_product_id',
                                                              product_id.id)
         amount, name = self._get_advance_details(invoice_term, invoice_term.sale_id, product_id)

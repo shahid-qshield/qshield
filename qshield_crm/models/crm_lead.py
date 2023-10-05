@@ -15,13 +15,29 @@ class CrmLead(models.Model):
         [('retainer', 'Retainer'), ('per_transaction', 'Per Transaction'),
          ('one_time_transaction', 'One time Transaction'),
          ('partners', 'Partners'), ('outsourcing', 'Outsourcing')])
+    parent_company_id = fields.Many2one('res.partner', string="Related Parent Company")
     service_request_ids = fields.One2many('ebs_mod.service.request', 'opportunity_id', string="Services")
     service_request_count = fields.Integer(string="Service count", compute="compute_service_request_count")
+    is_readonly_parent_company = fields.Boolean(string="IS Readonly Parent Company",
+                                                compute="compute_is_readonly_parent_company")
+
+    @api.depends('partner_id')
+    def compute_is_readonly_parent_company(self):
+        for record in self:
+            record.is_readonly_parent_company = False
+            if record.partner_id and record.partner_id.parent_company_id:
+                record.is_readonly_parent_company = True
 
     @api.onchange('partner_invoice_type')
     def onchange_partner_invoice_type(self):
         if self.partner_id and self.partner_id.partner_invoice_type:
             self.partner_invoice_type = self.partner_id.partner_invoice_type
+
+    # @api.onchange('parent_company_id')
+    # def onchange_parent_company_id(self):
+    #     if self.partner_id and self.partner_id.parent_company_id:
+    #         self.parent_company_id = self.partner_id.parent_company_id.id
+
     @api.depends('service_request_ids')
     def compute_service_request_count(self):
         for record in self:
@@ -66,12 +82,23 @@ class CrmLead(models.Model):
 
     @api.onchange('partner_id')
     def onchange_partner_id(self):
+        if self.partner_id and self.partner_id.parent_company_id:
+            self.parent_company_id = self.partner_id.parent_company_id
+        elif self.parent_company_id:
+            self.parent_company_id = False
         if self.partner_id and self.partner_id.partner_invoice_type:
             self.partner_invoice_type = self.partner_id.partner_invoice_type
         elif self.partner_id and self.partner_invoice_type:
             pass
         elif not self._context.get('from_convert_to_opportunity'):
             self.partner_invoice_type = False
+        domain = [('person_type', '=', 'company'), ('parent_company_id', '=', False)]
+        if self.partner_invoice_type:
+            domain.append(('partner_invoice_type', '=', self.partner_invoice_type))
+        if self.partner_id:
+            domain.append(('id', '!=', self.partner_id.id))
+        return {'domain': {
+            'parent_company_id': domain}}
 
     @api.model
     def create(self, vals):
@@ -83,6 +110,10 @@ class CrmLead(models.Model):
                 record.responsible_user = record.user_id.id
             if record.partner_id and not record.partner_id.partner_invoice_type and record.partner_invoice_type:
                 record.partner_id.sudo().write({'partner_invoice_type': record.partner_invoice_type})
+            if record.partner_id and not record.partner_id.parent_company_id and record.parent_company_id:
+                record.partner_id.sudo().write({'parent_company_id': record.parent_company_id.id})
+                message = 'Related Company is set from ' + record.name + " lead" + " and set by " + self.env.user.name
+                record.partner_id.message_post(body=message)
         return res
 
     # def write(self, vals):
@@ -105,6 +136,8 @@ class CrmLead(models.Model):
                     vals.update({'company_name': partner.name})
                 if partner and partner.partner_invoice_type:
                     vals.update({'partner_invoice_type': partner.partner_invoice_type})
+                if partner and partner.parent_company_id:
+                    vals.update({'parent_company_id': partner.parent_company_id.id})
                 # if partner and record.partner_invoice_type:
                 #     partner.sudo().write({'partner_invoice_type': record.partner_invoice_type})
             # if vals.get('partner_invoice_type'):
@@ -176,7 +209,8 @@ class CrmLead(models.Model):
             contact_name = Partner._parse_partner_name(self.email_from)[0] if self.email_from else False
 
         if self.partner_name:
-            partner_company = Partner.with_context(partner_invoice_type=self.partner_invoice_type).create(
+            partner_company = Partner.with_context(partner_invoice_type=self.partner_invoice_type,
+                                                   parent_company_id=self.parent_company_id).create(
                 self._create_lead_partner_data(self.partner_name, True))
         elif self.partner_id:
             partner_company = self.partner_id
@@ -184,12 +218,14 @@ class CrmLead(models.Model):
             partner_company = None
 
         if contact_name:
-            return Partner.with_context(partner_invoice_type=self.partner_invoice_type).create(
+            return Partner.with_context(partner_invoice_type=self.partner_invoice_type,
+                                        parent_company_id=self.parent_company_id).create(
                 self._create_lead_partner_data(contact_name, False, partner_company.id if partner_company else False))
 
         if partner_company:
             return partner_company
-        return Partner.with_context(partner_invoice_type=self.partner_invoice_type).create(
+        return Partner.with_context(partner_invoice_type=self.partner_invoice_type,
+                                    parent_company_id=self.parent_company_id).create(
             self._create_lead_partner_data(self.name, False))
 
 
@@ -219,5 +255,9 @@ class Lead2OpportunityPartner(models.TransientModel):
                 lead.write({'partner_invoice_type': self.partner_id.partner_invoice_type})
             if lead and lead.partner_invoice_type and not self.partner_id.partner_invoice_type:
                 self.partner_id.write({'partner_invoice_type': lead.partner_invoice_type})
+            if lead and self.partner_id.parent_company_id:
+                lead.write({'parent_company_id': self.partner_id.parent_company_id.id})
+            if lead and lead.parent_company_id and not self.partner_id.parent_company_id:
+                self.partner_id.write({'parent_company_id': lead.parent_company_id.id})
         result = super(Lead2OpportunityPartner, self).action_apply()
         return result

@@ -98,6 +98,12 @@
                             <field name="company_name"/>
                             <field name="partner_invoice_type"
                                    attrs="{'readonly' : [('type','=','opportunity')],'required' : [('type','=','lead')]}"/>
+                             <field name="is_readonly_parent_company" invisible="1"/>
+<!--                            <field name="parent_company_id"-->
+<!--                                   attrs="{'readonly' : [('type','=','opportunity')],'required' : [('type','=','lead')]}"-->
+<!--                                   domain="[('person_type','=','company'),('parent_company_id','=',False)]"-->
+<!--                                   force_save="1"-->
+<!--                            />-->
                             <field name="website" string="Company Website"/>
                             <field name="tag_ids" widget="many2many_tags"
                                    options="{'color_field': 'color', 'no_create_edit': True}" string="Tag"/>
@@ -183,9 +189,17 @@
                 <xpath expr="//field[@name='partner_id']" position="before">
                     <field name="partner_invoice_type"/>
                 </xpath>
+                <xpath expr="//field[@name='partner_id']" position="after">
+                    <field name="is_readonly_parent_company" invisible="1"/>
+                    <field name="parent_company_id"
+                           domain="[('person_type','=','company'),('parent_company_id','=',False)]"
+                           force_save="1"
+                           attrs="{'readonly' : [('is_readonly_parent_company','=',True)]}"/>
+                </xpath>
                 <xpath expr="//field[@name='partner_id']" position="attributes">
+                    <attribute name="domain">[('person_type','=','company')]</attribute>
                     <attribute name="context">{'res_partner_search_mode': 'customer', 'show_vat':
-                        True,'partner_invoice_type' : partner_invoice_type}
+                        True,'partner_invoice_type' : partner_invoice_type,'parent_company_id' : parent_company_id}
                     </attribute>
                 </xpath>
             </field>

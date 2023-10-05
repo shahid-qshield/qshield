@@ -346,9 +346,10 @@ class SaleOrder(models.Model):
 
     def create_agreement_of_customer(self):
         product_ids = self.order_line.mapped('product_id').ids
-        service_variants = self.env['ebs_mod.service.type.variants'].sudo().search(
-            [('product_id', 'in', product_ids)])
-        service_types = service_variants.mapped('service_type')
+        # service_variants = self.env['ebs_mod.service.type.variants'].sudo().search(
+        #     [('product_id', 'in', product_ids)])
+        # service_types = service_variants.mapped('service_type')
+        service_types = self.env['ebs_mod.service.types'].sudo().search([('product_id', 'in', product_ids)])
         start_date = datetime.strftime(self.start_date, '%Y-%m-%d')
         end_date = datetime.strftime(self.end_date, '%Y-%m-%d')
         contract = self.env['ebs_mod.contracts'].search(
@@ -364,7 +365,7 @@ class SaleOrder(models.Model):
                 'contact_id': self.partner_id.parent_company_id.id if self.partner_id.parent_company_id else self.partner_id.id,
                 'sale_order_id': self.id,
                 'no_of_employees': self.no_of_employees,
-                'generated_by_sale_order': True,
+                # 'generated_by_sale_order': True,
             })
         else:
             contract.write({
@@ -376,7 +377,7 @@ class SaleOrder(models.Model):
                 'contact_id': self.partner_id.id,
                 'sale_order_id': self.id,
                 'no_of_employees': self.no_of_employees,
-                'generated_by_sale_order': True,
+                # 'generated_by_sale_order': True,
             })
 
     def action_cancel(self):

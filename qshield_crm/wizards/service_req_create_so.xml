@@ -8,7 +8,14 @@
             <form string="Create Sale Order">
                 <group>
                     <group>
-                        <field name="service_price"/>
+                        <field name="set_price_from" string="Set Price From"/>
+                        <field name="service_price"
+                               attrs="{'invisible' : [('set_price_from','!=','manually')],'required' :  [('set_price_from','=','manually')]}"/>
+                        <field name="pricelist_id"
+                               attrs="{'invisible' : [('set_price_from','!=','pricelist')],'required' :  [('set_price_from','=','pricelist')]}"
+                               />
+                        <field name="service_product_price"
+                               attrs="{'invisible' : [('set_price_from','!=','pricelist')]}"/>
                     </group>
                 </group>
                 <footer>

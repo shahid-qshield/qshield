@@ -15,10 +15,11 @@
     # Check https://github.com/odoo/odoo/blob/13.0/odoo/addons/base/data/ir_module_category_data.xml
     # for the full list
     'category': 'Uncategorized',
-    'version': '1.0.7',
+    'version': '1.0.8',
 
     # any module necessary for this one to work correctly
-    'depends': ['base', 'crm', 'sale_crm', 'ebs_qsheild_mod', 'sale_management', 'custom_dashboard', 'sales_team', 'ebs_leave_appilcation_request'],
+    'depends': ['base', 'crm', 'sale_crm', 'ebs_qsheild_mod', 'sale_management', 'custom_dashboard', 'sales_team',
+                'ebs_leave_appilcation_request'],
 
     # always loaded
     'data': [
