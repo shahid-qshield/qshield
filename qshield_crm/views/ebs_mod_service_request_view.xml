@@ -149,7 +149,7 @@
                            readonly="1"
                            options='{"no_open": True}'
                     />
-                    <field name="partner_invoice_type" attrs="{'invisible' : [('partner_id','=',False)]}"/>
+                    <field name="partner_invoice_type" attrs="{'invisible' : [('partner_id','=',False)]}" required="1"/>
                     <field name="invoice_term_start_date"
                            attrs="{'invisible' : [('partner_invoice_type','!=','partners')],'required' : [('partner_invoice_type','=','partners')]}"/>
                     <field name="invoice_term_end_date"

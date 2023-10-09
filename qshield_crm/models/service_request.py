@@ -18,7 +18,7 @@ class ServiceRequest(models.Model):
         return today.replace(day=days[1])
 
     sale_order_id = fields.Many2one(comodel_name='sale.order', string="Sale Order", copy=False)
-    partner_invoice_type = fields.Selection(related="partner_id.partner_invoice_type")
+    partner_invoice_type = fields.Selection(related="related_company.partner_invoice_type")
     invoice_term_start_date = fields.Date(string="Invoice Term Start Date", default=default_invoice_term_start_date)
     invoice_term_end_date = fields.Date(string="Invoice Term End Date", default=default_invoice_term_end_date)
     opportunity_id = fields.Many2one('crm.lead', string="Opportunity")
@@ -226,7 +226,7 @@ class ServiceRequest(models.Model):
 
     @api.onchange('partner_id', 'service_type_id')
     def onchange_partner_partner_invoice_type(self):
-        if self.partner_id and self.partner_id.partner_invoice_type in ['per_transaction', 'one_time_transaction',
+        if self.related_company and self.related_company.partner_invoice_type in ['per_transaction', 'one_time_transaction',
                                                                         'partners']:
             self.is_one_time_transaction = True
         else:
@@ -242,7 +242,7 @@ class ServiceRequest(models.Model):
                 if in_scope_service:
                     record.is_one_time_transaction = False
                     is_in_scope = True
-            if record.partner_id and not record.contract_id and record.partner_id.partner_invoice_type in [
+            if record.related_company and not record.contract_id and record.related_company.partner_invoice_type in [
                 'per_transaction',
                 'one_time_transaction',
                 'partners']:
@@ -252,7 +252,7 @@ class ServiceRequest(models.Model):
 
     @api.onchange('partner_id')
     def onchange_partner_id_custom(self):
-        if self.partner_id and self.partner_id.partner_invoice_type and self.partner_id.partner_invoice_type not in [
+        if self.related_company and self.related_company.partner_invoice_type and self.related_company.partner_invoice_type not in [
             'retainer', 'outsourcing']:
             self.is_one_time_transaction = True
 
@@ -272,8 +272,8 @@ class ServiceRequest(models.Model):
             raise UserError('Product is not linked with service type')
         if self.is_out_of_scope or self.is_one_time_transaction:
             order_id = self.env['sale.order'].sudo().create({
-                'partner_id': self.partner_id.id,
-                'account_manager': self.partner_id.account_manager.id if self.partner_id.account_manager else False,
+                'partner_id': self.related_company.id,
+                'account_manager': self.related_company.account_manager.id if self.related_company.account_manager else False,
                 'is_out_of_scope': True,
                 'generate_order_line': 'from_consolidation',
                 'is_agreement': 'one_time_payment' if self.is_one_time_transaction else 'is_retainer',

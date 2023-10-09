@@ -624,7 +624,7 @@ class ServiceRequest(models.Model):
                 ('start_date', '<=', self.date),
                 ('end_date', '>=', self.date),
             ])
-            if len(contract_list) == 0 and self.partner_id.partner_invoice_type in ['retainer', 'outsourcing']:
+            if len(contract_list) == 0 and self.related_company.partner_invoice_type in ['retainer', 'outsourcing']:
                 return {'warning': {'title': _('Warning'),
                                     'message': _('No contract found for this company and date combination.')}}
             else:
@@ -640,13 +640,13 @@ class ServiceRequest(models.Model):
                 else:
 
                     contact_contract_list = self.get_contact_contract_list(self.partner_id, contract_list)
-                    if len(contact_contract_list) == 0 and self.partner_id.partner_invoice_type in ['retainer',
+                    if len(contact_contract_list) == 0 and self.related_company.partner_invoice_type in ['retainer',
                                                                                                     'outsourcing']:
                         return {'warning': {'title': _('Warning'),
                                             'message': _(
                                                 'Selected contact not found in contracts related contacts')}}
                     elif contact_contract_list:
-                        if self.partner_id.partner_invoice_type in ['retainer',
+                        if self.related_company.partner_invoice_type in ['retainer',
                                                                  'outsourcing']:
                             self.contract_id = contact_contract_list[0]
                         return {

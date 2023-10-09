@@ -337,6 +337,8 @@ class SaleOrder(models.Model):
         self.write({'state': 'submit_client_operation'})
         if self.partner_invoice_type in ['retainer', 'outsourcing']:
             self.create_agreement_of_customer()
+        if not self.is_invoice_term_created:
+            self.action_create_invoice_term()
 
     def create_refuse_activity(self):
         for approver in self:
