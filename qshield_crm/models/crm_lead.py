@@ -35,6 +35,7 @@ class CrmLead(models.Model):
 
     # @api.onchange('parent_company_id')
     # def onchange_parent_company_id(self):
+    #     print('test')
     #     if self.partner_id and self.partner_id.parent_company_id:
     #         self.parent_company_id = self.partner_id.parent_company_id.id
 
