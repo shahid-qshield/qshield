@@ -475,7 +475,7 @@ class ServiceRequest(models.Model):
                 'ebs_qsheild_mod.qshield_operational_manager') and not self._context.get('call_from_dashboard'):
             is_account_manager_only = True
         if self.status not in ['draft', 'new'] and is_account_manager_only and not vals.get(
-                'message_main_attachment_id'):
+                'message_main_attachment_id') and not vals.get('expenses_ids'):
             raise UserError('Account manager group user not allowed write this service')
         if vals.get('related_company', False):
             vals['related_company_ro'] = vals['related_company']

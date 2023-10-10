@@ -4,6 +4,8 @@ from odoo import models, fields, api, _
 import calendar
 from datetime import datetime, date
 from odoo.exceptions import ValidationError, UserError
+import os
+import xlrd
 
 
 class ServiceRequest(models.Model):
@@ -226,8 +228,9 @@ class ServiceRequest(models.Model):
 
     @api.onchange('partner_id', 'service_type_id')
     def onchange_partner_partner_invoice_type(self):
-        if self.related_company and self.related_company.partner_invoice_type in ['per_transaction', 'one_time_transaction',
-                                                                        'partners']:
+        if self.related_company and self.related_company.partner_invoice_type in ['per_transaction',
+                                                                                  'one_time_transaction',
+                                                                                  'partners']:
             self.is_one_time_transaction = True
         else:
             self.is_one_time_transaction = False
@@ -286,10 +289,11 @@ class ServiceRequest(models.Model):
             })
             if order_id:
                 self.write({'sale_order_id': order_id.id})
-                order_id.sudo().write({'order_line': [(0, 0, {
-                    'display_type': 'line_section',
-                    'name': self.service_type_id and self.service_type_id.variant_id and self.service_type_id.variant_id.consolidation_id.name
-                })]})
+                if self.service_type_id and self.service_type_id.variant_id and self.service_type_id.variant_id.consolidation_id:
+                    order_id.sudo().write({'order_line': [(0, 0, {
+                        'display_type': 'line_section',
+                        'name': self.service_type_id and self.service_type_id.variant_id and self.service_type_id.variant_id.consolidation_id.name
+                    })]})
                 service_product_price = 0.0
                 pricelist = self.related_company.property_product_pricelist
                 if pricelist:
@@ -325,6 +329,18 @@ class EbsModContracts(models.Model):
     sale_order_id = fields.Many2one(comodel_name='sale.order', string="Sale Order", track_visibility='onchange')
     no_of_employees = fields.Integer(string="No Of Employees")
     is_employee_exceed = fields.Boolean(string="Employee Exceed", compute="_compute_employee_exceed", store=True)
+    payment_amount = fields.Float(
+        string='Amount',
+        required=[('contract_type', '=', 'retainer_agreement')],
+        compute="compute_payment_amount")
+
+    @api.depends('sale_order_id')
+    def compute_payment_amount(self):
+        for rec in self:
+            if rec.sale_order_id:
+                rec.payment_amount = rec.sale_order_id.amount_total
+            else:
+                rec.payment_amount = 0
 
     def add_all_employee(self):
         for rec in self:
@@ -345,6 +361,48 @@ class ExpenseTypes(models.Model):
     product_id = fields.Many2one('product.product', string="Product")
     type = fields.Selection([('government', 'Government'),
                              ('other', 'Other')], string="Type")
+
+    def update_service_type_consolidation(self):
+        print('----------------------------')
+        file_path = os.path.dirname(os.path.dirname(__file__)) + '/data/update_consolidation.xlsx'
+        with open(file_path, 'rb') as f:
+            try:
+                file_data = f.read()
+                workbook = xlrd.open_workbook(file_contents=file_data)
+                worksheet = workbook.sheet_by_index(0)
+                first_row = []
+                for col in range(worksheet.ncols):
+                    first_row.append(worksheet.cell_value(0, col))
+                data = []
+                for row in range(1, worksheet.nrows):
+                    elm = {}
+                    for col in range(worksheet.ncols):
+                        if worksheet.cell_value(row, col) != '' and worksheet.cell_value(row, col) != 'NA':
+                            elm[first_row[col]] = worksheet.cell_value(row, col)
+                        else:
+                            elm[first_row[col]] = False
+                    data.append(elm)
+                for record in data:
+                    if record.get('CODE'):
+                        service_type = self.env['ebs_mod.service.types'].sudo().search(
+                            [('code', '=', record.get('CODE'))],limit=1)
+                        if service_type:
+                            consolidation_id = self.env['ebs_mod.service.type.consolidation'].sudo().search([('name','=',record.get('Consolidated Name'))],limit=1)
+                            # if not consolidation_id:
+                            #     consolidation_id = self.env['ebs_mod.service.type.consolidation'].sudo().create({'name':record.get('Consolidated Name')})
+                            variant_id = self.env['ebs_mod.service.type.variants'].sudo().search([('name','=',record.get('Variant Name'))],limit=1)
+                            # if not variant_id:
+                            #     variant_id = self.env['ebs_mod.service.type.variants'].sudo().create(
+                            #         {'name':record.get('Variant Name')})
+                            if consolidation_id and variant_id.consolidation_id != consolidation_id:
+                                variant_id.sudo().write({'consolidation_id' : consolidation_id.id})
+                            if variant_id and service_type.variant_id != variant_id:
+                                service_type.sudo().write({'variant_id':variant_id.id})
+                            if service_type.product_id.name != record.get('Product'):
+                                print('-----------------------',record.get('Product'))
+                print('----------------------------------')
+            except Exception as e:
+                print('Something Wrong', e)
 
 
 class EbsModServiceRequestExpenses(models.Model):

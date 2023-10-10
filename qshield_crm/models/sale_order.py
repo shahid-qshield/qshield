@@ -369,6 +369,12 @@ class SaleOrder(models.Model):
                 'no_of_employees': self.no_of_employees,
                 # 'generated_by_sale_order': True,
             })
+            if len(contract.employee_list) >= contract.no_of_employees:
+                contract.add_all_employee()
+            if not contract.visitor_list:
+                contract.add_all_visitor()
+            if not contract.dependant_list:
+                contract.add_all_dependent()
         else:
             contract.write({
                 'name': 'Contract for sale order of ' + self.name,
