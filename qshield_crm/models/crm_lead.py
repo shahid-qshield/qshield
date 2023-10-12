@@ -21,6 +21,12 @@ class CrmLead(models.Model):
     is_readonly_parent_company = fields.Boolean(string="IS Readonly Parent Company",
                                                 compute="compute_is_readonly_parent_company")
 
+    def action_new_quotation(self):
+        action = super(CrmLead,self).action_new_quotation()
+        if self.env.ref('account.account_payment_term_30days'):
+            action['context']['default_payment_term_id'] = self.env.ref('account.account_payment_term_30days').id
+        return action
+
     @api.depends('partner_id')
     def compute_is_readonly_parent_company(self):
         for record in self:

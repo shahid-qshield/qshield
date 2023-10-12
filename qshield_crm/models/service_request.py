@@ -385,15 +385,15 @@ class ExpenseTypes(models.Model):
                 for record in data:
                     if record.get('CODE'):
                         service_type = self.env['ebs_mod.service.types'].sudo().search(
-                            [('code', '=', record.get('CODE'))],limit=1)
+                            [('active','in',[True,False]),('code', '=', record.get('CODE'))],limit=1)
                         if service_type:
                             consolidation_id = self.env['ebs_mod.service.type.consolidation'].sudo().search([('name','=',record.get('Consolidated Name'))],limit=1)
-                            # if not consolidation_id:
-                            #     consolidation_id = self.env['ebs_mod.service.type.consolidation'].sudo().create({'name':record.get('Consolidated Name')})
+                            if not consolidation_id:
+                                consolidation_id = self.env['ebs_mod.service.type.consolidation'].sudo().create({'name':record.get('Consolidated Name')})
                             variant_id = self.env['ebs_mod.service.type.variants'].sudo().search([('name','=',record.get('Variant Name'))],limit=1)
-                            # if not variant_id:
-                            #     variant_id = self.env['ebs_mod.service.type.variants'].sudo().create(
-                            #         {'name':record.get('Variant Name')})
+                            if not variant_id:
+                                variant_id = self.env['ebs_mod.service.type.variants'].sudo().create(
+                                    {'name':record.get('Variant Name')})
                             if consolidation_id and variant_id.consolidation_id != consolidation_id:
                                 variant_id.sudo().write({'consolidation_id' : consolidation_id.id})
                             if variant_id and service_type.variant_id != variant_id:
