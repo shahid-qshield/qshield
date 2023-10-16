@@ -475,7 +475,7 @@ class ServiceRequest(models.Model):
                 'ebs_qsheild_mod.qshield_operational_manager') and not self._context.get('call_from_dashboard'):
             is_account_manager_only = True
         if self.status not in ['draft', 'new'] and is_account_manager_only and not vals.get(
-                'message_main_attachment_id'):
+                'message_main_attachment_id') and not vals.get('expenses_ids'):
             raise UserError('Account manager group user not allowed write this service')
         if vals.get('related_company', False):
             vals['related_company_ro'] = vals['related_company']
@@ -624,7 +624,7 @@ class ServiceRequest(models.Model):
                 ('start_date', '<=', self.date),
                 ('end_date', '>=', self.date),
             ])
-            if len(contract_list) == 0 and self.partner_id.partner_invoice_type in ['retainer', 'outsourcing']:
+            if len(contract_list) == 0 and self.related_company.partner_invoice_type in ['retainer', 'outsourcing']:
                 return {'warning': {'title': _('Warning'),
                                     'message': _('No contract found for this company and date combination.')}}
             else:
@@ -640,13 +640,13 @@ class ServiceRequest(models.Model):
                 else:
 
                     contact_contract_list = self.get_contact_contract_list(self.partner_id, contract_list)
-                    if len(contact_contract_list) == 0 and self.partner_id.partner_invoice_type in ['retainer',
+                    if len(contact_contract_list) == 0 and self.related_company.partner_invoice_type in ['retainer',
                                                                                                     'outsourcing']:
                         return {'warning': {'title': _('Warning'),
                                             'message': _(
                                                 'Selected contact not found in contracts related contacts')}}
                     elif contact_contract_list:
-                        if self.partner_id.partner_invoice_type in ['retainer',
+                        if self.related_company.partner_invoice_type in ['retainer',
                                                                  'outsourcing']:
                             self.contract_id = contact_contract_list[0]
                         return {
