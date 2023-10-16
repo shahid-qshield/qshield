@@ -331,7 +331,6 @@ class EbsModContracts(models.Model):
     is_employee_exceed = fields.Boolean(string="Employee Exceed", compute="_compute_employee_exceed", store=True)
     payment_amount = fields.Float(
         string='Amount',
-        required=[('contract_type', '=', 'retainer_agreement')],
         compute="compute_payment_amount")
 
     @api.depends('sale_order_id')
@@ -385,21 +384,24 @@ class ExpenseTypes(models.Model):
                 for record in data:
                     if record.get('CODE'):
                         service_type = self.env['ebs_mod.service.types'].sudo().search(
-                            [('active','in',[True,False]),('code', '=', record.get('CODE'))],limit=1)
+                            [('active', 'in', [True, False]), ('code', '=', record.get('CODE'))], limit=1)
                         if service_type:
-                            consolidation_id = self.env['ebs_mod.service.type.consolidation'].sudo().search([('name','=',record.get('Consolidated Name'))],limit=1)
+                            consolidation_id = self.env['ebs_mod.service.type.consolidation'].sudo().search(
+                                [('name', '=', record.get('Consolidated Name'))], limit=1)
                             if not consolidation_id:
-                                consolidation_id = self.env['ebs_mod.service.type.consolidation'].sudo().create({'name':record.get('Consolidated Name')})
-                            variant_id = self.env['ebs_mod.service.type.variants'].sudo().search([('name','=',record.get('Variant Name'))],limit=1)
+                                consolidation_id = self.env['ebs_mod.service.type.consolidation'].sudo().create(
+                                    {'name': record.get('Consolidated Name')})
+                            variant_id = self.env['ebs_mod.service.type.variants'].sudo().search(
+                                [('name', '=', record.get('Variant Name'))], limit=1)
                             if not variant_id:
                                 variant_id = self.env['ebs_mod.service.type.variants'].sudo().create(
-                                    {'name':record.get('Variant Name')})
+                                    {'name': record.get('Variant Name')})
                             if consolidation_id and variant_id.consolidation_id != consolidation_id:
-                                variant_id.sudo().write({'consolidation_id' : consolidation_id.id})
+                                variant_id.sudo().write({'consolidation_id': consolidation_id.id})
                             if variant_id and service_type.variant_id != variant_id:
-                                service_type.sudo().write({'variant_id':variant_id.id})
+                                service_type.sudo().write({'variant_id': variant_id.id})
                             if service_type.product_id.name != record.get('Product'):
-                                print('-----------------------',record.get('Product'))
+                                print('-----------------------', record.get('Product'))
                 print('----------------------------------')
             except Exception as e:
                 print('Something Wrong', e)

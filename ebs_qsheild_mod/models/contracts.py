@@ -42,7 +42,6 @@ class Contracts(models.Model):
 
     payment_amount = fields.Float(
         string='Amount',
-        required=[('contract_type', '=', 'retainer_agreement')],
         default=10000.0)
     currency_id = fields.Many2one(
         comodel_name='res.currency',
