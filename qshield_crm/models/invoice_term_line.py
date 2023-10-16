@@ -289,7 +289,7 @@ class InvoiceTermLine(models.Model):
                         last_day_month = date
                     invoice_id = self.env['account.move'].sudo().search(
                         [('invoice_date', '>=', first_day_month), ('invoice_date', '<=', last_day_month),
-                         ('partner_id', '=', invoice_partner.id), ('state', 'not in', ['posted', 'cancel'])])
+                         ('partner_id', '=', invoice_partner.id), ('state', 'not in', ['posted', 'cancel'])],limit=1)
                     if invoice_id:
                         invoice_id.sudo().write({'invoice_line_ids': invoice_line_vals})
                     else:

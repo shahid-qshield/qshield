@@ -49,6 +49,14 @@ class SaleOrder(models.Model):
     partner_invoice_type = fields.Selection(related="partner_id.partner_invoice_type")
 
     # is_notification_sent_to_account_manager = fields.Boolean(string="Is Notification Sent To Account Manager")
+
+    @api.model
+    def default_get(self, fields):
+        result = super(SaleOrder, self).default_get(fields)
+        if self.env.ref('account.account_payment_term_30days'):
+            result['payment_term_id'] = self.env.ref('account.account_payment_term_30days').id
+        return result
+
     def close_quotation_activity(self):
         activity = self.env.ref('qshield_crm.mail_activity_quotation').id
         domain = [
@@ -337,6 +345,8 @@ class SaleOrder(models.Model):
         self.write({'state': 'submit_client_operation'})
         if self.partner_invoice_type in ['retainer', 'outsourcing']:
             self.create_agreement_of_customer()
+        if not self.is_invoice_term_created:
+            self.action_create_invoice_term()
 
     def create_refuse_activity(self):
         for approver in self:
@@ -367,6 +377,24 @@ class SaleOrder(models.Model):
                 'no_of_employees': self.no_of_employees,
                 # 'generated_by_sale_order': True,
             })
+            emp_list = self.env['res.partner'].search([
+                ('parent_id', '=', contract.contact_id.id),
+                ('person_type', '=', 'emp')
+            ])
+            visitor_list = self.env['res.partner'].search([
+                ('parent_id', '=', contract.contact_id.id),
+                ('person_type', '=', 'visitor')
+            ])
+            dependent_list = self.env['res.partner'].search([
+                ('parent_id', '=', contract.contact_id.id),
+                ('person_type', '=', 'child')
+            ])
+            if len(emp_list) > 0 and len(contract.employee_list) >= contract.no_of_employees:
+                contract.add_all_employee()
+            if len(visitor_list) > 0 and not contract.visitor_list:
+                contract.add_all_visitor()
+            if len(dependent_list) > 0 and not contract.dependant_list:
+                contract.add_all_dependent()
         else:
             contract.write({
                 'name': 'Contract for sale order of ' + self.name,

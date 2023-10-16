@@ -57,7 +57,7 @@
 
             <field name="arch" type="xml">
                 <xpath expr="//field[@name='sale_order_id']" position="attributes">
-                    <attribute name="readonly">0</attribute>
+                    <attribute name="readonly">1</attribute>
                 </xpath>
                 <xpath expr="//field[@name='no_of_employees']" position="attributes">
                     <attribute name="readonly">0</attribute>
@@ -149,7 +149,7 @@
                            readonly="1"
                            options='{"no_open": True}'
                     />
-                    <field name="partner_invoice_type" attrs="{'invisible' : [('partner_id','=',False)]}"/>
+                    <field name="partner_invoice_type" attrs="{'invisible' : [('partner_id','=',False)]}" required="1"/>
                     <field name="invoice_term_start_date"
                            attrs="{'invisible' : [('partner_invoice_type','!=','partners')],'required' : [('partner_invoice_type','=','partners')]}"/>
                     <field name="invoice_term_end_date"
