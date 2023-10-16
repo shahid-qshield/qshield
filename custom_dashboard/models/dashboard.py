@@ -32,7 +32,7 @@ class ServiceRequest(models.Model):
                 ])
                 contact_contract_list = self.get_contact_contract_list(self.partner_id, contract_list)
                 if len(contact_contract_list) == 0 and \
-                        self.partner_id.partner_invoice_type in ['retainer', 'outsourcing']:
+                        self.related_company.partner_invoice_type in ['retainer', 'outsourcing']:
                     is_out_of_scope = True
             record.is_out_of_scope = is_out_of_scope
 
