@@ -389,7 +389,7 @@ class SaleOrder(models.Model):
                 ('parent_id', '=', contract.contact_id.id),
                 ('person_type', '=', 'child')
             ])
-            if len(emp_list) > 0 and len(contract.employee_list) >= contract.no_of_employees:
+            if 0 < len(emp_list) <= contract.no_of_employees:
                 contract.add_all_employee()
             if len(visitor_list) > 0 and not contract.visitor_list:
                 contract.add_all_visitor()
