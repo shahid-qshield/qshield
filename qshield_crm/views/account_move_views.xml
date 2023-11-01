@@ -163,6 +163,9 @@
                             attrs="{'invisible': [('state', '!=', 'new')]}"
                             string="Approve"
                             groups="ebs_leave_appilcation_request.group_finance_department_user"/>
+                    <button name="download_attachment" type="object"
+                            class="oe_highlight"
+                            string="Download Attachment"/>
                 </xpath>
                 <xpath expr="//button[@name='button_cancel']" position="attributes">
                     <attribute name="attrs">{'invisible' : ['|',('partner_invoice_type', '=', 'partners'),'|', ('id',

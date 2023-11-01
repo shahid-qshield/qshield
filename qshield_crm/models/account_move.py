@@ -7,6 +7,7 @@ import base64
 import xlsxwriter
 import io
 from itertools import groupby
+from urllib.parse import urlencode
 
 
 class AccountMove(models.Model):
@@ -31,6 +32,17 @@ class AccountMove(models.Model):
     retainer_amount = fields.Float('Retainer Amount', compute='get_retainer_amount')
     binary_data = fields.Binary("File")
 
+    def download_attachment(self):
+        if not self.attachment_ids:
+            raise UserError('Attachments is not exist')
+        params = urlencode({"attachment_ids": self.attachment_ids.ids, 'invoice_name': self.name})
+        return {
+            "type": "ir.actions.act_url",
+            "url": f"/web/attachment/download_zip_file?{params}",
+            "target": "new",
+        }
+        print('----------------------')
+
     @api.depends('invoice_line_ids')
     def get_retainer_amount(self):
         for rec in self:
@@ -43,7 +55,7 @@ class AccountMove(models.Model):
 
     @api.model
     def print_excel_invoice_report(self):
-        filename = self._get_expense_report_file_name() +'.xlsx'
+        filename = self._get_expense_report_file_name() + '.xlsx'
         output = io.BytesIO()
         workbook = xlsxwriter.Workbook(output, {'in_memory': True})
         header_format = workbook.add_format({'bold': True, 'font_size': 12, 'align': 'center'})
@@ -116,11 +128,11 @@ class AccountMove(models.Model):
                 sheet.write(row, 8, line.name if line.name else '', format1)
                 if line.is_government_fees_line:
                     total_government_fees += line.price_subtotal
-                    sheet.write(row, 9, round(line.price_subtotal,precision_digits=2), format1)
+                    sheet.write(row, 9, round(line.price_subtotal, precision_digits=2), format1)
                 else:
                     sheet.write(row, 9, 0.0, format1)
                 if not line.is_government_fees_line:
-                    sheet.write(row, 10, round(line.price_subtotal,precision_digits=2), format1)
+                    sheet.write(row, 10, round(line.price_subtotal, precision_digits=2), format1)
                     total_out_scope_amount += line.price_subtotal
                 else:
                     sheet.write(row, 10, 0.0, format1)
@@ -129,20 +141,21 @@ class AccountMove(models.Model):
             style_highlight = workbook.add_format(
                 {'bold': True, 'pattern': 1, 'bg_color': '#E0E0E0', 'align': 'center'})
             merge_string = 'A' + str(row) + ':K' + str(row)
-            retainer_string = 'Total Retainer Amount:- ' + str(round(total_retainer_amount,precision_digits=2))
+            retainer_string = 'Total Retainer Amount:- ' + str(round(total_retainer_amount, precision_digits=2))
             sheet.merge_range(merge_string, retainer_string, style_highlight)
             row += 1
             merge_string = 'A' + str(row) + ':K' + str(row)
-            government_string = 'Total Government Fees :- ' + str(round(total_government_fees,precision_digits=2))
+            government_string = 'Total Government Fees :- ' + str(round(total_government_fees, precision_digits=2))
             sheet.merge_range(merge_string, government_string, style_highlight)
             row += 1
             merge_string = 'A' + str(row) + ':K' + str(row)
-            out_of_scope_string = 'Total Out of scope :- ' + str(round(total_out_scope_amount,precision_digits=2))
+            out_of_scope_string = 'Total Out of scope :- ' + str(round(total_out_scope_amount, precision_digits=2))
             sheet.merge_range(merge_string, out_of_scope_string, style_highlight)
             row += 1
             row += 1
             merge_string = 'A' + str(row) + ':K' + str(row)
-            total_string = 'Total :- ' + str(round((total_out_scope_amount+total_retainer_amount+total_government_fees),precision_digits=2))
+            total_string = 'Total :- ' + str(
+                round((total_out_scope_amount + total_retainer_amount + total_government_fees), precision_digits=2))
             sheet.merge_range(merge_string, total_string, style_highlight)
             row += 1
         workbook.close()

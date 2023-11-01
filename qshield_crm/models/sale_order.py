@@ -12,12 +12,19 @@ class SaleOrder(models.Model):
     _inherit = 'sale.order'
 
     def default_start_date(self):
-        return date.today().replace(day=1)
+        if date.today().day > 25:
+            return date.today().replace(day=26)
+        else:
+            return date.today().replace(day=1)
 
     def default_end_date(self):
         today = date.today()
-        days = calendar.monthrange(today.year, today.month)
-        return today.replace(day=days[1])
+        if today.day > 25:
+            return  date.today().replace(day=25) + relativedelta(months=1)
+        else:
+            days = calendar.monthrange(today.year, today.month)
+            return today.replace(day=days[1])
+
 
     state = fields.Selection([
         ('draft', 'Quotation'),
@@ -137,10 +144,16 @@ class SaleOrder(models.Model):
             #         self.end_date.month - self.start_date.month) + 1
             # if num_months == 0:
             #     num_months = 1
+            previous_last_day_date = False
             for first_day_date in self.months_between(self.end_date, self.start_date):
-                if first_day_date:
-                    last_day_of_month = calendar.monthrange(first_day_date.year, first_day_date.month)[1]
-                    last_day_date = first_day_date.replace(day=last_day_of_month)
+                if first_day_date and first_day_date < self.end_date:
+                    if previous_last_day_date:
+                        first_day_date = previous_last_day_date + relativedelta(days=1)
+                    # last_day_of_month = calendar.monthrange(first_day_date.year, first_day_date.month)[1]
+                    if first_day_date.day > 25:
+                        last_day_date = first_day_date.replace(day=25) + relativedelta(months=1)
+                    else:
+                        last_day_date = first_day_date.replace(day=25)
                     self.env['invoice.term.line'].sudo().create({
                         'name': first_day_date.strftime('%b') + ' ' + first_day_date.strftime('%Y') + ' - invoice term',
                         'start_term_date': first_day_date,
@@ -151,11 +164,12 @@ class SaleOrder(models.Model):
                         'amount': self.amount_total,
                         'sale_id': self.id
                     })
+                    previous_last_day_date = last_day_date
             if self.is_out_of_scope:
                 self.create_agreement_of_customer()
         elif self.is_agreement == 'one_time_payment':
-            last_day_of_month = calendar.monthrange(self.end_date.year, self.end_date.month)[1]
-            last_day_date = self.end_date.replace(day=last_day_of_month)
+            # last_day_of_month = calendar.monthrange(self.end_date.year, self.end_date.month)[1]
+            last_day_date = self.end_date.replace(day=25)
             self.env['invoice.term.line'].sudo().create({
                 'name': self.start_date.strftime('%b') + ' ' + self.start_date.strftime('%Y') + ' - invoice term',
                 'start_term_date': self.start_date,
@@ -208,7 +222,10 @@ class SaleOrder(models.Model):
             year = start_date.year
             month = start_date.month
             while (year, month) <= (end_date.year, end_date.month):
-                yield date(year, month, 1)
+                if start_date.day > 25:
+                    yield date(year, month, 26)
+                else:
+                    yield date(year, month, 1)
                 if month == 12:
                     month = 1
                     year += 1
@@ -363,7 +380,7 @@ class SaleOrder(models.Model):
         start_date = datetime.strftime(self.start_date, '%Y-%m-%d')
         end_date = datetime.strftime(self.end_date, '%Y-%m-%d')
         contract = self.env['ebs_mod.contracts'].search(
-            [('start_date', '=', start_date), ('end_date', '=', end_date), ('contact_id', '=', self.partner_id.id),
+            [('contact_id', '=', self.partner_id.id),
              ('sale_order_id', '=', self.id)])
         if not contract:
             contract = self.env['ebs_mod.contracts'].create({

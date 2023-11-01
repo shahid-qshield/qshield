@@ -6,18 +6,25 @@ from datetime import datetime, date
 from odoo.exceptions import ValidationError, UserError
 import os
 import xlrd
+from dateutil.relativedelta import relativedelta
 
 
 class ServiceRequest(models.Model):
     _inherit = 'ebs_mod.service.request'
 
     def default_invoice_term_start_date(self):
-        return date.today().replace(day=1)
+        if date.today().day > 25:
+            return date.today().replace(day=26)
+        else:
+            return date.today().replace(day=1)
 
     def default_invoice_term_end_date(self):
         today = date.today()
-        days = calendar.monthrange(today.year, today.month)
-        return today.replace(day=days[1])
+        if today.day > 25:
+            return  date.today().replace(day=25) + relativedelta(months=1)
+        else:
+            days = calendar.monthrange(today.year, today.month)
+            return today.replace(day=days[1])
 
     sale_order_id = fields.Many2one(comodel_name='sale.order', string="Sale Order", copy=False)
     partner_invoice_type = fields.Selection(related="related_company.partner_invoice_type")
@@ -436,8 +443,11 @@ class EbsModServiceRequestExpenses(models.Model):
     def compute_invoice_due_date(self):
         for record in self:
             if record.invoice_date and not record.is_set_from_cron:
-                last_day_of_month = calendar.monthrange(record.invoice_date.year, record.invoice_date.month)[1]
-                record.invoice_due_date = record.invoice_date.replace(day=last_day_of_month)
+                # last_day_of_month = calendar.monthrange(record.invoice_date.year, record.invoice_date.month)[1]
+                if record.invoice_date.day > 25:
+                    record.invoice_due_date = record.invoice_date.replace(day=25) + relativedelta(months=1)
+                else:
+                    record.invoice_due_date = record.invoice_date.replace(day=25)
             elif record.is_set_from_cron and record.invoice_date:
                 record.invoice_due_date = record.invoice_date
             else:

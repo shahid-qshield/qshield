@@ -8,6 +8,7 @@ import xlsxwriter
 import io
 import base64
 from odoo.http import request
+from urllib.parse import urlencode
 
 
 class ExportServiceRequest(models.TransientModel):
@@ -15,8 +16,8 @@ class ExportServiceRequest(models.TransientModel):
     _description = "Export Service Request"
 
     def _default_end_date(self):
-        last_day = calendar.monthrange(date.today().year, date.today().month)
-        return date.today().replace(day=last_day[1])
+        # last_day = calendar.monthrange(date.today().year, date.today().month)
+        return date.today().replace(day=25)
 
     def _default_start_date(self):
         return date.today().replace(day=1)
@@ -60,7 +61,8 @@ class ExportServiceRequest(models.TransientModel):
         sheet.write(0, 8, 'Services Fee', header_format)
         sheet.write(0, 9, 'Invoice Number', header_format)
         sheet.write(0, 10, 'Invoice Status', header_format)
-        sheet.write(0, 11, 'Receipt Attachment', header_format)
+        # sheet.write(0, 11, 'Receipt Attachment', header_format)
+        attachment_ids = self.env['ir.attachment']
         if service_request_ids:
             row = 1
             for service_request_id in service_request_ids:
@@ -75,9 +77,8 @@ class ExportServiceRequest(models.TransientModel):
                         if invoice_term:
                             invoice_id = invoice_term[0].invoice_id
                 government_fees = sum(service_request_id.mapped('expenses_ids').mapped('amount'))
-                attachment_ids = self.env['ir.attachment']
                 if service_request_id.mapped('expenses_ids'):
-                    attachment_ids = \
+                    attachment_ids += \
                         service_request_id.mapped('expenses_ids').filtered(lambda s: s.attachment_ids).mapped(
                             'attachment_ids')
                 service_fees = service_request_id.sale_order_id.amount_total
@@ -107,26 +108,41 @@ class ExportServiceRequest(models.TransientModel):
                             invoice_id.state if invoice_id else '',
                             format1)
 
-                if attachment_ids:
-                    base_url = request.httprequest.host_url
-                    # base_url = self.env['ir.config_parameter'].get_param('web.base.url')
-                    col = 11
-                    for attachment_id in attachment_ids:
-                        sheet.write_url(row=row, col=col, url=str(
-                            base_url) + 'web/content/{id}?download=true'.format(id=attachment_id.id), tip='Click here',
-                                        string='Attachment link')
-                        # sheet.write_url(row=row, col=col, url=str(
-                        #     base_url) + '/web/content/{id}?download=true'.format(id=attachment_id.id), tip='Click here',
-                        #                 string='Attachment link')
-                        col += 1
+                # if attachment_ids:
+                #     base_url = request.httprequest.host_url
+                #     # base_url = self.env['ir.config_parameter'].get_param('web.base.url')
+                #     col = 11
+                #     for attachment_id in attachment_ids:
+                #         sheet.write_url(row=row, col=col, url=str(
+                #             base_url) + 'web/content/{id}?download=true'.format(id=attachment_id.id), tip='Click here',
+                #                         string='Attachment link')
+                #         # sheet.write_url(row=row, col=col, url=str(
+                #         #     base_url) + '/web/content/{id}?download=true'.format(id=attachment_id.id), tip='Click here',
+                #         #                 string='Attachment link')
+                #         col += 1
                 row += 1
         workbook.close()
         output.seek(0)
         output = base64.encodestring(output.read())
         self.write({'binary_data': output})
+        excel_attachment_vals = {
+                        'name': filename,
+                        'datas': output,
+                        'res_model': 'export.service.request',
+                        'res_id': self.id,
+                        'type': 'binary',
+                    }
+        excel_attachment_id = self.env['ir.attachment'].sudo().create(excel_attachment_vals)
+        attachment_ids += excel_attachment_id
+        params = urlencode({"attachment_ids": attachment_ids.ids,'invoice_name':'service_request.zip'})
         return {
-            'type': 'ir.actions.act_url',
-            'url': 'web/content/?model=export.service.request&field=binary_data&download=true&id=%s&filename=%s' % (
-                self.id, filename),
-            'target': 'new',
+            "type": "ir.actions.act_url",
+            "url": f"/web/attachment/download_zip_file?{params}",
+            "target": "new",
         }
+        # return {
+        #     'type': 'ir.actions.act_url',
+        #     'url': 'web/content/?model=export.service.request&field=binary_data&download=true&id=%s&filename=%s' % (
+        #         self.id, filename),
+        #     'target': 'new',
+        # }

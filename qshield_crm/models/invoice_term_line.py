@@ -116,6 +116,8 @@ class InvoiceTermLine(models.Model):
             partner_invoice_term_ids = partner_sale_orders.mapped('invoice_term_ids').filtered(
                 lambda s: s.id in invoice_term_ids.ids)
             partner_service_request_ids = service_request_ids.filtered(lambda s: s.partner_id in child_partners)
+            partner_service_request_ids += service_request_ids.filtered(
+                lambda s: s.related_company == partner and s not in partner_service_request_ids)
             invoice_vals = {
                 'type': 'out_invoice',
                 'partner_id': partner.parent_company_id.id if partner.parent_company_id else partner.id,
@@ -282,14 +284,20 @@ class InvoiceTermLine(models.Model):
                     if partner.parent_company_id:
                         invoice_partner = partner.parent_company_id
                     first_day_month = datetime.date.today().replace(day=1)
-                    last_no_day = calendar.monthrange(datetime.date.today().year, datetime.date.today().month)
-                    last_day_month = datetime.date.today().replace(day=last_no_day[1])
+                    # last_no_day = calendar.monthrange(datetime.date.today().year, datetime.date.today().month)
+                    last_day_month = datetime.date.today().replace(day=25)
+                    if datetime.date.today().day > 25:
+                        first_day_month = datetime.date.today().replace(day=25)
+                        last_day_month = first_day_month + relativedelta(months=1)
                     if date and start_date:
                         first_day_month = start_date
                         last_day_month = date
+                    if datetime.date.today().day > 25:
+                        first_day_month = datetime.date.today().replace(day=26)
+                        last_day_month = datetime.date.today().replace(day=25) + relativedelta(months=1)
                     invoice_id = self.env['account.move'].sudo().search(
                         [('invoice_date', '>=', first_day_month), ('invoice_date', '<=', last_day_month),
-                         ('partner_id', '=', invoice_partner.id), ('state', 'not in', ['posted', 'cancel'])],limit=1)
+                         ('partner_id', '=', invoice_partner.id), ('state', 'not in', ['posted', 'cancel'])], limit=1)
                     if invoice_id:
                         invoice_id.sudo().write({'invoice_line_ids': invoice_line_vals})
                     else:
