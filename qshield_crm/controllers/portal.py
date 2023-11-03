@@ -154,6 +154,6 @@ class DownloadZipFile(http.Controller):
                     filename=invoice_name,
                     as_attachment=True,
                 )
-                shutil.rmtree(attachment_temp_dir, ignore_errors=True)
-                remove(f"{attachment_temp_dir}.zip")
+                # shutil.rmtree(attachment_temp_dir, ignore_errors=True)
+                # remove(f"{attachment_temp_dir}.zip")
                 return response
