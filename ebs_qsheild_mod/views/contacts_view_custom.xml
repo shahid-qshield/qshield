@@ -246,7 +246,6 @@
                     <group>
                         <!--                        add type field by bhavesh parmar-->
                         <field name="type" invisible="1"/>
-                        <field name="person_type"/>
                         <field name="is_miscellaneous"/>
                         <field name="parent_id" readonly="context.get('readonly_parent_id', False)"
                                string="Related Company"
