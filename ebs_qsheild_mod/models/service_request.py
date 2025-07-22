@@ -808,24 +808,62 @@ class ServiceRequest(models.Model):
         for flow in self.service_flow_ids:
             flow.status = 'reject'
 
+    # def request_complete(self):
+    #     self.completed_date = fields.Date.today()
+    #     self.end_date = fields.Date.today()
+    #     complete = True
+    #     # for flow in self.service_flow_ids:
+    #     #     if flow.status == 'pending' or flow.status == 'progress' or flow.status == 'hold':
+    #     #         complete = False
+    #     #         break
+    #     if complete:
+    #         workflow_id = self.env['ebs_mod.service.request.workflow'].search(
+    #             [('service_request_id', '=', self.id), ('is_application_submission', '=', True)], limit=1)
+    #         if workflow_id:
+    #             complete_date = workflow_id.complete_data
+    #             if self.end_date and complete_date:
+    #                 self.sla_days = self.get_date_difference(self.end_date.date(), complete_date, 1)
+    #         else:
+    #             self.sla_days = 0
+    #         self.status = 'complete'
+    #     else:
+    #         raise ValidationError(_("Workflow still pending or in progress."))
+
     def request_complete(self):
-        self.completed_date = fields.Date.today()
-        self.end_date = fields.Date.today()
+        today = fields.Date.today()
         complete = True
+
+        # Check if flow validation is needed
+        # Uncomment if needed for your business logic
         # for flow in self.service_flow_ids:
-        #     if flow.status == 'pending' or flow.status == 'progress' or flow.status == 'hold':
+        #     if flow.status in ('pending', 'progress', 'hold'):
         #         complete = False
         #         break
+
         if complete:
             workflow_id = self.env['ebs_mod.service.request.workflow'].search(
-                [('service_request_id', '=', self.id), ('is_application_submission', '=', True)], limit=1)
-            if workflow_id:
+                [('service_request_id', '=', self.id), ('is_application_submission', '=', True)],
+                limit=1
+            )
+
+            if workflow_id and workflow_id.complete_data:
                 complete_date = workflow_id.complete_data
-                if self.end_date and complete_date:
-                    self.sla_days = self.get_date_difference(self.end_date.date(), complete_date, 1)
+                self.sla_days = self.get_date_difference(today, complete_date, 1)
             else:
                 self.sla_days = 0
-            self.status = 'complete'
+
+            # Perform direct SQL update for better performance
+            self.env.cr.execute("""
+                UPDATE ebs_mod_service_request
+                SET status = 'complete',
+                    completed_date = current_date,
+                    end_date = current_date
+                WHERE id = %s
+            """, (self.id,))
+
+            # Optional: refresh cache so self reflects updated values
+            self.invalidate_cache(['status', 'completed_date', 'end_date'])
+
         else:
             raise ValidationError(_("Workflow still pending or in progress."))
 
