@@ -1,4 +1,5 @@
 # -*- coding: utf-8 -*-
+from docutils.nodes import document
 
 from odoo import models, fields, api, _
 from odoo.exceptions import ValidationError
@@ -80,5 +81,17 @@ class CreateContactDocument(models.TransientModel):
 
         if self.expiry_date:
             vals.update({'expiry_date': self.expiry_date.strftime("%Y-%m-%d")})
-        self.env['documents.document'].create(vals)
+        document = self.env['documents.document'].create(vals)
         self.env.cr.commit()
+        # 👇 Create activity on the service request to appear in its chatter
+        if self.service_request_id:
+            activity_vals = {
+                'res_model_id': self.env['ir.model']._get('ebs_mod.service.request').id,
+                'res_id': self.service_request_id.id,
+                'activity_type_id': self.env.ref('mail.mail_activity_data_todo').id,
+                'summary': 'Document Uploaded',
+                'note': f'Document "{document.name or document.document_number}" has been uploaded.',
+                'user_id': self.env.user.id,
+                'date_deadline': fields.Date.today(),
+            }
+            self.env['mail.activity'].create(activity_vals)

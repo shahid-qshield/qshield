@@ -634,20 +634,20 @@ class ServiceRequest(models.Model):
                             'contract_id': [('contact_id', '=', self.related_company.id),
                                             ('start_date', '<=', self.date),
                                             ('end_date', '>=', self.date)]
-                                            # ('generated_by_sale_order', '=', False)]
+                            # ('generated_by_sale_order', '=', False)]
                         }
                     }
                 else:
 
                     contact_contract_list = self.get_contact_contract_list(self.partner_id, contract_list)
                     if len(contact_contract_list) == 0 and self.related_company.partner_invoice_type in ['retainer',
-                                                                                                    'outsourcing']:
+                                                                                                         'outsourcing']:
                         return {'warning': {'title': _('Warning'),
                                             'message': _(
                                                 'Selected contact not found in contracts related contacts')}}
                     elif contact_contract_list:
                         if self.related_company.partner_invoice_type in ['retainer',
-                                                                 'outsourcing']:
+                                                                         'outsourcing']:
                             self.contract_id = contact_contract_list[0]
                         return {
                             # 'domain': {
@@ -765,6 +765,7 @@ class ServiceRequest(models.Model):
     #     self.status = 'new'
 
     def request_cancel(self):
+        self.previous_status = self.status
         self.end_date = date.today()
         workflow_id = self.env['ebs_mod.service.request.workflow'].search(
             [('service_request_id', '=', self.id), ('is_application_submission', '=', True)], limit=1)
@@ -784,11 +785,24 @@ class ServiceRequest(models.Model):
         for flow in self.service_flow_ids:
             flow.status = 'cancel'
 
+            # Activity Created
+        self.activity_schedule(
+            activity_type_id=self.env.ref('mail.mail_activity_data_todo').id,
+            summary="Status Change Notification",
+            note="The status has been changed from %s to %s." % (
+                self.status_dict.get(self.previous_status, self.previous_status or 'N/A'),
+                self.status_dict.get('cancel', 'Cancelled')
+            ),
+            user_id=self.env.user.id,
+            date_deadline=self.cancel_date
+        )
+
     def request_reject(self):
         if self.env.user.has_group('ebs_qsheild_mod.qshield_account_manager') and not self.env.user.has_group(
                 'ebs_qsheild_mod.qshield_operational_manager'):
             raise UserError('Account manager groups are not allowed to reject service')
         else:
+            self.previous_status = self.status
             self.end_date = date.today()
             workflow_id = self.env['ebs_mod.service.request.workflow'].search(
                 [('service_request_id', '=', self.id), ('is_application_submission', '=', True)], limit=1)
@@ -805,8 +819,21 @@ class ServiceRequest(models.Model):
         #     self.sla_days = 0
         self.rejected_date = date.today()
         self.status = 'reject'
+
         for flow in self.service_flow_ids:
             flow.status = 'reject'
+
+            # Activity Created
+            self.activity_schedule(
+                activity_type_id=self.env.ref('mail.mail_activity_data_todo').id,
+                summary="Status Change Notification",
+                note="The status has been changed from %s to %s." % (
+                    self.status_dict.get(self.previous_status, self.previous_status or 'N/A'),
+                    self.status_dict.get('reject', 'Rejected')
+                ),
+                user_id=self.env.user.id,
+                date_deadline=self.rejected_date
+            )
 
     # def request_complete(self):
     #     self.completed_date = fields.Date.today()
@@ -830,6 +857,7 @@ class ServiceRequest(models.Model):
     #         raise ValidationError(_("Workflow still pending or in progress."))
 
     def request_complete(self):
+        self.previous_status = self.status
         today = fields.Date.today()
         complete = True
 
@@ -864,22 +892,73 @@ class ServiceRequest(models.Model):
             # Optional: refresh cache so self reflects updated values
             self.invalidate_cache(['status', 'completed_date', 'end_date'])
 
+            # ✅ Activity Created AFTER status is updated
+            self.activity_schedule(
+                activity_type_id=self.env.ref('mail.mail_activity_data_todo').id,
+                summary="Status Change Notification",
+                note="The status has been changed from %s to %s." % (
+                    self.status_dict.get(self.previous_status, self.previous_status or 'N/A'),
+                    self.status_dict.get('complete', 'Complete')
+                ),
+                user_id=self.env.user.id,
+                date_deadline=today  # You can change to SLA or completed_date if preferred
+            )
+
         else:
             raise ValidationError(_("Workflow still pending or in progress."))
 
     def request_hold(self):
+        self.previous_status = self.status
         self.onhold_date = date.today()
         self.status = 'hold'
 
+        # Activity Created
+        self.activity_schedule(
+            activity_type_id=self.env.ref('mail.mail_activity_data_todo').id,
+            summary="Status Change Notification",
+            note="The status has been changed from %s to %s." % (
+                self.status_dict.get(self.previous_status, self.previous_status or 'N/A'),
+                self.status_dict.get('hold', 'Hold')
+            ),
+            user_id=self.env.user.id,
+            date_deadline=self.onhold_date
+        )
+
     def request_pending(self):
+        self.previous_status = self.status
         self.pending_from_gov_date = date.today()
         self.status = 'pending'
+        # Activity Created
+        self.activity_schedule(
+            activity_type_id=self.env.ref('mail.mail_activity_data_todo').id,
+            summary="Status Change Notification",
+            note="The status has been changed from %s to %s." % (
+                self.status_dict.get(self.previous_status, self.previous_status or 'N/A'),
+                self.status_dict.get('pending', 'Pending')
+            ),
+            user_id=self.env.user.id,
+            date_deadline=self.pending_from_gov_date
+        )
 
     def request_escalated(self):
+        self.previous_status = self.status
         self.escalated_date = date.today()
         self.status = 'escalated'
 
+        # Activity Created
+        self.activity_schedule(
+            activity_type_id=self.env.ref('mail.mail_activity_data_todo').id,
+            summary="Status Change Notification",
+            note="The status has been changed from %s to %s." % (
+                self.status_dict.get(self.previous_status, self.previous_status or 'N/A'),
+                self.status_dict.get('escalated', 'Escalated')
+            ),
+            user_id=self.env.user.id,
+            date_deadline=self.escalated_date
+        )
+
     def request_escalated_in_progress(self):
+        self.previous_status = self.status
         self.escalated_in_progress_date = date.today()
         workflow_id = self.env['ebs_mod.service.request.workflow'].search(
             [('service_request_id', '=', self.id), ('is_application_submission', '=', True)], limit=1)
@@ -889,7 +968,20 @@ class ServiceRequest(models.Model):
                 self.sla_days = self.get_date_difference(self.escalated_in_progress_date, complete_date, 1)
         self.status = 'escalated_progress'
 
+        # Activity Created
+        self.activity_schedule(
+            activity_type_id=self.env.ref('mail.mail_activity_data_todo').id,
+            summary="Status Change Notification",
+            note="The status has been changed from %s to %s." % (
+                self.status_dict.get(self.previous_status, self.previous_status or 'N/A'),
+                self.status_dict.get('escalated_progress', 'Escalated In Progress')
+            ),
+            user_id=self.env.user.id,
+            date_deadline=self.escalated_in_progress_date
+        )
+
     def request_escalated_in_complete(self):
+        self.previous_status = self.status
         self.escalated_incomplete_date = date.today()
         self.end_date = date.today()
         workflow_id = self.env['ebs_mod.service.request.workflow'].search(
@@ -900,7 +992,21 @@ class ServiceRequest(models.Model):
                 self.sla_days = self.get_date_difference(self.escalated_incomplete_date, complete_date, 1)
         self.status = 'escalated_incomplete'
 
+        # Activity Created
+        self.activity_schedule(
+            activity_type_id=self.env.ref('mail.mail_activity_data_todo').id,
+            summary="Status Change Notification",
+            note="The status has been changed from %s to %s." % (
+                self.status_dict.get(self.previous_status, self.previous_status or 'N/A'),
+                self.status_dict.get('escalated_incomplete', 'Escalated Incomplete')
+            ),
+            user_id=self.env.user.id,
+            date_deadline=self.escalated_incomplete_date
+        )
+
     def request_escalated_complete(self):
+        self.previous_status = self.status
+
         self.escalated_complete_date = date.today()
         self.end_date = date.today()
         workflow_id = self.env['ebs_mod.service.request.workflow'].search(
@@ -911,7 +1017,21 @@ class ServiceRequest(models.Model):
                 self.sla_days = self.get_date_difference(self.escalated_complete_date, complete_date, 1)
         self.status = 'escalated_complete'
 
+        # Activity Created
+        self.activity_schedule(
+            activity_type_id=self.env.ref('mail.mail_activity_data_todo').id,
+            summary="Status Change Notification",
+            note="The status has been changed from %s to %s." % (
+                self.status_dict.get(self.previous_status, self.previous_status or 'N/A'),
+                self.status_dict.get('escalated_complete', 'Escalated Complete')
+            ),
+            user_id=self.env.user.id,
+            date_deadline=self.escalated_complete_date
+        )
+
     def request_incomplete(self):
+        self.previous_status = self.status
+
         self.incomplete_date = date.today()
         self.end_date = date.today()
         workflow_id = self.env['ebs_mod.service.request.workflow'].search(
@@ -922,17 +1042,52 @@ class ServiceRequest(models.Model):
                 self.sla_days = self.get_date_difference(self.incomplete_date, complete_date, 1)
         self.status = 'incomplete'
 
+        # Activity Created
+        self.activity_schedule(
+            activity_type_id=self.env.ref('mail.mail_activity_data_todo').id,
+            summary="Status Change Notification",
+            note="The status has been changed from %s to %s." % (
+                self.status_dict.get(self.previous_status, self.previous_status or 'N/A'),
+                self.status_dict.get('incomplete', 'Incomplete')
+            ),
+            user_id=self.env.user.id,
+            date_deadline=self.incomplete_date
+        )
+
     def request_pending_payment(self):
+        self.previous_status = self.status
         self.pending_payment_date = date.today()
         self.status = 'pending_payment'
 
+        # Activity Created
+        self.activity_schedule(
+            activity_type_id=self.env.ref('mail.mail_activity_data_todo').id,
+            summary="Status Change Notification",
+            note="The status has been changed from %s to %s." % (
+                self.status_dict.get(self.previous_status, self.previous_status or 'N/A'),
+                self.status_dict.get('pending_payment', 'Pending Payment')
+            ),
+            user_id=self.env.user.id,
+            date_deadline=self.pending_payment_date
+        )
+
     def request_progress(self):
+        self.previous_status = self.status
         if self.env.user.has_group('ebs_qsheild_mod.qshield_account_manager') and not self.env.user.has_group(
                 'ebs_qsheild_mod.qshield_operational_manager'):
             raise UserError('Account manager groups are not allowed to set in progress status')
         else:
             self.in_progress_date = date.today()
             self.status = 'progress'
+
+        # Activity Created
+        self.activity_schedule(
+            activity_type_id=self.env.ref('mail.mail_activity_data_todo').id,
+            summary="Status Change Notification",
+            note="The status has been changed from %s to In Progress." % (self.previous_status or 'N/A'),
+            user_id=self.env.user.id,  # assign to current user or change to record.user_id.id if needed
+            date_deadline=self.in_progress_date  # today or any future date
+        )
 
     def request_draft(self):
         if len(self.service_flow_ids) == 0 and len(self.service_document_ids) == 0 and len(self.expenses_ids) == 0:
