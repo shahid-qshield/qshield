@@ -49,7 +49,7 @@ class EBSHRLetterRequest(models.Model):
                                 default=AVAILABLE_PRIORITIES[0][0],
                                 help='The priority of the request, as an integer: 0 means higher priority, 10 means '
                                      'lower priority.')
-    type = fields.Selection(_request_type, required=True, string='Type', tracking=True, readonly=True,
+    type = fields.Selection(_request_type, required=True, string='Type', tracking=True,
                             default="noc_visa_application")
     addressed_to = fields.Char(string='Addressed To', required=True, copy=False, tracking=True)
     signatory_id = fields.Many2one('hr.employee', string='Signatory', required=True,
