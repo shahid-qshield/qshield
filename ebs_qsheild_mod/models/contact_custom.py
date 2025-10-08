@@ -68,7 +68,7 @@ class ContactCustom(models.Model):
     #     required=False)
     passport_exp_date = fields.Date(
         related='passport_doc.expiry_date',
-        string='Passport Expiry Date', readonly=False,
+        string='Passport Expiry Date',
         required=False)
 
     qatar_id_doc = fields.Many2one(
@@ -82,7 +82,7 @@ class ContactCustom(models.Model):
     #     #     required=False)
 
     qatarid_exp_date = fields.Date(
-        string='Qatar ID Expiry Date', related='qatar_id_doc.expiry_date', readonly=False,
+        string='Qatar ID Expiry Date', related='qatar_id_doc.expiry_date',
         required=False)
 
     computer_card_doc = fields.Many2one(
@@ -95,7 +95,7 @@ class ContactCustom(models.Model):
     #     string='Computer Card Number',
     #     required=False)
     comp_card_exp_date = fields.Date(
-        string='Computer Card Expiry Date', related='computer_card_doc.expiry_date', readonly=False,
+        string='Computer Card Expiry Date', related='computer_card_doc.expiry_date',
         required=False)
 
     cr_number_doc = fields.Many2one(
@@ -108,7 +108,7 @@ class ContactCustom(models.Model):
     #     string='CR Number',
     #     required=False)
     cr_exp_date = fields.Date(
-        string='CR Expiry Date', related='cr_number_doc.expiry_date', readonly=False,
+        string='CR Expiry Date', related='cr_number_doc.expiry_date',
         required=False)
 
     trade_licence_doc = fields.Many2one(
@@ -121,7 +121,7 @@ class ContactCustom(models.Model):
     #     string='Trade Licence Number',
     #     required=False)
     trade_licence_date = fields.Date(
-        string='Trade Licence Expiry Date', related='trade_licence_doc.expiry_date',readonly=False,
+        string='Trade Licence Expiry Date', related='trade_licence_doc.expiry_date',
         required=False)
 
     account_manager = fields.Many2one(

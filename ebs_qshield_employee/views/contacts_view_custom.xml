@@ -59,7 +59,8 @@
                     <field name="is_qshield_sponsor"/>
                     <field name="is_address" invisible="1"/>
                     <field name="employee_ids" context="{'get_partner_id' : active_id}"
-                           attrs="{'invisible':[('is_qshield_sponsor','=',False)]}" widget="many2many_tags"/>
+                           attrs="{'invisible':[('is_qshield_sponsor','=',False)]}" widget="many2many_tags"
+                           readonly="True"/>
                     <field name="is_employee_create" widget="boolean_toggle"
                            attrs="{'invisible':[('person_type','not in', ('company'))]}"
                            invisible="1"/>

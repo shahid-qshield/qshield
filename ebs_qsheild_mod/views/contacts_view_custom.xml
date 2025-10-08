@@ -256,7 +256,7 @@
 						   or
 						   (person_type in ('child') and 'emp')
 						   ))]"/>
-                        <field name="related_company" readonly="False"
+                        <field name="related_company" readonly="True"
                                attrs="{'invisible':[('person_type','!=','child')]}"/>
                         <!-- attrs="{'invisible':[('person_type','not in',('emp','visitor'))]}"-->
                         <field name="sponsor" options="{'no_create': True, 'no_create_edit':True}"/>
