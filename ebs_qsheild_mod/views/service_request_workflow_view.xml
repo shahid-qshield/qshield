@@ -36,7 +36,8 @@
                                 <field name="is_edit_status_new" invisible="True"/>
                                 <field name="service_request_id" invisible="context.get('hide_parent',False)"
                                        readonly="True"/>
-                                <field name="flow_type" invisible="context.get('hide_parent',False)"/>
+                                <field name="flow_type" />
+<!--                                invisible="context.get('hide_parent',False)"-->
                                 <field name="service_type_id" invisible="True"/>
                                 <field name="related_company" invisible="context.get('hide_parent',False)"/>
                                 <field name="partner_id" invisible="context.get('hide_parent',False)"/>
@@ -60,7 +61,7 @@
                                        force_save="1"/>
                                 <field name="status_new"
                                        attrs="{'invisible':[('is_show_new_status','=',False)],'readonly':[('is_edit_status_new','=',False)]}"/>
-                                <field name="date" readonly="True"/>
+                                <field name="date" readonly="False"/>
                                 <button name="create_service_activity" string="Create Activity" class="btn btn-primary"
                                         type="object"/>
                             </group>

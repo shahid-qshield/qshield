@@ -59,13 +59,13 @@ class ServiceRequestWorkFlow(models.Model):
     sequence = fields.Integer(
         string='Sequence',
         related="workflow_id.sequence",
-        required=False)
+        required=False,readonly=False,)
     flow_type = fields.Selection(
         string='Workflow Type',
         selection=[('o', 'Online'),
                    ('m', 'Manual'), ],
         related="service_request_id.flow_type",
-        required=False)
+        required=False, readonly=False,)
     service_type_id = fields.Many2one(
         comodel_name='ebs_mod.service.types',
         string='Service Type',
@@ -76,13 +76,13 @@ class ServiceRequestWorkFlow(models.Model):
         comodel_name='res.partner',
         string='Related Company',
         related="service_request_id.related_company_ro",
-        required=False)
+        required=False,readonly=False,)
 
     partner_id = fields.Many2one(
         comodel_name='res.partner',
         string='Related Contact',
         related="service_request_id.partner_id",
-        required=False)
+        required=False,readonly=False,)
 
     start_count_flow = fields.Boolean(
         string='Start Count Flow',
@@ -108,7 +108,7 @@ class ServiceRequestWorkFlow(models.Model):
         required=False)
 
     date = fields.Datetime(
-        string='Status Last Updated',
+        string='Status Last Updated',readonly=False,
         required=False)
 
     assign_to = fields.Many2one(
